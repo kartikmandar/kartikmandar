@@ -14,7 +14,8 @@ Here are some ideas to get you started:
 - ⚡ Fun fact: ...
 -->
 
-Kartik Mandar’s GitHub Profile
+<h1>Kartik Mandar’s GitHub Profile</h1>
+
 Welcome to my public profile! This includes examples of Certificates of Completion from Learn Enough. They work like this:
 
 Those badges show that I have completed the online courses for Learn Enough Command Line to Be Dangerous.
