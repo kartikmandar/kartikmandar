@@ -18,7 +18,6 @@ Here are some ideas to get you started:
 
 Welcome to my public profile! This includes examples of Certificates of Completion from Learn Enough. They work like this:
 
-
+<a href="https://www.learnenough.com/certificates/b8a44161"><img src="https://www.learnenough.com/certificates/b8a44161/command-line-tutorial.svg" alt="Certificate of Completion for Learn Enough Command Line"></a>
 Those badges show that I have completed the online courses for <a href = "https://www.learnenough.com/command-line">Learn Enough Command Line to Be Dangerous.</a>
 
-<a href="https://www.learnenough.com/certificates/b8a44161"><img src="https://www.learnenough.com/certificates/b8a44161/command-line-tutorial.svg" alt="Certificate of Completion for Learn Enough Command Line"></a>
