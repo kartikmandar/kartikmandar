@@ -20,5 +20,5 @@ Welcome to my public profile! This includes examples of Certificates of Completi
 
 <a href="https://www.learnenough.com/certificates/kartikmandar"><img src="https://www.learnenough.com/certificates/kartikmandar/command-line-tutorial.svg" alt="Certificate of Completion for Learn Enough Command Line"></a><a href="https://www.learnenough.com/certificates/kartikmandar"><img src="https://www.learnenough.com/certificates/kartikmandar/text-editor-tutorial.svg" alt="Certificate of Completion for Learn Enough Text Editor"></a>
 
-Those badges show that I have completed the online courses for <a href = "https://www.learnenough.com/command-line">Learn Enough Command Line to Be Dangerous.</a>
+Those badges show that I have completed the online courses for <a href = "https://www.learnenough.com/command-line">Learn Enough Command Line to Be Dangerous</a> and <a href = "https://www.learnenough.com/text-editor"> Learn Enough Text Editor to be Dangerous </a>
 
