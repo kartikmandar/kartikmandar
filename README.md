@@ -24,4 +24,4 @@ Those badges show that I have completed the online courses for <a href = "https:
 
 
 
-Also check out my <a href = "https://bitbucket.org/kartik-mandar/workspace/overview">BitBucket profile</a> and my <a href = "https://www.kartikmandar.com/">website</a>.
+Also check out my <a href = "https://gitlab.igem.org/kartikmandar">GitLab profile</a> and my <a href = "https://www.kartikmandar.com/">website</a>.
