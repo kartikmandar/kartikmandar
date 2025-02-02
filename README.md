@@ -16,4 +16,4 @@ Here are some ideas to get you started:
 
 <h1>My GitHub Profile</h1>
 
-Also check out my <a href = "https://gitlab.igem.org/kartikmandar">GitLab profile</a> and my <a href = "https://www.kartikmandar.com/">website</a>.
+For more information, check out my <a href = "https://www.kartikmandar.com/">website</a>.
