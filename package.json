@@ -20,6 +20,10 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
+    "@mui/icons-material": "^7.0.2",
+    "@mui/material": "^7.0.2",
     "@payloadcms/admin-bar": "3.33.0",
     "@payloadcms/db-vercel-postgres": "3.33.0",
     "@payloadcms/live-preview-react": "3.33.0",

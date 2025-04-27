@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @layer base {
+
   h1,
   h2,
   h3,
@@ -88,6 +89,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
   }

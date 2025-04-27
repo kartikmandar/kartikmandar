@@ -2,13 +2,11 @@
 
 import React from 'react'
 
-import type { Header as HeaderType } from '@/payload-types'
-
 import { CMSLink } from '@/components/Link'
 import Link from 'next/link'
 import { SearchIcon } from 'lucide-react'
 
-export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
+export const HeaderNav: React.FC<{ data: { navItems: { link: { label: string; url: string } }[] } }> = ({ data }) => {
   const navItems = data?.navItems || []
 
   return (
