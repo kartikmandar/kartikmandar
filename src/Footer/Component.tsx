@@ -323,7 +323,7 @@ export function Footer() {
               Connect for Research Collaboration
             </h3>
             <p className="mb-6 text-gray-300 max-w-xl mx-auto">
-              Interested in collaborating on radio astronomy research, discussing black hole physics, or exploring data analysis projects? Let's connect!
+              Interested in collaborating on radio astronomy research, discussing black hole physics, or exploring data analysis projects? Let&apos;s connect!
             </p>
             <form className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <input
@@ -339,7 +339,7 @@ export function Footer() {
                 Connect
               </button>
             </form>
-            <p className="text-gray-400 text-sm">I'm open to collaborations, presentations, and academic discussions.</p>
+            <p className="text-gray-400 text-sm">I&apos;m open to collaborations, presentations, and academic discussions.</p>
           </div>
         </div>
         
