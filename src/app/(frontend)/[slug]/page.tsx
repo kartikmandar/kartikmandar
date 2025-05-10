@@ -12,6 +12,7 @@ import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -64,18 +65,27 @@ export default async function Page({ params: paramsPromise }: Args) {
   }
 
   const { hero, layout } = page
+  const isHome = slug === 'home'
 
   return (
-    <article className="pt-16 pb-24">
-      <PageClient />
-      {/* Allows redirects for valid pages too */}
-      <PayloadRedirects disableNotFound url={url} />
+    <>
+      {isHome && (
+        <div className="w-full" style={{ height: '100vh' }}>
+          <QuasarBackgroundWrapper height="100%" />
+        </div>
+      )}
+      <article className="pt-16 pb-24">
+        <PageClient />
+        {/* Allows redirects for valid pages too */}
+        <PayloadRedirects disableNotFound url={url} />
 
-      {draft && <LivePreviewListener />}
+        {draft && <LivePreviewListener />}
 
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
-    </article>
+        {/* Only render hero if not on homepage */}
+        {!isHome && <RenderHero {...hero} />}
+        <RenderBlocks blocks={layout} />
+      </article>
+    </>
   )
 }
 
