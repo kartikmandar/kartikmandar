@@ -78,64 +78,6 @@ export default function QuasarBackgroundWrapper({
           {soundOn ? <Volume size={24} strokeWidth={2.2} /> : <VolumeX size={24} strokeWidth={2.2} />}
         </Button>
       </div>
-      {/* Down arrow at the bottom center */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          bottom: 32,
-          transform: 'translateX(-50%)',
-          zIndex: 10,
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          pointerEvents: 'none',
-        }}
-      >
-        <span
-          style={{
-            color: '#fff',
-            fontSize: '2.5rem',
-            textShadow: '0 2px 8px #000a',
-            animation: 'bounceDown 1.6s infinite',
-            pointerEvents: 'auto',
-            cursor: 'pointer',
-            userSelect: 'none',
-          }}
-          aria-label="Scroll down"
-          onClick={() => {
-            window.scrollTo({
-              top: window.innerHeight,
-              behavior: 'smooth',
-            })
-          }}
-        >
-          ↓
-        </span>
-        <span
-          style={{
-            color: '#fff',
-            fontSize: '1.1rem',
-            marginTop: 8,
-            textShadow: '0 2px 8px #000a',
-            pointerEvents: 'auto',
-            userSelect: 'none',
-            background: 'rgba(0,0,0,0.32)',
-            borderRadius: 12,
-            padding: '2px 14px',
-            fontWeight: 500,
-            letterSpacing: '0.01em',
-          }}
-        >
-          Scroll to zoom, drag to spin.
-        </span>
-        <style>{`
-          @keyframes bounceDown {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(18px); }
-          }
-        `}</style>
-      </div>
     </div>
   )
 } 

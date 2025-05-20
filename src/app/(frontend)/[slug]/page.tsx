@@ -13,7 +13,6 @@ import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
-import SupernovaEffectWrapper from '@/components/SupernovaEffect/ClientWrapper'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -71,14 +70,9 @@ export default async function Page({ params: paramsPromise }: Args) {
   return (
     <>
       {isHome && (
-        <>
-          <div className="w-full" style={{ height: '100vh' }}>
-            <QuasarBackgroundWrapper height="100%" />
-          </div>
-          <div className="w-full" style={{ height: '100vh' }}>
-            <SupernovaEffectWrapper height="100%" />
-          </div>
-        </>
+        <div className="w-full" style={{ height: '100vh' }}>
+          <QuasarBackgroundWrapper height="100%" />
+        </div>
       )}
       <article className="pt-16 pb-24">
         <PageClient />

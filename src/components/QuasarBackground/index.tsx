@@ -1,10 +1,12 @@
 'use client'
 
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
+import SupernovaEffect from '../SupernovaEffect'
 
 export default function QuasarBackground() {
   const containerRef = useRef<HTMLDivElement>(null)
+  const [showSupernova, setShowSupernova] = useState(false)
   
   useEffect(() => {
     // Import Three.js dynamically to avoid SSR issues
@@ -36,6 +38,14 @@ export default function QuasarBackground() {
         controls.enableDamping = true
         controls.dampingFactor = 0.05
         controls.enablePan = false
+        
+        // Set zoom limits
+        controls.minDistance = 1.5
+        controls.maxDistance = 2000
+        
+        // Track zoom level to trigger supernova
+        const zoomThreshold = 1750 // The distance at which to trigger supernova
+        let supernovaTriggered = false
 
         // Create a parent group for tilt
         const tiltGroup = new THREE.Group()
@@ -531,9 +541,20 @@ export default function QuasarBackground() {
         function animate() {
           const animationId = requestAnimationFrame(animate)
           controls.update()
+          
+          // Check if we need to trigger the supernova effect based on zoom level
+          if (!supernovaTriggered && camera.position.distanceTo(new THREE.Vector3(0, 0, 0)) > zoomThreshold) {
+            supernovaTriggered = true
+            setShowSupernova(true)
+          } else if (supernovaTriggered && camera.position.distanceTo(new THREE.Vector3(0, 0, 0)) <= zoomThreshold) {
+            supernovaTriggered = false
+            setShowSupernova(false)
+          }
+          
           const now = performance.now()
           const delta = (now - lastTime) / 1000 // seconds
           lastTime = now
+          
           // 1 rotation per minute = 2π/60 radians per second
           const rotationSpeed = 2 * Math.PI / 60
           accumulatedRotation += rotationSpeed * delta
@@ -568,17 +589,57 @@ export default function QuasarBackground() {
   }, [])
 
   return (
-    <div 
-      ref={containerRef} 
-      style={{ 
-        position: 'absolute', 
-        top: 0, 
-        left: 0, 
-        width: '100%',
-        height: '100vh',
-        zIndex: 0,
-        overflow: 'hidden'
-      }} 
-    />
+    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+      <div 
+        ref={containerRef} 
+        style={{ 
+          position: 'absolute', 
+          top: 0, 
+          left: 0, 
+          width: '100%',
+          height: '100%',
+          zIndex: 0,
+          overflow: 'hidden'
+        }} 
+      />
+      {!showSupernova && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            padding: '10px 15px',
+            background: 'rgba(0, 0, 0, 0.5)',
+            color: 'rgba(255, 255, 255, 0.8)',
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: 'normal',
+            letterSpacing: '0.5px',
+            backdropFilter: 'blur(4px)',
+            zIndex: 2,
+            pointerEvents: 'none',
+            transition: 'opacity 0.3s ease-in-out',
+            fontFamily: 'sans-serif'
+          }}
+        >
+          Scroll to zoom | Drag to spin
+        </div>
+      )}
+      {showSupernova && (
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1
+          }}
+        >
+          <SupernovaEffect height="100%" />
+        </div>
+      )}
+    </div>
   )
 } 

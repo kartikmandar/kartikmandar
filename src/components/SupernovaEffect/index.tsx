@@ -16,6 +16,19 @@ export default function SupernovaEffect({
   const [isExploding, setIsExploding] = useState(false)
   const isExplodingRef = useRef(false)
   
+  // Auto-trigger explosion when the component is rendered
+  useEffect(() => {
+    // After a short delay to allow initialization
+    const timer = setTimeout(() => {
+      setIsExploding(true)
+    }, 200)
+    
+    return () => clearTimeout(timer)
+  }, []) // Empty dependency array ensures this runs only once
+  
+  // Add a completed flag to track if explosion is done
+  const explosionCompletedRef = useRef(false)
+  
   useEffect(() => {
     // Scene setup
     if (!containerRef.current) return
@@ -24,6 +37,7 @@ export default function SupernovaEffect({
     const containerHeight = containerRef.current.clientHeight
     
     const scene = new THREE.Scene()
+    scene.background = new THREE.Color(0x000000) // Ensure pitch black background
     const camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(containerWidth, containerHeight)
@@ -35,27 +49,10 @@ export default function SupernovaEffect({
     // Variables for the supernova
     let exploding = false
     let explosionTime = 0
-    const explosionDuration = 8.0 // seconds
+    const explosionDuration = 12.0 // seconds - increased for a slower, smoother transition
     
-    // Stars background
-    const starGeometry = new THREE.BufferGeometry()
-    const starCount = 10000
-    const starPositions = new Float32Array(starCount * 3)
-    
-    for (let i = 0; i < starCount * 3; i += 3) {
-        starPositions[i] = (Math.random() - 0.5) * 2000
-        starPositions[i + 1] = (Math.random() - 0.5) * 2000
-        starPositions[i + 2] = (Math.random() - 0.5) * 2000
-    }
-    
-    starGeometry.setAttribute('position', new THREE.BufferAttribute(starPositions, 3))
-    const starMaterial = new THREE.PointsMaterial({ 
-        color: 0xFFFFFF, 
-        size: 0.7,
-        sizeAttenuation: true
-    })
-    const stars = new THREE.Points(starGeometry, starMaterial)
-    scene.add(stars)
+    // Remove background stars - we want pitch black background
+    // No code for stars here anymore
     
     // Create the star (pre-explosion)
     const starRadius = 4
@@ -77,6 +74,10 @@ export default function SupernovaEffect({
     })
     const glowMesh = new THREE.Mesh(glowGeometry, glowMaterial)
     scene.add(glowMesh)
+    
+    // Make star and glow invisible from the beginning
+    star.visible = false
+    glowMesh.visible = false
     
     // Create particles for explosion
     const particleCount = 20000
@@ -133,7 +134,8 @@ export default function SupernovaEffect({
         vertexColors: true,
         transparent: true,
         opacity: 0.8,
-        blending: THREE.AdditiveBlending
+        blending: THREE.AdditiveBlending,
+        sizeAttenuation: true
     })
     
     const particles = new THREE.Points(particleGeometry, particleMaterial)
@@ -183,19 +185,7 @@ export default function SupernovaEffect({
     
     // Animation functions
     function animateStar() {
-        const time = Date.now() * 0.001
-        
-        // Pulsate the star before explosion
-        if (!exploding) {
-            const pulseFactor = 1 + 0.1 * Math.sin(time * 2)
-            star.scale.set(pulseFactor, pulseFactor, pulseFactor)
-            glowMesh.scale.set(pulseFactor * 1.1, pulseFactor * 1.1, pulseFactor * 1.1)
-            
-            // Randomly change color slightly
-            const hue = 0.05 + 0.02 * Math.sin(time * 3)
-            starMat.color.setHSL(hue, 0.9, 0.7)
-            glowMaterial.color.setHSL(hue, 0.8, 0.5)
-        }
+        // Do nothing - star should remain invisible
     }
     
     function animateExplosion(deltaTime: number) {
@@ -221,24 +211,48 @@ export default function SupernovaEffect({
         const positions = positionAttribute.array
         if (!positions) return
         
-        // Update opacity
-        const opacity = progress < 0.5 ? 1.0 : 1.0 - (progress - 0.5) * 2
-        particleMaterial.opacity = Math.max(0, opacity)
+        // Update opacity - create a smoother fade out
+        let opacity = 0;
+        if (progress < 0.4) {
+            // First 40%: full opacity
+            opacity = 1.0;
+        } else if (progress < 0.9) {
+            // Gradually fade out from 0.4 to 0.9 progress - longer fade period
+            opacity = 1.0 - ((progress - 0.4) / 0.5);
+        } else {
+            // Final fade from 0.9 to 1.0 - ensure it smoothly approaches zero
+            opacity = 0.2 * Math.pow(1.0 - ((progress - 0.9) / 0.1), 2);
+        }
+        
+        // Apply a smoothstep to create a more natural fade
+        opacity = Math.max(0, Math.min(opacity, 1.0));
+        particleMaterial.opacity = opacity;
+        
+        // When near completion, gradually make particles invisible to prevent flash
+        if (progress > 0.98) {
+            const finalOpacity = (1.0 - progress) / 0.02; // Approaches 0 as progress approaches 1
+            particleMaterial.opacity = opacity * finalOpacity;
+        }
         
         // Update particle positions
-        const speed = 20 * easing // Speed decreases over time
+        const speed = progress < 0.7 ? 20 * easing : 5 * easing // Slower speed at the end
+        
+        // Slowly increase particle size as they fade out
+        const particleSize = progress < 0.5 ? 0.25 : 0.25 + (progress - 0.5) * 0.3;
+        particleMaterial.size = particleSize;
         
         for (let i = 0; i < particleCount; i++) {
             const index = i * 3
             
             // Make sure we have this velocity and don't go out of bounds
             if (i < particleVelocities.length && index < positions.length - 2) {
-                const velocity = particleVelocities[i]
+                const velocity = particleVelocities[i];
                 
-                // TypeScript should be happy now
-                positions[index] += velocity.x * speed * deltaTime
-                positions[index + 1] += velocity.y * speed * deltaTime
-                positions[index + 2] += velocity.z * speed * deltaTime
+                if (velocity) {
+                    positions[index] += (velocity?.x || 0) * speed * deltaTime
+                    positions[index + 1] += (velocity?.y || 0) * speed * deltaTime
+                    positions[index + 2] += (velocity?.z || 0) * speed * deltaTime
+                }
             }
         }
         
@@ -253,20 +267,24 @@ export default function SupernovaEffect({
         }
         
         // Reset when explosion is complete
-        if (progress >= 1.0) {
+        if (progress >= 1.0 && !explosionCompletedRef.current) {
             exploding = false
             isExplodingRef.current = false
-            setIsExploding(false)
-            particles.visible = false
-            star.visible = true
-            glowMesh.visible = true
-            pointLight.intensity = 2
+            setIsExploding(false) // Set React state to false to prevent retrigger
+            explosionCompletedRef.current = true // Mark as completed
+            
+            // Ensure particles remain completely invisible in their final state
+            particleMaterial.opacity = 0;
+            particles.visible = false;
+            
+            // No light
+            pointLight.intensity = 0;
         }
     }
     
     // Watch for external isExploding changes
     const checkExploding = () => {
-        if (isExploding && !isExplodingRef.current && !exploding) {
+        if (isExploding && !isExplodingRef.current && !exploding && !explosionCompletedRef.current) {
             triggerExplosion()
         }
     }
@@ -286,9 +304,16 @@ export default function SupernovaEffect({
         camera.position.z = 30
         camera.lookAt(0, 0, 0)
         
-        // Run animations
-        animateStar()
-        animateExplosion(deltaTime)
+        // Only run animations if not completed
+        if (!explosionCompletedRef.current) {
+            animateStar()
+            animateExplosion(deltaTime)
+        } else {
+            // Ensure there's no flash after completion
+            particleMaterial.opacity = 0;
+            particles.visible = false;
+            pointLight.intensity = 0;
+        }
         
         // Render the scene
         renderer.render(scene, camera)
@@ -336,33 +361,6 @@ export default function SupernovaEffect({
       ...style
     }}>
       <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
-      <div style={{
-        position: 'absolute',
-        top: '20px',
-        left: '20px',
-        zIndex: 10
-      }}>
-        <button 
-          onClick={() => setIsExploding(true)} 
-          disabled={isExploding}
-          style={{
-            backgroundColor: '#4CAF50',
-            border: 'none',
-            color: 'white',
-            padding: '8px 16px',
-            textAlign: 'center',
-            textDecoration: 'none',
-            display: 'inline-block',
-            fontSize: '14px',
-            margin: '4px 2px',
-            cursor: 'pointer',
-            borderRadius: '4px',
-            opacity: isExploding ? 0.5 : 1
-          }}
-        >
-          Trigger Supernova
-        </button>
-      </div>
     </div>
   )
 } 
