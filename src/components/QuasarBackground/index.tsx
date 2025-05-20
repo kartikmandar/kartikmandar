@@ -7,6 +7,12 @@ import SupernovaEffect from '../SupernovaEffect'
 export default function QuasarBackground() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showSupernova, setShowSupernova] = useState(false)
+  const [isTouchDevice, setIsTouchDevice] = useState(false)
+  
+  // Detect touch device
+  useEffect(() => {
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  }, [])
   
   useEffect(() => {
     // Import Three.js dynamically to avoid SSR issues
@@ -38,6 +44,15 @@ export default function QuasarBackground() {
         controls.enableDamping = true
         controls.dampingFactor = 0.05
         controls.enablePan = false
+        
+        // Enable touch controls for mobile
+        controls.enableZoom = true
+        controls.zoomSpeed = 1.2
+        controls.rotateSpeed = 0.8
+        controls.touches = {
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN
+        }
         
         // Set zoom limits
         controls.minDistance = 1.5
@@ -623,7 +638,7 @@ export default function QuasarBackground() {
             fontFamily: 'sans-serif'
           }}
         >
-          Scroll to zoom | Drag to spin
+          {isTouchDevice ? 'Pinch to zoom • Drag to spin' : 'Scroll to zoom • Drag to spin'}
         </div>
       )}
       {showSupernova && (

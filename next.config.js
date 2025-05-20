@@ -22,6 +22,15 @@ const nextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  // Allow cross-origin requests during development
+  // The IP address should match your Mac's network IP that's shown in the server logs
+  // You might need to update this IP if your network changes
+  allowedDevOrigins: [
+    "http://192.168.0.102:3000",  // Your current IP
+    // Add any additional IP addresses or origins that might access your dev server
+  ],
+  // Add crossOrigin attribute to help with resource loading
+  crossOrigin: 'anonymous',
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })
