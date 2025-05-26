@@ -155,22 +155,8 @@ if (typeof window !== 'undefined') {
       mix-blend-mode: difference;
       color: white;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     }
     
-    .custom-header::-webkit-scrollbar {
-      width: 4px;
-    }
-    
-    .custom-header::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    .custom-header::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
     
     .custom-header.minimized {
       width: 0;
@@ -345,22 +331,8 @@ if (typeof window !== 'undefined') {
       overflow-x: hidden;
       width: 90%;
       padding: 2rem 1rem;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
     }
     
-    .mobile-nav::-webkit-scrollbar {
-      width: 4px;
-    }
-    
-    .mobile-nav::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    
-    .mobile-nav::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-    }
 
     .mobile-nav-link {
       display: flex;

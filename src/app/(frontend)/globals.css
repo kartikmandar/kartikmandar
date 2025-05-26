@@ -103,3 +103,99 @@ html[data-theme='dark'],
 html[data-theme='light'] {
   opacity: initial;
 }
+
+/* Custom Scrollbar Styles */
+/* For Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(128, 128, 128, 0.1);
+  backdrop-filter: blur(2px);
+  border-radius: 6px;
+  margin: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(128, 128, 128, 0.4);
+  backdrop-filter: invert(1) blur(3px);
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(128, 128, 128, 0.6);
+  backdrop-filter: invert(1) blur(4px);
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(128, 128, 128, 0.8);
+  backdrop-filter: invert(1) blur(5px);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+}
+
+/* For thin scrollbars in specific areas */
+.thin-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  margin: 2px;
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  border: 1px solid transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(128, 128, 128, 0.4) rgba(128, 128, 128, 0.1);
+}
+
+/* Firefox - hover state (limited support) */
+*:hover {
+  scrollbar-color: rgba(128, 128, 128, 0.6) rgba(128, 128, 128, 0.1);
+}
+
+/* Dark theme adjustments */
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: invert(0.8) blur(3px);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: invert(0.8) blur(4px);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: invert(0.8) blur(5px);
+}
+
+/* Firefox dark theme */
+[data-theme='dark'] {
+  scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+}
+
+/* Horizontal scrollbar specific styles */
+::-webkit-scrollbar:horizontal {
+  height: 12px;
+}
+
+/* Corner where horizontal and vertical scrollbars meet */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
