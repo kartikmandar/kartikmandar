@@ -27,6 +27,8 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const navItems = data?.navItems || []
   const [expanded, setExpanded] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
   const pathname = usePathname()
 
   // Close mobile menu on route change
@@ -91,14 +93,26 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         onMouseLeave={() => setExpanded(false)}
         style={{ pointerEvents: expanded ? 'auto' : 'none' }}
       >
-        <div className="header-icons" style={{ width: '100%' }}>
+        <div className="header-icons" style={{ width: '100%', overflow: 'visible' }}>
           {navItems.map(({ link }, i) => {
             const isActive = pathname === link.url || 
               (link.url !== '/' && pathname.startsWith(link.url))
             
             return (
-              <div key={i} className="nav-item" style={{ margin: '1rem 0', position: 'relative' }}>
-                <span className="tooltip-text">{link.label}</span>
+              <div 
+                key={i} 
+                className="nav-item" 
+                style={{ margin: '1rem 0' }}
+                onMouseEnter={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect()
+                  setTooltipPosition({
+                    top: rect.top + rect.height / 2,
+                    left: rect.left - 15
+                  })
+                  setHoveredIndex(i)
+                }}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
                 <Link 
                   href={link.url} 
                   aria-label={link.label} 
@@ -120,6 +134,42 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       >
         <ChevronLeft size={16} style={{ marginLeft: '-2px' }} />
       </div>
+      
+      {/* Tooltip Portal */}
+      {hoveredIndex !== null && navItems[hoveredIndex] && (
+        <div 
+          className="tooltip-portal"
+          style={{
+            position: 'fixed',
+            top: `${tooltipPosition.top}px`,
+            left: `${tooltipPosition.left}px`,
+            transform: 'translate(-100%, -50%)',
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            color: 'white',
+            padding: '8px 16px',
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: 500,
+            whiteSpace: 'nowrap',
+            zIndex: 10000,
+            pointerEvents: 'none',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
+          }}
+        >
+          {navItems[hoveredIndex].link.label}
+          <span
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '100%',
+              marginTop: '-5px',
+              borderWidth: '5px',
+              borderStyle: 'solid',
+              borderColor: 'transparent transparent transparent rgba(0, 0, 0, 0.9)',
+            }}
+          />
+        </div>
+      )}
     </>
   )
 }
@@ -147,7 +197,7 @@ if (typeof window !== 'undefined') {
       gap: 0.5rem;
       transition: width 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1);
       overflow-y: auto;
-      overflow-x: hidden;
+      overflow-x: visible;
       pointer-events: auto;
       opacity: 1;
       background-color: rgba(128, 128, 128, 0.4);
@@ -224,42 +274,9 @@ if (typeof window !== 'undefined') {
       transform: translateY(-50%) scale(1);
     }
     
-    /* Tooltip styles */
-    .tooltip-text {
-      visibility: hidden;
-      position: absolute;
-      top: 50%;
-      right: calc(100% + 15px);
-      transform: translateY(-50%);
-      background-color: rgba(0, 0, 0, 0.8);
-      color: white;
-      text-align: center;
-      padding: 6px 12px;
-      border-radius: 5px;
-      z-index: 1002;
-      opacity: 0;
-      transition: opacity 0.3s, visibility 0.3s, transform 0.3s;
-      font-size: 14px;
-      white-space: nowrap;
-      pointer-events: none;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-    }
-    
-    .tooltip-text::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: 100%;
-      margin-top: -5px;
-      border-width: 5px;
-      border-style: solid;
-      border-color: transparent transparent transparent rgba(0, 0, 0, 0.8);
-    }
-    
-    .nav-item:hover .tooltip-text {
-      visibility: visible;
-      opacity: 1;
-      transform: translateY(-50%) scale(1);
+    /* Nav item styles */
+    .nav-item {
+      position: relative;
     }
 
     /* Mobile Styles */
