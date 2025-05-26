@@ -16,3 +16,6 @@ public/sitemap*.xml
 CLAUDE.md
 old-website.md
 reusable-components.md
+
+# Claude configuration
+.claude/
