@@ -6,11 +6,13 @@ import * as THREE from 'three'
 interface SupernovaEffectProps {
   height?: string;
   style?: React.CSSProperties;
+  onComplete?: () => void;
 }
 
 export default function SupernovaEffect({ 
   height = '100vh', 
-  style 
+  style,
+  onComplete
 }: SupernovaEffectProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isExploding, setIsExploding] = useState(false)
@@ -279,6 +281,11 @@ export default function SupernovaEffect({
             
             // No light
             pointLight.intensity = 0;
+            
+            // Call the onComplete callback if provided
+            if (onComplete) {
+                onComplete();
+            }
         }
     }
     
@@ -351,7 +358,7 @@ export default function SupernovaEffect({
         renderer.dispose()
         scene.clear()
     }
-  }, [isExploding]) // Add isExploding as a dependency
+  }, [isExploding, onComplete]) // Add isExploding and onComplete as dependencies
   
   return (
     <div style={{

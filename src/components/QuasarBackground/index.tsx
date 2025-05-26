@@ -8,10 +8,32 @@ export default function QuasarBackground() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showSupernova, setShowSupernova] = useState(false)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const [overlayText, setOverlayText] = useState("Astrophysics is fascinating, you can't deny this quasar looks cool")
+  const [supernovaCompleted, setSupernovaCompleted] = useState(false)
   
   // Detect touch device
   useEffect(() => {
     setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+  }, [])
+  
+  // Add CSS animation for bounce effect
+  useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      @keyframes bounce {
+        0%, 100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+    `
+    document.head.appendChild(style)
+    
+    return () => {
+      document.head.removeChild(style)
+    }
   }, [])
   
   useEffect(() => {
@@ -561,9 +583,11 @@ export default function QuasarBackground() {
           if (!supernovaTriggered && camera.position.distanceTo(new THREE.Vector3(0, 0, 0)) > zoomThreshold) {
             supernovaTriggered = true
             setShowSupernova(true)
+            setOverlayText('Or this supernova explosion for that matter')
           } else if (supernovaTriggered && camera.position.distanceTo(new THREE.Vector3(0, 0, 0)) <= zoomThreshold) {
             supernovaTriggered = false
             setShowSupernova(false)
+            // Keep the text as 'Text demo 2' - don't change it back
           }
           
           const now = performance.now()
@@ -605,7 +629,7 @@ export default function QuasarBackground() {
 
   return (
     <div style={{ position: 'relative', width: '100%', height: '100%' }}>
-      <div 
+        <div 
         ref={containerRef} 
         style={{ 
           position: 'absolute', 
@@ -652,7 +676,86 @@ export default function QuasarBackground() {
             zIndex: 1
           }}
         >
-          <SupernovaEffect height="100%" />
+          <SupernovaEffect 
+            height="100%" 
+            onComplete={() => {
+              setOverlayText("But this is just the surface of what really is happening!!")
+              setSupernovaCompleted(true)
+            }}
+          />
+        </div>
+      )}
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          color: 'white',
+          fontSize: '32px',
+          fontWeight: '900',
+          letterSpacing: '1px',
+          textAlign: 'center',
+          maxWidth: '80%',
+          textShadow: `
+            -2px -2px 4px rgba(0, 0, 0, 1),
+            2px -2px 4px rgba(0, 0, 0, 1),
+            -2px 2px 4px rgba(0, 0, 0, 1),
+            2px 2px 4px rgba(0, 0, 0, 1),
+            0 0 20px rgba(0, 0, 0, 1),
+            0 0 40px rgba(0, 0, 0, 0.8),
+            0 0 60px rgba(0, 0, 0, 0.6)
+          `,
+          WebkitTextStroke: '2px rgba(0, 0, 0, 0.9)',
+          paintOrder: 'stroke fill',
+          zIndex: 3,
+          pointerEvents: 'none',
+          fontFamily: 'sans-serif'
+        }}
+      >
+        {overlayText}
+      </div>
+      {supernovaCompleted && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '30px',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '8px',
+            zIndex: 4,
+            pointerEvents: 'none',
+          }}
+        >
+          <div
+            style={{
+              padding: '10px 15px',
+              background: 'rgba(0, 0, 0, 0.5)',
+              color: 'rgba(255, 255, 255, 0.8)',
+              borderRadius: '20px',
+              fontSize: '14px',
+              fontWeight: 'normal',
+              letterSpacing: '0.5px',
+              backdropFilter: 'blur(4px)',
+              transition: 'opacity 0.3s ease-in-out',
+              fontFamily: 'sans-serif'
+            }}
+          >
+            Scroll down to see boring stuff
+          </div>
+          <div
+            style={{
+              width: '0',
+              height: '0',
+              borderLeft: '8px solid transparent',
+              borderRight: '8px solid transparent',
+              borderTop: '12px solid rgba(255, 255, 255, 0.8)',
+              animation: 'bounce 2s infinite'
+            }}
+          />
         </div>
       )}
     </div>
