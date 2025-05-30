@@ -237,45 +237,45 @@ export function Footer() {
     }
   }, []);
 
-  // Navigation items
+  // Navigation items matching header menu
   const navItems = [
     { label: 'Home', url: '/' },
+    { label: 'CV', url: '/404' },
+    { label: 'Projects', url: '/404' },
+    { label: 'GSoC 2024', url: '/404' },
+    { label: 'GSoC 2025', url: '/404' },
+    { label: 'Talks', url: '/404' },
+    { label: 'Publications', url: '/404' },
+    { label: 'Hobbies', url: '/404' },
+    { label: 'Certificates', url: '/404' },
+    { label: 'Journal Club', url: '/404' },
+    { label: 'Courses', url: '/404' },
     { label: 'Posts', url: '/posts' },
-    { label: 'About', url: '/about' },
-    { label: 'Research', url: '/research' },
-    { label: 'Contact', url: '/contact' },
   ]
   
   // Research interests
   const researchInterests = [
     'Radio Interferometry',
-    'X-ray Binary Black Holes',
-    'Astrophysics',
+    'BHXBs',
     'Astronomical Data Analysis',
-    'Black Hole Physics',
-    'Observational Astronomy'
+    "DeepLense"
   ]
   
   // Publications
   const publications = [
     {
-      title: 'Radio Observations of X-ray Binary Systems',
-      authors: 'Mandar, K., et al.',
-      journal: 'Astronomy & Astrophysics (2024)',
-      url: '#'
+      title: 'fftvis: A Non-Uniform Fast Fourier Transform Based Interferometric Visibility Simulator',
+      authors: 'Cox et. al',
+      journal: 'TBD',
+      url: ''
     },
     {
-      title: 'Machine Learning Applications in Radio Astronomy',
-      authors: 'Mandar, K., et al.',
-      journal: 'Monthly Notices of the Royal Astronomical Society (2023)',
-      url: '#'
-    },
-    {
-      title: 'Analysis of Black Hole Binary Systems',
-      authors: 'Mandar, K., et al.',
-      journal: 'Astrophysical Journal (2023)',
-      url: '#'
+      title: 'A New Master Supernovae Ia sample and the investigation of the H0 tension',
+      authors: 'Acknowledgment (Not Author)',
+      journal: 'High Energy Astrophysics',
+      url: 'https://arxiv.org/html/2501.11772v3'
     }
+    
   ]
   
   // Technical skills
@@ -290,9 +290,9 @@ export function Footer() {
   // Resources
   const resources = [
     { label: 'Research Projects', url: '#' },
-    { label: 'Data Repositories', url: '#' },
+    { label: 'Courses/Labs', url: '#' },
     { label: 'Code Repositories', url: '#' },
-    { label: 'Tutorials', url: '#' },
+    { label: 'Clubs', url: '#' },
     { label: 'Astronomical Resources', url: '#' }
   ]
 
@@ -323,7 +323,7 @@ export function Footer() {
               Connect for Research Collaboration
             </h3>
             <p className="mb-6 text-gray-300 max-w-xl mx-auto">
-              Interested in collaborating on radio astronomy research, discussing black hole physics, or exploring data analysis projects? Let&apos;s connect!
+              Interested in collaborating on radio interferometry projects, spectral timing analysis of BHXBs, ML applications in gravitation lensing, or exploring data analysis projects? Let&apos;s connect!
             </p>
             <form className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
               <input
@@ -349,41 +349,53 @@ export function Footer() {
           <div>
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-1">Kartik Mandar</h3>
-              <p className="text-zinc-400 mb-2">BS Physics Student</p>
-              <p className="text-gray-400 text-sm">Specializing in radio interferometry and X-ray binary black holes</p>
+              <p className="text-zinc-400 mb-2">BS Physics</p>
+              <p className="text-gray-400 text-sm">Specializing in radio interferometry and spectral analysis</p>
             </div>
             
             {/* Social links */}
             <div className="flex gap-3 mb-6">
-              <a href="#" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="GitHub">
+              <a href="https://github.com/kartikmandar" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="GitHub">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/in/kartikmandar/" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="LinkedIn">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M4.98 3.5c0 1.381-1.11 2.5-2.48 2.5s-2.48-1.119-2.48-2.5c0-1.38 1.11-2.5 2.48-2.5s2.48 1.12 2.48 2.5zm.02 4.5h-5v16h5v-16zm7.982 0h-4.968v16h4.969v-8.399c0-4.67 6.029-5.052 6.029 0v8.399h4.988v-10.131c0-7.88-8.922-7.593-11.018-3.714v-2.155z"/></svg>
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="Twitter">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+              <a href="https://www.reddit.com/user/kartikmandar/" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="Reddit">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M14.238 15.348c.085.084.085.221 0 .306-.465.462-1.194.687-2.231.687l-.008-.002-.008.002c-1.036 0-1.766-.225-2.231-.688-.085-.084-.085-.221 0-.305.084-.084.222-.084.307 0 .379.377 1.008.561 1.924.561l.008.002.008-.002c.915 0 1.544-.184 1.924-.561.085-.084.223-.084.307 0zm-3.44-2.418c0-.507-.414-.919-.922-.919-.509 0-.923.412-.923.919 0 .506.414.918.923.918.508.001.922-.411.922-.918zm13.202-.93c0 6.627-5.373 12-12 12s-12-5.373-12-12 5.373-12 12-12 12 5.373 12 12zm-5-.129c0-.851-.695-1.543-1.55-1.543-.417 0-.795.167-1.074.435-1.056-.695-2.485-1.137-4.066-1.194l.865-2.724 2.343.549-.003.034c0 .696.569 1.262 1.268 1.262.699 0 1.267-.566 1.267-1.262s-.568-1.262-1.267-1.262c-.537 0-.994.335-1.179.804l-2.525-.592c-.11-.027-.223.037-.257.145l-.965 3.038c-1.656.02-3.155.466-4.258 1.181-.277-.255-.644-.415-1.05-.415-.854.001-1.549.693-1.549 1.544 0 .566.311 1.056.768 1.325-.03.164-.05.331-.05.5 0 2.281 2.805 4.137 6.253 4.137s6.253-1.856 6.253-4.137c0-.16-.017-.317-.044-.472.486-.261.82-.766.82-1.353zm-4.872.141c-.509 0-.922.412-.922.919 0 .506.414.918.922.918s.922-.412.922-.918c0-.507-.413-.919-.922-.919z"/></svg>
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="ORCID">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm-2.033 16.01c-.564-1.789-1.632-1.023-1.632-1.023l.498 1.205c.475.422.904.447 1.134-.182zm.146-8.361l-1.201-.822c-.682-.46-1.28-.264-1.311.5l.813 1.109c.669.217 1.353-.138 1.699-.787zm3.312-1.73c-.501-.532-1.341-.11-1.341-.11l.009 1.053c.325.444.645.287 1.332-.943z"/></svg>
+              <a href="https://bsky.app/profile/kartikmandar.bsky.social" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="Bluesky">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 10.8c-1.087-2.114-4.046-6.053-6.798-7.995C2.566.944 1.561 1.266.902 1.565.139 1.908 0 3.08 0 3.768c0 .69.378 5.65.624 6.479.815 2.736 3.713 3.66 6.383 3.364.136-.02.275-.039.415-.056-.138.022-.276.04-.415.056-3.912.58-7.387 2.005-2.83 7.078 5.013 5.19 6.87-1.113 7.823-4.308.953 3.195 2.05 9.271 7.733 4.308 4.267-4.308 1.172-6.498-2.74-7.078a8.741 8.741 0 0 1-.415-.056c.14.017.279.036.415.056 2.67.297 5.568-.628 6.383-3.364.246-.828.624-5.79.624-6.478 0-.69-.139-1.861-.902-2.206-.659-.298-1.664-.62-4.3 1.24C16.046 4.748 13.087 8.687 12 10.8Z"/></svg>
               </a>
             </div>
             
             {/* Academic buttons */}
             <div className="flex flex-wrap gap-3 mb-6">
-              <a href="#" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
+              <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <span>CV / Resume</span>
               </a>
-              <a href="#" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
+              <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path d="M12 14l9-5-9-5-9 5 9 5z" />
                   <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
                 </svg>
                 <span>Google Scholar</span>
+              </a>
+              <a href="https://orcid.org/0009-0002-6037-4613" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/>
+                </svg>
+                <span>ORCID</span>
+              </a>
+              <a href="https://www.researchgate.net/profile/Kartik-Mandar?ev=hdr_xprf" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a3.193 3.193 0 0 0-.112.437 8.365 8.365 0 0 0-.078.53 9 9 0 0 0-.05.727c-.01.282-.013.621-.013 1.016a31.121 31.123 0 0 0 .014 1.017 9 9 0 0 0 .05.727 7.946 7.946 0 0 0 .077.53h-.005a3.334 3.334 0 0 0 .113.438c.245.743.65 1.303 1.214 1.68.565.376 1.256.564 2.075.564.8 0 1.536-.213 2.105-.603.57-.39.94-.916 1.175-1.65.076-.235.135-.558.177-.93a10.9 10.9 0 0 0 .043-1.207v-.82c0-.095-.047-.142-.14-.142h-3.064c-.094 0-.14.047-.14.141v.956c0 .094.046.14.14.14h1.666c.056 0 .084.03.084.086 0 .36 0 .62-.036.865-.038.244-.1.447-.147.606-.108.385-.348.664-.638.876-.29.212-.738.35-1.227.35-.545 0-.901-.15-1.21-.353-.306-.203-.517-.454-.67-.915a3.136 3.136 0 0 1-.147-.762 17.366 17.367 0 0 1-.034-.656c-.01-.26-.014-.572-.014-.939a26.401 26.403 0 0 1 .014-.938 15.821 15.821 0 0 1 .035-.656 3.19 3.19 0 0 1 .148-.76 1.89 1.89 0 0 1 .742-1.01c.344-.244.593-.352 1.137-.352.508 0 .815.096 1.144.303.33.207.528.492.764.925.047.094.111.118.198.07l1.044-.43c.075-.048.09-.115.042-.199a3.549 3.549 0 0 0-.466-.742 3 3 0 0 0-.679-.607 3.313 3.313 0 0 0-.903-.41A4.068 4.068 0 0 0 19.586 0zM8.217 5.836c-1.69 0-3.036.086-4.297.086-1.146 0-2.291 0-3.007-.029v.831l1.088.2c.744.144 1.174.488 1.174 2.264v11.288c0 1.777-.43 2.12-1.174 2.263l-1.088.2v.832c.773-.029 2.12-.086 3.465-.086 1.29 0 2.951.057 3.667.086v-.831l-1.49-.2c-.773-.115-1.174-.487-1.174-2.264v-4.784c.688.057 1.29.057 2.206.057 1.748 3.123 3.41 5.472 4.355 6.56.86 1.032 2.177 1.691 3.839 1.691.487 0 1.003-.086 1.318-.23v-.744c-1.031 0-2.063-.716-2.808-1.518-1.26-1.376-2.95-3.582-4.355-6.074 2.32-.545 4.04-2.722 4.04-4.9 0-3.208-2.492-4.698-5.758-4.698zm-.515 1.29c2.406 0 3.839 1.26 3.839 3.552 0 2.263-1.547 3.782-4.097 3.782-.974 0-1.404-.03-2.063-.086v-7.19c.66-.059 1.547-.059 2.32-.059z"/>
+                </svg>
+                <span>ResearchGate</span>
               </a>
             </div>
             
@@ -477,26 +489,26 @@ export function Footer() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="text-gray-300">Office Hours: By appointment</div>
+                <div className="text-gray-300">Meeting Hours: By appointment</div>
               </div>
             </div>
           </div>
         </div>
         
         {/* Footer bottom */}
-        <div className="bg-zinc-900 py-4 relative z-10">
-          <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-gray-500 text-sm">
-              &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Researcher
-            </div>
-            <div className="flex flex-wrap gap-4">
-              <nav className="flex flex-wrap gap-4">
-                {navItems.map((item, i) => (
-                  <Link className="text-gray-500 text-sm hover:text-white transition-colors" key={i} href={item.url}>
-                    {item.label}
-                  </Link>
-                ))}
-              </nav>
+        <div className="bg-zinc-900 py-6 relative z-10">
+          <div className="container mx-auto px-4">
+            {/* Centered navigation menu */}
+            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4">
+              {navItems.map((item, i) => (
+                <Link className="text-gray-400 text-sm hover:text-white transition-colors" key={i} href={item.url}>
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+            {/* Copyright */}
+            <div className="text-center text-gray-500 text-sm">
+              &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Student
             </div>
           </div>
         </div>
