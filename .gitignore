@@ -19,3 +19,4 @@ reusable-components.md
 
 # Claude configuration
 .claude/
+tsconfig.tsbuildinfo

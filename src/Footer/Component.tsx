@@ -311,7 +311,7 @@ export function Footer() {
     { label: 'Courses/Labs', url: '#' },
     { label: 'Code Repositories', url: '#' },
     { label: 'Clubs', url: '#' },
-    { label: 'Common Resources', url: '#' }
+    { label: 'Common Resources', url: '/common-resources' }
   ]
 
   return (
