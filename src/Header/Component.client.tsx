@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import { Home, ChevronLeft, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3 } from 'lucide-react'
+import { Home, ChevronLeft, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library } from 'lucide-react'
 
 interface HeaderClientProps {
   data: { navItems: { link: { label: string; url: string } }[] }
@@ -20,6 +20,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Certificates: <Award size={28} />,
   'Journal Club': <Users size={28} />,
   Courses: <GraduationCap size={28} />,
+  'Common Resources': <Library size={28} />,
   Posts: <Edit3 size={28} />,
 }
 

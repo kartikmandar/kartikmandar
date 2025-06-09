@@ -15,6 +15,7 @@ export function Header() {
     { link: { label: 'Certificates', url: '/404' } },
     { link: { label: 'Journal Club', url: '/404' } },
     { link: { label: 'Courses', url: '/404' } },
+    { link: { label: 'Common Resources', url: '/common-resources' } },
     { link: { label: 'Posts', url: '/posts' } },
   ]
 
