@@ -266,14 +266,14 @@ export function Footer() {
     {
       title: 'fftvis: A Non-Uniform Fast Fourier Transform Based Interferometric Visibility Simulator',
       authors: 'Cox et. al',
-      journal: 'TBD',
-      url: ''
+      journal: 'arXiv preprint',
+      url: 'https://arxiv.org/abs/2506.02130'
     },
     {
       title: 'A New Master Supernovae Ia sample and the investigation of the H0 tension',
       authors: 'Acknowledgment (Not Author)',
-      journal: 'High Energy Astrophysics',
-      url: 'https://arxiv.org/html/2501.11772v3'
+      journal: 'arXiv preprint',
+      url: 'https://arxiv.org/abs/2501.11772v3'
     }
     
   ]
@@ -281,19 +281,37 @@ export function Footer() {
   // Technical skills
   const technicalSkills = [
     { label: 'Python & Data Analysis', url: '#' },
-    { label: 'Data Visualization', url: '#' },
     { label: 'Machine Learning', url: '#' },
     { label: 'Web & App Development', url: '#' },
-    { label: 'Cloud Deployments', url: '#' }
+    { label: 'CI/CD', url: '#' },
+    { label: 'Dev Ops', url: '#' }
+  ]
+  
+  // Blog posts
+  const blogPosts = [
+    { label: 'GSoC 2024 Journey', url: '#' },
+    { label: 'GSoC 2025 Adventure', url: '#' },
+    { label: 'Life of an Academia Student', url: '#' }
+  ]
+  
+  // Soft skills
+  const softSkills = [
+    { label: 'Public Speaking', url: '#' },
+    { label: 'Writing', url: '#' },
+    { label: 'Leadership', url: '#' },
   ]
   
   // Resources
   const resources = [
     { label: 'Research Projects', url: '#' },
+    { label: 'Talks', url: '#' },
+    { label: 'Posters', url: '#' },
+    { label: 'Open Source', url: '#' },
+    { label: 'Projects', url: '#' },
     { label: 'Courses/Labs', url: '#' },
     { label: 'Code Repositories', url: '#' },
     { label: 'Clubs', url: '#' },
-    { label: 'Astronomical Resources', url: '#' }
+    { label: 'Common Resources', url: '#' }
   ]
 
   return (
@@ -349,7 +367,7 @@ export function Footer() {
           <div>
             <div className="mb-6">
               <h3 className="text-xl font-bold mb-1">Kartik Mandar</h3>
-              <p className="text-zinc-400 mb-2">BS Physics</p>
+              <p className="text-zinc-400 mb-2">BS Physics | Looking for Astrophysics Masters</p>
               <p className="text-gray-400 text-sm">Specializing in radio interferometry and spectral analysis</p>
             </div>
             
@@ -391,12 +409,6 @@ export function Footer() {
                 </svg>
                 <span>ORCID</span>
               </a>
-              <a href="https://www.researchgate.net/profile/Kartik-Mandar?ev=hdr_xprf" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19.586 0c-.818 0-1.508.19-2.073.565-.563.377-.97.936-1.213 1.68a3.193 3.193 0 0 0-.112.437 8.365 8.365 0 0 0-.078.53 9 9 0 0 0-.05.727c-.01.282-.013.621-.013 1.016a31.121 31.123 0 0 0 .014 1.017 9 9 0 0 0 .05.727 7.946 7.946 0 0 0 .077.53h-.005a3.334 3.334 0 0 0 .113.438c.245.743.65 1.303 1.214 1.68.565.376 1.256.564 2.075.564.8 0 1.536-.213 2.105-.603.57-.39.94-.916 1.175-1.65.076-.235.135-.558.177-.93a10.9 10.9 0 0 0 .043-1.207v-.82c0-.095-.047-.142-.14-.142h-3.064c-.094 0-.14.047-.14.141v.956c0 .094.046.14.14.14h1.666c.056 0 .084.03.084.086 0 .36 0 .62-.036.865-.038.244-.1.447-.147.606-.108.385-.348.664-.638.876-.29.212-.738.35-1.227.35-.545 0-.901-.15-1.21-.353-.306-.203-.517-.454-.67-.915a3.136 3.136 0 0 1-.147-.762 17.366 17.367 0 0 1-.034-.656c-.01-.26-.014-.572-.014-.939a26.401 26.403 0 0 1 .014-.938 15.821 15.821 0 0 1 .035-.656 3.19 3.19 0 0 1 .148-.76 1.89 1.89 0 0 1 .742-1.01c.344-.244.593-.352 1.137-.352.508 0 .815.096 1.144.303.33.207.528.492.764.925.047.094.111.118.198.07l1.044-.43c.075-.048.09-.115.042-.199a3.549 3.549 0 0 0-.466-.742 3 3 0 0 0-.679-.607 3.313 3.313 0 0 0-.903-.41A4.068 4.068 0 0 0 19.586 0zM8.217 5.836c-1.69 0-3.036.086-4.297.086-1.146 0-2.291 0-3.007-.029v.831l1.088.2c.744.144 1.174.488 1.174 2.264v11.288c0 1.777-.43 2.12-1.174 2.263l-1.088.2v.832c.773-.029 2.12-.086 3.465-.086 1.29 0 2.951.057 3.667.086v-.831l-1.49-.2c-.773-.115-1.174-.487-1.174-2.264v-4.784c.688.057 1.29.057 2.206.057 1.748 3.123 3.41 5.472 4.355 6.56.86 1.032 2.177 1.691 3.839 1.691.487 0 1.003-.086 1.318-.23v-.744c-1.031 0-2.063-.716-2.808-1.518-1.26-1.376-2.95-3.582-4.355-6.074 2.32-.545 4.04-2.722 4.04-4.9 0-3.208-2.492-4.698-5.758-4.698zm-.515 1.29c2.406 0 3.839 1.26 3.839 3.552 0 2.263-1.547 3.782-4.097 3.782-.974 0-1.404-.03-2.063-.086v-7.19c.66-.059 1.547-.059 2.32-.059z"/>
-                </svg>
-                <span>ResearchGate</span>
-              </a>
             </div>
             
             {/* Make sure the theme selector is visible */}
@@ -405,23 +417,39 @@ export function Footer() {
             </div>
           </div>
           
-          {/* Research Interests & Skills */}
+          {/* Blogs & Technical Skills */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Research Interests</h4>
-            <div className="flex flex-wrap gap-2 mb-6">
-              {researchInterests.map((interest, index) => (
-                <span 
-                  key={index} 
-                  className="bg-zinc-800 text-gray-300 px-3 py-1 rounded-full text-xs transition-all hover:bg-zinc-700 hover:text-white hover:translate-y-[-2px]"
-                >
-                  {interest}
-                </span>
+            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Blogs</h4>
+            <ul className="space-y-2 mb-6">
+              {blogPosts.map((post, index) => (
+                <li key={index}>
+                  <a 
+                    href={post.url} 
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                  >
+                    {post.label}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
             
             <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Technical Skills</h4>
-            <ul className="space-y-2">
+            <ul className="space-y-2 mb-6">
               {technicalSkills.map((skill, index) => (
+                <li key={index}>
+                  <a 
+                    href={skill.url} 
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                  >
+                    {skill.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+            
+            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Soft Skills</h4>
+            <ul className="space-y-2">
+              {softSkills.map((skill, index) => (
                 <li key={index}>
                   <a 
                     href={skill.url} 
@@ -437,7 +465,7 @@ export function Footer() {
           {/* Publications */}
           <div>
             <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Recent Publications</h4>
-            <div className="space-y-4">
+            <div className="space-y-4 mb-6">
               {publications.map((pub, index) => (
                 <div key={index} className="border-l-2 border-zinc-700 pl-3">
                   <a href={pub.url} className="text-gray-300 hover:text-white text-sm">{pub.title}</a>
@@ -448,6 +476,18 @@ export function Footer() {
               <div className="border-l-2 border-zinc-700 pl-3">
                 <a href="#" className="text-gray-300 hover:text-white text-sm">See All Publications</a>
               </div>
+            </div>
+            
+            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Research Interests</h4>
+            <div className="flex flex-wrap gap-2">
+              {researchInterests.map((interest, index) => (
+                <span 
+                  key={index} 
+                  className="bg-zinc-800 text-gray-300 px-3 py-1 rounded-full text-xs transition-all hover:bg-zinc-700 hover:text-white hover:translate-y-[-2px]"
+                >
+                  {interest}
+                </span>
+              ))}
             </div>
           </div>
           
@@ -474,9 +514,8 @@ export function Footer() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 <div className="text-gray-300">
-                  Indian Institute of Science Education<br />
-                  and Research Bhopal<br />
-                  Bhopal, India
+                  Raman Rsearch Institute<br />
+                  Bangalore, Karnataka
                 </div>
               </div>
               <div className="flex gap-3">
