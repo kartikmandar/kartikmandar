@@ -250,6 +250,7 @@ export function Footer() {
     { label: 'Certificates', url: '/404' },
     { label: 'Journal Club', url: '/404' },
     { label: 'Courses', url: '/404' },
+    { label: 'Common Resources', url: '/common-resources' },
     { label: 'Posts', url: '/posts' },
   ]
   
@@ -335,44 +336,44 @@ export function Footer() {
         <div className="shooting-stars-container" ref={shootingStarsRef}></div>
         
         {/* Connect section */}
-        <div className="border-t border-border bg-gradient-to-r from-black to-zinc-900 py-10 text-center relative">
-          <div className="container max-w-4xl mx-auto px-4">
-            <h3 className="text-2xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-zinc-200 to-zinc-400 inline-block">
+        <div className="border-t border-border bg-gradient-to-r from-black to-zinc-900 py-8 sm:py-10 text-center relative">
+          <div className="container max-w-4xl mx-auto px-4 sm:px-6">
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-zinc-200 to-zinc-400 inline-block">
               Connect for Research Collaboration
             </h3>
-            <p className="mb-6 text-gray-300 max-w-xl mx-auto">
+            <p className="mb-4 sm:mb-6 text-gray-300 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
               Interested in collaborating on radio interferometry projects, spectral timing analysis of BHXBs, ML applications in gravitation lensing, or exploring data analysis projects? Let&apos;s connect!
             </p>
-            <form className="flex flex-col sm:flex-row gap-3 justify-center mb-4">
+            <form className="flex flex-col sm:flex-row gap-3 justify-center mb-3 sm:mb-4 max-w-md sm:max-w-lg mx-auto">
               <input
                 type="email"
                 placeholder="Your email address"
                 required
-                className="flex-1 min-w-0 px-4 py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white"
+                className="flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base"
               />
               <button 
                 type="submit"
-                className="px-6 py-3 bg-zinc-700 text-white font-semibold rounded-md transition-all hover:bg-zinc-600 hover:translate-y-[-2px]"
+                className="px-4 sm:px-6 py-2 sm:py-3 bg-zinc-700 text-white font-semibold rounded-md transition-all hover:bg-zinc-600 hover:translate-y-[-2px] text-sm sm:text-base"
               >
                 Connect
               </button>
             </form>
-            <p className="text-gray-400 text-sm">I&apos;m open to collaborations, presentations, and academic discussions.</p>
+            <p className="text-gray-400 text-xs sm:text-sm">I&apos;m open to collaborations, presentations, and academic discussions.</p>
           </div>
         </div>
         
         {/* Main footer content */}
-        <div className="container py-12 px-4 mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative z-10">
+        <div className="container py-8 sm:py-10 lg:py-12 px-4 sm:px-6 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
           {/* Profile section */}
-          <div>
-            <div className="mb-6">
-              <h3 className="text-xl font-bold mb-1">Kartik Mandar</h3>
-              <p className="text-zinc-400 mb-2">BS Physics | Looking for Astrophysics Masters</p>
-              <p className="text-gray-400 text-sm">Specializing in radio interferometry and spectral analysis</p>
+          <div className="sm:col-span-2 lg:col-span-1">
+            <div className="mb-4 sm:mb-6">
+              <h3 className="text-lg sm:text-xl font-bold mb-1">Kartik Mandar</h3>
+              <p className="text-zinc-400 mb-2 text-sm sm:text-base">BS Physics | Looking for Astrophysics Masters</p>
+              <p className="text-gray-400 text-xs sm:text-sm">Specializing in radio interferometry and spectral analysis</p>
             </div>
             
             {/* Social links */}
-            <div className="flex gap-3 mb-6">
+            <div className="flex gap-2 sm:gap-3 mb-4 sm:mb-6 flex-wrap">
               <a href="https://github.com/kartikmandar" className="w-9 h-9 rounded-full bg-zinc-800 flex items-center justify-center transition-all hover:bg-zinc-600 hover:translate-y-[-2px]" aria-label="GitHub">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
               </a>
@@ -388,23 +389,23 @@ export function Footer() {
             </div>
             
             {/* Academic buttons */}
-            <div className="flex flex-wrap gap-3 mb-6">
-              <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 <span>CV / Resume</span>
               </a>
-              <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path d="M12 14l9-5-9-5-9 5 9 5z" />
                   <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
                 </svg>
                 <span>Google Scholar</span>
               </a>
-              <a href="https://orcid.org/0009-0002-6037-4613" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-zinc-800 px-3 py-2 rounded-md text-sm transition-all hover:bg-zinc-600">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <a href="https://orcid.org/0009-0002-6037-4613" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/>
                 </svg>
                 <span>ORCID</span>
@@ -419,13 +420,13 @@ export function Footer() {
           
           {/* Blogs & Technical Skills */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Blogs</h4>
-            <ul className="space-y-2 mb-6">
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Blogs</h4>
+            <ul className="space-y-2 mb-4 sm:mb-6">
               {blogPosts.map((post, index) => (
                 <li key={index}>
                   <a 
                     href={post.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {post.label}
                   </a>
@@ -433,13 +434,13 @@ export function Footer() {
               ))}
             </ul>
             
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Technical Skills</h4>
-            <ul className="space-y-2 mb-6">
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Technical Skills</h4>
+            <ul className="space-y-2 mb-4 sm:mb-6">
               {technicalSkills.map((skill, index) => (
                 <li key={index}>
                   <a 
                     href={skill.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {skill.label}
                   </a>
@@ -447,13 +448,13 @@ export function Footer() {
               ))}
             </ul>
             
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Soft Skills</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Soft Skills</h4>
             <ul className="space-y-2">
               {softSkills.map((skill, index) => (
                 <li key={index}>
                   <a 
                     href={skill.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {skill.label}
                   </a>
@@ -464,26 +465,26 @@ export function Footer() {
           
           {/* Publications */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Recent Publications</h4>
-            <div className="space-y-4 mb-6">
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Recent Publications</h4>
+            <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
               {publications.map((pub, index) => (
                 <div key={index} className="border-l-2 border-zinc-700 pl-3">
-                  <a href={pub.url} className="text-gray-300 hover:text-white text-sm">{pub.title}</a>
+                  <a href={pub.url} className="text-gray-300 hover:text-white text-sm leading-snug block mb-1 touch-target">{pub.title}</a>
                   <div className="text-xs text-gray-500 italic">{pub.authors}</div>
                   <div className="text-xs text-zinc-500">{pub.journal}</div>
                 </div>
               ))}
               <div className="border-l-2 border-zinc-700 pl-3">
-                <a href="#" className="text-gray-300 hover:text-white text-sm">See All Publications</a>
+                <a href="#" className="text-gray-300 hover:text-white text-sm touch-target py-1 inline-block">See All Publications</a>
               </div>
             </div>
             
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Research Interests</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Research Interests</h4>
             <div className="flex flex-wrap gap-2">
               {researchInterests.map((interest, index) => (
                 <span 
                   key={index} 
-                  className="bg-zinc-800 text-gray-300 px-3 py-1 rounded-full text-xs transition-all hover:bg-zinc-700 hover:text-white hover:translate-y-[-2px]"
+                  className="bg-zinc-800 text-gray-300 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs transition-all hover:bg-zinc-700 hover:text-white hover:translate-y-[-2px] touch-target"
                 >
                   {interest}
                 </span>
@@ -493,13 +494,13 @@ export function Footer() {
           
           {/* Resources & Contact */}
           <div>
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Resources</h4>
-            <ul className="space-y-2 mb-6">
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Resources</h4>
+            <ul className="space-y-2 mb-4 sm:mb-6">
               {resources.map((resource, index) => (
                 <li key={index}>
                   <a 
                     href={resource.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block"
+                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {resource.label}
                   </a>
@@ -507,46 +508,46 @@ export function Footer() {
               ))}
             </ul>
             
-            <h4 className="text-lg font-semibold mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Contact</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Contact</h4>
             <div className="space-y-3 text-sm">
-              <div className="flex gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex gap-3 items-start">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <div className="text-gray-300">
-                  Raman Rsearch Institute<br />
+                <div className="text-gray-300 text-sm leading-relaxed">
+                  Raman Research Institute<br />
                   Bangalore, Karnataka
                 </div>
               </div>
-              <div className="flex gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex gap-3 items-start">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <div className="text-gray-300">kartik4321mandar@gmail.com</div>
+                <div className="text-gray-300 text-sm leading-relaxed break-all">kartik4321mandar@gmail.com</div>
               </div>
-              <div className="flex gap-3">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-zinc-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex gap-3 items-start">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="text-gray-300">Meeting Hours: By appointment</div>
+                <div className="text-gray-300 text-sm leading-relaxed">Meeting Hours: By appointment</div>
               </div>
             </div>
           </div>
         </div>
         
         {/* Footer bottom */}
-        <div className="bg-zinc-900 py-6 relative z-10">
+        <div className="bg-zinc-900 py-4 sm:py-6 relative z-10">
           <div className="container mx-auto px-4">
             {/* Centered navigation menu */}
-            <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-4">
+            <nav className="flex flex-wrap justify-center gap-x-4 sm:gap-x-6 gap-y-2 mb-3 sm:mb-4">
               {navItems.map((item, i) => (
-                <Link className="text-gray-400 text-sm hover:text-white transition-colors" key={i} href={item.url}>
+                <Link className="text-gray-400 text-xs sm:text-sm hover:text-white transition-colors py-1 touch-target" key={i} href={item.url}>
                   {item.label}
                 </Link>
               ))}
             </nav>
             {/* Copyright */}
-            <div className="text-center text-gray-500 text-sm">
+            <div className="text-center text-gray-500 text-xs sm:text-sm">
               &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Student
             </div>
           </div>
