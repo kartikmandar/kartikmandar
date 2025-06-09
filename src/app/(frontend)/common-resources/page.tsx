@@ -2499,36 +2499,37 @@ export default async function Page() {
   ]
 
   return (
-    <div className="pt-24 pb-24 scroll-smooth">
+    <div className="pt-16 pb-16 sm:pt-24 sm:pb-24 scroll-smooth">
       <PageClient />
-      <div className="container">
-        <div className="prose dark:prose-invert max-w-none mb-16">
-          <h1 className="text-4xl font-bold mb-4">A Comprehensive Compendium of Resources in Astronomy and Astrophysics</h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+      <div className="container px-4 sm:px-6 lg:px-8">
+        <div className="prose dark:prose-invert max-w-none mb-8 sm:mb-16">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 leading-tight">A Comprehensive Compendium of Resources in Astronomy and Astrophysics</h1>
+          <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed">
             Everything you need to explore the universe, whether you're just starting to stargaze or diving deep into astrophysics research. From inspiring books and documentaries to professional software and cutting-edge equipment, this collection tries to cover it all.
           </p>
 
           {/* Table of Contents */}
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 mb-8 border border-gray-200 dark:border-gray-700">
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white flex items-center">
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 border border-gray-200 dark:border-gray-700">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white flex items-center">
+              <span className="mr-2">📚</span>
               Table of Contents
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
               {resources.map((category, categoryIndex) => (
-                <div key={categoryIndex} className="space-y-2">
+                <div key={categoryIndex} className="space-y-1 sm:space-y-2">
                   <a 
                     href={`#category-${categoryIndex}`}
-                    className="block text-lg font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                    className="block text-base sm:text-lg font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors break-words py-1 active:scale-95"
                   >
                     {category.category}
                   </a>
                   {'subcategories' in category && category.subcategories && (
-                    <ul className="ml-4 space-y-1">
+                    <ul className="ml-3 sm:ml-4 space-y-0.5 sm:space-y-1">
                       {category.subcategories.map((subcategory, subIndex) => (
                         <li key={subIndex}>
                           <a 
                             href={`#subcategory-${categoryIndex}-${subIndex}`}
-                            className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                            className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors break-words leading-tight py-0.5 active:scale-95"
                           >
                             {subcategory.name}
                           </a>
@@ -2542,32 +2543,32 @@ export default async function Page() {
           </div>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-6 sm:space-y-8 lg:space-y-12">
           {resources.map((category, categoryIndex) => (
-            <div key={categoryIndex} className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-8">
+            <div key={categoryIndex} className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-4 sm:p-6 lg:p-8">
               <h2 
                 id={`category-${categoryIndex}`}
-                className="text-2xl font-bold mb-6 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-3 scroll-mt-24"
+                className="text-xl sm:text-2xl font-bold mb-4 sm:mb-6 text-gray-900 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2 sm:pb-3 scroll-mt-20 sm:scroll-mt-24 break-words"
               >
                 {category.category}
               </h2>
               
               {/* Handle categories with subcategories */}
               {category.subcategories && (
-                <div className="space-y-8">
+                <div className="space-y-6 sm:space-y-8">
                   {category.subcategories.map((subcategory, subIndex) => (
                     <div key={subIndex}>
                       <h3 
                         id={`subcategory-${categoryIndex}-${subIndex}`}
-                        className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200 border-l-4 border-blue-500 pl-4 scroll-mt-24"
+                        className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-gray-800 dark:text-gray-200 border-l-4 border-blue-500 pl-3 sm:pl-4 scroll-mt-20 sm:scroll-mt-24 break-words"
                       >
                         {subcategory.name}
                       </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
                         {subcategory.items.map((item, itemIndex) => (
-                          <div key={itemIndex} className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow">
-                            <div className="flex justify-between items-start mb-3">
-                              <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          <div key={itemIndex} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4 sm:p-6 hover:shadow-md transition-shadow">
+                            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-3 space-y-2 sm:space-y-0">
+                              <h4 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white break-words">
                                 <a 
                                   href={item.url} 
                                   target="_blank" 
@@ -2577,14 +2578,14 @@ export default async function Page() {
                                   {item.title}
                                 </a>
                               </h4>
-                              <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full">
+                              <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full self-start sm:flex-shrink-0 sm:ml-3">
                                 {item.type}
                               </span>
                             </div>
-                            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                            <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-3 sm:mb-4">
                               {item.description}
                             </p>
-                            <div className="mt-4">
+                            <div className="mt-3 sm:mt-4">
                               <a 
                                 href={item.url} 
                                 target="_blank" 
@@ -2608,20 +2609,22 @@ export default async function Page() {
           ))}
         </div>
 
-        <div className="mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-8">
-          <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-white">
+        <div className="mt-8 sm:mt-12 lg:mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg p-4 sm:p-6 lg:p-8">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900 dark:text-white">
             Contribute to This List
           </h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-4 sm:mb-6 leading-relaxed">
             Know of other valuable resources that should be included? Feel free to reach out with suggestions 
             for tools, databases, or educational materials that would benefit the astronomy and astrophysics community. 
-            <br/>
-            If you feel any resource isn't up to the mark or is inappropriately placed, please suggest its removal 
-            and explain why - your feedback helps keep this collection accurate and valuable!
+            <br className="hidden sm:block"/>
+            <span className="block sm:inline mt-2 sm:mt-0">
+              If you feel any resource isn't up to the mark or is inappropriately placed, please suggest its removal 
+              and explain why - your feedback helps keep this collection accurate and valuable!
+            </span>
           </p>
           <a 
             href="mailto:kartik4321mandar@gmail.com?subject=Common Resources Suggestion" 
-            className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md font-medium transition-colors"
+            className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-medium transition-colors"
           >
             Suggest/Change a Resource
             <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
