@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     pages: Page;
     posts: Post;
+    projects: Project;
     media: Media;
     categories: Category;
     users: User;
@@ -85,6 +86,7 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    projects: ProjectsSelect<false> | ProjectsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -185,7 +187,7 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | ProjectsShowcaseBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -723,6 +725,418 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsShowcaseBlock".
+ */
+export interface ProjectsShowcaseBlock {
+  blockName?: string | null;
+  /**
+   * Main heading for the projects section
+   */
+  title?: string | null;
+  /**
+   * Subtitle/description below the main heading
+   */
+  subtitle?: string | null;
+  /**
+   * Select projects to display in this showcase
+   */
+  projects: (number | Project)[];
+  /**
+   * Only show projects marked as "featured"
+   */
+  showFeaturedOnly?: boolean | null;
+  /**
+   * Maximum number of projects to display
+   */
+  maxProjects?: number | null;
+  /**
+   * Layout style for the projects showcase
+   */
+  layout?: ('grid-3' | 'grid-2' | 'grid-4' | 'mixed') | null;
+  /**
+   * Show "View All Projects" button at the bottom
+   */
+  showViewAllButton?: boolean | null;
+  /**
+   * Text for the view all button
+   */
+  viewAllButtonText?: string | null;
+  /**
+   * URL for the view all button
+   */
+  viewAllButtonUrl?: string | null;
+  id?: string | null;
+  blockType: 'projectsShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects".
+ */
+export interface Project {
+  id: number;
+  /**
+   * The main title of your project
+   */
+  title: string;
+  /**
+   * Brief description shown on project cards (optional)
+   */
+  shortDescription?: string | null;
+  /**
+   * Detailed description of the project
+   */
+  description: string;
+  /**
+   * Main image/thumbnail for the project card
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Project category for organization
+   */
+  category?:
+    | (
+        | 'web-development'
+        | 'mobile-development'
+        | 'artificial-intelligence'
+        | 'data-science'
+        | 'scientific-computing'
+        | 'ui-ux-design'
+        | 'devops'
+        | 'blockchain'
+        | 'game-development'
+        | 'research'
+        | 'other'
+      )
+    | null;
+  /**
+   * Current status of the project
+   */
+  projectStatus: 'active' | 'completed' | 'archived';
+  /**
+   * Technologies used in this project
+   */
+  techStack?:
+    | {
+        technology: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * External links and repository information
+   */
+  links?: {
+    /**
+     * GitHub repository URL
+     */
+    githubUrl?: string | null;
+    /**
+     * Live demo/website URL
+     */
+    demoUrl?: string | null;
+    /**
+     * GitHub repository statistics (automatically updated)
+     */
+    githubStats?: {
+      /**
+       * Number of GitHub stars (auto-synced)
+       */
+      stars?: number | null;
+      /**
+       * Number of GitHub forks (auto-synced)
+       */
+      forks?: number | null;
+      /**
+       * Number of GitHub watchers (auto-synced)
+       */
+      watchers?: number | null;
+      /**
+       * Number of open GitHub issues (auto-synced)
+       */
+      openIssues?: number | null;
+      /**
+       * Primary programming language (auto-synced)
+       */
+      language?: string | null;
+      /**
+       * Repository size in KB (auto-synced)
+       */
+      size?: number | null;
+      /**
+       * Last updated on GitHub (auto-synced)
+       */
+      lastUpdated?: string | null;
+    };
+  };
+  /**
+   * Detailed project information for modal view
+   */
+  projectDetails?: {
+    /**
+     * Total lines of code (optional)
+     */
+    linesOfCode?: number | null;
+    /**
+     * Technical architecture description
+     */
+    architecture?: string | null;
+    /**
+     * Installation and usage instructions
+     */
+    usageGuide?: string | null;
+    /**
+     * What problem does this project solve?
+     */
+    problemSolving?: string | null;
+    /**
+     * Future roadmap and planned features
+     */
+    futureWork?: string | null;
+    /**
+     * Repository README content (auto-synced from GitHub)
+     */
+    readme?: string | null;
+    /**
+     * Total number of commits (auto-synced from GitHub)
+     */
+    totalCommits?: number | null;
+    /**
+     * Top contributors (auto-synced from GitHub)
+     */
+    contributors?:
+      | {
+          name: string;
+          contributions: number;
+          githubUrl?: string | null;
+          avatarUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Total number of files (auto-synced from GitHub)
+     */
+    fileCount?: number | null;
+    /**
+     * Total number of directories (auto-synced from GitHub)
+     */
+    directoryCount?: number | null;
+    /**
+     * Repository size in KB (auto-synced from GitHub)
+     */
+    repositorySize?: number | null;
+    /**
+     * Default branch name (auto-synced from GitHub)
+     */
+    defaultBranch?: string | null;
+    /**
+     * Is the repository archived? (auto-synced from GitHub)
+     */
+    isArchived?: boolean | null;
+    /**
+     * Is this repository a fork? (auto-synced from GitHub)
+     */
+    isFork?: boolean | null;
+    /**
+     * Repository license (auto-synced from GitHub)
+     */
+    license?: string | null;
+    /**
+     * GitHub repository topics/tags (auto-synced)
+     */
+    topics?:
+      | {
+          topic: string;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Repository creation date (auto-synced from GitHub)
+     */
+    createdAt?: string | null;
+    /**
+     * Repository homepage URL (auto-synced from GitHub)
+     */
+    homepage?: string | null;
+    /**
+     * Repository file structure (auto-synced from GitHub)
+     */
+    fileTree?:
+      | {
+          path: string;
+          type: 'blob' | 'tree';
+          size?: number | null;
+          url?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * GitHub issues statistics (auto-synced)
+     */
+    githubIssues?: {
+      /**
+       * Total number of issues (auto-synced from GitHub)
+       */
+      total?: number | null;
+      /**
+       * Number of open issues (auto-synced from GitHub)
+       */
+      open?: number | null;
+      /**
+       * Number of closed issues (auto-synced from GitHub)
+       */
+      closed?: number | null;
+    };
+    /**
+     * GitHub pull requests statistics (auto-synced)
+     */
+    githubPullRequests?: {
+      /**
+       * Total number of pull requests (auto-synced from GitHub)
+       */
+      total?: number | null;
+      /**
+       * Number of open pull requests (auto-synced from GitHub)
+       */
+      open?: number | null;
+      /**
+       * Number of closed pull requests (auto-synced from GitHub)
+       */
+      closed?: number | null;
+      /**
+       * Number of merged pull requests (auto-synced from GitHub)
+       */
+      merged?: number | null;
+    };
+  };
+  /**
+   * Related academic publication (if any)
+   */
+  publication?: {
+    /**
+     * Publication title
+     */
+    title?: string | null;
+    /**
+     * Publication authors
+     */
+    authors?: string | null;
+    /**
+     * Journal, conference, or venue name
+     */
+    venue?: string | null;
+    /**
+     * Publication year
+     */
+    year?: number | null;
+    /**
+     * Link to publication (DOI, arXiv, etc.)
+     */
+    url?: string | null;
+  };
+  /**
+   * Images, plots, and media files for the project
+   */
+  media?: {
+    /**
+     * Charts, graphs, and data visualizations
+     */
+    plots?:
+      | {
+          image: number | Media;
+          caption: string;
+          /**
+           * Alt text for accessibility
+           */
+          alt?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Project screenshots and images
+     */
+    screenshots?:
+      | {
+          image: number | Media;
+          caption: string;
+          /**
+           * Alt text for accessibility
+           */
+          alt?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Conference posters and presentations
+     */
+    posters?:
+      | {
+          title: string;
+          conference: string;
+          year: number;
+          file: number | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Latest GitHub release information (auto-synced)
+   */
+  latestRelease?: {
+    /**
+     * Latest release version tag (auto-synced from GitHub)
+     */
+    version?: string | null;
+    /**
+     * Release name (auto-synced from GitHub)
+     */
+    name?: string | null;
+    /**
+     * Release publication date (auto-synced from GitHub)
+     */
+    publishedAt?: string | null;
+    /**
+     * Release notes/description (auto-synced from GitHub)
+     */
+    description?: string | null;
+    /**
+     * Link to release on GitHub (auto-synced)
+     */
+    htmlUrl?: string | null;
+    /**
+     * Total downloads across all assets (auto-synced)
+     */
+    downloadCount?: number | null;
+  };
+  /**
+   * Last time GitHub data was synchronized
+   */
+  lastGitHubSync?: string | null;
+  /**
+   * Show this project in featured sections
+   */
+  featured?: boolean | null;
+  /**
+   * When this project was completed/published
+   */
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  /**
+   * Search engine optimization settings
+   */
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -902,6 +1316,10 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
+        relationTo: 'projects';
+        value: number | Project;
+      } | null)
+    | ({
         relationTo: 'media';
         value: number | Media;
       } | null)
@@ -1011,6 +1429,7 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        projectsShowcase?: T | ProjectsShowcaseBlockSelect<T>;
       };
   meta?:
     | T
@@ -1112,6 +1531,23 @@ export interface FormBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ProjectsShowcaseBlock_select".
+ */
+export interface ProjectsShowcaseBlockSelect<T extends boolean = true> {
+  blockName?: T;
+  title?: T;
+  subtitle?: T;
+  projects?: T;
+  showFeaturedOnly?: T;
+  maxProjects?: T;
+  layout?: T;
+  showViewAllButton?: T;
+  viewAllButtonText?: T;
+  viewAllButtonUrl?: T;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -1137,6 +1573,163 @@ export interface PostsSelect<T extends boolean = true> {
       };
   slug?: T;
   slugLock?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "projects_select".
+ */
+export interface ProjectsSelect<T extends boolean = true> {
+  title?: T;
+  shortDescription?: T;
+  description?: T;
+  coverImage?: T;
+  category?: T;
+  projectStatus?: T;
+  techStack?:
+    | T
+    | {
+        technology?: T;
+        id?: T;
+      };
+  links?:
+    | T
+    | {
+        githubUrl?: T;
+        demoUrl?: T;
+        githubStats?:
+          | T
+          | {
+              stars?: T;
+              forks?: T;
+              watchers?: T;
+              openIssues?: T;
+              language?: T;
+              size?: T;
+              lastUpdated?: T;
+            };
+      };
+  projectDetails?:
+    | T
+    | {
+        linesOfCode?: T;
+        architecture?: T;
+        usageGuide?: T;
+        problemSolving?: T;
+        futureWork?: T;
+        readme?: T;
+        totalCommits?: T;
+        contributors?:
+          | T
+          | {
+              name?: T;
+              contributions?: T;
+              githubUrl?: T;
+              avatarUrl?: T;
+              id?: T;
+            };
+        fileCount?: T;
+        directoryCount?: T;
+        repositorySize?: T;
+        defaultBranch?: T;
+        isArchived?: T;
+        isFork?: T;
+        license?: T;
+        topics?:
+          | T
+          | {
+              topic?: T;
+              id?: T;
+            };
+        createdAt?: T;
+        homepage?: T;
+        fileTree?:
+          | T
+          | {
+              path?: T;
+              type?: T;
+              size?: T;
+              url?: T;
+              id?: T;
+            };
+        githubIssues?:
+          | T
+          | {
+              total?: T;
+              open?: T;
+              closed?: T;
+            };
+        githubPullRequests?:
+          | T
+          | {
+              total?: T;
+              open?: T;
+              closed?: T;
+              merged?: T;
+            };
+      };
+  publication?:
+    | T
+    | {
+        title?: T;
+        authors?: T;
+        venue?: T;
+        year?: T;
+        url?: T;
+      };
+  media?:
+    | T
+    | {
+        plots?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alt?: T;
+              id?: T;
+            };
+        screenshots?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              alt?: T;
+              id?: T;
+            };
+        posters?:
+          | T
+          | {
+              title?: T;
+              conference?: T;
+              year?: T;
+              file?: T;
+              id?: T;
+            };
+      };
+  latestRelease?:
+    | T
+    | {
+        version?: T;
+        name?: T;
+        publishedAt?: T;
+        description?: T;
+        htmlUrl?: T;
+        downloadCount?: T;
+      };
+  lastGitHubSync?: T;
+  featured?: T;
+  publishedAt?: T;
+  slug?: T;
+  slugLock?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
