@@ -1,4 +1,42 @@
 import type { RequiredDataFromCollectionSlug } from 'payload'
+import { getPayload } from 'payload'
+import configPromise from '@payload-config'
+
+// Function to get featured projects for static homepage
+export const getHomePageWithProjects = async (): Promise<RequiredDataFromCollectionSlug<'pages'>> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    
+    // Fetch all projects (show both draft and published for development)
+    const projects = await payload.find({
+      collection: 'projects',
+      limit: 6,
+      sort: '-createdAt',
+    })
+
+    return {
+      ...homeStatic,
+      layout: [
+        {
+          blockName: 'Featured Projects',
+          blockType: 'projectsShowcase',
+          title: 'Featured Projects',
+          subtitle: 'Discover our latest work showcasing innovation, technical excellence, and creative problem-solving',
+          projects: projects.docs,
+          layout: 'grid-3',
+          showViewAllButton: true,
+          viewAllButtonText: 'View All Projects',
+          viewAllButtonUrl: '/projects',
+          maxProjects: 6,
+        },
+      ],
+    }
+  } catch (error) {
+    console.error('Error fetching projects for homepage:', error)
+    // Fallback to static content without projects
+    return homeStatic
+  }
+}
 
 // Used for pre-seeded content so that the homepage is not empty
 export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
@@ -84,5 +122,18 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
     title: 'Payload Website Template',
   },
   title: 'Home',
-  layout: [],
+  layout: [
+    {
+      blockName: 'Featured Projects',
+      blockType: 'projectsShowcase',
+      title: 'Featured Projects',
+      subtitle: 'Discover our latest work showcasing innovation, technical excellence, and creative problem-solving',
+      projects: [], // Will be populated when projects are added via CMS
+      layout: 'grid-3',
+      showViewAllButton: true,
+      viewAllButtonText: 'View All Projects',
+      viewAllButtonUrl: '/projects',
+      maxProjects: 6,
+    },
+  ],
 }
