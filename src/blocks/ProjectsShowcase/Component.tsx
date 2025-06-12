@@ -40,6 +40,18 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
       stars: payloadProject.links.githubStats?.stars || 0,
       forks: payloadProject.links.githubStats?.forks || 0,
     }
+    
+    // Add additional GitHub stats for metadata
+    project.links = {
+      githubUrl: payloadProject.links.githubUrl,
+      githubStats: {
+        language: payloadProject.links.githubStats?.language,
+        watchers: payloadProject.links.githubStats?.watchers || 0,
+        openIssues: payloadProject.links.githubStats?.openIssues || 0,
+        size: payloadProject.links.githubStats?.size || 0,
+        lastUpdated: payloadProject.links.githubStats?.lastUpdated,
+      }
+    }
   }
 
   if (payloadProject.links?.demoUrl) {
@@ -77,6 +89,17 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
     // Add GitHub Issues and Pull Requests data
     project.githubIssues = payloadProject.projectDetails.githubIssues || undefined
     project.githubPullRequests = payloadProject.projectDetails.githubPullRequests || undefined
+    
+    // Add repository metadata
+    project.projectDetails = {
+      ...project.projectDetails,
+      license: payloadProject.projectDetails.license,
+      defaultBranch: payloadProject.projectDetails.defaultBranch,
+      homepage: payloadProject.projectDetails.homepage,
+      topics: payloadProject.projectDetails.topics,
+      isArchived: payloadProject.projectDetails.isArchived,
+      isFork: payloadProject.projectDetails.isFork,
+    }
   }
 
   // Transform publication
@@ -87,6 +110,27 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
       venue: payloadProject.publication.venue || '',
       year: payloadProject.publication.year || new Date().getFullYear(),
       url: payloadProject.publication.url || undefined,
+    }
+  }
+
+  // Transform branches
+  if (payloadProject.branches?.length) {
+    project.branches = payloadProject.branches.map(branch => ({
+      name: branch.name,
+      protected: branch.protected,
+      commitSha: branch.commitSha,
+    }))
+  }
+
+  // Transform latest release
+  if (payloadProject.latestRelease?.version) {
+    project.latestRelease = {
+      version: payloadProject.latestRelease.version,
+      name: payloadProject.latestRelease.name,
+      publishedAt: payloadProject.latestRelease.publishedAt,
+      description: payloadProject.latestRelease.description,
+      htmlUrl: payloadProject.latestRelease.htmlUrl,
+      downloadCount: payloadProject.latestRelease.downloadCount,
     }
   }
 

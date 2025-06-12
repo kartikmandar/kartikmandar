@@ -42,7 +42,7 @@ export const autoSyncGitHub: CollectionAfterChangeHook = async ({
       return doc
     }
 
-    const { repository, languages, contributors, latestRelease, totalCommits, fileTree } = githubData
+    const { repository, languages, contributors, latestRelease, totalCommits, fileTree, branches } = githubData
 
     // Update the document with GitHub data
     const updatedDoc = await req.payload.update({
@@ -99,6 +99,13 @@ export const autoSyncGitHub: CollectionAfterChangeHook = async ({
           htmlUrl: latestRelease.html_url,
           downloadCount: latestRelease.assets.reduce((sum, asset) => sum + asset.download_count, 0),
         } : undefined,
+        
+        // Update branches if available
+        branches: branches ? branches.map(branch => ({
+          name: branch.name,
+          protected: branch.protected,
+          commitSha: branch.commit.sha,
+        })) : undefined,
         
         // Auto-populate description if empty
         description: !doc.description && repository.description 

@@ -55,6 +55,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "7.45.4",
+    "react-hot-toast": "^2.5.2",
     "react-markdown": "^10.1.0",
     "sharp": "0.32.6",
     "tailwind-merge": "^2.3.0",

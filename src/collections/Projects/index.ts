@@ -4,6 +4,7 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { slugField } from '@/fields/slug'
 import { githubSyncField } from '@/fields/githubSync'
+import { bulkSyncField } from '@/fields/bulkSync'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
 // import { autoSyncGitHub } from './hooks/autoSyncGitHub'
 
@@ -30,10 +31,21 @@ export const Projects: CollectionConfig<'projects'> = {
     projectStatus: true,
   },
   admin: {
-    defaultColumns: ['title', 'projectStatus', 'category', 'updatedAt'],
+    defaultColumns: ['title', 'displayOrder', 'projectStatus', 'category', 'updatedAt'],
     useAsTitle: 'title',
+    // components: {
+    //   beforeList: ['@/components/ProjectsBulkSync'],
+    // },
   },
   fields: [
+    {
+      name: 'displayOrder',
+      type: 'number',
+      admin: {
+        description: 'Order for displaying projects (lower numbers appear first)',
+        position: 'sidebar',
+      },
+    },
     {
       name: 'title',
       type: 'text',
@@ -679,6 +691,30 @@ export const Projects: CollectionConfig<'projects'> = {
       },
     },
     {
+      name: 'branches',
+      type: 'array',
+      fields: [
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'protected',
+          type: 'checkbox',
+          defaultValue: false,
+        },
+        {
+          name: 'commitSha',
+          type: 'text',
+        },
+      ],
+      admin: {
+        description: 'Repository branches (auto-synced from GitHub)',
+        readOnly: true,
+      },
+    },
+    {
       name: 'lastGitHubSync',
       type: 'date',
       admin: {
@@ -687,6 +723,7 @@ export const Projects: CollectionConfig<'projects'> = {
         position: 'sidebar',
       },
     },
+    ...bulkSyncField(),
     ...githubSyncField(),
     {
       name: 'featured',
