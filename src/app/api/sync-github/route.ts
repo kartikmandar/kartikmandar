@@ -61,7 +61,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
       }
     }
 
-    const { repository, languages, contributors, latestRelease, totalCommits, fileTree, readme, linesOfCode, stats } = githubData
+    const { repository, languages, contributors, latestRelease, totalCommits, fileTree, readme, linesOfCode, stats, branches } = githubData
 
     // Update project with GitHub data
     const payload = await getPayload({ config: configPromise })
@@ -139,6 +139,13 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
           htmlUrl: latestRelease.html_url,
           downloadCount: latestRelease.assets.reduce((sum, asset) => sum + asset.download_count, 0),
         } : undefined,
+        
+        // Update branches if available
+        branches: branches ? branches.map(branch => ({
+          name: branch.name,
+          protected: branch.protected,
+          commitSha: branch.commit.sha,
+        })) : undefined,
         
         // Update description if empty and GitHub has one
         description: !project.description && repository.description 

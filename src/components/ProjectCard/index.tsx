@@ -38,7 +38,14 @@ import {
   Terminal,
   Braces,
   Package,
-  Palette
+  Palette,
+  Tag,
+  GitBranch,
+  Home,
+  Shield,
+  Archive,
+  Download,
+  Calendar
 } from 'lucide-react'
 
 import { Media } from '@/components/Media'
@@ -561,6 +568,19 @@ export interface Project {
   coverImage?: any // Payload media type
   techStack?: (string | ProjectTechStack)[]
   github?: ProjectGithubStats
+  links?: {
+    githubUrl?: string
+    demoUrl?: string
+    githubStats?: {
+      stars?: number
+      forks?: number
+      watchers?: number
+      openIssues?: number
+      language?: string
+      size?: number
+      lastUpdated?: string
+    }
+  }
   linesOfCode?: number
   totalCommits?: number
   fileCount?: number
@@ -603,6 +623,61 @@ export interface Project {
     open: number
     closed: number
     merged: number
+  }
+  latestRelease?: {
+    version?: string
+    name?: string
+    publishedAt?: string
+    description?: string
+    htmlUrl?: string
+    downloadCount?: number
+  }
+  branches?: Array<{
+    name: string
+    protected?: boolean
+    commitSha?: string
+  }>
+  projectDetails?: {
+    linesOfCode?: number
+    architecture?: string
+    usageGuide?: string
+    problemSolving?: string
+    futureWork?: string
+    readme?: string
+    totalCommits?: number
+    contributors?: Array<{
+      name: string
+      contributions: number
+      githubUrl?: string
+      avatarUrl?: string
+    }>
+    fileCount?: number
+    directoryCount?: number
+    repositorySize?: number
+    defaultBranch?: string
+    isArchived?: boolean
+    isFork?: boolean
+    license?: string
+    topics?: Array<{ topic: string }>
+    createdAt?: string
+    homepage?: string
+    fileTree?: Array<{
+      path: string
+      type: 'blob' | 'tree'
+      size?: number
+      url?: string
+    }>
+    githubIssues?: {
+      total?: number
+      open?: number
+      closed?: number
+    }
+    githubPullRequests?: {
+      total?: number
+      open?: number
+      closed?: number
+      merged?: number
+    }
   }
 }
 
@@ -659,19 +734,19 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
   }
 
   const renderStats = () => {
-    if (!project.github && !project.linesOfCode) return null
+    if (!project.links?.githubStats && !project.linesOfCode) return null
 
     return (
       <div className="flex items-center gap-4 text-xs text-muted-foreground">
-        {project.github && (
+        {project.links?.githubStats && (
           <>
             <div className="flex items-center gap-1">
               <Star className="w-3 h-3" />
-              <span>{project.github.stars.toLocaleString()}</span>
+              <span>{(project.links.githubStats.stars || 0).toLocaleString()}</span>
             </div>
             <div className="flex items-center gap-1">
               <GitFork className="w-3 h-3" />
-              <span>{project.github.forks.toLocaleString()}</span>
+              <span>{(project.links.githubStats.forks || 0).toLocaleString()}</span>
             </div>
           </>
         )}
@@ -738,9 +813,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
 
         {/* Action Icons */}
         <div className="absolute top-4 right-4 flex gap-2">
-          {project.github && (
+          {project.links?.githubUrl && (
             <a
-              href={project.github.url}
+              href={project.links.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gray-900/80 dark:bg-white/90 backdrop-blur-md rounded-full p-2.5 shadow-lg border border-white/20 dark:border-gray-900/20 hover:bg-gray-800/90 dark:hover:bg-white transition-all duration-200 z-20 hover:scale-105"
@@ -918,6 +993,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
       case 'code':
         return (
           <div className="space-y-6">
+            {!project.github && !project.architecture && (
+              <div className="text-center py-8">
+                <Code className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">No Code Information Available</h3>
+                <p className="text-muted-foreground">
+                  This project doesn't have GitHub repository or architecture information linked.
+                </p>
+              </div>
+            )}
+            
             {project.github && (
               <div>
                 <div className="flex items-center justify-between mb-3">
@@ -934,9 +1019,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 </div>
                 <div className="bg-muted rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-medium text-foreground">{project.github.url.split('/').pop()}</span>
+                    <span className="font-medium text-foreground">{project.links.githubUrl.split('/').pop()}</span>
                     <a 
-                      href={project.github.url} 
+                      href={project.links.githubUrl} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
@@ -945,16 +1030,21 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                       View on GitHub
                     </a>
                   </div>
-                  <div className="grid grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
                     <div className="text-center p-3 bg-background rounded border border-border">
                       <Star className="w-4 h-4 mx-auto mb-1 text-yellow-500" />
-                      <div className="font-medium text-foreground">{project.github.stars.toLocaleString()}</div>
+                      <div className="font-medium text-foreground">{(project.links?.githubStats?.stars || 0).toLocaleString()}</div>
                       <div className="text-muted-foreground">Stars</div>
                     </div>
                     <div className="text-center p-3 bg-background rounded border border-border">
                       <GitFork className="w-4 h-4 mx-auto mb-1 text-primary" />
-                      <div className="font-medium text-foreground">{project.github.forks.toLocaleString()}</div>
+                      <div className="font-medium text-foreground">{(project.links?.githubStats?.forks || 0).toLocaleString()}</div>
                       <div className="text-muted-foreground">Forks</div>
+                    </div>
+                    <div className="text-center p-3 bg-background rounded border border-border">
+                      <Eye className="w-4 h-4 mx-auto mb-1 text-blue-500" />
+                      <div className="font-medium text-foreground">{(project.links?.githubStats?.watchers || 0).toLocaleString()}</div>
+                      <div className="text-muted-foreground">Watchers</div>
                     </div>
                     <div className="text-center p-3 bg-background rounded border border-border">
                       <Code className="w-4 h-4 mx-auto mb-1 text-green-500" />
@@ -999,6 +1089,236 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             </div>
                           </div>
                         )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Repository Metadata */}
+            {project.links?.githubUrl && (project.links?.githubStats?.language || project.projectDetails?.license || project.projectDetails?.defaultBranch || project.projectDetails?.homepage || project.projectDetails?.topics?.length || project.projectDetails?.isArchived !== undefined || project.projectDetails?.isFork !== undefined || project.branches?.length) && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-foreground">
+                  <Settings className="w-5 h-5" />
+                  Repository Metadata
+                </h3>
+                <div className="bg-muted rounded-lg p-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                    {/* Language & License */}
+                    <div className="space-y-3">
+                      {project.links?.githubStats?.language && (
+                        <div className="flex items-center gap-2">
+                          <Code className="w-4 h-4 text-blue-500" />
+                          <span className="text-muted-foreground">Language:</span>
+                          <span className="font-medium text-foreground">{project.links.githubStats.language}</span>
+                        </div>
+                      )}
+                      {project.projectDetails?.license && (
+                        <div className="flex items-center gap-2">
+                          <Shield className="w-4 h-4 text-green-500" />
+                          <span className="text-muted-foreground">License:</span>
+                          <span className="font-medium text-foreground">{project.projectDetails.license}</span>
+                        </div>
+                      )}
+                      {project.projectDetails?.defaultBranch && (
+                        <div className="flex items-center gap-2">
+                          <GitBranch className="w-4 h-4 text-purple-500" />
+                          <span className="text-muted-foreground">Default Branch:</span>
+                          <span className="font-medium text-foreground">{project.projectDetails.defaultBranch}</span>
+                        </div>
+                      )}
+                      {project.projectDetails?.homepage && (
+                        <div className="flex items-center gap-2">
+                          <Home className="w-4 h-4 text-orange-500" />
+                          <span className="text-muted-foreground">Homepage:</span>
+                          <a 
+                            href={project.projectDetails.homepage} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="font-medium text-primary hover:text-primary/80 transition-colors truncate"
+                          >
+                            {project.projectDetails.homepage.replace(/^https?:\/\//, '')}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Status Flags */}
+                    <div className="space-y-3">
+                      {(project.projectDetails?.isArchived !== undefined || project.projectDetails?.isFork !== undefined) && (
+                        <div className="space-y-2">
+                          <span className="text-muted-foreground text-xs font-medium uppercase">Repository Status</span>
+                          {project.projectDetails?.isArchived && (
+                            <div className="flex items-center gap-2">
+                              <Archive className="w-4 h-4 text-yellow-500" />
+                              <span className="text-yellow-600 dark:text-yellow-400 font-medium">Archived Repository</span>
+                            </div>
+                          )}
+                          {project.projectDetails?.isFork && (
+                            <div className="flex items-center gap-2">
+                              <GitFork className="w-4 h-4 text-blue-500" />
+                              <span className="text-blue-600 dark:text-blue-400 font-medium">Forked Repository</span>
+                            </div>
+                          )}
+                          {!project.projectDetails?.isArchived && !project.projectDetails?.isFork && (
+                            <div className="flex items-center gap-2">
+                              <CheckCircle className="w-4 h-4 text-green-500" />
+                              <span className="text-green-600 dark:text-green-400 font-medium">Active Repository</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {/* Topics/Tags */}
+                  {project.projectDetails?.topics && project.projectDetails.topics.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Tag className="w-4 h-4 text-primary" />
+                        <span className="text-muted-foreground text-sm font-medium">Topics</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        {project.projectDetails.topics.slice(0, 10).map((topic, index) => (
+                          <span 
+                            key={index}
+                            className="px-2 py-1 bg-primary/10 text-primary text-xs font-medium rounded-md border border-primary/20"
+                          >
+                            {typeof topic === 'string' ? topic : topic.topic}
+                          </span>
+                        ))}
+                        {project.projectDetails.topics.length > 10 && (
+                          <span className="px-2 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-md">
+                            +{project.projectDetails.topics.length - 10} more
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Branches */}
+                  {project.branches && project.branches.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-border">
+                      <div className="flex items-center gap-2 mb-3">
+                        <GitBranch className="w-4 h-4 text-primary" />
+                        <span className="text-muted-foreground text-sm font-medium">Branches ({project.branches.length})</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                        {project.branches.slice(0, 10).map((branch, index) => (
+                          <div 
+                            key={index}
+                            className="flex items-center justify-between p-2 bg-background rounded border border-border text-sm"
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              <GitBranch className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                              <span className="font-medium text-foreground truncate">{branch.name}</span>
+                              {branch.protected && (
+                                <Shield className="w-3 h-3 text-yellow-500 flex-shrink-0" title="Protected branch" />
+                              )}
+                            </div>
+                            {branch.commitSha && (
+                              <span className="text-xs text-muted-foreground font-mono">
+                                {branch.commitSha.slice(0, 7)}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {project.branches.length > 10 && (
+                          <div className="flex items-center justify-center p-2 bg-muted text-muted-foreground text-sm rounded border border-border">
+                            +{project.branches.length - 10} more branches
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Latest Release */}
+            {project.latestRelease && (project.latestRelease.version || project.latestRelease.name) && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-foreground">
+                  <Package className="w-5 h-5" />
+                  Latest Release
+                </h3>
+                <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold text-foreground text-lg">
+                          {project.latestRelease.version || project.latestRelease.name}
+                        </span>
+                        {project.latestRelease.version && project.latestRelease.name && project.latestRelease.version !== project.latestRelease.name && (
+                          <span className="text-sm text-muted-foreground">({project.latestRelease.name})</span>
+                        )}
+                      </div>
+                      {project.latestRelease.publishedAt && (
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Calendar className="w-3 h-3" />
+                          Released {new Date(project.latestRelease.publishedAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })}
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm">
+                      {project.latestRelease.downloadCount !== undefined && (
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <Download className="w-3 h-3" />
+                          <span>{project.latestRelease.downloadCount.toLocaleString()} downloads</span>
+                        </div>
+                      )}
+                      {project.latestRelease.htmlUrl && (
+                        <a
+                          href={project.latestRelease.htmlUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
+                        >
+                          <ExternalLink className="w-3 h-3" />
+                          View Release
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {project.latestRelease.description && (
+                    <div className="mt-3 pt-3 border-t border-green-200 dark:border-green-800">
+                      <div className="text-sm text-muted-foreground leading-relaxed">
+                        <ReactMarkdown
+                          components={{
+                            a: ({ href, children, ...props }) => (
+                              <a
+                                href={href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:text-primary/80 transition-colors"
+                                {...props}
+                              >
+                                {children}
+                              </a>
+                            ),
+                            p: ({ children, ...props }) => (
+                              <p className="mb-2 last:mb-0" {...props}>{children}</p>
+                            ),
+                            ul: ({ children, ...props }) => (
+                              <ul className="list-disc list-inside mb-2" {...props}>{children}</ul>
+                            ),
+                            li: ({ children, ...props }) => (
+                              <li className="mb-1" {...props}>{children}</li>
+                            )
+                          }}
+                        >
+                          {project.latestRelease.description.length > 300 
+                            ? project.latestRelease.description.substring(0, 300) + '...'
+                            : project.latestRelease.description
+                          }
+                        </ReactMarkdown>
                       </div>
                     </div>
                   )}
@@ -1142,8 +1462,28 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
               </div>
             )}
 
+            {/* No Code Structure Notice */}
+            {project.github && !project.fileCount && !project.linesOfCode && !project.totalCommits && (
+              <div>
+                <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-foreground">
+                  <FileText className="w-5 h-5" />
+                  Repository Type
+                </h3>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <FileText className="w-4 h-4 text-blue-500" />
+                    <span className="font-medium text-foreground">Documentation Repository</span>
+                  </div>
+                  <p className="text-muted-foreground text-sm">
+                    This repository primarily contains documentation, research, or non-code content. 
+                    Check the README section below for detailed information about this project.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Repository Structure & Stats */}
-            {(project.fileCount || project.directoryCount || project.repositorySize || project.fileTree) && (
+            {(project.fileCount > 0 || project.directoryCount > 0 || project.repositorySize || (project.fileTree && project.fileTree.length > 0)) && (
               <div>
                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-foreground">
                   <FolderTree className="w-5 h-5" />
@@ -1153,7 +1493,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 {/* Repository Stats */}
                 <div className="bg-muted rounded-lg p-4 mb-4">
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-                    {project.fileCount && (
+                    {(project.fileCount !== undefined && project.fileCount !== null) && (
                       <div className="text-center p-3 bg-background rounded border border-border">
                         {(() => {
                           // Get top 3 file types for display
@@ -1204,7 +1544,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         <div className="text-muted-foreground">Files</div>
                       </div>
                     )}
-                    {project.directoryCount && (
+                    {(project.directoryCount !== undefined && project.directoryCount !== null) && (
                       <div className="text-center p-3 bg-background rounded border border-border">
                         <Folder className="w-4 h-4 mx-auto mb-1 text-orange-500" />
                         <div className="font-medium text-foreground">{project.directoryCount.toLocaleString()}</div>
@@ -1223,7 +1563,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         <div className="text-muted-foreground">Size</div>
                       </div>
                     )}
-                    {project.totalCommits && (
+                    {(project.totalCommits !== undefined && project.totalCommits !== null) && (
                       <div className="text-center p-3 bg-background rounded border border-border">
                         <Zap className="w-4 h-4 mx-auto mb-1 text-green-500" />
                         <div className="font-medium text-foreground">{project.totalCommits.toLocaleString()}</div>

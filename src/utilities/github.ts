@@ -160,6 +160,15 @@ export interface GitHubPullRequest {
   changed_files: number
 }
 
+export interface GitHubBranch {
+  name: string
+  commit: {
+    sha: string
+    url: string
+  }
+  protected: boolean
+}
+
 export interface GitHubStats {
   issues: {
     total: number
@@ -187,6 +196,7 @@ export interface GitHubRepoStats {
   packageJson: any | null
   linesOfCode?: number
   stats: GitHubStats
+  branches?: GitHubBranch[]
 }
 
 /**
@@ -366,6 +376,31 @@ export async function fetchGitHubLatestRelease(owner: string, repo: string): Pro
   } catch (error) {
     console.error(`Error fetching latest release for ${owner}/${repo}:`, error)
     return null
+  }
+}
+
+/**
+ * Fetch repository branches from GitHub API
+ */
+export async function fetchGitHubBranches(owner: string, repo: string): Promise<GitHubBranch[]> {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100`,
+      createGitHubFetchOptions()
+    )
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        console.warn(`Repository ${owner}/${repo} not found`)
+        return []
+      }
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error(`Error fetching branches for ${owner}/${repo}:`, error)
+    return []
   }
 }
 
@@ -736,10 +771,11 @@ export async function fetchCompleteGitHubData(githubUrl: string): Promise<GitHub
   try {
     // Fetch essential data first (batch 1 - most important)
     console.log(`Fetching essential GitHub data for ${owner}/${repo}...`)
-    const [repository, languages, fileTree] = await Promise.all([
+    const [repository, languages, fileTree, branches] = await Promise.all([
       fetchGitHubRepository(owner, repo),
       fetchGitHubLanguages(owner, repo),
       fetchGitHubFileTree(owner, repo),
+      fetchGitHubBranches(owner, repo),
     ])
     
     // Small delay before next batch
@@ -782,6 +818,7 @@ export async function fetchCompleteGitHubData(githubUrl: string): Promise<GitHub
       packageJson,
       linesOfCode,
       stats,
+      branches: branches || [],
     }
   } catch (error) {
     console.error(`Error fetching complete GitHub data for ${githubUrl}:`, error)

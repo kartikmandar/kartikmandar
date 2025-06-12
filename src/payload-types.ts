@@ -775,6 +775,10 @@ export interface ProjectsShowcaseBlock {
 export interface Project {
   id: number;
   /**
+   * Order for displaying projects (lower numbers appear first)
+   */
+  displayOrder?: number | null;
+  /**
    * The main title of your project
    */
   title: string;
@@ -1106,6 +1110,17 @@ export interface Project {
      */
     downloadCount?: number | null;
   };
+  /**
+   * Repository branches (auto-synced from GitHub)
+   */
+  branches?:
+    | {
+        name: string;
+        protected?: boolean | null;
+        commitSha?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   /**
    * Last time GitHub data was synchronized
    */
@@ -1582,6 +1597,7 @@ export interface PostsSelect<T extends boolean = true> {
  * via the `definition` "projects_select".
  */
 export interface ProjectsSelect<T extends boolean = true> {
+  displayOrder?: T;
   title?: T;
   shortDescription?: T;
   description?: T;
@@ -1717,6 +1733,14 @@ export interface ProjectsSelect<T extends boolean = true> {
         description?: T;
         htmlUrl?: T;
         downloadCount?: T;
+      };
+  branches?:
+    | T
+    | {
+        name?: T;
+        protected?: T;
+        commitSha?: T;
+        id?: T;
       };
   lastGitHubSync?: T;
   featured?: T;

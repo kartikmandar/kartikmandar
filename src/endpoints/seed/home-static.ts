@@ -7,11 +7,10 @@ export const getHomePageWithProjects = async (): Promise<RequiredDataFromCollect
   try {
     const payload = await getPayload({ config: configPromise })
     
-    // Fetch all projects (show both draft and published for development)
+    // Fetch all projects sorted by display order (nulls last, then by creation date)
     const projects = await payload.find({
       collection: 'projects',
-      limit: 6,
-      sort: '-createdAt',
+      sort: 'displayOrder,-createdAt',
     })
 
     return {
@@ -20,14 +19,14 @@ export const getHomePageWithProjects = async (): Promise<RequiredDataFromCollect
         {
           blockName: 'Featured Projects',
           blockType: 'projectsShowcase',
-          title: 'Featured Projects',
-          subtitle: 'Discover our latest work showcasing innovation, technical excellence, and creative problem-solving',
+          title: 'My Projects',
+          subtitle: '',
           projects: projects.docs,
           layout: 'grid-3',
-          showViewAllButton: true,
+          showViewAllButton: false,
           viewAllButtonText: 'View All Projects',
           viewAllButtonUrl: '/projects',
-          maxProjects: 6,
+          maxProjects: projects.docs.length,
         },
       ],
     }
@@ -133,7 +132,7 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
       showViewAllButton: true,
       viewAllButtonText: 'View All Projects',
       viewAllButtonUrl: '/projects',
-      maxProjects: 6,
+      maxProjects: 0,
     },
   ],
 }
