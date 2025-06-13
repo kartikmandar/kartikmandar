@@ -261,6 +261,14 @@ export const Projects: CollectionConfig<'projects'> = {
           },
         },
         {
+          name: 'readmeIsMarkdown',
+          type: 'checkbox',
+          admin: {
+            description: 'Whether the README is in Markdown format (auto-detected)',
+            readOnly: true,
+          },
+        },
+        {
           name: 'totalCommits',
           type: 'number',
           admin: {
@@ -398,6 +406,7 @@ export const Projects: CollectionConfig<'projects'> = {
               options: [
                 { label: 'File', value: 'blob' },
                 { label: 'Directory', value: 'tree' },
+                { label: 'Submodule', value: 'commit' },
               ],
               required: true,
             },

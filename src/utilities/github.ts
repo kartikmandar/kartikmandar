@@ -72,7 +72,7 @@ export interface GitHubTree {
   tree: Array<{
     path: string
     mode: string
-    type: 'blob' | 'tree'
+    type: 'blob' | 'tree' | 'commit'
     sha: string
     size?: number
     url: string
@@ -192,7 +192,7 @@ export interface GitHubRepoStats {
   latestRelease: GitHubRelease | null
   totalCommits: number
   fileTree: GitHubTree | null
-  readme: string | null
+  readme: { content: string; isMarkdown: boolean } | null
   packageJson: any | null
   linesOfCode?: number
   stats: GitHubStats
@@ -229,11 +229,11 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
 /**
  * Create authenticated fetch options for GitHub API
  */
-function createGitHubFetchOptions(): RequestInit {
+function createGitHubFetchOptions(customAccept?: string): RequestInit {
   const token = process.env.GITHUB_TOKEN
   
   const headers: Record<string, string> = {
-    'Accept': 'application/vnd.github.v3+json',
+    'Accept': customAccept || 'application/vnd.github.v3+json',
     'User-Agent': 'Payload-CMS-GitHub-Integration',
   }
   
@@ -469,25 +469,55 @@ export async function fetchGitHubCommitCount(owner: string, repo: string): Promi
 }
 
 /**
- * Fetch README content from repository
+ * Fetch README content from repository as rendered HTML
+ * This supports all markup formats including Markdown, RST, and others
  */
-export async function fetchGitHubReadme(owner: string, repo: string): Promise<string | null> {
+export async function fetchGitHubReadme(owner: string, repo: string): Promise<{ content: string; isMarkdown: boolean } | null> {
   try {
-    const response = await fetch(
+    // First fetch the README metadata to check file extension
+    const metaResponse = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/readme`,
       createGitHubFetchOptions()
     )
     
-    if (!response.ok) {
-      if (response.status === 404) {
+    if (!metaResponse.ok) {
+      if (metaResponse.status === 404) {
         return null // No README found
       }
-      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
+      throw new Error(`GitHub API error: ${metaResponse.status} ${metaResponse.statusText}`)
     }
     
-    const data = await response.json()
-    // Decode base64 content
-    return Buffer.from(data.content, 'base64').toString('utf-8')
+    const metadata = await metaResponse.json()
+    const filename = metadata.name?.toLowerCase() || ''
+    const isMarkdown = filename.endsWith('.md') || filename.endsWith('.markdown')
+    
+    if (isMarkdown) {
+      // For Markdown files, fetch raw content
+      const rawResponse = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/readme`,
+        createGitHubFetchOptions('application/vnd.github.raw')
+      )
+      
+      if (!rawResponse.ok) {
+        throw new Error(`GitHub API error: ${rawResponse.status} ${rawResponse.statusText}`)
+      }
+      
+      const rawContent = await rawResponse.text()
+      return { content: rawContent, isMarkdown: true }
+    } else {
+      // For RST and other files, fetch rendered HTML
+      const htmlResponse = await fetch(
+        `https://api.github.com/repos/${owner}/${repo}/readme`,
+        createGitHubFetchOptions('application/vnd.github.html+json')
+      )
+      
+      if (!htmlResponse.ok) {
+        throw new Error(`GitHub API error: ${htmlResponse.status} ${htmlResponse.statusText}`)
+      }
+      
+      const htmlContent = await htmlResponse.text()
+      return { content: htmlContent, isMarkdown: false }
+    }
   } catch (error) {
     console.error(`Error fetching README for ${owner}/${repo}:`, error)
     return null

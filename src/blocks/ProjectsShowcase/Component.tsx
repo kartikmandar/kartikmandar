@@ -66,6 +66,7 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
     project.problemSolving = payloadProject.projectDetails.problemSolving || undefined
     project.futureWork = payloadProject.projectDetails.futureWork || undefined
     project.readme = payloadProject.projectDetails.readme || undefined
+    project.readmeIsMarkdown = payloadProject.projectDetails.readmeIsMarkdown || false
     
     // Add GitHub synced data
     project.totalCommits = payloadProject.projectDetails.totalCommits || undefined

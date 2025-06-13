@@ -199,3 +199,96 @@ html[data-theme='light'] {
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+/* GitHub rendered README content styles */
+.readme-content {
+  /* Ensure proper styling for GitHub rendered HTML */
+  @apply text-foreground;
+}
+
+.readme-content h1,
+.readme-content h2,
+.readme-content h3,
+.readme-content h4,
+.readme-content h5,
+.readme-content h6 {
+  @apply font-semibold text-foreground mt-6 mb-4 first:mt-0;
+}
+
+.readme-content h1 {
+  @apply text-2xl border-b border-border pb-2;
+}
+
+.readme-content h2 {
+  @apply text-xl border-b border-border pb-2;
+}
+
+.readme-content h3 {
+  @apply text-lg;
+}
+
+.readme-content h4 {
+  @apply text-base;
+}
+
+.readme-content p {
+  @apply mb-4 text-foreground leading-relaxed;
+}
+
+.readme-content a {
+  @apply text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 underline;
+}
+
+.readme-content ul,
+.readme-content ol {
+  @apply mb-4 ml-6;
+}
+
+.readme-content ul {
+  @apply list-disc;
+}
+
+.readme-content ol {
+  @apply list-decimal;
+}
+
+.readme-content li {
+  @apply mb-1;
+}
+
+.readme-content pre {
+  @apply bg-muted p-4 rounded border overflow-x-auto text-sm;
+}
+
+.readme-content code {
+  @apply bg-muted px-1 py-0.5 rounded text-sm;
+}
+
+.readme-content pre code {
+  @apply bg-transparent p-0;
+}
+
+.readme-content blockquote {
+  @apply border-l-4 border-border pl-4 italic text-muted-foreground mb-4;
+}
+
+.readme-content table {
+  @apply w-full border-collapse mb-4;
+}
+
+.readme-content th,
+.readme-content td {
+  @apply border border-border px-3 py-2 text-left;
+}
+
+.readme-content th {
+  @apply bg-muted font-semibold;
+}
+
+.readme-content img {
+  @apply max-w-full h-auto rounded border border-border mb-4;
+}
+
+.readme-content hr {
+  @apply border-border my-6;
+}

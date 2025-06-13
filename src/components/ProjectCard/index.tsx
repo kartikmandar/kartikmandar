@@ -51,6 +51,12 @@ import {
 import { Media } from '@/components/Media'
 // import useClickableCard from '@/utilities/useClickableCard'
 
+// Utility function to generate heading IDs from text
+const generateHeadingId = (children: React.ReactNode): string => {
+  const text = typeof children === 'string' ? children : Array.isArray(children) ? children.join('') : ''
+  return text.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+}
+
 // Utility function to get file icon based on extension
 const getFileIcon = (filename: string) => {
   const ext = filename.toLowerCase().split('.').pop()
@@ -594,13 +600,14 @@ export interface Project {
   }>
   fileTree?: Array<{
     path: string
-    type: 'blob' | 'tree'
+    type: 'blob' | 'tree' | 'commit'
     size?: number
     url: string
   }>
   createdAt?: string
   updatedAt?: string
   readme?: string
+  readmeIsMarkdown?: boolean
   architecture?: string
   problemSolving?: string
   usageGuide?: string
@@ -784,7 +791,9 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         {project.coverImage ? (
           <Media 
             resource={project.coverImage} 
-            className="w-full h-full object-cover"
+            imgClassName="object-cover object-center"
+            className="w-full h-full bg-muted/20"
+            fill={true}
             alt={project.title}
           />
         ) : (
@@ -1331,8 +1340,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                   Contributors ({project.contributors.length})
                 </h3>
                 <div className="bg-muted rounded-lg p-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {project.contributors.slice(0, 6).map((contributor, index) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto">
+                    {project.contributors.map((contributor, index) => (
                       <div key={index} className="flex items-center gap-3 p-2 bg-background rounded border border-border">
                         {contributor.avatarUrl ? (
                           <img 
@@ -1368,11 +1377,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         </div>
                       </div>
                     ))}
-                    {project.contributors.length > 6 && (
-                      <div className="flex items-center justify-center p-2 bg-background rounded border border-border text-muted-foreground">
-                        +{project.contributors.length - 6} more
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -1696,115 +1700,224 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
               <div>
                 <h3 className="text-lg font-semibold mb-3 text-foreground">README</h3>
                 <div className="bg-muted rounded-lg p-4 max-h-96 overflow-y-auto prose prose-sm prose-gray dark:prose-invert max-w-none">
-                  <ReactMarkdown
-                    components={{
-                      a: ({ href, children, ...props }) => {
-                        // Handle anchor links (table of contents)
-                        if (href?.startsWith('#')) {
-                          return (
-                            <a
-                              href={href}
-                              onClick={(e) => {
-                                e.preventDefault()
-                                const modalContent = e.currentTarget.closest('.prose')
-                                if (modalContent) {
+                  {project.readmeIsMarkdown === true ? (
+                    // Render Markdown files with ReactMarkdown
+                    <ReactMarkdown
+                      components={{
+                        a: ({ href, children, ...props }) => {
+                          // Handle different types of links
+                          if (href?.startsWith('#')) {
+                            // Internal anchor links - smooth scroll within the README
+                            return (
+                              <a
+                                href={href}
+                                onClick={(e) => {
+                                  e.preventDefault()
+                                  const targetId = href.slice(1)
                                   // Try multiple selector strategies
-                                  const selectors = [
-                                    href, // Original href like #section-name
-                                    `[id="${href.slice(1)}"]`, // Match exact id
-                                    `h1:has-text("${children}")`, // Find heading with matching text
-                                    `h2:has-text("${children}")`,
-                                    `h3:has-text("${children}")`,
-                                    `h4:has-text("${children}")`,
-                                    `h5:has-text("${children}")`,
-                                    `h6:has-text("${children}")`
-                                  ]
+                                  let targetElement = document.getElementById(targetId)
                                   
-                                  let target = null
-                                  for (const selector of selectors) {
-                                    try {
-                                      target = modalContent.querySelector(selector)
-                                      if (target) break
-                                    } catch (e) {
-                                      // Continue to next selector if this one fails
+                                  // If not found by ID, try finding by heading text
+                                  if (!targetElement) {
+                                    const headings = Array.from(document.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+                                    targetElement = headings.find(heading => {
+                                      const text = heading.textContent?.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '')
+                                      return text === targetId || heading.id === targetId
+                                    }) as HTMLElement
+                                  }
+                                  
+                                  if (targetElement) {
+                                    // Scroll within the README container
+                                    const readmeContainer = targetElement.closest('.prose')
+                                    if (readmeContainer) {
+                                      const containerRect = readmeContainer.getBoundingClientRect()
+                                      const elementRect = targetElement.getBoundingClientRect()
+                                      const scrollTop = readmeContainer.scrollTop + (elementRect.top - containerRect.top) - 20
+                                      
+                                      readmeContainer.scrollTo({
+                                        top: scrollTop,
+                                        behavior: 'smooth'
+                                      })
+                                    } else {
+                                      targetElement.scrollIntoView({ behavior: 'smooth' })
                                     }
                                   }
-                                  
-                                  // Fallback: find heading by text content
-                                  if (!target && typeof children === 'string') {
-                                    const headings = modalContent.querySelectorAll('h1, h2, h3, h4, h5, h6')
-                                    target = Array.from(headings).find(h => 
-                                      h.textContent?.toLowerCase().includes(children.toLowerCase())
-                                    )
-                                  }
-                                  
-                                  if (target) {
-                                    target.scrollIntoView({ behavior: 'smooth', block: 'start' })
-                                  } else {
-                                    console.log('Target not found for:', href, children)
-                                  }
-                                }
-                              }}
-                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+                                }}
+                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+                                {...props}
+                              >
+                                {children}
+                              </a>
+                            )
+                          }
+                          
+                          // Handle relative links - convert to GitHub URLs
+                          let finalHref = href
+                          if (href && !href.startsWith('http') && !href.startsWith('mailto:') && project.links?.githubUrl) {
+                            const githubUrl = project.links.githubUrl
+                            const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
+                            if (repoMatch) {
+                              const [, owner, repo] = repoMatch
+                              finalHref = `https://github.com/${owner}/${repo}/blob/main/${href.startsWith('./') ? href.slice(2) : href}`
+                            }
+                          }
+
+                          return (
+                            <a
+                              href={finalHref}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
                               {...props}
                             >
                               {children}
                             </a>
                           )
+                        },
+                        h1: ({ children, ...props }) => <h1 id={generateHeadingId(children)} {...props}>{children}</h1>,
+                        h2: ({ children, ...props }) => <h2 id={generateHeadingId(children)} {...props}>{children}</h2>,
+                        h3: ({ children, ...props }) => <h3 id={generateHeadingId(children)} {...props}>{children}</h3>,
+                        h4: ({ children, ...props }) => <h4 id={generateHeadingId(children)} {...props}>{children}</h4>,
+                        h5: ({ children, ...props }) => <h5 id={generateHeadingId(children)} {...props}>{children}</h5>,
+                        h6: ({ children, ...props }) => <h6 id={generateHeadingId(children)} {...props}>{children}</h6>,
+                        img: ({ src, alt, ...props }) => {
+                          // Handle relative images - convert to GitHub raw URLs
+                          let finalSrc = src
+                          if (src && !src.startsWith('http') && project.links?.githubUrl) {
+                            const githubUrl = project.links.githubUrl
+                            const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
+                            if (repoMatch) {
+                              const [, owner, repo] = repoMatch
+                              finalSrc = `https://raw.githubusercontent.com/${owner}/${repo}/main/${src.startsWith('./') ? src.slice(2) : src}`
+                            }
+                          }
+                          
+                          return (
+                            <img
+                              src={finalSrc}
+                              alt={alt}
+                              className="max-w-full h-auto rounded border border-border"
+                              {...props}
+                            />
+                          )
                         }
-                        // External links open in new tab
-                        return (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
-                            {...props}
-                          >
-                            {children}
-                          </a>
-                        )
-                      },
-                      h1: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h1 id={id} {...props}>{children}</h1>
-                      },
-                      h2: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h2 id={id} {...props}>{children}</h2>
-                      },
-                      h3: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h3 id={id} {...props}>{children}</h3>
-                      },
-                      h4: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h4 id={id} {...props}>{children}</h4>
-                      },
-                      h5: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h5 id={id} {...props}>{children}</h5>
-                      },
-                      h6: ({ children, ...props }) => {
-                        const id = typeof children === 'string' 
-                          ? children.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
-                          : undefined
-                        return <h6 id={id} {...props}>{children}</h6>
-                      }
-                    }}
-                  >
-                    {project.readme}
-                  </ReactMarkdown>
+                      }}
+                    >
+                      {project.readme}
+                    </ReactMarkdown>
+                  ) : project.readmeIsMarkdown === false ? (
+                    // Render RST and other formats as HTML
+                    <div 
+                      dangerouslySetInnerHTML={{ 
+                        __html: project.readme
+                          ?.replace(/<a class="headerlink"[^>]*>.*?<\/a>/gi, '') // Remove headerlink anchors
+                          ?.replace(/¶/g, '') // Remove pilcrow symbols
+                          ?.replace(/§/g, '') // Remove section symbols
+                          ?.replace(/#\s*$/gm, '') // Remove trailing # symbols
+                          ?.replace(/\s+<\/h([1-6])>/g, '</h$1>') // Clean up whitespace before closing heading tags
+                        || ''
+                      }}
+                      className="readme-content [&_a]:text-blue-600 [&_a]:hover:text-blue-800 dark:[&_a]:text-blue-400 dark:[&_a]:hover:text-blue-300 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:border [&_img]:border-border [&_table]:border-collapse [&_table]:border [&_table]:border-border [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:p-2 [&_td]:border [&_td]:border-border [&_td]:p-2"
+                    />
+                  ) : (
+                    // Fallback for undefined readmeIsMarkdown - detect from content
+                    project.readme && (project.readme.startsWith('<') || project.readme.includes('</')) ? (
+                      // Looks like HTML, render as HTML
+                      <div 
+                        dangerouslySetInnerHTML={{ 
+                          __html: project.readme
+                            ?.replace(/<a class="headerlink"[^>]*>.*?<\/a>/gi, '') // Remove headerlink anchors
+                            ?.replace(/¶/g, '') // Remove pilcrow symbols
+                            ?.replace(/§/g, '') // Remove section symbols
+                            ?.replace(/#\s*$/gm, '') // Remove trailing # symbols
+                            ?.replace(/\s+<\/h([1-6])>/g, '</h$1>') // Clean up whitespace before closing heading tags
+                          || ''
+                        }}
+                        className="readme-content [&_a]:text-blue-600 [&_a]:hover:text-blue-800 dark:[&_a]:text-blue-400 dark:[&_a]:hover:text-blue-300 [&_img]:max-w-full [&_img]:h-auto [&_img]:rounded [&_img]:border [&_img]:border-border [&_table]:border-collapse [&_table]:border [&_table]:border-border [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:p-2 [&_td]:border [&_td]:border-border [&_td]:p-2"
+                      />
+                    ) : (
+                      // Assume Markdown for backward compatibility
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children, ...props }) => {
+                            // Handle different types of links
+                            if (href?.startsWith('#')) {
+                              // Internal anchor links - smooth scroll within the README
+                              return (
+                                <a
+                                  href={href}
+                                  onClick={(e) => {
+                                    e.preventDefault()
+                                    const targetId = href.slice(1)
+                                    const targetElement = document.getElementById(targetId)
+                                    if (targetElement) {
+                                      targetElement.scrollIntoView({ behavior: 'smooth' })
+                                    }
+                                  }}
+                                  className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 cursor-pointer"
+                                  {...props}
+                                >
+                                  {children}
+                                </a>
+                              )
+                            }
+                            
+                            // Handle relative links - convert to GitHub URLs
+                            let finalHref = href
+                            if (href && !href.startsWith('http') && !href.startsWith('mailto:') && project.links?.githubUrl) {
+                              const githubUrl = project.links.githubUrl
+                              const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
+                              if (repoMatch) {
+                                const [, owner, repo] = repoMatch
+                                finalHref = `https://github.com/${owner}/${repo}/blob/main/${href.startsWith('./') ? href.slice(2) : href}`
+                              }
+                            }
+                            
+                            return (
+                              <a
+                                href={finalHref}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                                {...props}
+                              >
+                                {children}
+                              </a>
+                            )
+                          },
+                          h1: ({ children, ...props }) => <h1 id={generateHeadingId(children)} {...props}>{children}</h1>,
+                          h2: ({ children, ...props }) => <h2 id={generateHeadingId(children)} {...props}>{children}</h2>,
+                          h3: ({ children, ...props }) => <h3 id={generateHeadingId(children)} {...props}>{children}</h3>,
+                          h4: ({ children, ...props }) => <h4 id={generateHeadingId(children)} {...props}>{children}</h4>,
+                          h5: ({ children, ...props }) => <h5 id={generateHeadingId(children)} {...props}>{children}</h5>,
+                          h6: ({ children, ...props }) => <h6 id={generateHeadingId(children)} {...props}>{children}</h6>,
+                          img: ({ src, alt, ...props }) => {
+                            // Handle relative images - convert to GitHub raw URLs
+                            let finalSrc = src
+                            if (src && !src.startsWith('http') && project.links?.githubUrl) {
+                              const githubUrl = project.links.githubUrl
+                              const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
+                              if (repoMatch) {
+                                const [, owner, repo] = repoMatch
+                                finalSrc = `https://raw.githubusercontent.com/${owner}/${repo}/main/${src.startsWith('./') ? src.slice(2) : src}`
+                              }
+                            }
+                            
+                            return (
+                              <img
+                                src={finalSrc}
+                                alt={alt}
+                                className="max-w-full h-auto rounded border border-border"
+                                {...props}
+                              />
+                            )
+                          }
+                        }}
+                      >
+                        {project.readme}
+                      </ReactMarkdown>
+                    )
+                  )}
                 </div>
               </div>
             )}
