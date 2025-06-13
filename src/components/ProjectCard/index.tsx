@@ -718,14 +718,14 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
           return (
             <span 
               key={index} 
-              className="px-3 py-1 bg-secondary text-secondary-foreground text-xs font-medium rounded-full"
+              className="px-3 py-1.5 bg-secondary text-secondary-foreground text-xs md:text-xs font-medium rounded-full min-h-[28px] flex items-center"
             >
               {techName}
             </span>
           )
         })}
         {remainingCount > 0 && (
-          <span className="px-3 py-1 bg-muted text-muted-foreground text-xs font-medium rounded-full">
+          <span className="px-3 py-1.5 bg-muted text-muted-foreground text-xs md:text-xs font-medium rounded-full min-h-[28px] flex items-center">
             +{remainingCount} more
           </span>
         )}
@@ -737,22 +737,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
     if (!project.links?.githubStats && !project.linesOfCode) return null
 
     return (
-      <div className="flex items-center gap-4 text-xs text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4 text-xs md:text-xs text-muted-foreground">
         {project.links?.githubStats && (
           <>
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3" />
+            <div className="flex items-center gap-1 min-h-[24px]">
+              <Star className="w-3 h-3 md:w-3 md:h-3" />
               <span>{(project.links.githubStats.stars || 0).toLocaleString()}</span>
             </div>
-            <div className="flex items-center gap-1">
-              <GitFork className="w-3 h-3" />
+            <div className="flex items-center gap-1 min-h-[24px]">
+              <GitFork className="w-3 h-3 md:w-3 md:h-3" />
               <span>{(project.links.githubStats.forks || 0).toLocaleString()}</span>
             </div>
           </>
         )}
         {project.linesOfCode && (
-          <div className="flex items-center gap-1">
-            <Code className="w-3 h-3" />
+          <div className="flex items-center gap-1 min-h-[24px]">
+            <Code className="w-3 h-3 md:w-3 md:h-3" />
             <span>{project.linesOfCode.toLocaleString()} lines</span>
           </div>
         )}
@@ -777,7 +777,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
       {/* Header Image */}
       <div 
         className={`relative bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5 overflow-hidden cursor-pointer ${
-          variant === 'compact' ? 'h-32' : variant === 'featured' ? 'h-64' : 'h-48'
+          variant === 'compact' ? 'h-24 md:h-32' : variant === 'featured' ? 'h-48 md:h-64' : 'h-40 md:h-48'
         }`}
         onClick={handleModalOpen}
       >
@@ -812,22 +812,22 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         )}
 
         {/* Action Icons */}
-        <div className="absolute top-4 right-4 flex gap-2">
+        <div className="absolute top-3 md:top-4 right-3 md:right-4 flex gap-2">
           {project.links?.githubUrl && (
             <a
               href={project.links.githubUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-900/80 dark:bg-white/90 backdrop-blur-md rounded-full p-2.5 shadow-lg border border-white/20 dark:border-gray-900/20 hover:bg-gray-800/90 dark:hover:bg-white transition-all duration-200 z-20 hover:scale-105"
+              className="bg-gray-900/80 dark:bg-white/90 backdrop-blur-md rounded-full p-3 md:p-2.5 shadow-lg border border-white/20 dark:border-gray-900/20 hover:bg-gray-800/90 dark:hover:bg-white transition-all duration-200 z-20 hover:scale-105 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
               aria-label="View GitHub repository"
             >
-              <Github className="w-4 h-4 text-white dark:text-gray-900" />
+              <Github className="w-4 h-4 md:w-4 md:h-4 text-white dark:text-gray-900" />
             </a>
           )}
           {project.publication && (
-            <div className="bg-orange-500/90 backdrop-blur-md rounded-full p-2.5 shadow-lg border border-white/20 hover:scale-105 transition-transform duration-200">
-              <Award className="w-4 h-4 text-white" />
+            <div className="bg-orange-500/90 backdrop-blur-md rounded-full p-3 md:p-2.5 shadow-lg border border-white/20 hover:scale-105 transition-transform duration-200 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center">
+              <Award className="w-4 h-4 md:w-4 md:h-4 text-white" />
             </div>
           )}
           {project.demoUrl && (
@@ -835,41 +835,41 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
               href={project.demoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-blue-500/90 backdrop-blur-md rounded-full p-2.5 shadow-lg border border-white/20 hover:bg-blue-600/90 transition-all duration-200 z-20 hover:scale-105"
+              className="bg-blue-500/90 backdrop-blur-md rounded-full p-3 md:p-2.5 shadow-lg border border-white/20 hover:bg-blue-600/90 transition-all duration-200 z-20 hover:scale-105 min-h-[44px] min-w-[44px] md:min-h-0 md:min-w-0 flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
               aria-label="View live demo"
             >
-              <ExternalLink className="w-4 h-4 text-white" />
+              <ExternalLink className="w-4 h-4 md:w-4 md:h-4 text-white" />
             </a>
           )}
         </div>
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="p-4 md:p-6">
         <div className="flex items-start justify-between mb-3">
           <div className="flex-1 min-w-0">
             <h3 
-              className="text-xl font-semibold text-foreground leading-tight mb-1 truncate cursor-pointer hover:text-primary transition-colors"
+              className="text-lg md:text-xl font-semibold text-foreground leading-tight mb-1 cursor-pointer hover:text-primary transition-colors line-clamp-2 md:truncate"
               onClick={handleModalOpen}
             >
               {project.title}
             </h3>
             {project.category && (
-              <span className="text-xs uppercase text-muted-foreground font-medium tracking-wide">
+              <span className="text-xs md:text-xs uppercase text-muted-foreground font-medium tracking-wide">
                 {project.category}
               </span>
             )}
           </div>
           <ChevronRight 
-            className={`w-5 h-5 text-muted-foreground transition-all duration-300 ml-2 flex-shrink-0 cursor-pointer hover:text-primary ${
+            className={`w-5 h-5 text-muted-foreground transition-all duration-300 ml-2 md:ml-2 flex-shrink-0 cursor-pointer hover:text-primary min-h-[44px] min-w-[44px] flex items-center justify-center md:min-h-0 md:min-w-0 ${
               isHovered ? 'translate-x-1' : ''
             }`}
             onClick={handleModalOpen}
           />
         </div>
         
-        <p className="text-muted-foreground text-sm leading-relaxed mb-4 overflow-hidden" style={{
+        <p className="text-muted-foreground text-sm md:text-sm leading-relaxed mb-4 overflow-hidden" style={{
           display: '-webkit-box',
           WebkitLineClamp: 3,
           WebkitBoxOrient: 'vertical' as const,
@@ -938,6 +938,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
 
   const handleClose = () => {
     setIsVisible(false)
+    // Restore body scroll immediately when closing starts
+    document.body.style.overflow = 'unset'
     setTimeout(() => onClose(), 200) // Wait for exit animation
   }
 
@@ -1064,7 +1066,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                   {/* Repository Dates */}
                   {(project.createdAt || project.updatedAt) && (
                     <div className="mt-4 pt-4 border-t border-border">
-                      <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
                         {project.createdAt && (
                           <div>
                             <div className="text-muted-foreground text-xs mb-1">Created</div>
@@ -1205,7 +1207,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         <span className="text-muted-foreground text-sm font-medium">Branches ({project.branches.length})</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-32 overflow-y-auto">
-                        {project.branches.slice(0, 10).map((branch, index) => (
+                        {project.branches.map((branch, index) => (
                           <div 
                             key={index}
                             className="flex items-center justify-between p-2 bg-background rounded border border-border text-sm"
@@ -1224,11 +1226,6 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             )}
                           </div>
                         ))}
-                        {project.branches.length > 10 && (
-                          <div className="flex items-center justify-center p-2 bg-muted text-muted-foreground text-sm rounded border border-border">
-                            +{project.branches.length - 10} more branches
-                          </div>
-                        )}
                       </div>
                     </div>
                   )}
@@ -1397,7 +1394,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         <AlertCircle className="w-4 h-4 text-orange-500" />
                         <h4 className="font-medium text-foreground">Issues</h4>
                       </div>
-                      <div className="grid grid-cols-3 gap-3 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
                         <div className="text-center p-2 bg-background rounded border border-border">
                           <AlertCircle className="w-3 h-3 mx-auto mb-1 text-orange-500" />
                           <div className="font-medium text-foreground">{project.githubIssues.total.toLocaleString()}</div>
@@ -1429,7 +1426,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         <GitPullRequest className="w-4 h-4 text-blue-500" />
                         <h4 className="font-medium text-foreground">Pull Requests</h4>
                       </div>
-                      <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
                         <div className="text-center p-2 bg-background rounded border border-border">
                           <GitPullRequest className="w-3 h-3 mx-auto mb-1 text-blue-500" />
                           <div className="font-medium text-foreground">{project.githubPullRequests.total.toLocaleString()}</div>
@@ -1483,7 +1480,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             )}
 
             {/* Repository Structure & Stats */}
-            {(project.fileCount > 0 || project.directoryCount > 0 || project.repositorySize || (project.fileTree && project.fileTree.length > 0)) && (
+            {((project.fileCount ?? 0) > 0 || (project.directoryCount ?? 0) > 0 || project.repositorySize || (project.fileTree && project.fileTree.length > 0)) && (
               <div>
                 <h3 className="text-lg font-semibold mb-3 flex items-center gap-2 text-foreground">
                   <FolderTree className="w-5 h-5" />
@@ -1608,7 +1605,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             return tree
                           }
                           
-                          const renderTree = (tree: any, depth = 0, isLast = true) => {
+                          const renderTree = (tree: any, depth = 0) => {
                             return Object.entries(tree).map(([name, node]: [string, any], index, array) => {
                               const isLastItem = index === array.length - 1
                               const indent = '  '.repeat(depth)
@@ -1632,7 +1629,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                                     )}
                                   </div>
                                   {Object.keys(node.children).length > 0 && (
-                                    <div>{renderTree(node.children, depth + 1, isLastItem)}</div>
+                                    <div>{renderTree(node.children, depth + 1)}</div>
                                   )}
                                 </div>
                               )
@@ -1871,13 +1868,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             {project.plots && project.plots.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold mb-3 text-foreground">Plots & Visualizations</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.plots.map((plot, index) => (
                     <div key={index} className="bg-muted rounded-lg p-2">
                       <img 
                         src={plot.url} 
                         alt={plot.alt || plot.caption} 
-                        className="w-full h-32 object-cover rounded border border-border" 
+                        className="w-full h-40 md:h-32 object-cover rounded border border-border" 
                       />
                       <p className="text-sm text-muted-foreground mt-2">{plot.caption}</p>
                     </div>
@@ -1889,7 +1886,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
             {project.images && project.images.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold mb-3 text-foreground">Project Images</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.images.map((image, index) => (
                     <div key={index} className="bg-muted rounded-lg p-2">
                       <img 
@@ -1949,7 +1946,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center z-50 p-4 transition-all duration-300 ease-out ${
+      className={`fixed inset-0 flex items-center justify-center z-40 p-2 md:p-4 transition-all duration-300 ease-out ${
         isVisible 
           ? 'bg-background/40 backdrop-blur-sm' 
           : 'bg-background/0 backdrop-blur-none'
@@ -1957,15 +1954,62 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
       onClick={handleBackdropClick}
     >
       <div 
-        className={`bg-card/60 backdrop-blur-xl border border-border/30 rounded-lg max-w-7xl w-full h-[90vh] flex shadow-2xl transition-all duration-300 ease-out ${
+        className={`bg-card/60 backdrop-blur-xl border border-border/30 rounded-lg max-w-7xl w-full h-[95vh] md:h-[90vh] flex flex-col md:flex-row shadow-2xl transition-all duration-300 ease-out overflow-hidden ${
           isVisible 
             ? 'opacity-100 scale-100 translate-y-0' 
             : 'opacity-0 scale-95 translate-y-4'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Left Sidebar with Tabs */}
-        <div className="w-64 bg-muted/10 backdrop-blur-md rounded-l-lg border-r border-border/30 flex flex-col">
+        {/* Mobile Header with Close Button */}
+        <div className="block md:hidden px-4 py-3 border-b border-border/30 bg-muted/5 backdrop-blur-md">
+          <div className="flex items-center">
+            <button 
+              onClick={handleCloseClick}
+              className="mr-3 p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center relative z-40"
+            >
+              <X className="w-5 h-5 text-muted-foreground" />
+            </button>
+            <div className="flex-1 min-w-0">
+              <h2 className="text-lg font-semibold text-foreground mb-1 truncate">{project.title}</h2>
+              <p className="text-sm text-muted-foreground leading-tight">
+                {project.shortDescription || project.description?.substring(0, 80) + "..."}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Horizontal Tabs */}
+        <div className="block md:hidden border-b border-border/30 bg-muted/5">
+          <nav className="px-2 py-2">
+            <div className="flex overflow-x-auto scrollbar-thin scrollbar-thumb-muted scrollbar-track-transparent gap-1">
+              {tabs.map((tab) => {
+                const Icon = tab.icon
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setActiveTab(tab.id)
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm transition-all whitespace-nowrap min-h-[44px] ${
+                      activeTab === tab.id
+                        ? 'bg-primary text-primary-foreground shadow-sm'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4 flex-shrink-0" />
+                    <span className="text-xs md:text-sm">{tab.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+          </nav>
+        </div>
+
+        {/* Desktop Left Sidebar with Tabs */}
+        <div className="hidden md:flex w-64 bg-muted/10 backdrop-blur-md rounded-l-lg border-r border-border/30 flex-col">
           {/* Header in Sidebar */}
           <div className="p-6 border-b border-border">
             <div className="flex items-start justify-between mb-4">
@@ -1977,7 +2021,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
               </div>
               <button 
                 onClick={handleCloseClick}
-                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors flex-shrink-0"
+                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors flex-shrink-0 relative z-40"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>
@@ -2013,17 +2057,17 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
         </div>
 
         {/* Main Content Area */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Content Header */}
-          <div className="px-8 py-6 border-b border-border/30 bg-muted/5 backdrop-blur-md">
+        <div className="flex-1 flex flex-col min-w-0 min-h-0">
+          {/* Desktop Content Header */}
+          <div className="hidden md:block px-8 py-6 border-b border-border/30 bg-muted/5 backdrop-blur-md">
             <h3 className="text-xl font-semibold text-foreground">
               {tabs.find(tab => tab.id === activeTab)?.label}
             </h3>
           </div>
 
           {/* Scrollable Content */}
-          <div className="flex-1 overflow-y-auto">
-            <div className="p-8">
+          <div className="flex-1 overflow-y-auto overscroll-contain min-h-0" style={{ WebkitOverflowScrolling: 'touch' }}>
+            <div className="p-4 md:p-8">
               {renderTabContent()}
             </div>
           </div>
