@@ -92,7 +92,8 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
         // Update project details with GitHub info
         projectDetails: {
           ...project.projectDetails,
-          readme,
+          readme: readme?.content || null,
+          readmeIsMarkdown: readme ? readme.isMarkdown : null,
           totalCommits,
           linesOfCode,
           contributors: contributors.slice(0, 10).map(c => ({

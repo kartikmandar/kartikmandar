@@ -900,6 +900,10 @@ export interface Project {
      */
     readme?: string | null;
     /**
+     * Whether the README is in Markdown format (auto-detected)
+     */
+    readmeIsMarkdown?: boolean | null;
+    /**
      * Total number of commits (auto-synced from GitHub)
      */
     totalCommits?: number | null;
@@ -966,7 +970,7 @@ export interface Project {
     fileTree?:
       | {
           path: string;
-          type: 'blob' | 'tree';
+          type: 'blob' | 'tree' | 'commit';
           size?: number | null;
           url?: string | null;
           id?: string | null;
@@ -1636,6 +1640,7 @@ export interface ProjectsSelect<T extends boolean = true> {
         problemSolving?: T;
         futureWork?: T;
         readme?: T;
+        readmeIsMarkdown?: T;
         totalCommits?: T;
         contributors?:
           | T
