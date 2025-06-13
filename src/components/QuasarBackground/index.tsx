@@ -744,7 +744,7 @@ export default function QuasarBackground() {
               fontFamily: 'sans-serif'
             }}
           >
-            Scroll down to see <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> fascinating stuff
+            Scroll down to glimpse into my <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> simple journey
           </div>
           <div
             style={{
