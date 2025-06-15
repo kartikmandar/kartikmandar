@@ -180,6 +180,16 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
   // Transform Payload projects to component projects
   const projects: Project[] = payloadProjects
     .filter((project): project is PayloadProject => typeof project === 'object' && project !== null)
+    .sort((a, b) => {
+      // Sort by displayOrder (ascending), then by createdAt (descending) for ties
+      const orderA = a.displayOrder ?? 999999
+      const orderB = b.displayOrder ?? 999999
+      if (orderA !== orderB) {
+        return orderA - orderB
+      }
+      // If displayOrder is the same, sort by createdAt (newest first)
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    })
     .slice(0, maxProjects)
     .map(transformPayloadProject)
 

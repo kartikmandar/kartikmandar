@@ -19,7 +19,6 @@ import { HorizontalRuleFeatureClient as HorizontalRuleFeatureClient_e70f5e05f09f
 import { BlocksFeatureClient as BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BulkSyncComponent as BulkSyncComponent_3e033bfc695bd7f9acbda6fe87c265e3 } from '@/fields/bulkSync/BulkSyncComponent'
 import { GitHubSyncComponent as GitHubSyncComponent_4f744e1ad0d94204a387a9f1d4e87efb } from '@/fields/githubSync/GitHubSyncComponent'
-// import { default as default_79b5c0f165ced99b0fd01ad733b2a3cb } from '../../../src/collections/Projects/components/SimpleBulkSync'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
@@ -48,7 +47,6 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#BlocksFeatureClient": BlocksFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@/fields/bulkSync/BulkSyncComponent#BulkSyncComponent": BulkSyncComponent_3e033bfc695bd7f9acbda6fe87c265e3,
   "@/fields/githubSync/GitHubSyncComponent#GitHubSyncComponent": GitHubSyncComponent_4f744e1ad0d94204a387a9f1d4e87efb,
-  // "/src/collections/Projects/components/SimpleBulkSync#default": default_79b5c0f165ced99b0fd01ad733b2a3cb,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
