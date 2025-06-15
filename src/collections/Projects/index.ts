@@ -24,6 +24,7 @@ export const Projects: CollectionConfig<'projects'> = {
     read: authenticatedOrPublished,
     update: authenticated,
   },
+  defaultSort: 'displayOrder',
   defaultPopulate: {
     title: true,
     slug: true,

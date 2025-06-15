@@ -17,6 +17,12 @@ export const getHomePageWithProjects = async (): Promise<RequiredDataFromCollect
       ...homeStatic,
       layout: [
         {
+          blockName: 'Cosmic Journey',
+          blockType: 'cosmicJourney',
+          title: 'A Cosmic Journey',
+          subtitle: 'The story of a path written in the stars.',
+        },
+        {
           blockName: 'Featured Projects',
           blockType: 'projectsShowcase',
           title: 'My Projects',
@@ -122,6 +128,12 @@ export const homeStatic: RequiredDataFromCollectionSlug<'pages'> = {
   },
   title: 'Home',
   layout: [
+    {
+      blockName: 'Cosmic Journey',
+      blockType: 'cosmicJourney',
+      title: 'A Cosmic Journey',
+      subtitle: 'The story of a path written in the stars.',
+    },
     {
       blockName: 'Featured Projects',
       blockType: 'projectsShowcase',

@@ -5,6 +5,7 @@ import type { Page } from '@/payload-types'
 import { ArchiveBlock } from '@/blocks/ArchiveBlock/Component'
 import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
+import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
@@ -12,6 +13,7 @@ import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
 const blockComponents = {
   archive: ArchiveBlock,
   content: ContentBlock,
+  cosmicJourney: CosmicJourney,
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
@@ -35,8 +37,11 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
+              // Remove default margin for CosmicJourney to seamlessly connect with QuasarBackground
+              const blockMargin = blockType === 'cosmicJourney' ? '' : 'my-16'
+              
               return (
-                <div className="my-16" key={index}>
+                <div className={blockMargin} key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
