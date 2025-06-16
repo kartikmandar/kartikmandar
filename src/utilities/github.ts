@@ -232,6 +232,13 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
 function createGitHubFetchOptions(customAccept?: string): RequestInit {
   const token = process.env.GITHUB_TOKEN
   
+  // Debug GitHub token configuration
+  if (!token) {
+    console.warn('⚠️  No GITHUB_TOKEN configured. Using unauthenticated requests (60/hour limit)')
+  } else {
+    console.log('✅ GitHub token configured for API requests')
+  }
+  
   const headers: Record<string, string> = {
     'Accept': customAccept || 'application/vnd.github.v3+json',
     'User-Agent': 'Payload-CMS-GitHub-Integration',
@@ -297,10 +304,20 @@ export async function fetchGitHubRepository(owner: string, repo: string): Promis
         console.warn(`Repository ${owner}/${repo} not found`)
         return null
       }
+      console.error(`GitHub API error for ${owner}/${repo}: ${response.status} ${response.statusText}`)
       throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
     }
     
-    return await response.json()
+    const data = await response.json()
+    console.log(`GitHub repo data for ${owner}/${repo}:`, {
+      stars: data.stargazers_count,
+      forks: data.forks_count,
+      watchers: data.watchers_count,
+      language: data.language,
+      size: data.size
+    })
+    
+    return data
   } catch (error) {
     console.error(`Error fetching repository ${owner}/${repo}:`, error)
     return null

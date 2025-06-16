@@ -11,6 +11,15 @@ export const getHomePageWithProjects = async (): Promise<RequiredDataFromCollect
     const projects = await payload.find({
       collection: 'projects',
       sort: 'displayOrder,-createdAt',
+      limit: 100, // Ensure we get all projects (default might be 10)
+      draft: false, // Only get published projects
+      pagination: false, // Disable pagination to get all results
+    })
+
+    console.log('Home page projects fetched:', {
+      totalProjects: projects.totalDocs,
+      projectTitles: projects.docs.map(p => p.title),
+      projectCount: projects.docs.length
     })
 
     return {

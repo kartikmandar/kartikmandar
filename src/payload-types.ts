@@ -70,6 +70,7 @@ export interface Config {
     pages: Page;
     posts: Post;
     projects: Project;
+    talks: Talk;
     media: Media;
     categories: Category;
     users: User;
@@ -87,6 +88,7 @@ export interface Config {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    talks: TalksSelect<false> | TalksSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -763,9 +765,13 @@ export interface ProjectsShowcaseBlock {
    */
   subtitle?: string | null;
   /**
-   * Select projects to display in this showcase
+   * Show all published projects automatically (ignores manual selection below)
    */
-  projects: (number | Project)[];
+  showAllProjects?: boolean | null;
+  /**
+   * Manually select specific projects to display (only used if "Show all projects" is unchecked)
+   */
+  projects?: (number | Project)[] | null;
   /**
    * Only show projects marked as "featured"
    */
@@ -1181,6 +1187,358 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "talks".
+ */
+export interface Talk {
+  id: number;
+  /**
+   * Order for displaying talks (lower numbers appear first)
+   */
+  displayOrder?: number | null;
+  /**
+   * The title of your talk/presentation
+   */
+  title: string;
+  /**
+   * Brief description shown on talk cards (optional)
+   */
+  shortDescription?: string | null;
+  /**
+   * Detailed abstract/description of the talk content
+   */
+  abstract: string;
+  /**
+   * Type of speaking engagement
+   */
+  talkType?: ('keynote' | 'workshop' | 'panel' | 'lightning' | 'presentation' | 'tutorial' | 'demo' | 'poster') | null;
+  /**
+   * Duration of the talk in minutes
+   */
+  duration?: number | null;
+  /**
+   * Language of the presentation
+   */
+  language?: ('english' | 'spanish' | 'french' | 'german' | 'portuguese' | 'other') | null;
+  /**
+   * Technical level of the intended audience
+   */
+  audienceLevel?: ('beginner' | 'intermediate' | 'advanced' | 'mixed') | null;
+  /**
+   * Description of the intended audience and their background
+   */
+  targetAudience?: string | null;
+  /**
+   * Main image/thumbnail for the talk
+   */
+  coverImage?: (number | null) | Media;
+  /**
+   * Details about the event and venue
+   */
+  eventDetails: {
+    /**
+     * Name of the conference, meetup, or event
+     */
+    eventName: string;
+    /**
+     * Type of event where you are speaking
+     */
+    eventType?:
+      | (
+          | 'conference'
+          | 'meetup'
+          | 'workshop'
+          | 'webinar'
+          | 'symposium'
+          | 'hackathon'
+          | 'university'
+          | 'corporate'
+          | 'other'
+        )
+      | null;
+    /**
+     * Venue name, address, or virtual platform details
+     */
+    venue?: string | null;
+    /**
+     * Official event website URL
+     */
+    eventWebsite?: string | null;
+    /**
+     * Organization or company hosting the event
+     */
+    eventOrganizer?: string | null;
+    /**
+     * Brief description of the event context
+     */
+    eventDescription?: string | null;
+    /**
+     * City where the event takes place
+     */
+    city?: string | null;
+    /**
+     * Country where the event takes place
+     */
+    country?: string | null;
+  };
+  /**
+   * Scheduling and status information
+   */
+  scheduling: {
+    /**
+     * Date when the talk will occur or occurred
+     */
+    talkDate: string;
+    /**
+     * Specific time of the talk (e.g., "2:30 PM - 3:15 PM")
+     */
+    talkTime?: string | null;
+    /**
+     * Timezone for the event (e.g., "EST", "PST", "UTC+1")
+     */
+    timezone?: string | null;
+    /**
+     * Current status of the talk
+     */
+    talkStatus: 'upcoming' | 'completed' | 'cancelled' | 'postponed';
+    /**
+     * Link for people to register or attend the talk
+     */
+    registrationUrl?: string | null;
+  };
+  /**
+   * Presentation materials and resources
+   */
+  materials?: {
+    /**
+     * Presentation slides (PDF, PowerPoint, etc.)
+     */
+    slides?: (number | null) | Media;
+    /**
+     * URL to video recording (YouTube, Vimeo, etc.)
+     */
+    videoRecording?: string | null;
+    /**
+     * URL to audio recording (podcast, etc.)
+     */
+    audioRecording?: string | null;
+    /**
+     * URL for live streaming the talk
+     */
+    liveStreamUrl?: string | null;
+    /**
+     * Links to demos, examples, or interactive content
+     */
+    demoLinks?:
+      | {
+          title: string;
+          url: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Related GitHub repositories or code examples
+     */
+    codeRepositories?:
+      | {
+          title: string;
+          url: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Additional resources and reference materials
+     */
+    resources?:
+      | {
+          title: string;
+          url: string;
+          type?: ('article' | 'documentation' | 'tool' | 'library' | 'tutorial' | 'other') | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Downloadable materials and handouts
+     */
+    handouts?:
+      | {
+          title: string;
+          file: number | Media;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Main topics and themes covered in the talk
+   */
+  topics?:
+    | {
+        topic: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Technologies, tools, or frameworks discussed
+   */
+  technologies?:
+    | {
+        technology: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Keywords for search optimization and categorization
+   */
+  keywords?:
+    | {
+        keyword: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * What the audience should know beforehand
+   */
+  prerequisites?: string | null;
+  /**
+   * What attendees will learn from this talk
+   */
+  learningOutcomes?: string | null;
+  /**
+   * Collaboration and speaker details
+   */
+  collaboration?: {
+    /**
+     * Co-presenters and collaborators
+     */
+    coSpeakers?:
+      | {
+          name: string;
+          title?: string | null;
+          company?: string | null;
+          bio?: string | null;
+          linkedinUrl?: string | null;
+          twitterUrl?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Which track or session within the event
+     */
+    trackSession?: string | null;
+    /**
+     * Acceptance rate percentage (if competitive CFP)
+     */
+    acceptanceRate?: number | null;
+    /**
+     * Was this talk peer-reviewed or academically vetted?
+     */
+    peerReviewed?: boolean | null;
+    /**
+     * Were you invited to speak (vs. applying through CFP)?
+     */
+    invitedSpeaker?: boolean | null;
+  };
+  /**
+   * Professional and business details
+   */
+  professional?: {
+    /**
+     * Did you receive payment for this speaking engagement?
+     */
+    honorarium?: boolean | null;
+    /**
+     * Was travel/accommodation sponsored by the event?
+     */
+    travelSponsored?: boolean | null;
+    /**
+     * Speaker bio used for this specific event
+     */
+    speakerBio?: string | null;
+    /**
+     * Speaker photo used for event promotion
+     */
+    speakerPhoto?: (number | null) | Media;
+  };
+  /**
+   * Media, photos, and documentation
+   */
+  media?: {
+    /**
+     * Photos from the event or presentation
+     */
+    eventPhotos?:
+      | {
+          image: number | Media;
+          caption: string;
+          photographer?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Related social media posts and mentions
+     */
+    socialMediaPosts?:
+      | {
+          platform: 'twitter' | 'linkedin' | 'instagram' | 'facebook' | 'other';
+          url: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Blog posts written about or related to the talk
+     */
+    blogPosts?:
+      | {
+          title: string;
+          url: string;
+          author?: string | null;
+          publishedDate?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Press coverage and media mentions
+     */
+    pressCoverage?:
+      | {
+          title: string;
+          publication: string;
+          url: string;
+          publishedDate?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  /**
+   * Show this talk in featured sections
+   */
+  featured?: boolean | null;
+  /**
+   * When this talk information was published
+   */
+  publishedAt?: string | null;
+  slug?: string | null;
+  slugLock?: boolean | null;
+  /**
+   * Search engine optimization settings
+   */
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1362,6 +1720,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'talks';
+        value: number | Talk;
       } | null)
     | ({
         relationTo: 'media';
@@ -1592,6 +1954,7 @@ export interface ProjectsShowcaseBlockSelect<T extends boolean = true> {
   blockName?: T;
   title?: T;
   subtitle?: T;
+  showAllProjects?: T;
   projects?: T;
   showFeaturedOnly?: T;
   maxProjects?: T;
@@ -1784,6 +2147,182 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   lastGitHubSync?: T;
+  featured?: T;
+  publishedAt?: T;
+  slug?: T;
+  slugLock?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        image?: T;
+        description?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "talks_select".
+ */
+export interface TalksSelect<T extends boolean = true> {
+  displayOrder?: T;
+  title?: T;
+  shortDescription?: T;
+  abstract?: T;
+  talkType?: T;
+  duration?: T;
+  language?: T;
+  audienceLevel?: T;
+  targetAudience?: T;
+  coverImage?: T;
+  eventDetails?:
+    | T
+    | {
+        eventName?: T;
+        eventType?: T;
+        venue?: T;
+        eventWebsite?: T;
+        eventOrganizer?: T;
+        eventDescription?: T;
+        city?: T;
+        country?: T;
+      };
+  scheduling?:
+    | T
+    | {
+        talkDate?: T;
+        talkTime?: T;
+        timezone?: T;
+        talkStatus?: T;
+        registrationUrl?: T;
+      };
+  materials?:
+    | T
+    | {
+        slides?: T;
+        videoRecording?: T;
+        audioRecording?: T;
+        liveStreamUrl?: T;
+        demoLinks?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+              description?: T;
+              id?: T;
+            };
+        codeRepositories?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+              description?: T;
+              id?: T;
+            };
+        resources?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+              type?: T;
+              id?: T;
+            };
+        handouts?:
+          | T
+          | {
+              title?: T;
+              file?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  topics?:
+    | T
+    | {
+        topic?: T;
+        id?: T;
+      };
+  technologies?:
+    | T
+    | {
+        technology?: T;
+        id?: T;
+      };
+  keywords?:
+    | T
+    | {
+        keyword?: T;
+        id?: T;
+      };
+  prerequisites?: T;
+  learningOutcomes?: T;
+  collaboration?:
+    | T
+    | {
+        coSpeakers?:
+          | T
+          | {
+              name?: T;
+              title?: T;
+              company?: T;
+              bio?: T;
+              linkedinUrl?: T;
+              twitterUrl?: T;
+              id?: T;
+            };
+        trackSession?: T;
+        acceptanceRate?: T;
+        peerReviewed?: T;
+        invitedSpeaker?: T;
+      };
+  professional?:
+    | T
+    | {
+        honorarium?: T;
+        travelSponsored?: T;
+        speakerBio?: T;
+        speakerPhoto?: T;
+      };
+  media?:
+    | T
+    | {
+        eventPhotos?:
+          | T
+          | {
+              image?: T;
+              caption?: T;
+              photographer?: T;
+              id?: T;
+            };
+        socialMediaPosts?:
+          | T
+          | {
+              platform?: T;
+              url?: T;
+              description?: T;
+              id?: T;
+            };
+        blogPosts?:
+          | T
+          | {
+              title?: T;
+              url?: T;
+              author?: T;
+              publishedDate?: T;
+              id?: T;
+            };
+        pressCoverage?:
+          | T
+          | {
+              title?: T;
+              publication?: T;
+              url?: T;
+              publishedDate?: T;
+              id?: T;
+            };
+      };
   featured?: T;
   publishedAt?: T;
   slug?: T;
