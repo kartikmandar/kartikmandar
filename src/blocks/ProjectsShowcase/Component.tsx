@@ -204,7 +204,7 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
   // If no projects, show fallback content
   if (projects.length === 0) {
     return (
-      <div className="container my-16">
+      <div id="my-projects" className="container my-16">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             {title}
@@ -222,7 +222,7 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
 
   return (
     <>
-      <div className="container my-16">
+      <div id="my-projects" className="container my-16">
         <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             {title}

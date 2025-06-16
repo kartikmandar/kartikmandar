@@ -241,7 +241,7 @@ export function Footer() {
   const navItems = [
     { label: 'Home', url: '/' },
     { label: 'CV', url: '/404' },
-    { label: 'Projects', url: '/404' },
+    { label: 'Projects', url: '/#my-projects' },
     { label: 'GSoC 2024', url: '/404' },
     { label: 'GSoC 2025', url: '/404' },
     { label: 'Talks', url: '/404' },
@@ -290,9 +290,9 @@ export function Footer() {
   
   // Blog posts
   const blogPosts = [
-    { label: 'GSoC 2024 Journey', url: '#' },
-    { label: 'GSoC 2025 Adventure', url: '#' },
-    { label: 'Life of an Academia Student', url: '#' }
+    { label: 'GSoC 2024 Journey', url: 'https://gsoc2024.blogspot.com/' },
+    { label: 'GSoC 2025 Adventure', url: 'https://gsoc2025.blogspot.com/' },
+    { label: 'Life of an Academia Student', url: '/life-of-an-academia-student' }
   ]
   
   // Soft skills
@@ -304,13 +304,10 @@ export function Footer() {
   
   // Resources
   const resources = [
-    { label: 'Research Projects', url: '#' },
+    { label: 'Projects', url: '/#my-projects' },
     { label: 'Talks', url: '#' },
     { label: 'Posters', url: '#' },
-    { label: 'Open Source', url: '#' },
-    { label: 'Projects', url: '#' },
     { label: 'Courses/Labs', url: '#' },
-    { label: 'Code Repositories', url: '#' },
     { label: 'Clubs', url: '#' },
     { label: 'Common Resources', url: '/common-resources' }
   ]
@@ -424,12 +421,12 @@ export function Footer() {
             <ul className="space-y-2 mb-4 sm:mb-6">
               {blogPosts.map((post, index) => (
                 <li key={index}>
-                  <a 
+                  <Link 
                     href={post.url} 
                     className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {post.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -438,12 +435,12 @@ export function Footer() {
             <ul className="space-y-2 mb-4 sm:mb-6">
               {technicalSkills.map((skill, index) => (
                 <li key={index}>
-                  <a 
+                  <Link 
                     href={skill.url} 
                     className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {skill.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -452,12 +449,12 @@ export function Footer() {
             <ul className="space-y-2">
               {softSkills.map((skill, index) => (
                 <li key={index}>
-                  <a 
+                  <Link 
                     href={skill.url} 
                     className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {skill.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -469,13 +466,13 @@ export function Footer() {
             <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
               {publications.map((pub, index) => (
                 <div key={index} className="border-l-2 border-zinc-700 pl-3">
-                  <a href={pub.url} className="text-gray-300 hover:text-white text-sm leading-snug block mb-1 touch-target">{pub.title}</a>
+                  <a href={pub.url} className="text-gray-300 hover:text-white text-sm leading-snug block mb-1 touch-target" target="_blank" rel="noopener noreferrer">{pub.title}</a>
                   <div className="text-xs text-gray-500 italic">{pub.authors}</div>
                   <div className="text-xs text-zinc-500">{pub.journal}</div>
                 </div>
               ))}
               <div className="border-l-2 border-zinc-700 pl-3">
-                <a href="#" className="text-gray-300 hover:text-white text-sm touch-target py-1 inline-block">See All Publications</a>
+                <Link href="#" className="text-gray-300 hover:text-white text-sm touch-target py-1 inline-block">See All Publications</Link>
               </div>
             </div>
             
@@ -498,12 +495,12 @@ export function Footer() {
             <ul className="space-y-2 mb-4 sm:mb-6">
               {resources.map((resource, index) => (
                 <li key={index}>
-                  <a 
+                  <Link 
                     href={resource.url} 
                     className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
                   >
                     {resource.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
