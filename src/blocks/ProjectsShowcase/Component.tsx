@@ -9,6 +9,7 @@ interface ProjectsShowcaseProps {
   blockType: 'projectsShowcase'
   title?: string
   subtitle?: string
+  showAllProjects?: boolean
   projects?: (string | PayloadProject)[]
   showFeaturedOnly?: boolean
   maxProjects?: number
@@ -45,6 +46,8 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
     project.links = {
       githubUrl: payloadProject.links.githubUrl,
       githubStats: {
+        stars: payloadProject.links.githubStats?.stars || 0,
+        forks: payloadProject.links.githubStats?.forks || 0,
         language: payloadProject.links.githubStats?.language,
         watchers: payloadProject.links.githubStats?.watchers || 0,
         openIssues: payloadProject.links.githubStats?.openIssues || 0,
@@ -168,12 +171,13 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
   blockName,
   title = 'Featured Projects',
   subtitle = 'Discover our latest work showcasing innovation, technical excellence, and creative problem-solving',
+  showAllProjects = false,
   projects: payloadProjects = [],
   layout = 'grid-3',
   showViewAllButton = true,
   viewAllButtonText = 'View All Projects',
   viewAllButtonUrl = '/projects',
-  maxProjects = 6,
+  maxProjects = 20,
 }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
@@ -192,6 +196,16 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
     })
     .slice(0, maxProjects)
     .map(transformPayloadProject)
+
+  // Always show debugging info to help with project limits
+  console.log('ProjectsShowcase Debug:', {
+    showAllProjects,
+    payloadProjectsCount: payloadProjects.length,
+    payloadProjects: payloadProjects.map(p => typeof p === 'object' ? p.title : p),
+    maxProjects,
+    actualProjectsShown: projects.length,
+    isLimitingResults: payloadProjects.length > maxProjects
+  })
 
   // Grid class mapping
   const gridClasses = {

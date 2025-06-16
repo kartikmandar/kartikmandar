@@ -6,7 +6,7 @@ import { slugField } from '@/fields/slug'
 import { githubSyncField } from '@/fields/githubSync'
 import { bulkSyncField } from '@/fields/bulkSync'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
-// import { autoSyncGitHub } from './hooks/autoSyncGitHub'
+import { autoSyncGitHub } from './hooks/autoSyncGitHub'
 
 import {
   MetaDescriptionField,
@@ -782,7 +782,7 @@ export const Projects: CollectionConfig<'projects'> = {
   ],
   hooks: {
     beforeChange: [populatePublishedAt],
-    // afterChange: [autoSyncGitHub], // Uncomment to enable auto-sync on create/update
+    // afterChange: [autoSyncGitHub], // Disabled auto-sync - use manual sync to avoid timeouts
   },
   versions: {
     drafts: {

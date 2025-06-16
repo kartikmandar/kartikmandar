@@ -33,14 +33,23 @@ export const ProjectsShowcase: Block = {
       },
     },
     {
+      name: 'showAllProjects',
+      type: 'checkbox',
+      defaultValue: false,
+      admin: {
+        description: 'Show all published projects automatically (ignores manual selection below)',
+      },
+    },
+    {
       name: 'projects',
       type: 'relationship',
       relationTo: 'projects',
       hasMany: true,
-      required: true,
+      required: false,
       admin: {
-        description: 'Select projects to display in this showcase',
+        description: 'Manually select specific projects to display (only used if "Show all projects" is unchecked)',
         sortOptions: 'title',
+        condition: (data) => !data.showAllProjects,
       },
     },
     {
@@ -54,9 +63,9 @@ export const ProjectsShowcase: Block = {
     {
       name: 'maxProjects',
       type: 'number',
-      defaultValue: 6,
+      defaultValue: 20,
       min: 1,
-      max: 12,
+      max: 50,
       admin: {
         description: 'Maximum number of projects to display',
       },
