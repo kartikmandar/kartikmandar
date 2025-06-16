@@ -6,7 +6,7 @@ export function Header() {
   const navItems = [
     { link: { label: 'Home', url: '/' } },
     { link: { label: 'CV', url: '/404' } },
-    { link: { label: 'Projects', url: '/404' } },
+    { link: { label: 'Projects', url: '/#my-projects' } },
     { link: { label: 'GSoC 2024', url: '/404' } },
     { link: { label: 'GSoC 2025', url: '/404' } },
     { link: { label: 'Talks', url: '/404' } },
