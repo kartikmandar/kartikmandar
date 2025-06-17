@@ -141,12 +141,10 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              <Search size={14} className="sm:hidden text-white/60 group-hover:text-white/80 flex-shrink-0" />
-              <Terminal size={16} className="hidden sm:block text-white/60 group-hover:text-white/80 flex-shrink-0" />
+              <Terminal size={16} className="text-white/60 group-hover:text-white/80 flex-shrink-0" />
               <div className="flex-1 flex items-center justify-center">
                 <span className="text-sm font-medium text-center">
-                  <span className="sm:hidden">Search</span>
-                  <span className="hidden sm:inline">{getCurrentPath()}</span>
+                  {getCurrentPath()}
                 </span>
               </div>
               <div className="hidden md:flex items-center gap-1 text-xs text-white/40 flex-shrink-0">
@@ -166,12 +164,17 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-2xl z-50"
+            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-2xl z-[9998]"
           >
             <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
               <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
                 <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsExpanded(false)}
+                    className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-400 transition-colors"
+                    aria-label="Close terminal"
+                  />
                   <Terminal size={16} className="text-green-400" />
                   <span className="text-sm font-medium text-white/80">Terminal</span>
                 </div>
@@ -179,11 +182,6 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
                   <div className="text-xs text-white/40 font-mono">
                     {getCurrentPath()}
                   </div>
-                  <button
-                    onClick={() => setIsExpanded(false)}
-                    className="w-3 h-3 bg-red-500 rounded-full hover:bg-red-400 transition-colors"
-                    aria-label="Close terminal"
-                  />
                 </div>
               </div>
 
@@ -210,7 +208,7 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40"
+            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9997]"
           />
         )}
       </AnimatePresence>

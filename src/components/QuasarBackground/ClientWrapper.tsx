@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic'
 import { CSSProperties, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Volume, VolumeX } from 'lucide-react'
+import { Volume2, VolumeX } from 'lucide-react'
 
 // Dynamically import the QuasarBackground with no SSR
 const QuasarBackground = dynamic(
@@ -62,20 +62,33 @@ export default function QuasarBackgroundWrapper({
           aria-label={soundOn ? 'Mute sound' : 'Play sound'}
           onClick={handleSoundToggle}
           style={{
-            background: 'rgba(30,30,30,0.86)',
-            color: '#fff',
-            fontSize: '1.6em',
-            borderRadius: 30,
-            boxShadow: '0 2px 8px #0007',
-            transition: 'background 0.2s',
+            background: 'rgba(0, 0, 0, 0.20)',
+            backdropFilter: 'blur(24px)',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            color: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: 20,
+            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             width: 48,
             height: 48,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = 'rgba(0, 0, 0, 0.30)'
+            e.currentTarget.style.color = 'rgba(255, 255, 255, 1)'
+            e.currentTarget.style.transform = 'scale(1.02)'
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = 'rgba(0, 0, 0, 0.20)'
+            e.currentTarget.style.color = 'rgba(255, 255, 255, 0.9)'
+            e.currentTarget.style.transform = 'scale(1)'
+            e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
+          }}
         >
-          {soundOn ? <Volume size={24} strokeWidth={2.2} /> : <VolumeX size={24} strokeWidth={2.2} />}
+          {soundOn ? <Volume2 size={24} strokeWidth={2.2} /> : <VolumeX size={24} strokeWidth={2.2} />}
         </Button>
       </div>
     </div>
