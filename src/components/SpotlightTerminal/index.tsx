@@ -18,11 +18,14 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
   const [commandHistory, setCommandHistory] = useState<string[]>([])
   const [output, setOutput] = useState<string[]>([])
   const [currentInput, setCurrentInput] = useState<string>('')
+  const [isVisible, setIsVisible] = useState<boolean>(true)
+  const [isInteracting, setIsInteracting] = useState<boolean>(false)
   
   const router = useRouter()
   const pathname = usePathname()
   const terminalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Initialize file system mapper and command processor
   const fileSystemMapper = new FileSystemMapper(navItems)
@@ -58,6 +61,43 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
     }
   }, [isExpanded])
 
+  // Handle auto-hide based on scroll and interactions
+  useEffect(() => {
+    const startHideTimer = () => {
+      // Clear existing timeout
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+      
+      // Hide after 2 seconds of no scrolling (unless expanded or interacting)
+      scrollTimeoutRef.current = setTimeout(() => {
+        if (!isExpanded && !isInteracting) {
+          setIsVisible(false)
+        }
+      }, 2000)
+    }
+
+    const handleScroll = () => {
+      // Show immediately on scroll
+      setIsVisible(true)
+      startHideTimer()
+    }
+
+    // Start timer when interaction ends
+    if (!isInteracting && !isExpanded) {
+      startHideTimer()
+    }
+
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current)
+      }
+    }
+  }, [isExpanded, isInteracting])
+
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -65,6 +105,7 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
         event.preventDefault()
         setIsExpanded(true)
+        setIsVisible(true) // Always show when opened via keyboard
       }
       
       // Escape to close
@@ -130,14 +171,20 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
         {!isExpanded && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
+            animate={{ 
+              opacity: isVisible ? 1 : 0, 
+              scale: isVisible ? 1 : 0.8, 
+              y: isVisible ? 0 : -20 
+            }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="fixed top-4 left-0 right-0 mx-auto w-fit z-50"
           >
             <motion.button
               onClick={handleExpand}
-              className="group flex items-center gap-3 px-6 py-3 sm:px-8 sm:py-3 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white transition-all duration-300 hover:bg-black/30 hover:border-white/20 min-w-[200px] sm:min-w-[280px]"
+              onMouseEnter={() => setIsInteracting(true)}
+              onMouseLeave={() => setIsInteracting(false)}
+              className="group flex items-center gap-3 px-6 sm:px-8 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white transition-all duration-300 hover:bg-black/30 hover:border-white/20 min-w-[200px] sm:min-w-[280px] h-12"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >

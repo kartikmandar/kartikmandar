@@ -7,6 +7,7 @@ import React from 'react'
 
 import { AdminBar } from '@/components/AdminBar'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
+import { FloatingBottomNav } from '@/components/FloatingBottomNav'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -19,6 +20,14 @@ import { getServerSideURL } from '@/utilities/getURL'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+
+  // Navigation items for both header and floating bottom nav
+  const navItems = [
+    { link: { label: 'Home', url: '/' } },
+    { link: { label: 'CV', url: '/cv' } },
+    { link: { label: 'Publications', url: '/publications' } },
+    { link: { label: 'Posts', url: '/posts' } },
+  ]
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
@@ -39,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Header />
           {children}
           <Footer />
+          <FloatingBottomNav navItems={navItems} />
         </Providers>
       </body>
     </html>
