@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React, { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
-import { Home, ChevronLeft, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library } from 'lucide-react'
+import { Home, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library } from 'lucide-react'
 
 interface HeaderClientProps {
   data: { navItems: { link: { label: string; url: string } }[] }
@@ -26,12 +26,8 @@ const iconMap: Record<string, React.ReactNode> = {
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const navItems = data?.navItems || []
-  const [expanded, setExpanded] = useState(false)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
-  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 })
   const pathname = usePathname()
-  const headerRef = useRef<HTMLElement>(null)
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -50,23 +46,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
     }
   }, [mobileMenuOpen])
 
-  // Handle wheel scrolling for sidebar
-  useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
-      if (headerRef.current && expanded) {
-        e.preventDefault()
-        headerRef.current.scrollTop += e.deltaY * 0.5 // Smooth scrolling
-      }
-    }
-
-    const headerElement = headerRef.current
-    if (headerElement) {
-      headerElement.addEventListener('wheel', handleWheel, { passive: false })
-      return () => {
-        headerElement.removeEventListener('wheel', handleWheel)
-      }
-    }
-  }, [expanded])
 
   return (
     <>
@@ -107,85 +86,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         </div>
       </div>
 
-      {/* Desktop Floating Sidebar */}
-      <aside
-        ref={headerRef}
-        className={`custom-header desktop-only${expanded ? ' expanded' : ' minimized'}`}
-        onMouseLeave={() => setExpanded(false)}
-        style={{ pointerEvents: expanded ? 'auto' : 'none' }}
-      >
-        <div className="header-icons" style={{ width: '100%', overflow: 'visible', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '0.75rem' }}>
-          {navItems.map(({ link }, i) => {
-            const isActive = pathname === link.url || 
-              (link.url !== '/' && pathname.startsWith(link.url))
-            
-            return (
-              <Link 
-                key={i}
-                href={link.url} 
-                aria-label={link.label} 
-                className={`nav-link${isActive ? ' active' : ''}`}
-                onMouseEnter={(e) => {
-                  const rect = e.currentTarget.getBoundingClientRect()
-                  setTooltipPosition({
-                    top: rect.top + rect.height / 2,
-                    left: rect.left - 15
-                  })
-                  setHoveredIndex(i)
-                }}
-                onMouseLeave={() => setHoveredIndex(null)}
-              >
-                {iconMap[link.label] || <span />}
-              </Link>
-            )
-          })}
-        </div>
-      </aside>
-      <div
-        className={`header-arrow-anim desktop-only${!expanded ? ' visible' : ''}`}
-        onMouseEnter={() => setExpanded(true)}
-        style={{ position: 'fixed', top: '50%', right: '0px', transform: 'translateY(-50%)', cursor: 'pointer', borderRadius: '12px 0 0 12px', width: '30px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001, opacity: !expanded ? 1 : 0, pointerEvents: !expanded ? 'auto' : 'none', transition: 'opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1)' }}
-        tabIndex={0}
-        aria-label={expanded ? 'Collapse header' : 'Expand header'}
-      >
-        <ChevronLeft size={16} style={{ marginLeft: '-2px' }} />
-      </div>
-      
-      {/* Tooltip Portal */}
-      {hoveredIndex !== null && navItems[hoveredIndex] && (
-        <div 
-          className="tooltip-portal"
-          style={{
-            position: 'fixed',
-            top: `${tooltipPosition.top}px`,
-            left: `${tooltipPosition.left}px`,
-            transform: 'translate(-100%, -50%)',
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
-            color: 'white',
-            padding: '8px 16px',
-            borderRadius: '6px',
-            fontSize: '14px',
-            fontWeight: 500,
-            whiteSpace: 'nowrap',
-            zIndex: 10000,
-            pointerEvents: 'none',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.4)',
-          }}
-        >
-          {navItems[hoveredIndex].link.label}
-          <span
-            style={{
-              position: 'absolute',
-              top: '50%',
-              left: '100%',
-              marginTop: '-5px',
-              borderWidth: '5px',
-              borderStyle: 'solid',
-              borderColor: 'transparent transparent transparent rgba(0, 0, 0, 0.9)',
-            }}
-          />
-        </div>
-      )}
     </>
   )
 }
@@ -193,119 +93,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
 if (typeof window !== 'undefined') {
   const style = document.createElement('style')
   style.innerHTML = `
-    .custom-header {
-      position: fixed;
-      right: 10px;
-      top: 50%;
-      left: auto;
-      transform: translateY(-50%);
-      width: 80px;
-      height: auto;
-      border-radius: 30px;
-      z-index: 1000;
-      padding: 20px 10px;
-      box-sizing: border-box;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      transition: width 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.4s cubic-bezier(0.4,0,0.2,1), box-shadow 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1), border-radius 0.4s cubic-bezier(0.4,0,0.2,1);
-      overflow: hidden;
-      pointer-events: auto;
-      opacity: 1;
-      background: rgba(0, 0, 0, 0.20);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: white;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    }
-    
-    
-    .custom-header.minimized {
-      width: 0;
-      padding: 0;
-      background: transparent !important;
-      pointer-events: none;
-      opacity: 0;
-      box-shadow: none;
-      transform: translateY(-50%) scale(0.95);
-    }
-    
-    .custom-header.expanded {
-      opacity: 1;
-      transform: translateY(-50%) scale(1);
-    }
-    
-    .custom-header .header-icons {
-      opacity: 1;
-      transition: opacity 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-    
-    .custom-header.minimized .header-icons {
-      opacity: 0;
-      pointer-events: none;
-    }
-    
-    .nav-link {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-      padding: 0;
-      border-radius: 18px;
-      background: transparent;
-      width: 44px;
-      height: 44px;
-      margin: 0 auto;
-    }
-    
-    .nav-link:hover {
-      color: rgba(255, 255, 255, 1) !important;
-      background: rgba(0, 0, 0, 0.30);
-      transform: scale(1.02);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .nav-link.active {
-      color: rgba(255, 255, 255, 1) !important;
-      background: rgba(0, 0, 0, 0.40);
-      transform: scale(1.05);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-    }
-    
-    .nav-link.active svg {
-      filter: drop-shadow(0 2px 4px rgba(255, 255, 255, 0.3));
-    }
-    
-    .header-arrow-anim {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1);
-      transform: translateY(-50%) scale(0.95);
-      background: rgba(0, 0, 0, 0.20);
-      backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.8);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      border-radius: 24px 0 0 24px;
-    }
-    
-    .header-arrow-anim.visible {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(-50%) scale(1);
-    }
-    
-    /* Nav item styles */
-    .nav-item {
-      position: relative;
-    }
 
     /* Mobile Styles */
     .mobile-header {
