@@ -137,26 +137,27 @@ export function Footer() {
           position: fixed;
           bottom: 2rem;
           left: 2rem;
-          width: 2.5rem;
-          height: 2.5rem;
+          width: 3rem;
+          height: 3rem;
           display: flex;
           align-items: center;
           justify-content: center;
-          border-radius: 50%;
+          border-radius: 20px;
           z-index: 50;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background-color: rgba(128, 128, 128, 0.4);
-          backdrop-filter: invert(1) blur(3px);
-          mix-blend-mode: difference;
-          color: white;
-          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+          background: rgba(0, 0, 0, 0.20);
+          backdrop-filter: blur(24px);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          color: rgba(255, 255, 255, 0.9);
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
           cursor: pointer;
-          border: none;
         }
         
         .back-to-top-button:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+          transform: translateY(-4px) scale(1.02);
+          background: rgba(0, 0, 0, 0.30);
+          color: rgba(255, 255, 255, 1);
+          border-color: rgba(255, 255, 255, 0.2);
         }
         
         .back-to-top-button.hidden {

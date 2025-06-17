@@ -2059,7 +2059,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
 
   return (
     <div 
-      className={`fixed inset-0 flex items-center justify-center z-40 p-2 md:p-4 transition-all duration-300 ease-out ${
+      className={`fixed inset-0 flex items-center justify-center z-[9999] p-2 md:p-4 transition-all duration-300 ease-out ${
         isVisible 
           ? 'bg-background/40 backdrop-blur-sm' 
           : 'bg-background/0 backdrop-blur-none'
@@ -2079,7 +2079,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
           <div className="flex items-center">
             <button 
               onClick={handleCloseClick}
-              className="mr-3 p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center relative z-40"
+              className="mr-3 p-2 hover:bg-muted rounded-full transition-colors flex-shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center relative z-[10000]"
             >
               <X className="w-5 h-5 text-muted-foreground" />
             </button>
@@ -2134,7 +2134,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
               </div>
               <button 
                 onClick={handleCloseClick}
-                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors flex-shrink-0 relative z-40"
+                className="ml-2 p-1 hover:bg-muted rounded-full transition-colors flex-shrink-0 relative z-[10000]"
               >
                 <X className="w-5 h-5 text-muted-foreground" />
               </button>

@@ -40,6 +40,28 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     return Math.max(0, Math.min(1, progress))
   }, [])
 
+  // Responsive scaling utilities
+  const getResponsiveScale = useCallback((baseSize: number, w: number, h: number) => {
+    const minDimension = Math.min(w, h)
+    const isMobile = w < 768
+    const isTablet = w < 1024 && w >= 768
+    
+    if (isMobile) {
+      return baseSize * (minDimension / 400) * 0.8
+    } else if (isTablet) {
+      return baseSize * (minDimension / 600) * 0.9
+    } else {
+      return baseSize * (minDimension / 800)
+    }
+  }, [])
+
+  const getResponsiveFontSize = useCallback((baseSize: number, w: number) => {
+    if (w < 480) return `${baseSize * 0.7}px`
+    if (w < 768) return `${baseSize * 0.8}px`
+    if (w < 1024) return `${baseSize * 0.9}px`
+    return `${baseSize}px`
+  }, [])
+
   // Memoized data generation to avoid recreating on every render
   const memoizedData = useCallback(() => ({
     particles: generateParticles(50),
@@ -65,6 +87,11 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
               
               if (progressDiff > 0.01 || data.animation) {
                 data.lastProgress = progress
+                
+                // Initialize lensing canvas animation if needed
+                if (key === 'lensing-canvas' && data.initFn && !data.animation) {
+                  data.animation = data.initFn({ canvas: data.canvas, section: data.section })
+                }
                 
                 if (data.animation) {
                   data.animation.update(progress)
@@ -111,7 +138,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     let isDeleting = false
 
     const type = () => {
-      const currentPhrase = phrases[phraseIndex]
+      const currentPhrase = phrases[phraseIndex] || ''
       if (isDeleting) {
         charIndex--
       } else {
@@ -119,12 +146,12 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
       
       if (searchTextRef.current) {
-        searchTextRef.current.textContent = currentPhrase.substring(0, charIndex)
+        searchTextRef.current.textContent = (currentPhrase || '').substring(0, charIndex)
       }
       
       let typeSpeed = isDeleting ? 50 : 150
       
-      if (!isDeleting && charIndex === currentPhrase.length) {
+      if (!isDeleting && charIndex === (currentPhrase || '').length) {
         if (phraseIndex === phrases.length - 1) {
           if (searchTextRef.current) {
             searchTextRef.current.style.borderColor = '#4ade80'
@@ -164,7 +191,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     if (!searchSection) return
 
     const searchObserver = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && !typingStarted) {
+      if (entries[0]?.isIntersecting && !typingStarted) {
         setTypingStarted(true)
       }
     }, { threshold: 0.5 })
@@ -184,7 +211,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && !typingStarted) {
+        if (entries[0]?.isIntersecting && !typingStarted) {
           setTypingStarted(true)
         }
       },
@@ -634,7 +661,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       drawAStar(ctx, star.x * w, star.y * h, star.radius, `rgba(255, 255, 255, 1)`)
       if(star.name) {
         ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
-        ctx.font = '14px Poppins'
+        ctx.font = getResponsiveFontSize(14, w)
         ctx.fillText(star.name, star.x * w + 15, star.y * h + 5)
       }
     })
@@ -651,12 +678,12 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     
     researchLines.forEach((line, i) => {
       if (linesToDraw > i) {
-        const p1 = researchStars[line[0]]
-        const p2 = researchStars[line[1]]
+        const p1 = researchStars[line[0] || 0]
+        const p2 = researchStars[line[1] || 0]
         const lineProgress = Math.min(1, linesToDraw - i)
         ctx.beginPath()
-        ctx.moveTo(p1.x * w, p1.y * h)
-        ctx.lineTo(p1.x * w + (p2.x * w - p1.x * w) * lineProgress, p1.y * h + (p2.y * h - p1.y * h) * lineProgress)
+        ctx.moveTo((p1?.x || 0) * w, (p1?.y || 0) * h)
+        ctx.lineTo((p1?.x || 0) * w + ((p2?.x || 0) * w - (p1?.x || 0) * w) * lineProgress, (p1?.y || 0) * h + ((p2?.y || 0) * h - (p1?.y || 0) * h) * lineProgress)
         ctx.stroke()
       }
     })
@@ -667,7 +694,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
-    const centralNodeRadius = 20
+    const centralNodeRadius = getResponsiveScale(20, w, h)
 
     ctx.fillStyle = '#a5b4fc'
     ctx.beginPath()
@@ -699,7 +726,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.arc(nodeX, nodeY, 15, 0, 2 * Math.PI)
       ctx.fill()
 
-      ctx.font = "16px Poppins"
+      ctx.font = getResponsiveFontSize(16, w)
       ctx.fillStyle = '#0c0a1a'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
@@ -733,20 +760,20 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.stroke()
     
     ctx.fillStyle = 'white'
-    ctx.font = '14px Poppins'
+    ctx.font = getResponsiveFontSize(14, w)
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText('Econ Science', centerX, centerY - compassRadius - 20)
 
     // Draw Physics Star
     const physicsStar = { x: w * 0.85, y: h * 0.5 }
-    const starSize = 30 * progress
+    const starSize = getResponsiveScale(30, w, h) * progress
     const starAlpha = progress
     if (starAlpha > 0) {
       drawAStar(ctx, physicsStar.x, physicsStar.y, starSize, `rgba(165, 180, 252, ${starAlpha})`)
       drawAStar(ctx, physicsStar.x, physicsStar.y, starSize * 0.6, `rgba(255, 255, 255, ${starAlpha})`)
       ctx.fillStyle = `rgba(255,255,255, ${starAlpha})`
-      ctx.font = '16px Poppins'
+      ctx.font = getResponsiveFontSize(16, w)
       ctx.fillText('Physics', physicsStar.x, physicsStar.y + starSize + 20)
     }
 
@@ -764,7 +791,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     
     ctx.strokeStyle = '#f87171'
     ctx.fillStyle = '#f87171'
-    ctx.lineWidth = 4
+    ctx.lineWidth = getResponsiveScale(4, w, h)
     ctx.beginPath()
     ctx.moveTo(0, 0)
     ctx.lineTo(compassRadius * 0.8, 0)
@@ -834,16 +861,16 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`
       ctx.font = `${Math.min(w, h) * 0.02}px Poppins`
       ctx.textAlign = "center"
-      ctx.fillText(orb.name, orb.pos[0] * w, orb.pos[1] * h - 50)
+      ctx.fillText(orb.name, (orb.pos?.[0] || 0) * w, (orb.pos?.[1] || 0) * h - 50)
       ctx.beginPath()
-      ctx.arc(orb.pos[0] * w, orb.pos[1] * h, Math.min(w, h) * 0.03, 0, 2 * Math.PI)
+      ctx.arc((orb.pos?.[0] || 0) * w, (orb.pos?.[1] || 0) * h, Math.min(w, h) * 0.03, 0, 2 * Math.PI)
       ctx.fill()
       ctx.restore()
     })
     
     const lensRadius = Math.min(w, h) * 0.2 * Math.min(1, progress * 4)
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'
-    ctx.lineWidth = 3
+    ctx.lineWidth = getResponsiveScale(3, w, h)
     ctx.beginPath()
     ctx.arc(w / 2, h / 2, lensRadius, 0, 2 * Math.PI)
     ctx.stroke()
@@ -1006,10 +1033,10 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     const currentY = startY - (startY - impactY) * riseProgress
 
     if (shatterPhase > 0) {
-      if (!data.shards) {
+      if (!data?.shards) {
         data.shards = generateShards(25, centerX, impactY)
       }
-      data.shards.forEach((shard: any) => {
+      data?.shards?.forEach((shard: any) => {
         const travelProgress = Math.pow(shatterPhase, 0.7)
         const currentX = shard.x + shard.vx * travelProgress
         const currentY = shard.y + shard.vy * travelProgress + (travelProgress * travelProgress * 200)
@@ -1038,7 +1065,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         ctx.restore()
       })
     } else {
-      data.shards = null
+      if (data) data.shards = null
       drawShuttlecock(ctx, centerX, currentY, 1, '#fff')
       if (crackPhase > 0) {
         ctx.strokeStyle = `rgba(0, 0, 0, ${crackPhase * 0.8})`
@@ -1128,7 +1155,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
       ctx.stroke()
       ctx.fillStyle = `rgba(74, 222, 128, ${plotProgress})`
-      ctx.font = '16px Poppins'
+      ctx.font = getResponsiveFontSize(16, w)
       ctx.textAlign = 'right'
       ctx.fillText("RRIViz", plotX + plotW - 10, plotY + 20)
     }
@@ -1136,7 +1163,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
 
   const drawBuildingDashboard = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
-    ctx.font = "14px Poppins"
+    ctx.font = getResponsiveFontSize(14, w)
 
     const dashX = w * 0.15
     const dashY = h * 0.15
@@ -1190,9 +1217,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.fillStyle = '#a5b4fc'
       const obsText = "Obs ID: 4040130102\nTarget: Cygnus X-1"
       const obsLines = obsText.split('\n')
-      ctx.fillText(obsLines[0].substring(0, Math.floor(contentProgress * obsLines[0].length)), dashX + 15, dashY + 70)
+      ctx.fillText((obsLines[0] || '').substring(0, Math.floor(contentProgress * (obsLines[0]?.length || 0))), dashX + 15, dashY + 70)
       if (progress > 0.55) {
-        ctx.fillText(obsLines[1].substring(0, Math.floor(Math.max(0, contentProgress - 0.1) * obsLines[1].length)), dashX + 15, dashY + 90)
+        ctx.fillText((obsLines[1] || '').substring(0, Math.floor(Math.max(0, contentProgress - 0.1) * (obsLines[1]?.length || 0))), dashX + 15, dashY + 90)
       }
       
       ctx.fillStyle = '#e0e0e0'
@@ -1620,7 +1647,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           drawAStar(ctx, dest2.x, dest2.y, 10, `rgba(165, 180, 252, ${destAlpha})`)
 
           ctx.fillStyle = `rgba(255, 255, 255, ${destAlpha})`
-          ctx.font = '14px Poppins'
+          ctx.font = getResponsiveFontSize(14, w)
           ctx.textAlign = 'center'
           ctx.fillText("U of Toronto", dest1.x, dest1.y + 28)
           ctx.fillText("IIT Indore (SKA)", dest2.x, dest2.y - 28)
@@ -1777,7 +1804,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     if (latexPhase > 0) {
       const crystalX = w * 0.8
       const crystalY = h * 0.75
-      const crystalSize = w * 0.1 * latexPhase
+      const crystalSize = getResponsiveScale(80, w, h) * latexPhase
       
       ctx.save()
       ctx.translate(crystalX, crystalY)
@@ -1799,7 +1826,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
 
       ctx.restore()
 
-      if (data.latexParticles.length === 0 && latexPhase > 0.1) {
+      if (data && data.latexParticles.length === 0 && latexPhase > 0.1) {
         const symbols = ['\\int', '\\Sigma', '\\frac{a}{b}', '\\alpha', '\\nabla']
         for (let i = 0; i < 15; i++) {
           data.latexParticles.push({
@@ -1814,14 +1841,14 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         }
       }
       
-      data.latexParticles.forEach((p: any) => {
+      data && data.latexParticles.forEach((p: any) => {
         if (!p.absorbed) {
-          p.x += p.vx * latexPhase
-          p.y += p.vy * latexPhase
-          p.alpha = 1 - latexPhase
+          p.x += p.vx
+          p.y += p.vy
+          p.alpha = Math.max(0.2, 1 - latexPhase * 0.7)
 
           ctx.fillStyle = `rgba(253, 224, 71, ${p.alpha})`
-          ctx.font = '20px Poppins'
+          ctx.font = getResponsiveFontSize(20, w)
           ctx.fillText(p.text, p.x, p.y)
           
           if(distance(p.x, p.y, crystalX, crystalY) < crystalSize * 0.8) {
@@ -1831,15 +1858,15 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         }
       })
 
-      if (data.currentLatexSymbol) {
+      if (data && data.currentLatexSymbol) {
         ctx.fillStyle = `rgba(253, 224, 71, ${latexPhase})`
-        ctx.font = 'bold 24px Poppins'
+        ctx.font = `bold ${getResponsiveFontSize(24, w)}`
         ctx.textAlign = 'center'
         ctx.textBaseline = 'middle'
         drawMathSymbol(ctx, data.currentLatexSymbol, crystalX, crystalY)
       }
     }
-    if (progress < 0.5) {
+    if (progress < 0.5 && data) {
       data.latexParticles = []
       data.currentLatexSymbol = null
     }
@@ -2002,14 +2029,25 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     const resizeCanvases = () => {
       for (const key in canvasDataRef.current) {
         const data = canvasDataRef.current[key]
-        if (data.isInitialized) continue
-        
-        const dpr = window.devicePixelRatio || 1
-        const rect = data.canvas.getBoundingClientRect()
-        data.canvas.width = rect.width * dpr
-        data.canvas.height = rect.height * dpr
-        if (data.ctx) data.ctx.scale(dpr, dpr)
+        if (data?.canvas) {
+          const dpr = window.devicePixelRatio || 1
+          const rect = data.canvas.getBoundingClientRect()
+          data.canvas.width = rect.width * dpr
+          data.canvas.height = rect.height * dpr
+          if (data.ctx) {
+            data.ctx.scale(dpr, dpr)
+          }
+        }
       }
+    }
+
+    // Throttled resize handler for better performance
+    let resizeTimeout: NodeJS.Timeout | null = null
+    const handleResize = () => {
+      if (resizeTimeout) clearTimeout(resizeTimeout)
+      resizeTimeout = setTimeout(() => {
+        resizeCanvases()
+      }, 150)
     }
 
     // Set up Intersection Observer for performance
@@ -2048,6 +2086,18 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           const progress = calculateScrollProgress(data.section)
           data.animation.update(progress)
         }
+        
+        // Update analysis canvas continuously for moving LaTeX symbols
+        if (key === 'analysis-canvas' && data?.drawFn && data?.ctx) {
+          const progress = calculateScrollProgress(data.section)
+          data.drawFn({
+            ctx: data.ctx,
+            w: data.canvas.clientWidth,
+            h: data.canvas.clientHeight,
+            progress: progress,
+            data: data.data
+          })
+        }
       })
       
       // Use throttled update for canvas drawings (still optimized with progress detection)
@@ -2058,12 +2108,13 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       animationFrameRef.current = requestAnimationFrame(mainAnimationLoop)
     }
 
-    window.addEventListener('resize', resizeCanvases)
+    window.addEventListener('resize', handleResize)
     resizeCanvases()
     mainAnimationLoop()
 
     return () => {
-      window.removeEventListener('resize', resizeCanvases)
+      window.removeEventListener('resize', handleResize)
+      if (resizeTimeout) clearTimeout(resizeTimeout)
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current)
       }
@@ -2187,6 +2238,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           left: 0;
           width: 100%;
           height: 100vh;
+          min-height: 400px;
           will-change: transform;
         }
 
@@ -2201,6 +2253,96 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           width: 90%;
           max-width: 600px;
           pointer-events: none;
+          padding: 20px;
+        }
+
+        /* Mobile and Tablet Responsive Styles */
+        @media (max-width: 768px) {
+          .interactive-canvas {
+            height: 80vh;
+            min-height: 350px;
+          }
+          
+          .interactive-text {
+            width: 95%;
+            padding: 15px;
+          }
+          
+          .interactive-text h3 {
+            font-size: 1.5rem !important;
+            line-height: 1.3;
+            margin-bottom: 8px !important;
+          }
+          
+          .interactive-text p {
+            font-size: 0.9rem !important;
+            line-height: 1.4;
+          }
+          
+          .timeline-container {
+            max-width: 100%;
+            padding: 20px 10px;
+          }
+          
+          .timeline-event {
+            width: 80% !important;
+            left: 10% !important;
+            margin-bottom: 40px;
+          }
+          
+          .timeline-event.left,
+          .timeline-event.right {
+            left: 10% !important;
+            transform: none !important;
+          }
+          
+          .timeline-spine {
+            left: 8%;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .interactive-canvas {
+            height: 70vh;
+            min-height: 300px;
+          }
+          
+          .interactive-text h3 {
+            font-size: 1.25rem !important;
+          }
+          
+          .interactive-text p {
+            font-size: 0.8rem !important;
+          }
+          
+          .timeline-container {
+            padding: 15px 5px;
+          }
+          
+          .timeline-event {
+            width: 90% !important;
+            left: 5% !important;
+            margin-bottom: 30px;
+          }
+          
+          .timeline-spine {
+            left: 5%;
+          }
+        }
+
+        /* Large screens optimization */
+        @media (min-width: 1400px) {
+          .interactive-canvas {
+            height: 100vh;
+          }
+          
+          .timeline-container {
+            max-width: 1200px;
+          }
+          
+          .interactive-text {
+            max-width: 700px;
+          }
         }
 
         #search-text {
