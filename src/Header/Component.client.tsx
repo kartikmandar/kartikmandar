@@ -144,7 +144,7 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
       <div
         className={`header-arrow-anim desktop-only${!expanded ? ' visible' : ''}`}
         onMouseEnter={() => setExpanded(true)}
-        style={{ position: 'fixed', top: '50%', right: '0px', transform: 'translateY(-50%)', cursor: 'pointer', borderRadius: '12px 0 0 12px', width: '18px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001, opacity: !expanded ? 1 : 0, pointerEvents: !expanded ? 'auto' : 'none', transition: 'opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1)' }}
+        style={{ position: 'fixed', top: '50%', right: '0px', transform: 'translateY(-50%)', cursor: 'pointer', borderRadius: '12px 0 0 12px', width: '30px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1001, opacity: !expanded ? 1 : 0, pointerEvents: !expanded ? 'auto' : 'none', transition: 'opacity 0.4s cubic-bezier(0.4,0,0.2,1), transform 0.4s cubic-bezier(0.4,0,0.2,1)' }}
         tabIndex={0}
         aria-label={expanded ? 'Collapse header' : 'Expand header'}
       >
