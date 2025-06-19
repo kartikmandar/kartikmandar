@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import React, { useState, useEffect, useRef } from 'react'
 import { usePathname } from 'next/navigation'
-import { Home, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library } from 'lucide-react'
+import { Home, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library, Phone, Briefcase } from 'lucide-react'
 
 interface HeaderClientProps {
   data: { navItems: { link: { label: string; url: string } }[] }
@@ -12,6 +12,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Home: <Home size={28} />,
   CV: <User size={28} />,
   Projects: <FolderOpen size={28} />,
+  Consultancy: <Briefcase size={28} />,
   'GSoC 2024': <Code2 size={28} />,
   'GSoC 2025': <Code2 size={28} />,
   Talks: <Mic size={28} />,
@@ -21,7 +22,8 @@ const iconMap: Record<string, React.ReactNode> = {
   'Journal Club': <Users size={28} />,
   Courses: <GraduationCap size={28} />,
   'Common Resources': <Library size={28} />,
-  Posts: <Edit3 size={28} />,
+  Blog: <Edit3 size={28} />,
+  Contact: <Phone size={28} />,
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
@@ -75,7 +77,6 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
                 className={`mobile-nav-link${isActive ? ' active' : ''}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                <span className="mobile-nav-icon">{iconMap[link.label] || <span />}</span>
                 <span className="mobile-nav-label">{link.label}</span>
               </Link>
             )
@@ -175,13 +176,13 @@ if (typeof window !== 'undefined') {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
       color: white;
       text-decoration: none;
       font-size: 1.25rem;
       transition: color 0.2s, transform 0.2s;
-      padding: 0.5rem 1rem;
+      padding: 0.75rem 1rem;
       width: 100%;
+      text-align: center;
     }
 
     .mobile-nav-link:hover {
@@ -193,21 +194,6 @@ if (typeof window !== 'undefined') {
       color: #ffd700;
     }
 
-    .mobile-nav-link.active .mobile-nav-icon svg {
-      filter: drop-shadow(0 0 8px rgba(255, 215, 0, 0.6));
-    }
-
-    .mobile-nav-icon {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 40px;
-    }
-
-    .mobile-nav-icon svg {
-      width: 28px;
-      height: 28px;
-    }
 
     .mobile-nav-label {
       font-weight: 500;
@@ -267,10 +253,6 @@ if (typeof window !== 'undefined') {
         padding: 0.4rem 1rem;
       }
       
-      .mobile-nav-icon svg {
-        width: 24px;
-        height: 24px;
-      }
     }
     
     /* Hide scrollbar completely */

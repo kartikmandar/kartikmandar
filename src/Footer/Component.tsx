@@ -3,11 +3,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { NAVIGATION_ITEMS } from '@/constants/navigation'
+import { useForm, ValidationError } from '@formspree/react'
 
 export function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const starsContainerRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
+  const [state, handleSubmit] = useForm("xyzjpnrj");
   
   useEffect(() => {
     const handleScroll = () => {
@@ -238,22 +241,8 @@ export function Footer() {
     }
   }, []);
 
-  // Navigation items matching header menu
-  const navItems = [
-    { label: 'Home', url: '/' },
-    { label: 'CV', url: '/404' },
-    { label: 'Projects', url: '/#my-projects' },
-    { label: 'GSoC 2024', url: '/404' },
-    { label: 'GSoC 2025', url: '/404' },
-    { label: 'Talks', url: '/404' },
-    { label: 'Publications', url: '/404' },
-    { label: 'Hobbies', url: '/404' },
-    { label: 'Certificates', url: '/404' },
-    { label: 'Journal Club', url: '/404' },
-    { label: 'Courses', url: '/404' },
-    { label: 'Common Resources', url: '/common-resources' },
-    { label: 'Posts', url: '/posts' },
-  ]
+  // Navigation items from shared constants
+  const navItems = NAVIGATION_ITEMS
   
   // Research interests
   const researchInterests = [
@@ -342,20 +331,89 @@ export function Footer() {
             <p className="mb-4 sm:mb-6 text-gray-300 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
               Interested in collaborating on radio interferometry projects, spectral timing analysis of BHXBs, ML applications in gravitation lensing, or exploring data analysis projects? Let&apos;s connect!
             </p>
-            <form className="flex flex-col sm:flex-row gap-3 justify-center mb-3 sm:mb-4 max-w-md sm:max-w-lg mx-auto">
-              <input
-                type="email"
-                placeholder="Your email address"
-                required
-                className="flex-1 min-w-0 px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base"
-              />
-              <button 
-                type="submit"
-                className="px-4 sm:px-6 py-2 sm:py-3 bg-zinc-700 text-white font-semibold rounded-md transition-all hover:bg-zinc-600 hover:translate-y-[-2px] text-sm sm:text-base"
-              >
-                Connect
-              </button>
-            </form>
+            {state.succeeded ? (
+              <div className="text-center mb-4 sm:mb-6">
+                <div className="inline-block px-6 py-4 bg-card border border-border rounded-lg shadow-lg">
+                  <p className="text-foreground font-semibold">Thanks for reaching out!</p>
+                  <p className="text-muted-foreground text-sm mt-1">I'll get back to you soon.</p>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="flex flex-col gap-3 justify-center mb-3 sm:mb-4 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <input
+                      type="text"
+                      name="name"
+                      placeholder="Your name"
+                      required
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
+                    />
+                    <ValidationError 
+                      prefix="Name" 
+                      field="name"
+                      errors={state.errors}
+                      className="text-destructive text-xs mt-1"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      name="designation"
+                      placeholder="Your designation (e.g., PhD Student)"
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
+                    />
+                    <ValidationError 
+                      prefix="Designation" 
+                      field="designation"
+                      errors={state.errors}
+                      className="text-destructive text-xs mt-1"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your email address"
+                    required
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
+                  />
+                  <ValidationError 
+                    prefix="Email" 
+                    field="email"
+                    errors={state.errors}
+                    className="text-destructive text-xs mt-1"
+                  />
+                </div>
+                <div>
+                  <textarea
+                    name="message"
+                    placeholder="Why do you want to connect? (e.g., research collaboration, academic discussion, project inquiry)"
+                    required
+                    rows={3}
+                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400 resize-none"
+                  />
+                  <ValidationError 
+                    prefix="Message" 
+                    field="message"
+                    errors={state.errors}
+                    className="text-destructive text-xs mt-1"
+                  />
+                </div>
+                <button 
+                  type="submit"
+                  disabled={state.submitting}
+                  className={`px-4 sm:px-6 py-3 sm:py-4 bg-zinc-700 text-white font-semibold rounded-md transition-all text-sm sm:text-base ${
+                    state.submitting 
+                      ? 'opacity-50 cursor-not-allowed' 
+                      : 'hover:bg-zinc-600 hover:translate-y-[-2px]'
+                  }`}
+                >
+                  {state.submitting ? 'Connecting...' : 'Connect'}
+                </button>
+              </form>
+            )}
             <p className="text-gray-400 text-xs sm:text-sm">I&apos;m open to collaborations, presentations, and academic discussions.</p>
           </div>
         </div>
@@ -446,19 +504,6 @@ export function Footer() {
               ))}
             </ul>
             
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Soft Skills</h4>
-            <ul className="space-y-2">
-              {softSkills.map((skill, index) => (
-                <li key={index}>
-                  <Link 
-                    href={skill.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
-                  >
-                    {skill.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
           
           {/* Publications */}
