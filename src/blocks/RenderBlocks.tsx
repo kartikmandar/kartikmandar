@@ -9,6 +9,7 @@ import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
+import { TalksShowcase } from '@/blocks/TalksShowcase/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -18,6 +19,7 @@ const blockComponents = {
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
   projectsShowcase: ProjectsShowcase,
+  talksShowcase: TalksShowcase,
 }
 
 export const RenderBlocks: React.FC<{

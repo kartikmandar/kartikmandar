@@ -197,6 +197,7 @@ export interface Page {
     | ArchiveBlock
     | FormBlock
     | ProjectsShowcaseBlock
+    | TalksShowcaseBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1187,6 +1188,55 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TalksShowcaseBlock".
+ */
+export interface TalksShowcaseBlock {
+  blockName?: string | null;
+  /**
+   * Main heading for the talks section
+   */
+  title?: string | null;
+  /**
+   * Subtitle/description below the main heading
+   */
+  subtitle?: string | null;
+  /**
+   * Show all published talks automatically (ignores manual selection below)
+   */
+  showAllTalks?: boolean | null;
+  /**
+   * Manually select specific talks to display (only used if "Show all talks" is unchecked)
+   */
+  talks?: (number | Talk)[] | null;
+  /**
+   * Only show talks marked as "featured"
+   */
+  showFeaturedOnly?: boolean | null;
+  /**
+   * Maximum number of talks to display
+   */
+  maxTalks?: number | null;
+  /**
+   * Layout style for the talks showcase
+   */
+  layout?: ('grid-3' | 'grid-2' | 'grid-4' | 'mixed') | null;
+  /**
+   * Show "View All Talks" button at the bottom
+   */
+  showViewAllButton?: boolean | null;
+  /**
+   * Text for the view all button
+   */
+  viewAllButtonText?: string | null;
+  /**
+   * URL for the view all button
+   */
+  viewAllButtonUrl?: string | null;
+  id?: string | null;
+  blockType: 'talksShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "talks".
  */
 export interface Talk {
@@ -1306,66 +1356,46 @@ export interface Talk {
     registrationUrl?: string | null;
   };
   /**
-   * Presentation materials and resources
+   * Google Drive folder containing all presentation materials, slides, code, and resources
    */
   materials?: {
     /**
-     * Presentation slides (PDF, PowerPoint, etc.)
+     * Google Drive folder ID containing all talk materials (extract from folder share URL)
      */
-    slides?: (number | null) | Media;
+    gDriveFolderId?: string | null;
     /**
-     * URL to video recording (YouTube, Vimeo, etc.)
+     * Complete Google Drive folder URL for direct access
+     */
+    gDriveFolderUrl?: string | null;
+    /**
+     * Show embedded Google Drive folder view in the talk modal
+     */
+    enableEmbedView?: boolean | null;
+    /**
+     * Height of the embedded Google Drive view (in pixels)
+     */
+    embedHeight?: number | null;
+    /**
+     * Description of what materials are available in the Google Drive folder
+     */
+    materialDescription?: string | null;
+    /**
+     * URL to video recording (YouTube, Vimeo, etc.) - separate from Drive folder
      */
     videoRecording?: string | null;
     /**
-     * URL to audio recording (podcast, etc.)
-     */
-    audioRecording?: string | null;
-    /**
-     * URL for live streaming the talk
+     * URL for live streaming the talk (if applicable)
      */
     liveStreamUrl?: string | null;
     /**
-     * Links to demos, examples, or interactive content
+     * Additional links not included in the Google Drive folder
      */
-    demoLinks?:
+    additionalLinks?:
       | {
           title: string;
           url: string;
           description?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Related GitHub repositories or code examples
-     */
-    codeRepositories?:
-      | {
-          title: string;
-          url: string;
-          description?: string | null;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Additional resources and reference materials
-     */
-    resources?:
-      | {
-          title: string;
-          url: string;
-          type?: ('article' | 'documentation' | 'tool' | 'library' | 'tutorial' | 'other') | null;
-          id?: string | null;
-        }[]
-      | null;
-    /**
-     * Downloadable materials and handouts
-     */
-    handouts?:
-      | {
-          title: string;
-          file: number | Media;
-          description?: string | null;
+          type?: ('demo' | 'github' | 'website' | 'article' | 'documentation' | 'other') | null;
           id?: string | null;
         }[]
       | null;
@@ -1837,6 +1867,7 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         projectsShowcase?: T | ProjectsShowcaseBlockSelect<T>;
+        talksShowcase?: T | TalksShowcaseBlockSelect<T>;
       };
   meta?:
     | T
@@ -1958,6 +1989,24 @@ export interface ProjectsShowcaseBlockSelect<T extends boolean = true> {
   projects?: T;
   showFeaturedOnly?: T;
   maxProjects?: T;
+  layout?: T;
+  showViewAllButton?: T;
+  viewAllButtonText?: T;
+  viewAllButtonUrl?: T;
+  id?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "TalksShowcaseBlock_select".
+ */
+export interface TalksShowcaseBlockSelect<T extends boolean = true> {
+  blockName?: T;
+  title?: T;
+  subtitle?: T;
+  showAllTalks?: T;
+  talks?: T;
+  showFeaturedOnly?: T;
+  maxTalks?: T;
   layout?: T;
   showViewAllButton?: T;
   viewAllButtonText?: T;
@@ -2201,40 +2250,20 @@ export interface TalksSelect<T extends boolean = true> {
   materials?:
     | T
     | {
-        slides?: T;
+        gDriveFolderId?: T;
+        gDriveFolderUrl?: T;
+        enableEmbedView?: T;
+        embedHeight?: T;
+        materialDescription?: T;
         videoRecording?: T;
-        audioRecording?: T;
         liveStreamUrl?: T;
-        demoLinks?:
+        additionalLinks?:
           | T
           | {
               title?: T;
               url?: T;
               description?: T;
-              id?: T;
-            };
-        codeRepositories?:
-          | T
-          | {
-              title?: T;
-              url?: T;
-              description?: T;
-              id?: T;
-            };
-        resources?:
-          | T
-          | {
-              title?: T;
-              url?: T;
               type?: T;
-              id?: T;
-            };
-        handouts?:
-          | T
-          | {
-              title?: T;
-              file?: T;
-              description?: T;
               id?: T;
             };
       };

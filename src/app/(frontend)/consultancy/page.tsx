@@ -262,6 +262,12 @@ export default async function ConsultancyPage() {
                 >
                   Schedule Consultation
                 </a>
+                <a 
+                  href="/#my-projects" 
+                  className="inline-flex items-center justify-center px-8 py-4 bg-card border border-border text-card-foreground font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
+                >
+                  My Work
+                </a>
               </div>
             </div>
           </section>

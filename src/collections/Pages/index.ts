@@ -9,6 +9,7 @@ import { CosmicJourney } from '../../blocks/CosmicJourney/config'
 import { FormBlock } from '../../blocks/Form/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { ProjectsShowcase } from '../../blocks/ProjectsShowcase/config'
+import { TalksShowcase } from '../../blocks/TalksShowcase/config'
 import { hero } from '@/heros/config'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -77,7 +78,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, CosmicJourney, MediaBlock, Archive, FormBlock, ProjectsShowcase],
+              blocks: [CallToAction, Content, CosmicJourney, MediaBlock, Archive, FormBlock, ProjectsShowcase, TalksShowcase],
               required: true,
               admin: {
                 initCollapsed: true,
