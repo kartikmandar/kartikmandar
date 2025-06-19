@@ -14,6 +14,7 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
+import { NAVIGATION_ITEMS } from '@/constants/navigation'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -22,12 +23,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
 
   // Navigation items for both header and floating bottom nav
-  const navItems = [
-    { link: { label: 'Home', url: '/' } },
-    { link: { label: 'CV', url: '/cv' } },
-    { link: { label: 'Publications', url: '/publications' } },
-    { link: { label: 'Posts', url: '/posts' } },
-  ]
+  const navItems = NAVIGATION_ITEMS.map(item => ({ link: item }))
 
   return (
     <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>

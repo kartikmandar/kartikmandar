@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, FileText, BookOpen, PenTool } from 'lucide-react'
+import { Home, FileText, BookOpen, PenTool, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase } from 'lucide-react'
 
 interface NavItem {
   label: string
@@ -22,7 +22,29 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
   const [isInteracting, setIsInteracting] = React.useState<boolean>(false)
   const scrollTimeoutRef = React.useRef<NodeJS.Timeout | null>(null)
 
-  // Default navigation items with icons
+  // Icon mapping for navigation items
+  const getIconForNavItem = (label: string): React.ReactNode => {
+    const iconMap: { [key: string]: React.ReactNode } = {
+      'Home': <Home size={20} />,
+      'CV': <FileText size={20} />,
+      'Projects': <Folder size={20} />,
+      'Consultancy': <Briefcase size={20} />,
+      'GSoC 2024': <Trophy size={20} />,
+      'GSoC 2025': <Trophy size={20} />,
+      'Talks': <Mic size={20} />,
+      'Publications': <BookOpen size={20} />,
+      'Hobbies': <Gamepad2 size={20} />,
+      'Certificates': <Award size={20} />,
+      'Journal Club': <Users size={20} />,
+      'Courses': <GraduationCap size={20} />,
+      'Common Resources': <FolderOpen size={20} />,
+      'Blog': <PenTool size={20} />,
+      'Contact': <Phone size={20} />,
+    }
+    return iconMap[label] || <Home size={20} />
+  }
+
+  // Default navigation items with icons (fallback)
   const defaultNavItems: NavItem[] = [
     {
       label: 'Home',
@@ -40,7 +62,12 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
       icon: <BookOpen size={20} />
     },
     {
-      label: 'Posts',
+      label: 'Common Resources',
+      url: '/common-resources',
+      icon: <FolderOpen size={20} />
+    },
+    {
+      label: 'Blog',
       url: '/posts',
       icon: <PenTool size={20} />
     }
@@ -48,10 +75,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
 
   // Convert navItems prop to our format if provided, otherwise use defaults
   const navigationItems: NavItem[] = navItems 
-    ? navItems.slice(0, 4).map((item, index) => ({
+    ? navItems.map((item) => ({
         label: item.link.label,
         url: item.link.url,
-        icon: defaultNavItems[index]?.icon || <Home size={20} />
+        icon: getIconForNavItem(item.link.label)
       }))
     : defaultNavItems
 
@@ -132,43 +159,32 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
               </div>
               
-              <motion.div
-                className={`flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-200 ${
+              <div
+                className={`relative flex items-center justify-center w-12 h-12 rounded-xl transition-colors transition-opacity duration-200 ${
                   isActive 
                     ? 'bg-white/20 text-white shadow-lg' 
                     : 'text-white/70 hover:text-white hover:bg-white/10'
                 }`}
-                whileHover={{ 
-                  scale: 1.2,
-                  y: -2,
-                  transition: { type: "spring", stiffness: 400, damping: 25 }
-                }}
-                whileTap={{ 
-                  scale: 0.95,
-                  transition: { type: "spring", stiffness: 600, damping: 30 }
-                }}
               >
-                <motion.div 
+                <div 
                   className={`transition-all duration-200 ${
                     isActive ? 'text-white' : 'text-white/60 group-hover:text-white/90'
                   }`}
-                  whileHover={{ 
-                    scale: 1.1,
-                    transition: { type: "spring", stiffness: 400, damping: 25 }
-                  }}
                 >
                   {item.icon}
-                </motion.div>
-              </motion.div>
-              
-              {/* Active indicator dot */}
-              {isActive && (
-                <motion.div
-                  layoutId="activeIndicator"
-                  className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-white rounded-full"
-                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                />
-              )}
+                </div>
+                
+                {/* Active indicator dot */}
+                {isActive && (
+                  <motion.div
+                    className="absolute bottom-1 inset-x-0 mx-auto w-1.5 h-1.5 bg-white rounded-full"
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    exit={{ scale: 0 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+              </div>
             </Link>
           )
         })}
