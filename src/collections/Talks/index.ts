@@ -26,12 +26,26 @@ export const Talks: CollectionConfig<'talks'> = {
     title: true,
     slug: true,
     coverImage: true,
-    talkStatus: true,
-    eventName: true,
-    talkDate: true,
+    abstract: true,
+    shortDescription: true,
+    talkType: true,
+    duration: true,
+    language: true,
+    audienceLevel: true,
+    targetAudience: true,
+    eventDetails: true,
+    scheduling: true,
+    materials: true,
+    topics: true,
+    technologies: true,
+    collaboration: true,
+    professional: true,
+    media: true,
+    featured: true,
+    displayOrder: true,
   },
   admin: {
-    defaultColumns: ['title', 'eventName', 'talkDate', 'talkStatus', 'updatedAt'],
+    defaultColumns: ['title', 'eventDetails.eventName', 'scheduling.talkDate', 'scheduling.talkStatus', 'updatedAt'],
     useAsTitle: 'title',
   },
   fields: [
@@ -270,42 +284,68 @@ export const Talks: CollectionConfig<'talks'> = {
       },
     },
 
-    // 4. Content & Materials
+    // 4. Google Drive Materials
     {
       name: 'materials',
       type: 'group',
       fields: [
         {
-          name: 'slides',
-          type: 'upload',
-          relationTo: 'media',
+          name: 'gDriveFolderId',
+          type: 'text',
           admin: {
-            description: 'Presentation slides (PDF, PowerPoint, etc.)',
+            description: 'Google Drive folder ID containing all talk materials (extract from folder share URL)',
+            placeholder: 'e.g., 1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
+          },
+        },
+        {
+          name: 'gDriveFolderUrl',
+          type: 'text',
+          admin: {
+            description: 'Complete Google Drive folder URL for direct access',
+            placeholder: 'https://drive.google.com/drive/folders/...',
+          },
+        },
+        {
+          name: 'enableEmbedView',
+          type: 'checkbox',
+          defaultValue: true,
+          admin: {
+            description: 'Show embedded Google Drive folder view in the talk modal',
+          },
+        },
+        {
+          name: 'embedHeight',
+          type: 'number',
+          defaultValue: 400,
+          admin: {
+            description: 'Height of the embedded Google Drive view (in pixels)',
+            condition: (data, siblingData) => siblingData.enableEmbedView,
+          },
+        },
+        {
+          name: 'materialDescription',
+          type: 'textarea',
+          admin: {
+            description: 'Description of what materials are available in the Google Drive folder',
+            placeholder: 'This folder contains presentation slides, code examples, datasets, and additional resources...',
           },
         },
         {
           name: 'videoRecording',
           type: 'text',
           admin: {
-            description: 'URL to video recording (YouTube, Vimeo, etc.)',
-          },
-        },
-        {
-          name: 'audioRecording',
-          type: 'text',
-          admin: {
-            description: 'URL to audio recording (podcast, etc.)',
+            description: 'URL to video recording (YouTube, Vimeo, etc.) - separate from Drive folder',
           },
         },
         {
           name: 'liveStreamUrl',
           type: 'text',
           admin: {
-            description: 'URL for live streaming the talk',
+            description: 'URL for live streaming the talk (if applicable)',
           },
         },
         {
-          name: 'demoLinks',
+          name: 'additionalLinks',
           type: 'array',
           fields: [
             {
@@ -321,93 +361,28 @@ export const Talks: CollectionConfig<'talks'> = {
             {
               name: 'description',
               type: 'text',
-            },
-          ],
-          admin: {
-            description: 'Links to demos, examples, or interactive content',
-          },
-        },
-        {
-          name: 'codeRepositories',
-          type: 'array',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'description',
-              type: 'text',
-            },
-          ],
-          admin: {
-            description: 'Related GitHub repositories or code examples',
-          },
-        },
-        {
-          name: 'resources',
-          type: 'array',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'url',
-              type: 'text',
-              required: true,
             },
             {
               name: 'type',
               type: 'select',
               options: [
+                { label: 'Demo', value: 'demo' },
+                { label: 'GitHub Repository', value: 'github' },
+                { label: 'Website', value: 'website' },
                 { label: 'Article', value: 'article' },
                 { label: 'Documentation', value: 'documentation' },
-                { label: 'Tool', value: 'tool' },
-                { label: 'Library', value: 'library' },
-                { label: 'Tutorial', value: 'tutorial' },
                 { label: 'Other', value: 'other' },
               ],
+              defaultValue: 'other',
             },
           ],
           admin: {
-            description: 'Additional resources and reference materials',
-          },
-        },
-        {
-          name: 'handouts',
-          type: 'array',
-          fields: [
-            {
-              name: 'title',
-              type: 'text',
-              required: true,
-            },
-            {
-              name: 'file',
-              type: 'upload',
-              relationTo: 'media',
-              required: true,
-            },
-            {
-              name: 'description',
-              type: 'text',
-            },
-          ],
-          admin: {
-            description: 'Downloadable materials and handouts',
+            description: 'Additional links not included in the Google Drive folder',
           },
         },
       ],
       admin: {
-        description: 'Presentation materials and resources',
+        description: 'Google Drive folder containing all presentation materials, slides, code, and resources',
       },
     },
 
