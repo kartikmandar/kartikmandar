@@ -214,8 +214,8 @@ export default function NotFound() {
         // Copy existing cells to new grid (as much as fits)
         for (let i = 0; i < Math.min(cols, oldGrid.length); i++) {
           for (let j = 0; j < Math.min(rows, oldGrid[i]?.length || 0); j++) {
-            if (oldGrid[i]?.[j]) {
-              newGrid[i]![j] = oldGrid[i][j]
+            if (oldGrid[i]?.[j] !== undefined) {
+              newGrid[i]![j] = oldGrid[i]![j]!
             }
           }
         }
