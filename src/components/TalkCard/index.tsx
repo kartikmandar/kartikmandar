@@ -301,7 +301,7 @@ export const TalkModal: React.FC<TalkModalProps> = ({ talk, onClose }) => {
   const [imageError, setImageError] = useState(false)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+    <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 bg-black/50">
       <div className="bg-background border border-border rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
         {/* Modal Header */}
         <div className="flex items-start justify-between p-6 border-b border-border">
@@ -515,13 +515,14 @@ export const TalkModal: React.FC<TalkModalProps> = ({ talk, onClose }) => {
                 {talk.materialDescription && (
                   <p className="text-muted-foreground text-sm">{talk.materialDescription}</p>
                 )}
-                <div className="border border-border rounded-lg overflow-hidden">
+                <div className="border border-border rounded-lg overflow-hidden bg-background">
                   <iframe
                     src={`https://drive.google.com/embeddedfolderview?id=${talk.gDriveFolderId}#grid`}
                     width="100%"
                     height={talk.embedHeight || 400}
-                    className="w-full"
+                    className="w-full min-h-[400px] border-0"
                     title="Talk Materials"
+                    style={{ display: 'block' }}
                   />
                 </div>
               </div>

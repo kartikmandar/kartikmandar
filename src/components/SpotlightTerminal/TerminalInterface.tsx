@@ -124,7 +124,7 @@ export const TerminalInterface: React.FC<TerminalInterfaceProps> = ({
 
   const handleTabCompletion = (): void => {
     // Simple tab completion - could be enhanced
-    const commonCommands = ['ls', 'cd', 'pwd', 'tree', 'help', 'clear', 'whoami']
+    const commonCommands = ['ls', 'cd', 'pwd', 'tree', 'help', 'clear', 'whoami', 'refresh', 'info', 'stats']
     const matchingCommands = commonCommands.filter(cmd => 
       cmd.startsWith(currentInput.toLowerCase())
     )
