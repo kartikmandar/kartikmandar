@@ -1,5 +1,4 @@
 import { withPayload } from '@payloadcms/next/withPayload'
-import webpack from 'webpack'
 
 import redirects from './redirects.js'
 
