@@ -932,3 +932,85 @@ export async function checkRateLimitBeforeSync(): Promise<boolean> {
     return true // Proceed if check fails
   }
 }
+
+/**
+ * Fetch repository stats including basic info
+ */
+export async function fetchGitHubRepoStats(owner: string, repo: string): Promise<any> {
+  try {
+    const repository = await fetchGitHubRepository(owner, repo)
+    if (!repository) return null
+    
+    const [fileTree, readme, totalCommits, contributors, stats] = await Promise.all([
+      fetchGitHubFileTree(owner, repo, repository.default_branch),
+      fetchGitHubReadme(owner, repo),
+      fetchGitHubCommitCount(owner, repo),
+      fetchGitHubContributors(owner, repo),
+      fetchGitHubRepositoryStats(owner, repo)
+    ])
+    
+    // Count files and directories from the tree
+    let fileCount = 0
+    let directoryCount = 0
+    
+    if (fileTree?.tree) {
+      fileTree.tree.forEach(item => {
+        if (item.type === 'blob') fileCount++
+        else if (item.type === 'tree') directoryCount++
+      })
+    }
+    
+    return {
+      stars: repository.stargazers_count,
+      forks: repository.forks_count,
+      watchers: repository.watchers_count,
+      openIssues: repository.open_issues_count,
+      language: repository.language,
+      size: repository.size,
+      lastUpdated: repository.updated_at,
+      readme: readme?.content || null,
+      totalCommits,
+      contributors: contributors.length,
+      fileCount,
+      directoryCount,
+      repositorySize: repository.size,
+      defaultBranch: repository.default_branch,
+      isArchived: repository.archived,
+      isFork: repository.fork,
+      license: repository.license?.name || null,
+      topics: repository.topics || [],
+      createdAt: repository.created_at,
+      homepage: repository.homepage,
+      fileTree,
+      githubIssues: stats.issues,
+      githubPullRequests: stats.pullRequests
+    }
+  } catch (error) {
+    console.error(`Error fetching repo stats for ${owner}/${repo}:`, error)
+    return null
+  }
+}
+
+/**
+ * Fetch all releases (not just the latest)
+ */
+export async function fetchGitHubReleases(owner: string, repo: string): Promise<GitHubRelease[]> {
+  try {
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/releases?per_page=100`,
+      createGitHubFetchOptions()
+    )
+    
+    if (!response.ok) {
+      if (response.status === 404) {
+        return [] // No releases found
+      }
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`)
+    }
+    
+    return await response.json()
+  } catch (error) {
+    console.error(`Error fetching releases for ${owner}/${repo}:`, error)
+    return []
+  }
+}

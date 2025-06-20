@@ -145,7 +145,7 @@ export const TerminalInterface: React.FC<TerminalInterfaceProps> = ({
     if (output.length === 0) {
       return (
         <div className="text-green-400 text-sm mb-4">
-          Welcome to Website Terminal! Type 'help' to see available commands.
+          Welcome to Website Terminal! Type &apos;help&apos; to see available commands.
         </div>
       )
     }

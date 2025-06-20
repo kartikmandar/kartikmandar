@@ -2505,7 +2505,7 @@ export default async function Page() {
         <div className="prose dark:prose-invert max-w-none mb-8 sm:mb-16">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 leading-tight">A Comprehensive Compendium of Resources in Astronomy and Astrophysics</h1>
           <p className="text-base sm:text-lg lg:text-xl text-gray-600 dark:text-gray-300 mb-6 sm:mb-8 leading-relaxed">
-            Everything you need to explore the universe, whether you're just starting to stargaze or diving deep into astrophysics research. From inspiring books and documentaries to professional software and cutting-edge equipment, this collection tries to cover it all.
+            Everything you need to explore the universe, whether you&apos;re just starting to stargaze or diving deep into astrophysics research. From inspiring books and documentaries to professional software and cutting-edge equipment, this collection tries to cover it all.
           </p>
 
           {/* Table of Contents */}
@@ -2617,7 +2617,7 @@ export default async function Page() {
             for tools, databases, or educational materials that would benefit the astronomy and astrophysics community. 
             <br className="hidden sm:block"/>
             <span className="block sm:inline mt-2 sm:mt-0">
-              If you feel any resource isn't up to the mark or is inappropriately placed, please suggest its removal 
+              If you feel any resource isn&apos;t up to the mark or is inappropriately placed, please suggest its removal 
               and explain why - your feedback helps keep this collection accurate and valuable!
             </span>
           </p>
