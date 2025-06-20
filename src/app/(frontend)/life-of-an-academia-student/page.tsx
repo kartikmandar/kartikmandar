@@ -250,7 +250,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
                 console.log(`Post "${post.title}" populatedAuthors:`, post.populatedAuthors)
                 console.log(`Post "${post.title}" authors:`, post.authors)
                 const hasAuthors = post.populatedAuthors && post.populatedAuthors.length > 0 && formatAuthors(post.populatedAuthors) !== ''
-                const authorsText = hasAuthors ? formatAuthors(post.populatedAuthors) : null
+                const authorsText = hasAuthors && post.populatedAuthors ? formatAuthors(post.populatedAuthors) : null
                 console.log(`Post "${post.title}" authorsText:`, authorsText)
                 
                 // Extract content preview
