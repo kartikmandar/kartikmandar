@@ -1,4 +1,5 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import webpack from 'webpack'
 
 import redirects from './redirects.js'
 
@@ -8,6 +9,14 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  webpack: (config, { webpack }) => {
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
+      }),
+    )
+    return config
+  },
   images: {
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
@@ -50,4 +59,4 @@ const nextConfig = {
   crossOrigin: 'anonymous',
 }
 
-export default withPayload(nextConfig, { devBundleServerPackages: false })
+export default withPayload(nextConfig)
