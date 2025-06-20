@@ -43,7 +43,7 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
     if (!acc[poster.category]) {
       acc[poster.category] = []
     }
-    acc[poster.category].push(poster)
+    acc[poster.category]!.push(poster)
     return acc
   }, {} as Record<string, typeof posters>)
 
