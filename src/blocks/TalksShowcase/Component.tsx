@@ -193,7 +193,7 @@ export const TalksShowcase: React.FC<TalksShowcaseProps> = ({
     return (
       <div id="my-talks" className="container my-16">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             {title}
           </h2>
           <p className="text-lg text-muted-foreground mb-8">
@@ -211,7 +211,7 @@ export const TalksShowcase: React.FC<TalksShowcaseProps> = ({
     <>
       <div id="my-talks" className="container my-16">
         <div className="max-w-4xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             {title}
           </h2>
           <p className="text-lg text-muted-foreground">

@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, FileText, BookOpen, PenTool, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase } from 'lucide-react'
+import { Home, FileText, BookOpen, PenTool, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase, BookText, Presentation, User } from 'lucide-react'
 
 interface NavItem {
   label: string
@@ -33,12 +33,14 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
       'GSoC 2025': <Trophy size={20} />,
       'Talks': <Mic size={20} />,
       'Publications': <BookOpen size={20} />,
+      'Posters': <Presentation size={20} />,
       'Hobbies': <Gamepad2 size={20} />,
       'Certificates': <Award size={20} />,
       'Journal Club': <Users size={20} />,
       'Courses': <GraduationCap size={20} />,
       'Common Resources': <FolderOpen size={20} />,
-      'Blog': <PenTool size={20} />,
+      'Blog': <BookText size={20} />,
+      'Academic Life': <User size={20} />,
       'Contact': <Phone size={20} />,
     }
     return iconMap[label] || <Home size={20} />
@@ -69,7 +71,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
     {
       label: 'Blog',
       url: '/posts',
-      icon: <PenTool size={20} />
+      icon: <BookText size={20} />
     }
   ]
 

@@ -271,11 +271,11 @@ export function Footer() {
   
   // Technical skills
   const technicalSkills = [
-    { label: 'Python & Data Analysis', url: '#' },
-    { label: 'Machine Learning', url: '#' },
-    { label: 'Web & App Development', url: '#' },
-    { label: 'CI/CD', url: '#' },
-    { label: 'Dev Ops', url: '#' }
+    { label: 'Python & Data Analysis', url: '/certificates#Programming' },
+    { label: 'Machine Learning', url: '/certificates#Machine-Learning' },
+    { label: 'Web & App Development', url: '/certificates#Web-Development' },
+    { label: 'Database & DevOps', url: '/certificates#DevOps' },
+    { label: 'Mobile Development', url: '/certificates#Mobile-Development' }
   ]
   
   // Blog posts
@@ -297,7 +297,7 @@ export function Footer() {
     { label: 'Projects', url: '/#my-projects' },
     { label: 'Talks', url: '#' },
     { label: 'Posters', url: '#' },
-    { label: 'Courses/Labs', url: '#' },
+    { label: 'Courses/Labs', url: '/courses' },
     { label: 'Clubs', url: '#' },
     { label: 'Common Resources', url: '/common-resources' }
   ]
@@ -518,7 +518,7 @@ export function Footer() {
                 </div>
               ))}
               <div className="border-l-2 border-zinc-700 pl-3">
-                <Link href="#" className="text-gray-300 hover:text-white text-sm touch-target py-1 inline-block">See All Publications</Link>
+                <Link href="/publications" className="text-gray-300 hover:text-white text-sm touch-target py-1 inline-block">See All Publications</Link>
               </div>
             </div>
             

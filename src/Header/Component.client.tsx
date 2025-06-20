@@ -23,6 +23,7 @@ const iconMap: Record<string, React.ReactNode> = {
   Courses: <GraduationCap size={28} />,
   'Common Resources': <Library size={28} />,
   Blog: <Edit3 size={28} />,
+  'Academic Life': <User size={28} />,
   Contact: <Phone size={28} />,
 }
 

@@ -68,7 +68,7 @@ export default async function HobbiesPage() {
         
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground via-foreground/80 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Hobbies
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
@@ -84,11 +84,6 @@ export default async function HobbiesPage() {
                 key={index} 
                 className={`bg-gradient-to-br ${hobby.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg`}
               >
-                {/* Icon */}
-                <div className="mb-4 text-foreground">
-                  {hobby.icon}
-                </div>
-                
                 {/* Content */}
                 <div>
                   <h3 className="text-xl font-bold mb-3 text-foreground">

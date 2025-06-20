@@ -27,9 +27,9 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
-  // Initialize file system mapper and command processor
-  const fileSystemMapper = new FileSystemMapper(navItems)
-  const commandProcessor = new CommandProcessor(fileSystemMapper, router, pathname)
+  // Initialize file system mapper and command processor with useMemo to prevent recreation
+  const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems), [navItems])
+  const commandProcessor = React.useMemo(() => new CommandProcessor(fileSystemMapper, router, pathname), [fileSystemMapper, router, pathname])
 
   // Update current directory based on pathname
   useEffect(() => {
