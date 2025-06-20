@@ -263,7 +263,7 @@ export default async function CertificatesPage(): Promise<React.JSX.Element> {
     if (!acc[cert.category]) {
       acc[cert.category] = []
     }
-    acc[cert.category].push(cert)
+    acc[cert.category]!.push(cert)
     return acc
   }, {} as Record<string, typeof certificates>)
 
