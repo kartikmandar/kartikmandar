@@ -312,7 +312,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           ) : (
             <div className="text-center py-12 bg-muted/30 rounded-xl">
               <p className="text-muted-foreground">
-                Personal stories and blog posts will be featured here as they're published.
+                Personal stories and blog posts will be featured here as they&apos;re published.
               </p>
             </div>
           )}
@@ -365,7 +365,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">A Day in Academic Life</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              What does a typical day actually look like? Spoiler: it's rarely typical.
+              What does a typical day actually look like? Spoiler: it&apos;s rarely typical.
             </p>
           </div>
           
@@ -417,8 +417,8 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
             </div>
             <div className="text-center mt-8 p-4 bg-muted/30 rounded-lg">
               <p className="text-sm text-muted-foreground">
-                <strong>Reality check:</strong> This process is rarely linear. You'll often cycle back to earlier steps, 
-                face rejections, and sometimes start over completely. That's normal!
+                <strong>Reality check:</strong> This process is rarely linear. You&apos;ll often cycle back to earlier steps, 
+                face rejections, and sometimes start over completely. That&apos;s normal!
               </p>
             </div>
           </div>
@@ -430,7 +430,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">The Financial Reality</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Let's talk about money - because passion doesn't pay the bills (but it might barely cover them).
+              Let&apos;s talk about money - because passion doesn&apos;t pay the bills (but it might barely cover them).
             </p>
           </div>
           
@@ -482,7 +482,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
         <section className="text-center py-16 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Join the Academic Community?</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Academic life isn't for everyone, but for those called to it, it can be incredibly fulfilling. 
+            Academic life isn&apos;t for everyone, but for those called to it, it can be incredibly fulfilling. 
             The world needs curious minds pushing the boundaries of knowledge.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

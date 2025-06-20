@@ -28,7 +28,7 @@ export default async function ContactPage() {
               Contact Me
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-              Let's connect for research collaborations, academic discussions, consultancy services, or to explore opportunities in astrophysics, data analysis or even a cool development project.
+              Let&apos;s connect for research collaborations, academic discussions, consultancy services, or to explore opportunities in astrophysics, data analysis or even a cool development project.
             </p>
           </div>
 

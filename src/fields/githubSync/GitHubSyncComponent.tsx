@@ -198,7 +198,7 @@ Last Updated: ${new Date(githubData.updatedAt).toLocaleDateString()}`)
           color: '#856404',
           fontSize: '13px'
         }}>
-          💡 Add a GitHub URL in the "Links" section above to enable syncing
+          💡 Add a GitHub URL in the &quot;Links&quot; section above to enable syncing
         </div>
       )}
 

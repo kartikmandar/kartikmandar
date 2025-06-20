@@ -1,5 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import Link from 'next/link'
 import PageClient from './page.client'
 
 export const dynamic = 'force-static'
@@ -105,12 +106,12 @@ export default async function ConsultancyPage() {
               >
                 Explore Services
               </a>
-              <a 
+              <Link 
                 href="/contact" 
                 className="inline-flex items-center justify-center px-8 py-4 bg-card border border-border text-card-foreground font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
               >
                 Schedule Consultation
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -256,18 +257,18 @@ export default async function ConsultancyPage() {
             <div className="bg-card border border-border rounded-lg p-8">
               <h2 className="text-2xl font-bold mb-4 text-foreground">Ready to Transform Your Research with Modern Software?</h2>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a 
+                <Link 
                   href="/contact" 
                   className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Schedule Consultation
-                </a>
-                <a 
+                </Link>
+                <Link 
                   href="/#my-projects" 
                   className="inline-flex items-center justify-center px-8 py-4 bg-card border border-border text-card-foreground font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                   My Work
-                </a>
+                </Link>
               </div>
             </div>
           </section>

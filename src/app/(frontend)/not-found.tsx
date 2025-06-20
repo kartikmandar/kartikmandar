@@ -381,7 +381,7 @@ export default function NotFound() {
             404: Lost in the Cellular Cosmos
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            You've drifted into Conway's Game of Life. Click anywhere in the simulation to create cells and watch evolution unfold.
+            You&apos;ve drifted into Conway&apos;s Game of Life. Click anywhere in the simulation to create cells and watch evolution unfold.
           </p>
           <Link 
             href="/" 
@@ -499,7 +499,7 @@ export default function NotFound() {
         {/* Rules and Information Section */}
         <div className="mt-16 space-y-8">
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-4 text-foreground">Conway's Game of Life</h2>
+            <h2 className="text-3xl font-bold mb-4 text-foreground">Conway&apos;s Game of Life</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
               A cellular automaton devised by mathematician John Horton Conway in 1970. 
               Despite its simple rules, it can simulate complex behaviors and is Turing complete.

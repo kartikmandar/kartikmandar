@@ -335,7 +335,7 @@ export function Footer() {
               <div className="text-center mb-4 sm:mb-6">
                 <div className="inline-block px-6 py-4 bg-card border border-border rounded-lg shadow-lg">
                   <p className="text-foreground font-semibold">Thanks for reaching out!</p>
-                  <p className="text-muted-foreground text-sm mt-1">I'll get back to you soon.</p>
+                  <p className="text-muted-foreground text-sm mt-1">I&apos;ll get back to you soon.</p>
                 </div>
               </div>
             ) : (

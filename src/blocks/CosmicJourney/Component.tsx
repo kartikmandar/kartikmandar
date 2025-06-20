@@ -1841,7 +1841,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         }
       }
       
-      data && data.latexParticles.forEach((p: any) => {
+      if (data) {
+        data.latexParticles.forEach((p: any) => {
         if (!p.absorbed) {
           p.x += p.vx
           p.y += p.vy
@@ -1857,6 +1858,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           }
         }
       })
+      }
 
       if (data && data.currentLatexSymbol) {
         ctx.fillStyle = `rgba(253, 224, 71, ${latexPhase})`
@@ -2450,7 +2452,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             <p className="text-indigo-400 font-semibold mb-1">6th - 8th Standard</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Hands-On Exploration</h3>
             <p className="text-md md:text-lg">
-              Joined SPACE-India astronomy club at school. They were transformative be it: solar observation, making dry-ice comets, finding asteroids, and even calculating Earth's circumference. Overnight observation camps at Sariska somehow made the universe tangible.
+              Joined SPACE-India astronomy club at school. They were transformative be it: solar observation, making dry-ice comets, finding asteroids, and even calculating Earth&apos;s circumference. Overnight observation camps at Sariska somehow made the universe tangible.
             </p>
           </div>
         </section>
@@ -2480,7 +2482,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             <p className="text-indigo-400 font-semibold mb-1">11th - 12th Standard</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Forging My Own Path</h3>
             <p className="text-md md:text-lg">
-              Even though choosing PCM in my +2, I went with research over engineering, built my own refractor, started the "Brittle Stars" blog, and competed in state-level badminton. I also bagged AIR 14 in Heliodyssey, winning a fully sponsored solar expedition to Oman to study an annular eclipse.
+              Even though choosing PCM in my +2, I went with research over engineering, built my own refractor, started the &quot;Brittle Stars&quot; blog, and competed in state-level badminton. I also bagged AIR 14 in Heliodyssey, winning a fully sponsored solar expedition to Oman to study an annular eclipse.
             </p>
           </div>
         </section>
@@ -2700,7 +2702,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             <p className="text-indigo-400 font-semibold mb-1">Current Endeavors</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Analysis and Innovation</h3>
             <p className="text-md md:text-lg">
-              I am working on the spectral and timing analysis of Cygnus X-1, improving RRIViz, learning about EM solvers, and participating in the world's largest hackathon building a WYSIWYG LaTeX editor.
+              I am working on the spectral and timing analysis of Cygnus X-1, improving RRIViz, learning about EM solvers, and participating in the world&apos;s largest hackathon building a WYSIWYG LaTeX editor.
             </p>
           </div>
         </section>
@@ -2713,7 +2715,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           ></canvas>
           <div className="interactive-text" style={{ top: '30%' }}>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">The Journey Continues...</h2>
-            <p className="text-lg text-indigo-300">...in search of a Master's in Astrophysics.</p>
+            <p className="text-lg text-indigo-300">...in search of a Master&apos;s in Astrophysics.</p>
           </div>
         </section>
       </div>

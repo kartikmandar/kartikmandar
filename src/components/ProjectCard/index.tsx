@@ -1009,7 +1009,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 <Code className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
                 <h3 className="text-lg font-semibold text-foreground mb-2">No Code Information Available</h3>
                 <p className="text-muted-foreground">
-                  This project doesn't have GitHub repository or architecture information linked.
+                  This project doesn&apos;t have GitHub repository or architecture information linked.
                 </p>
               </div>
             )}
