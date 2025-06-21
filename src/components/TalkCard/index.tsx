@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import { 
   Calendar,
@@ -168,8 +168,6 @@ const formatDuration = (minutes?: number): string => {
 }
 
 export const TalkCard: React.FC<TalkCardProps> = ({ talk, onExpand }) => {
-  const [imageError, setImageError] = useState(false)
-
   const handleCardClick = () => {
     onExpand(talk)
   }
@@ -180,12 +178,11 @@ export const TalkCard: React.FC<TalkCardProps> = ({ talk, onExpand }) => {
       onClick={handleCardClick}
     >
       {/* Cover Image */}
-      {talk.coverImage && !imageError && (
+      {talk.coverImage && (
         <div className="mb-4 overflow-hidden rounded-lg">
           <Media
             resource={talk.coverImage}
             className="w-full h-48 object-cover object-center group-hover:scale-105 transition-transform duration-300"
-            onError={() => setImageError(true)}
           />
         </div>
       )}
@@ -298,8 +295,6 @@ export const TalkCard: React.FC<TalkCardProps> = ({ talk, onExpand }) => {
 }
 
 export const TalkModal: React.FC<TalkModalProps> = ({ talk, onClose }) => {
-  const [imageError, setImageError] = useState(false)
-
   return (
     <div className="fixed inset-0 z-[1200] flex items-center justify-center p-4 bg-black/50">
       <div className="bg-background border border-border rounded-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
@@ -331,12 +326,11 @@ export const TalkModal: React.FC<TalkModalProps> = ({ talk, onClose }) => {
         <div className="overflow-y-auto max-h-[calc(90vh-5rem)]">
           <div className="p-6 space-y-6">
             {/* Cover Image */}
-            {talk.coverImage && !imageError && (
+            {talk.coverImage && (
               <div className="overflow-hidden rounded-lg">
                 <Media
                   resource={talk.coverImage}
                   className="w-full h-64 object-cover object-center"
-                  onError={() => setImageError(true)}
                 />
               </div>
             )}
@@ -563,5 +557,3 @@ export const TalkModal: React.FC<TalkModalProps> = ({ talk, onClose }) => {
     </div>
   )
 }
-
-export type { Talk }

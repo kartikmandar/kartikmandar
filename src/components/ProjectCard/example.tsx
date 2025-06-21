@@ -169,7 +169,7 @@ npm start`,
             {/* Featured Card - takes more space */}
             <div className="lg:col-span-8">
               <ProjectCard
-                project={sampleProjects[0]}
+                project={sampleProjects[0]!}
                 onExpand={setSelectedProject}
                 variant="featured"
               />

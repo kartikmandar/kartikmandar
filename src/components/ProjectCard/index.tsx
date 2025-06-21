@@ -151,7 +151,6 @@ const getFileIcon = (filename: string) => {
     'r': { icon: FileCode, color: 'text-blue-400' },
     'rmd': { icon: FileText, color: 'text-blue-500' },
     'matlab': { icon: FileCode, color: 'text-orange-600' },
-    'm': { icon: FileCode, color: 'text-orange-500' },
     'pl': { icon: FileCode, color: 'text-blue-600' },
     'pm': { icon: FileCode, color: 'text-blue-700' },
     'lua': { icon: FileCode, color: 'text-blue-500' },
@@ -1030,9 +1029,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 </div>
                 <div className="bg-muted rounded-lg p-4">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="font-medium text-foreground">{project.links.githubUrl.split('/').pop()}</span>
+                    <span className="font-medium text-foreground">{project.links?.githubUrl?.split('/').pop()}</span>
                     <a 
-                      href={project.links.githubUrl} 
+                      href={project.links?.githubUrl || '#'} 
                       target="_blank" 
                       rel="noopener noreferrer" 
                       className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors"
@@ -1225,7 +1224,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                               <GitBranch className="w-3 h-3 text-muted-foreground flex-shrink-0" />
                               <span className="font-medium text-foreground truncate">{branch.name}</span>
                               {branch.protected && (
-                                <Shield className="w-3 h-3 text-yellow-500 flex-shrink-0" title="Protected branch" />
+                                <Shield className="w-3 h-3 text-yellow-500 flex-shrink-0" />
                               )}
                             </div>
                             {branch.commitSha && (

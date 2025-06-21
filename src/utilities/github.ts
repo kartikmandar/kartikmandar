@@ -211,7 +211,7 @@ export function parseGitHubUrl(url: string): { owner: string; repo: string } | n
     
     for (const pattern of patterns) {
       const match = url.match(pattern)
-      if (match) {
+      if (match && match[1] && match[2]) {
         return {
           owner: match[1],
           repo: match[2],
@@ -471,7 +471,7 @@ export async function fetchGitHubCommitCount(owner: string, repo: string): Promi
     if (linkHeader) {
       // Parse the last page number from Link header
       const lastPageMatch = linkHeader.match(/page=(\d+)>; rel="last"/)
-      if (lastPageMatch) {
+      if (lastPageMatch && lastPageMatch[1]) {
         return parseInt(lastPageMatch[1], 10)
       }
     }

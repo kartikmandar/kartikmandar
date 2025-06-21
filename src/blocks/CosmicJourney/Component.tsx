@@ -23,8 +23,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
   const [isCosmicJourneyVisible, setIsCosmicJourneyVisible] = useState(false)
   const searchTextRef = useRef<HTMLSpanElement>(null)
   const canvasDataRef = useRef<{ [key: string]: CanvasData }>({})
-  const animationFrameRef = useRef<number>()
-  const intersectionObserverRef = useRef<IntersectionObserver>()
+  const animationFrameRef = useRef<number>(0)
+  const intersectionObserverRef = useRef<IntersectionObserver | null>(null)
   const visibleCanvasesRef = useRef<Set<string>>(new Set())
   const cosmicJourneyRef = useRef<HTMLDivElement>(null)
 
@@ -480,7 +480,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     })
   }
 
-  const drawBuildAComet = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawBuildAComet = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const nucleus = { x: w * 0.5, y: h * 0.5 }
 
@@ -544,7 +544,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     drawAStar(ctx, nucleus.x, nucleus.y, nucleusSize, '#999')
   }
 
-  const drawFocusingLens = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawFocusingLens = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
@@ -655,7 +655,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     const researchLines = [[1, 3], [3, 4], [0, 2], [2, 4], [0, 8], [1, 9], [2, 5], [5, 6], [6, 7]]
     
     const engAlpha = Math.max(0, 1 - progress * 2.5)
-    engineeringStars.forEach(star => drawAStar(ctx, star[0] * w, star[1] * h, 2, `rgba(255, 255, 255, ${engAlpha})`))
+    engineeringStars.forEach(star => drawAStar(ctx, star[0]! * w, star[1]! * h, 2, `rgba(255, 255, 255, ${engAlpha})`))
     
     researchStars.forEach(star => {
       drawAStar(ctx, star.x * w, star.y * h, star.radius, `rgba(255, 255, 255, 1)`)
@@ -690,7 +690,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.shadowBlur = 0
   }
 
-  const drawVirtualNetwork = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawVirtualNetwork = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
@@ -1021,7 +1021,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawShatteringShuttlecock = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawShatteringShuttlecock = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const riseProgress = Math.min(1, progress / 0.4)
@@ -1082,7 +1082,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawSignalToSimulation = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawSignalToSimulation = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const time = Date.now() / 100
 
@@ -1269,7 +1269,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawRadioInterferometry = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawRadioInterferometry = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const padding = 50
     const plotW = w - padding * 2
@@ -1589,7 +1589,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     return { update }
   }
 
-  const drawPublicationFlight = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawPublicationFlight = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
 
     const paperPhase = Math.min(1, progress / 0.3)
@@ -1747,7 +1747,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.stroke()
   }
 
-  const drawCelestialWorkbench = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawCelestialWorkbench = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
@@ -1884,7 +1884,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawJourneyContinues = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data: any }) => {
+  const drawJourneyContinues = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: any }) => {
     ctx.clearRect(0, 0, w, h)
     
     const centerX = w / 2

@@ -233,7 +233,6 @@ Last Updated: ${new Date(githubData.updatedAt).toLocaleDateString()}`)
           disabled={isLoading || !githubUrl || !projectId || !urlValidation.isValid}
           size="small"
           buttonStyle="primary"
-          title={!projectId ? 'Save the project first to enable syncing' : 'Sync GitHub data to this project'}
         >
           {isLoading ? 'Syncing...' : !projectId ? 'Save Project First' : 'Sync from GitHub'}
         </Button>

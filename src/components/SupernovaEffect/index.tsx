@@ -250,10 +250,10 @@ export default function SupernovaEffect({
             if (i < particleVelocities.length && index < positions.length - 2) {
                 const velocity = particleVelocities[i];
                 
-                if (velocity) {
-                    positions[index] += (velocity?.x || 0) * speed * deltaTime
-                    positions[index + 1] += (velocity?.y || 0) * speed * deltaTime
-                    positions[index + 2] += (velocity?.z || 0) * speed * deltaTime
+                if (velocity && positions[index] !== undefined && positions[index + 1] !== undefined && positions[index + 2] !== undefined) {
+                    positions[index]! += (velocity?.x || 0) * speed * deltaTime
+                    positions[index + 1]! += (velocity?.y || 0) * speed * deltaTime
+                    positions[index + 2]! += (velocity?.z || 0) * speed * deltaTime
                 }
             }
         }
