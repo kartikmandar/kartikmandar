@@ -101,13 +101,15 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     // Process latest release
     if (releases.status === 'fulfilled' && releases.value && releases.value.length > 0) {
       const latestRelease = releases.value[0]
-      updateData.latestRelease = {
-        version: latestRelease.tag_name,
-        name: latestRelease.name,
-        publishedAt: latestRelease.published_at,
-        description: latestRelease.body,
-        htmlUrl: latestRelease.html_url,
-        downloadCount: latestRelease.assets?.reduce((sum, asset) => sum + (asset.download_count || 0), 0) || 0,
+      if (latestRelease) {
+        updateData.latestRelease = {
+          version: latestRelease.tag_name,
+          name: latestRelease.name,
+          publishedAt: latestRelease.published_at,
+          description: latestRelease.body,
+          htmlUrl: latestRelease.html_url,
+          downloadCount: latestRelease.assets?.reduce((sum, asset) => sum + (asset.download_count || 0), 0) || 0,
+        }
       }
     }
 
