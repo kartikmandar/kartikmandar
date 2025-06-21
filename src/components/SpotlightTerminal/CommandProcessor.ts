@@ -462,7 +462,7 @@ ${examples}`,
   }
 
   private async executeInfo(args: string[]): Promise<CommandResult> {
-    const targetPath = args.length > 0 
+    const targetPath = args.length > 0 && args[0]
       ? this.fileSystemMapper.resolvePath(this.currentPath, args[0])
       : this.currentPath
 

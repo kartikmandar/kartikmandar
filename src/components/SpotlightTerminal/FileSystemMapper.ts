@@ -196,6 +196,7 @@ export class FileSystemMapper {
     if (pathParts.length === 0) return
 
     const [currentPart, ...remainingParts] = pathParts
+    if (!currentPart) return
     let currentPath: string
     
     // Build path correctly based on parent path

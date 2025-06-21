@@ -48,11 +48,11 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
       githubStats: {
         stars: payloadProject.links.githubStats?.stars || 0,
         forks: payloadProject.links.githubStats?.forks || 0,
-        language: payloadProject.links.githubStats?.language,
+        language: payloadProject.links.githubStats?.language || undefined,
         watchers: payloadProject.links.githubStats?.watchers || 0,
         openIssues: payloadProject.links.githubStats?.openIssues || 0,
         size: payloadProject.links.githubStats?.size || 0,
-        lastUpdated: payloadProject.links.githubStats?.lastUpdated,
+        lastUpdated: payloadProject.links.githubStats?.lastUpdated || undefined,
       }
     }
   }
@@ -76,7 +76,12 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
     project.fileCount = payloadProject.projectDetails.fileCount || undefined
     project.directoryCount = payloadProject.projectDetails.directoryCount || undefined
     project.repositorySize = payloadProject.projectDetails.repositorySize || undefined
-    project.contributors = payloadProject.projectDetails.contributors || undefined
+    project.contributors = payloadProject.projectDetails.contributors?.map(c => ({
+      name: c.name,
+      contributions: c.contributions,
+      githubUrl: c.githubUrl || undefined,
+      avatarUrl: c.avatarUrl || undefined
+    })) || undefined
     project.createdAt = payloadProject.projectDetails.createdAt || undefined
     
     // Get last updated from either GitHub sync or repository data
@@ -85,24 +90,38 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
                        undefined
     
     // Add file tree data
-    project.fileTree = payloadProject.projectDetails.fileTree || undefined
+    project.fileTree = payloadProject.projectDetails.fileTree?.filter(item => item.url).map(item => ({
+      path: item.path,
+      type: item.type,
+      size: item.size || undefined,
+      url: item.url!
+    })) || undefined
     
     // Add GitHub sync timestamp
     project.lastGitHubSync = payloadProject.lastGitHubSync || undefined
     
     // Add GitHub Issues and Pull Requests data
-    project.githubIssues = payloadProject.projectDetails.githubIssues || undefined
-    project.githubPullRequests = payloadProject.projectDetails.githubPullRequests || undefined
+    project.githubIssues = payloadProject.projectDetails.githubIssues ? {
+      total: payloadProject.projectDetails.githubIssues.total || 0,
+      open: payloadProject.projectDetails.githubIssues.open || 0,
+      closed: payloadProject.projectDetails.githubIssues.closed || 0
+    } : undefined
+    project.githubPullRequests = payloadProject.projectDetails.githubPullRequests ? {
+      total: payloadProject.projectDetails.githubPullRequests.total || 0,
+      open: payloadProject.projectDetails.githubPullRequests.open || 0,
+      closed: payloadProject.projectDetails.githubPullRequests.closed || 0,
+      merged: payloadProject.projectDetails.githubPullRequests.merged || 0
+    } : undefined
     
     // Add repository metadata
     project.projectDetails = {
       ...project.projectDetails,
-      license: payloadProject.projectDetails.license,
-      defaultBranch: payloadProject.projectDetails.defaultBranch,
-      homepage: payloadProject.projectDetails.homepage,
-      topics: payloadProject.projectDetails.topics,
-      isArchived: payloadProject.projectDetails.isArchived,
-      isFork: payloadProject.projectDetails.isFork,
+      license: payloadProject.projectDetails.license || undefined,
+      defaultBranch: payloadProject.projectDetails.defaultBranch || undefined,
+      homepage: payloadProject.projectDetails.homepage || undefined,
+      topics: payloadProject.projectDetails.topics || undefined,
+      isArchived: payloadProject.projectDetails.isArchived ?? undefined,
+      isFork: payloadProject.projectDetails.isFork ?? undefined,
     }
   }
 
@@ -121,8 +140,8 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
   if (payloadProject.branches?.length) {
     project.branches = payloadProject.branches.map(branch => ({
       name: branch.name,
-      protected: branch.protected,
-      commitSha: branch.commitSha,
+      protected: branch.protected ?? undefined,
+      commitSha: branch.commitSha || undefined,
     }))
   }
 
@@ -130,11 +149,11 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
   if (payloadProject.latestRelease?.version) {
     project.latestRelease = {
       version: payloadProject.latestRelease.version,
-      name: payloadProject.latestRelease.name,
-      publishedAt: payloadProject.latestRelease.publishedAt,
-      description: payloadProject.latestRelease.description,
-      htmlUrl: payloadProject.latestRelease.htmlUrl,
-      downloadCount: payloadProject.latestRelease.downloadCount,
+      name: payloadProject.latestRelease.name || undefined,
+      publishedAt: payloadProject.latestRelease.publishedAt || undefined,
+      description: payloadProject.latestRelease.description || undefined,
+      htmlUrl: payloadProject.latestRelease.htmlUrl || undefined,
+      downloadCount: payloadProject.latestRelease.downloadCount || undefined,
     }
   }
 
