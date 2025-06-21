@@ -37,7 +37,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     }
 
     const [, owner, repo] = match
-    const cleanRepo = repo.replace(/\.git$/, '')
+    const cleanRepo = repo!.replace(/\.git$/, '')
 
     // Fetch GitHub data
     const [repoStats, branches, releases] = await Promise.allSettled([
