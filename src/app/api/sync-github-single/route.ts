@@ -41,9 +41,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
     // Fetch GitHub data
     const [repoStats, branches, releases] = await Promise.allSettled([
-      fetchGitHubRepoStats(owner, cleanRepo),
-      fetchGitHubBranches(owner, cleanRepo),
-      fetchGitHubReleases(owner, cleanRepo),
+      fetchGitHubRepoStats(owner!, cleanRepo),
+      fetchGitHubBranches(owner!, cleanRepo),
+      fetchGitHubReleases(owner!, cleanRepo),
     ])
 
     // Prepare update data
