@@ -80,7 +80,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         isArchived: stats.isArchived,
         isFork: stats.isFork,
         license: stats.license,
-        topics: stats.topics?.map(topic => ({ topic })),
+        topics: stats.topics?.map((topic: string) => ({ topic })),
         createdAt: stats.createdAt,
         homepage: stats.homepage,
         fileTree: stats.fileTree,
