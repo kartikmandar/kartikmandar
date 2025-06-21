@@ -33,7 +33,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
     if (!githubUrl) {
       return {
         success: false,
-        projectId: project.id,
+        projectId: String(project.id),
         projectTitle: project.title,
         error: 'No GitHub URL found'
       }
@@ -44,7 +44,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
     if (!parsed) {
       return {
         success: false,
-        projectId: project.id,
+        projectId: String(project.id),
         projectTitle: project.title,
         error: 'Invalid GitHub URL format'
       }
@@ -55,7 +55,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
     if (!githubData) {
       return {
         success: false,
-        projectId: project.id,
+        projectId: String(project.id),
         projectTitle: project.title,
         error: 'Failed to fetch GitHub data'
       }
@@ -165,7 +165,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
 
     return {
       success: true,
-      projectId: project.id,
+      projectId: String(project.id),
       projectTitle: project.title,
       githubData: {
         stars: repository.stargazers_count,
@@ -181,7 +181,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
     console.error(`Error syncing GitHub data for project ${project.id}:`, error)
     return {
       success: false,
-      projectId: project.id,
+      projectId: String(project.id),
       projectTitle: project.title,
       error: error instanceof Error ? error.message : 'Unknown error'
     }
