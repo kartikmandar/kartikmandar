@@ -34,7 +34,9 @@ function extractTextFromContent(content: any): string {
   return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
 }
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt' | 'populatedAuthors' | 'authors' | 'content'>
+export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt' | 'populatedAuthors' | 'authors'> & {
+  content?: Post['content']
+}
 
 export const Card: React.FC<{
   alignItems?: 'center'
