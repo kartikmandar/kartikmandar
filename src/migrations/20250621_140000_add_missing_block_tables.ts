@@ -225,7 +225,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_projects_showcase_projects" ADD CONSTRAINT "pages_blocks_projects_showcase_projects_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages_blocks_projects_showcase"("id") ON DELETE cascade ON UPDATE no action;
-      ALTER TABLE "pages_blocks_projects_showcase_projects" ADD CONSTRAINT "pages_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `)
+
+  // Only add foreign key to projects table if it exists
+  await db.execute(sql`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
+        ALTER TABLE "pages_blocks_projects_showcase_projects" ADD CONSTRAINT "pages_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
+      END IF;
     EXCEPTION
       WHEN duplicate_object THEN null;
     END $$;
@@ -251,7 +261,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_projects_showcase_projects" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_projects_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v_blocks_projects_showcase"("id") ON DELETE cascade ON UPDATE no action;
-      ALTER TABLE "_pages_v_blocks_projects_showcase_projects" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `)
+
+  // Only add foreign key to projects table if it exists
+  await db.execute(sql`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
+        ALTER TABLE "_pages_v_blocks_projects_showcase_projects" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
+      END IF;
     EXCEPTION
       WHEN duplicate_object THEN null;
     END $$;
@@ -276,7 +296,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_talks_showcase_talks" ADD CONSTRAINT "pages_blocks_talks_showcase_talks_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages_blocks_talks_showcase"("id") ON DELETE cascade ON UPDATE no action;
-      ALTER TABLE "pages_blocks_talks_showcase_talks" ADD CONSTRAINT "pages_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `)
+
+  // Only add foreign key to talks table if it exists
+  await db.execute(sql`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
+        ALTER TABLE "pages_blocks_talks_showcase_talks" ADD CONSTRAINT "pages_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
+      END IF;
     EXCEPTION
       WHEN duplicate_object THEN null;
     END $$;
@@ -302,7 +332,17 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_talks_showcase_talks" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_talks_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v_blocks_talks_showcase"("id") ON DELETE cascade ON UPDATE no action;
-      ALTER TABLE "_pages_v_blocks_talks_showcase_talks" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `)
+
+  // Only add foreign key to talks table if it exists
+  await db.execute(sql`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
+        ALTER TABLE "_pages_v_blocks_talks_showcase_talks" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
+      END IF;
     EXCEPTION
       WHEN duplicate_object THEN null;
     END $$;
