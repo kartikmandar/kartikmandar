@@ -1,6 +1,54 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
+  // Create pages__rels table if it doesn't exist
+  await db.execute(sql`
+    CREATE TABLE IF NOT EXISTS "pages__rels" (
+      "id" serial PRIMARY KEY NOT NULL,
+      "order" integer,
+      "parent_id" integer NOT NULL,
+      "path" text NOT NULL,
+      "categories_id" integer,
+      "posts_id" integer,
+      "projects_id" integer,
+      "talks_id" integer
+    );
+  `)
+
+  // Create indexes for pages__rels
+  await db.execute(sql`
+    CREATE INDEX IF NOT EXISTS "pages__rels_order_idx" ON "pages__rels" USING btree ("order");
+    CREATE INDEX IF NOT EXISTS "pages__rels_parent_idx" ON "pages__rels" USING btree ("parent_id");
+    CREATE INDEX IF NOT EXISTS "pages__rels_path_idx" ON "pages__rels" USING btree ("path");
+    CREATE INDEX IF NOT EXISTS "pages__rels_categories_id_idx" ON "pages__rels" USING btree ("categories_id");
+    CREATE INDEX IF NOT EXISTS "pages__rels_posts_id_idx" ON "pages__rels" USING btree ("posts_id");
+    CREATE INDEX IF NOT EXISTS "pages__rels_projects_id_idx" ON "pages__rels" USING btree ("projects_id");
+    CREATE INDEX IF NOT EXISTS "pages__rels_talks_id_idx" ON "pages__rels" USING btree ("talks_id");
+  `)
+
+  // Add foreign key constraints for pages__rels
+  await db.execute(sql`
+    DO $$ BEGIN
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'pages') THEN
+        ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "pages"("id") ON DELETE cascade ON UPDATE no action;
+      END IF;
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'categories') THEN
+        ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "categories"("id") ON DELETE cascade ON UPDATE no action;
+      END IF;
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'posts') THEN
+        ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "posts"("id") ON DELETE cascade ON UPDATE no action;
+      END IF;
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
+        ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE cascade ON UPDATE no action;
+      END IF;
+      IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
+        ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE cascade ON UPDATE no action;
+      END IF;
+    EXCEPTION
+      WHEN duplicate_object THEN null;
+    END $$;
+  `)
+
   // Create the pages_blocks_cosmic_journey table
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS "pages_blocks_cosmic_journey" (
@@ -361,5 +409,6 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
     DROP TABLE IF EXISTS "pages_blocks_projects_showcase" CASCADE;
     DROP TABLE IF EXISTS "_pages_v_blocks_cosmic_journey" CASCADE;
     DROP TABLE IF EXISTS "pages_blocks_cosmic_journey" CASCADE;
+    DROP TABLE IF EXISTS "pages__rels" CASCADE;
   `)
 }
