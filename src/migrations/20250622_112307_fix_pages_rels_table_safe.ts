@@ -116,7 +116,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   `)
 
   // Only create the table if it doesn't exist
-  if (!tableExists.rows[0].exists) {
+  if (!tableExists.rows[0]?.exists) {
     // Create pages__rels table
     await db.execute(sql`
       CREATE TABLE "pages__rels" (

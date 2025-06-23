@@ -49,7 +49,7 @@ import {
   Calendar
 } from 'lucide-react'
 
-import { Media } from '@/components/Media'
+import { Media as MediaComponent } from '@/components/Media'
 // import useClickableCard from '@/utilities/useClickableCard'
 
 // Utility function to generate heading IDs from text
@@ -568,7 +568,7 @@ export interface ProjectPoster {
 
 type TreeNode = {
   [key: string]: {
-    type: 'tree' | 'blob'
+    type: 'tree' | 'blob' | 'commit'
     size?: number
     children: TreeNode
   }
@@ -797,7 +797,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         onClick={handleModalOpen}
       >
         {project.coverImage ? (
-          <Media 
+          <MediaComponent 
             resource={project.coverImage} 
             imgClassName="object-cover object-center"
             className="w-full h-full bg-muted/20"
