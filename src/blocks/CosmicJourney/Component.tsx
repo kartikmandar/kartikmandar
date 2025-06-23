@@ -66,9 +66,10 @@ type LatexParticle = {
   y: number
   vx: number
   vy: number
-  symbol: string
-  size: number
+  text: string
+  size?: number
   alpha: number
+  absorbed?: boolean
 }
 
 type DrawFunctionData = {
@@ -82,6 +83,7 @@ type DrawFunctionData = {
   latexParticles?: LatexParticle[]
   noisySignal?: VisibilityPoint[]
   nodes?: NetworkNode[]
+  currentLatexSymbol?: string
 }
 
 type CanvasData = {
@@ -1942,7 +1944,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             y: Math.random() * h,
             vx: (crystalX - (Math.random() * w)) / 200,
             vy: (crystalY - (Math.random() * h)) / 200,
-            text: symbols[i % symbols.length],
+            text: symbols[i % symbols.length] || '\\alpha',
             alpha: 1,
             absorbed: false,
           })
@@ -1978,7 +1980,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
     if (progress < 0.5 && data) {
       data.latexParticles = []
-      data.currentLatexSymbol = null
+      data.currentLatexSymbol = undefined
     }
   }
 
@@ -2129,7 +2131,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             ctx: canvasEl.getContext('2d')!,
             section: sectionEl,
             drawFn: c.drawFn,
-            data: c.data || null,
+            data: c.data || undefined,
             lastProgress: -1
           }
         }
