@@ -124,6 +124,12 @@ export interface GitHubIssue {
     html_url: string
   }>
   comments: number
+  pull_request?: {
+    url: string
+    html_url: string
+    diff_url: string
+    patch_url: string
+  }
 }
 
 export interface GitHubPullRequest {
@@ -169,6 +175,27 @@ export interface GitHubBranch {
   protected: boolean
 }
 
+export interface PackageJson {
+  name?: string
+  version?: string
+  description?: string
+  dependencies?: Record<string, string>
+  devDependencies?: Record<string, string>
+  scripts?: Record<string, string>
+  keywords?: string[]
+  author?: string | {
+    name?: string
+    email?: string
+    url?: string
+  }
+  license?: string
+  repository?: {
+    type?: string
+    url?: string
+  }
+  [key: string]: unknown
+}
+
 export interface GitHubStats {
   issues: {
     total: number
@@ -193,7 +220,7 @@ export interface GitHubRepoStats {
   totalCommits: number
   fileTree: GitHubTree | null
   readme: { content: string; isMarkdown: boolean } | null
-  packageJson: any | null
+  packageJson: PackageJson | null
   linesOfCode?: number
   stats: GitHubStats
   branches?: GitHubBranch[]
@@ -544,7 +571,7 @@ export async function fetchGitHubReadme(owner: string, repo: string): Promise<{ 
 /**
  * Fetch package.json content from repository
  */
-export async function fetchGitHubPackageJson(owner: string, repo: string): Promise<any | null> {
+export async function fetchGitHubPackageJson(owner: string, repo: string): Promise<PackageJson | null> {
   try {
     const response = await fetch(
       `https://api.github.com/repos/${owner}/${repo}/contents/package.json`,
@@ -681,8 +708,8 @@ export async function fetchGitHubIssues(owner: string, repo: string): Promise<Gi
     ])
 
     // Filter out pull requests (GitHub API returns PRs as issues)
-    const openIssuesFiltered = openIssues.filter((issue: any) => !issue.pull_request)
-    const closedIssuesFiltered = closedIssues.filter((issue: any) => !issue.pull_request)
+    const openIssuesFiltered = openIssues.filter((issue: GitHubIssue) => !issue.pull_request)
+    const closedIssuesFiltered = closedIssues.filter((issue: GitHubIssue) => !issue.pull_request)
 
     // Get total counts by fetching repository data
     const repoResponse = await fetch(
@@ -742,8 +769,8 @@ export async function fetchGitHubPullRequests(owner: string, repo: string): Prom
     ])
 
     // Count merged vs closed PRs
-    const mergedPRs = closedPRs.filter((pr: any) => pr.merged_at !== null)
-    const justClosedPRs = closedPRs.filter((pr: any) => pr.merged_at === null)
+    const mergedPRs = closedPRs.filter((pr: GitHubPullRequest) => pr.merged_at !== null)
+    const justClosedPRs = closedPRs.filter((pr: GitHubPullRequest) => pr.merged_at === null)
 
     // Combine recent PRs for display
     const recentPRs = [...openPRs, ...closedPRs]
