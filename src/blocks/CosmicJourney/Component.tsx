@@ -1934,7 +1934,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
 
       ctx.restore()
 
-      if (data && data.latexParticles.length === 0 && latexPhase > 0.1) {
+      if (data && data.latexParticles && data.latexParticles.length === 0 && latexPhase > 0.1) {
         const symbols = ['\\int', '\\Sigma', '\\frac{a}{b}', '\\alpha', '\\nabla']
         for (let i = 0; i < 15; i++) {
           data.latexParticles.push({
