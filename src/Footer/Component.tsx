@@ -286,7 +286,7 @@ export function Footer() {
   ]
   
   // Soft skills
-  const softSkills = [
+  const _softSkills = [
     { label: 'Public Speaking', url: '#' },
     { label: 'Writing', url: '#' },
     { label: 'Leadership', url: '#' },

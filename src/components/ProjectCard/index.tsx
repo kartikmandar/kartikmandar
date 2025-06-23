@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
+import type { Media } from '@/payload-types'
 import { 
   Github, 
   ExternalLink, 
@@ -565,12 +566,20 @@ export interface ProjectPoster {
   url: string
 }
 
+type TreeNode = {
+  [key: string]: {
+    type: 'tree' | 'blob'
+    size?: number
+    children: TreeNode
+  }
+}
+
 export interface Project {
   id: string | number
   title: string
   shortDescription?: string
   description: string
-  coverImage?: any // Payload media type
+  coverImage?: string | number | Media | null
   techStack?: (string | ProjectTechStack)[]
   github?: ProjectGithubStats
   links?: {
@@ -1587,7 +1596,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         {(() => {
                           // Build directory tree structure
                           const buildTree = (items: typeof project.fileTree) => {
-                            const tree: any = {}
+                            const tree: TreeNode = {}
                             
                             items?.forEach(item => {
                               const parts = item.path.split('/')
@@ -1608,8 +1617,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             return tree
                           }
                           
-                          const renderTree = (tree: any, depth = 0) => {
-                            return Object.entries(tree).map(([name, node]: [string, any], index, array) => {
+                          const renderTree = (tree: TreeNode, depth = 0) => {
+                            return Object.entries(tree).map(([name, node], index, array) => {
                               const isLastItem = index === array.length - 1
                               const indent = '  '.repeat(depth)
                               const connector = depth === 0 ? '' : (isLastItem ? '└── ' : '├── ')

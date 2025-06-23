@@ -1,6 +1,6 @@
 'use client'
 import Link from 'next/link'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import { Home, Menu, X, User, FolderOpen, Code2, Mic, BookOpen, Heart, Award, Users, GraduationCap, Edit3, Library, Phone, Briefcase } from 'lucide-react'
 
@@ -8,7 +8,7 @@ interface HeaderClientProps {
   data: { navItems: { link: { label: string; url: string } }[] }
 }
 
-const iconMap: Record<string, React.ReactNode> = {
+const _iconMap: Record<string, React.ReactNode> = {
   Home: <Home size={28} />,
   CV: <User size={28} />,
   Projects: <FolderOpen size={28} />,
