@@ -152,7 +152,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     stars100: generateStarfield(100),
     networkNodes: generateNetworkNodes(8),
     visibilityData100: generateVisibilityData(100),
-    antennas: generateAntennaPositions(5)
+    antennas: generateAntennaPositions(5),
+    pathStars100: generatePathStars(100)
   }), [])
 
   // Throttled scroll handler
@@ -359,6 +360,20 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       })
     }
     return nodes
+  }
+
+  const generatePathStars = (count: number): PathStar[] => {
+    const stars: PathStar[] = []
+    for (let i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random(),
+        y: Math.random(),
+        size: Math.random() * 1.5 + 0.5,
+        alpha: 1,
+        twinkle: Math.random()
+      })
+    }
+    return stars
   }
 
   const generateAntennaPositions = (count: number) => {
@@ -2110,7 +2125,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       { id: 'lensing-canvas', sectionId: 'lensing-section', initFn: initGravitationalLensing },
       { id: 'publication-canvas', sectionId: 'publication-section', drawFn: drawPublicationFlight },
       { id: 'analysis-canvas', sectionId: 'analysis-section', drawFn: drawCelestialWorkbench, data: { latexParticles: [], currentLatexSymbol: undefined } },
-      { id: 'journey-continues-canvas', sectionId: 'journey-continues-section', drawFn: drawJourneyContinues, data: { pathStars: data.stars100 } },
+      { id: 'journey-continues-canvas', sectionId: 'journey-continues-section', drawFn: drawJourneyContinues, data: { pathStars: data.pathStars100 } },
     ]
 
     canvases.forEach(c => {
