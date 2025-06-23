@@ -20,3 +20,6 @@ reusable-components.md
 # Claude configuration
 .claude/
 tsconfig.tsbuildinfo
+
+local_db_backup.sql
+.env.production
