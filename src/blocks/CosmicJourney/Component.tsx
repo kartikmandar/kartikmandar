@@ -347,8 +347,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     return data
   }
 
-  const generateNetworkNodes = (count: number) => {
-    const nodes = []
+  const generateNetworkNodes = (count: number): NetworkNode[] => {
+    const nodes: NetworkNode[] = []
     for (let i = 0; i < count; i++) {
       const angle = (i / count) * 2 * Math.PI + Math.PI / 4
       const radius = (Math.random() * 0.15 + 0.25)
@@ -2101,7 +2101,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       { id: 'slingshot-canvas', sectionId: 'slingshot-section', drawFn: drawSlingshot },
       { id: 'lens-canvas', sectionId: 'lens-section', drawFn: drawMajorChoiceLens },
       { id: 'internship-canvas', sectionId: 'internship-section', drawFn: drawInternshipPathways },
-      { id: 'injury-canvas', sectionId: 'injury-section', drawFn: drawShatteringShuttlecock, data: { shards: null } },
+      { id: 'injury-canvas', sectionId: 'injury-section', drawFn: drawShatteringShuttlecock, data: { shards: undefined } },
       { id: 'rri-research-canvas', sectionId: 'rri-research-section', drawFn: drawSignalToSimulation, data: { noisySignal: data.visibilityData100, antennas: data.antennas } },
       { id: 'gsoc-canvas', sectionId: 'gsoc-section', drawFn: drawBuildingDashboard },
       { id: 'radio-canvas', sectionId: 'radio-section', drawFn: drawRadioInterferometry, data: { visibilityData: data.visibilityData100 } },
@@ -2109,7 +2109,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       { id: 'bs-exit-canvas', sectionId: 'bs-exit-section', drawFn: drawDivergingPaths },
       { id: 'lensing-canvas', sectionId: 'lensing-section', initFn: initGravitationalLensing },
       { id: 'publication-canvas', sectionId: 'publication-section', drawFn: drawPublicationFlight },
-      { id: 'analysis-canvas', sectionId: 'analysis-section', drawFn: drawCelestialWorkbench, data: { latexParticles: [], currentLatexSymbol: null } },
+      { id: 'analysis-canvas', sectionId: 'analysis-section', drawFn: drawCelestialWorkbench, data: { latexParticles: [], currentLatexSymbol: undefined } },
       { id: 'journey-continues-canvas', sectionId: 'journey-continues-section', drawFn: drawJourneyContinues, data: { pathStars: data.stars100 } },
     ]
 
