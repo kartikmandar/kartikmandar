@@ -2111,7 +2111,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       { id: 'comet-canvas', sectionId: 'comet-section', drawFn: drawBuildAComet, data: { particles: data.particles } },
       { id: 'decision-canvas', sectionId: 'decision-section', drawFn: drawFocusingLens, data: { stars: data.stars150 } },
       { id: 'constellation-canvas', sectionId: 'constellation-section', drawFn: drawConstellations },
-      { id: 'new-system-canvas', sectionId: 'new-system-section', drawFn: drawVirtualNetwork, data: { nodes: data.networkNodes } },
+      { id: 'new-system-canvas', sectionId: 'new-system-section', drawFn: drawVirtualNetwork, data: { networkNodes: data.networkNodes } },
       { id: 'fixation-canvas', sectionId: 'fixation-section', drawFn: drawUnwaveringCompass },
       { id: 'slingshot-canvas', sectionId: 'slingshot-section', drawFn: drawSlingshot },
       { id: 'lens-canvas', sectionId: 'lens-section', drawFn: drawMajorChoiceLens },
