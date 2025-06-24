@@ -5,6 +5,7 @@ import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { AdminBar } from '@/components/AdminBar'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
@@ -47,6 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Footer />
           <FloatingBottomNav navItems={navItems} />
           <Analytics />
+          <SpeedInsights />
         </Providers>
       </body>
     </html>
