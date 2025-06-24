@@ -1,7 +1,86 @@
 import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-vercel-postgres'
 
 export async function up({ db }: MigrateUpArgs): Promise<void> {
-  // Create pages__rels table if it doesn't exist
+  // Create all enum types
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_hero_links_link_type" AS ENUM('reference', 'custom');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_hero_links_link_appearance" AS ENUM('default', 'outline');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_cta_links_link_type" AS ENUM('reference', 'custom');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_cta_links_link_appearance" AS ENUM('default', 'outline');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_content_columns_size" AS ENUM('oneThird', 'half', 'twoThirds', 'full');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_content_columns_link_type" AS ENUM('reference', 'custom');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_content_columns_link_appearance" AS ENUM('default', 'outline');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_archive_populate_by" AS ENUM('collection', 'selection');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_archive_relation_to" AS ENUM('posts');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_projects_showcase_layout" AS ENUM('grid-3', 'grid-2', 'grid-4', 'mixed');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_blocks_talks_showcase_layout" AS ENUM('grid-3', 'grid-2', 'grid-4', 'mixed');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_hero_type" AS ENUM('none', 'highImpact', 'mediumImpact', 'lowImpact');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
+      CREATE TYPE "public"."enum_pages_status" AS ENUM('draft', 'published');
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  // Create pages__rels table with all columns
   await db.execute(sql`
     CREATE TABLE IF NOT EXISTS "pages__rels" (
       "id" serial PRIMARY KEY NOT NULL,
@@ -32,21 +111,39 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'pages') THEN
         ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_parent_fk" FOREIGN KEY ("parent_id") REFERENCES "pages"("id") ON DELETE cascade ON UPDATE no action;
       END IF;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'categories') THEN
         ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_categories_fk" FOREIGN KEY ("categories_id") REFERENCES "categories"("id") ON DELETE cascade ON UPDATE no action;
       END IF;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'posts') THEN
         ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_posts_fk" FOREIGN KEY ("posts_id") REFERENCES "posts"("id") ON DELETE cascade ON UPDATE no action;
       END IF;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
         ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE cascade ON UPDATE no action;
       END IF;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
+  `)
+
+  await db.execute(sql`
+    DO $$ BEGIN
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
         ALTER TABLE "pages__rels" ADD CONSTRAINT "pages__rels_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE cascade ON UPDATE no action;
       END IF;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the pages_blocks_cosmic_journey table
@@ -73,9 +170,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_cosmic_journey" ADD CONSTRAINT "pages_blocks_cosmic_journey_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the _pages_v_blocks_cosmic_journey table for versions
@@ -103,9 +198,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_cosmic_journey" ADD CONSTRAINT "_pages_v_blocks_cosmic_journey_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the pages_blocks_projects_showcase table
@@ -139,9 +232,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_projects_showcase" ADD CONSTRAINT "pages_blocks_projects_showcase_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the _pages_v_blocks_projects_showcase table for versions
@@ -176,9 +267,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_projects_showcase" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the pages_blocks_talks_showcase table
@@ -212,9 +301,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_talks_showcase" ADD CONSTRAINT "pages_blocks_talks_showcase_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create the _pages_v_blocks_talks_showcase table for versions
@@ -249,9 +336,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_talks_showcase" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_parent_id_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create join tables for projects showcase
@@ -273,9 +358,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_projects_showcase_projects" ADD CONSTRAINT "pages_blocks_projects_showcase_projects_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages_blocks_projects_showcase"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Only add foreign key to projects table if it exists
@@ -284,9 +367,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
         ALTER TABLE "pages_blocks_projects_showcase_projects" ADD CONSTRAINT "pages_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
       END IF;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create join tables for projects showcase versions
@@ -309,9 +390,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_projects_showcase_projects" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_projects_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v_blocks_projects_showcase"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Only add foreign key to projects table if it exists
@@ -320,9 +399,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'projects') THEN
         ALTER TABLE "_pages_v_blocks_projects_showcase_projects" ADD CONSTRAINT "_pages_v_blocks_projects_showcase_projects_projects_fk" FOREIGN KEY ("projects_id") REFERENCES "projects"("id") ON DELETE set null ON UPDATE no action;
       END IF;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create join tables for talks showcase
@@ -344,9 +421,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "pages_blocks_talks_showcase_talks" ADD CONSTRAINT "pages_blocks_talks_showcase_talks_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "pages_blocks_talks_showcase"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Only add foreign key to talks table if it exists
@@ -355,9 +430,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
         ALTER TABLE "pages_blocks_talks_showcase_talks" ADD CONSTRAINT "pages_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
       END IF;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Create join tables for talks showcase versions
@@ -380,9 +453,7 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     DO $$ BEGIN
       ALTER TABLE "_pages_v_blocks_talks_showcase_talks" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_talks_parent_fk" FOREIGN KEY ("_parent_id") REFERENCES "_pages_v_blocks_talks_showcase"("id") ON DELETE cascade ON UPDATE no action;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 
   // Only add foreign key to talks table if it exists
@@ -391,13 +462,12 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'talks') THEN
         ALTER TABLE "_pages_v_blocks_talks_showcase_talks" ADD CONSTRAINT "_pages_v_blocks_talks_showcase_talks_talks_fk" FOREIGN KEY ("talks_id") REFERENCES "talks"("id") ON DELETE set null ON UPDATE no action;
       END IF;
-    EXCEPTION
-      WHEN duplicate_object THEN null;
-    END $$;
+    EXCEPTION WHEN duplicate_object THEN null; END $$;
   `)
 }
 
 export async function down({ db }: MigrateDownArgs): Promise<void> {
+  // Drop all tables in reverse order
   await db.execute(sql`
     DROP TABLE IF EXISTS "_pages_v_blocks_talks_showcase_talks" CASCADE;
     DROP TABLE IF EXISTS "pages_blocks_talks_showcase_talks" CASCADE;
@@ -410,5 +480,22 @@ export async function down({ db }: MigrateDownArgs): Promise<void> {
     DROP TABLE IF EXISTS "_pages_v_blocks_cosmic_journey" CASCADE;
     DROP TABLE IF EXISTS "pages_blocks_cosmic_journey" CASCADE;
     DROP TABLE IF EXISTS "pages__rels" CASCADE;
+  `)
+
+  // Drop all enum types
+  await db.execute(sql`
+    DROP TYPE IF EXISTS "public"."enum_pages_hero_links_link_type" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_hero_links_link_appearance" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_cta_links_link_type" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_cta_links_link_appearance" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_content_columns_size" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_content_columns_link_type" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_content_columns_link_appearance" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_archive_populate_by" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_archive_relation_to" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_projects_showcase_layout" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_blocks_talks_showcase_layout" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_hero_type" CASCADE;
+    DROP TYPE IF EXISTS "public"."enum_pages_status" CASCADE;
   `)
 }
