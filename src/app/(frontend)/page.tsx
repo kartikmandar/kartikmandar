@@ -6,7 +6,6 @@ import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import type { Project } from '@/payload-types'
 
 export const dynamic = 'force-dynamic' // Changed to dynamic to fetch data
 
