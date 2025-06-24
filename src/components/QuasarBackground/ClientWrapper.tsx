@@ -26,7 +26,7 @@ export default function QuasarBackgroundWrapper({
 
   const handleSoundToggle = () => {
     if (!audioRef.current) {
-      audioRef.current = new Audio('/media/quasar.mp3')
+      audioRef.current = new Audio('/media/quasar-compressed.mp3')
       audioRef.current.loop = true
       audioRef.current.volume = 0.3
     }
