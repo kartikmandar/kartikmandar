@@ -10,6 +10,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { AdminBar } from '@/components/AdminBar'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
 import { FloatingBottomNav } from '@/components/FloatingBottomNav'
+import { GlobalAudioButton } from '@/components/GlobalAudioButton'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -54,6 +55,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
           <Footer />
           <FloatingBottomNav navItems={navItems} />
+          <GlobalAudioButton />
           <Analytics />
           <SpeedInsights />
         </Providers>
@@ -64,9 +66,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  title: 'Kartik Mandar - Astrophysicist & Software Developer',
+  description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through research, innovation, and the cosmos.',
+  keywords: ['astrophysics', 'software development', 'research', 'kartik mandar', 'cosmos', 'innovation'],
+  authors: [{ name: 'Kartik Mandar' }],
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
-    creator: '@payloadcms',
+    creator: '@kartikmandar',
+    title: 'Kartik Mandar - Astrophysicist & Software Developer',
+    description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through research, innovation, and the cosmos.',
   },
 }
