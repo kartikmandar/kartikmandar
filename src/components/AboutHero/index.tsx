@@ -43,7 +43,7 @@ export const AboutHero: React.FC = () => {
         
         {/* Name and Introduction */}
         <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-          Hi, I'm Kartik Mandar
+          Hi, I&apos;m Kartik Mandar
         </h1>
         
         <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
@@ -58,7 +58,7 @@ export const AboutHero: React.FC = () => {
             My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing and Dark Matter Substructure.
           </p><br/>
           <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
-            I am on the lookout for Research Assistant positions which align to my research interests and a Master's in Astrophysics.
+            I am on the lookout for Research Assistant positions which align to my research interests and a Master&apos;s in Astrophysics.
           </p>
         </div>
         
