@@ -178,19 +178,19 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
             }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-4 left-0 right-0 mx-auto w-fit z-50"
+            className="fixed top-4 left-5 md:left-0 md:right-0 md:mx-auto w-auto md:w-fit z-50 flex md:justify-center"
           >
             <motion.button
               onClick={handleExpand}
               onMouseEnter={() => setIsInteracting(true)}
               onMouseLeave={() => setIsInteracting(false)}
-              className="group flex items-center gap-3 px-6 sm:px-8 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white transition-all duration-300 hover:bg-black/30 hover:border-white/20 min-w-[200px] sm:min-w-[280px] h-12"
+              className="group flex items-center gap-3 px-4 sm:px-6 md:px-8 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white transition-all duration-300 hover:bg-black/30 hover:border-white/20 min-w-0 max-w-[calc(100vw-120px)] md:max-w-[320px] h-12"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
               <Terminal size={16} className="text-white/60 group-hover:text-white/80 flex-shrink-0" />
-              <div className="flex-1 flex items-center justify-center">
-                <span className="text-sm font-medium text-center">
+              <div className="flex-1 flex items-center justify-center min-w-0">
+                <span className="text-sm font-medium text-center truncate">
                   {getCurrentPath()}
                 </span>
               </div>

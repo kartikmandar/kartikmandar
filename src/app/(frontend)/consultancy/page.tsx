@@ -40,12 +40,13 @@ export default async function ConsultancyPage() {
       ]
     },
     {
-      title: "Google Summer of Code Guidance",
-      description: "Supporting throughout the application procedure and proposal",
+      title: "Mobile Applications for Scientific Projects",
+      description: "Native and cross-platform mobile apps designed for field research, data collection, and real-time scientific monitoring.",
       features: [
-        "Proposal Making",
-        "PR submissions",
-        "Introduction to Open Source",
+        "Field data collection apps",
+        "Offline-first research tools",
+        "Real-time experiment monitoring",
+        "Research collaboration apps"
       ]
     }
   ]
@@ -214,12 +215,12 @@ export default async function ConsultancyPage() {
                 </div>
               </div>
 
-              {/* GSoC Guidance */}
+              {/* Mobile Applications */}
               <div className="bg-card border border-border rounded-lg p-6 hover:bg-accent/50 transition-colors">
                 <div className="text-center mb-6">
-                  <h3 className="text-xl font-semibold mb-2 text-foreground">GSoC Guidance</h3>
-                  <div className="text-3xl font-bold text-foreground mb-2">$10/hr</div>
-                  <p className="text-muted-foreground text-sm">Application & proposal support</p>
+                  <h3 className="text-xl font-semibold mb-2 text-foreground">Mobile Applications</h3>
+                  <div className="text-3xl font-bold text-foreground mb-2">$35/hr</div>
+                  <p className="text-muted-foreground text-sm">iOS, Android & cross-platform apps</p>
                 </div>
               </div>
 
@@ -227,7 +228,7 @@ export default async function ConsultancyPage() {
               <div className="bg-card border border-border rounded-lg p-6 hover:bg-accent/50 transition-colors">
                 <div className="text-center mb-6">
                   <h3 className="text-xl font-semibold mb-2 text-foreground">Custom Solutions</h3>
-                  <div className="text-3xl font-bold text-foreground mb-2">$35/hr</div>
+                  <div className="text-3xl font-bold text-foreground mb-2">$40/hr</div>
                   <p className="text-muted-foreground text-sm">Complex specialized projects</p>
                 </div>
               </div>
@@ -238,7 +239,7 @@ export default async function ConsultancyPage() {
               <div className="bg-muted/50 rounded-lg p-4 max-w-3xl mx-auto">
                 <h4 className="font-semibold mb-2 text-foreground text-left">Pricing Notes</h4>
                 <div className="md:columns-2 md:gap-8 text-sm text-muted-foreground space-y-3">
-                  <p className="break-inside-avoid">1. Minimum 6-hour engagement per project (except GSoC Guidance)</p>
+                  <p className="break-inside-avoid">1. Minimum 10-hour engagement per project</p>
                   <p className="break-inside-avoid">2. 25% advance payment required to start</p>
                   <p className="break-inside-avoid">3. Bulk discounts available for 30+ hours</p>
                   <p className="break-inside-avoid">4. Free initial consultation (45 minutes)</p>
