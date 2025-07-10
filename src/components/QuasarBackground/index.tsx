@@ -659,7 +659,8 @@ export default function QuasarBackground() {
             zIndex: 2,
             pointerEvents: 'none',
             transition: 'opacity 0.3s ease-in-out',
-            fontFamily: 'sans-serif'
+            fontFamily: 'sans-serif',
+            whiteSpace: 'nowrap'
           }}
         >
           {isTouchDevice ? 'Pinch to zoom • Drag to spin' : 'Scroll to zoom • Drag to spin'}
