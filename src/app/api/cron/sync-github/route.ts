@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 import { fetchCompleteGitHubData, parseGitHubUrl, getGitHubRateLimit } from '@/utilities/github'
-import type { Project } from '@/payload-types'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'

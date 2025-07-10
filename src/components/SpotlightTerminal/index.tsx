@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Terminal, Search } from 'lucide-react'
+import { Terminal } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { TerminalInterface } from './TerminalInterface'
 import { CommandProcessor } from './CommandProcessor'

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { 
-  ChevronRight,
-  ExternalLink
+  ChevronRight
 } from 'lucide-react'
 import Link from 'next/link'
 import configPromise from '@payload-config'
@@ -23,24 +22,29 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 // Helper function to extract text from Lexical content
-function extractTextFromContent(content: any): string {
-  if (!content || !content.root || !content.root.children) return ''
+function extractTextFromContent(content: unknown): string {
+  if (!content || typeof content !== 'object') return ''
   
-  const extractText = (node: any): string => {
-    if (!node) return ''
+  const contentObj = content as { root?: { children?: unknown[] } }
+  if (!contentObj.root || !contentObj.root.children) return ''
+  
+  const extractText = (node: unknown): string => {
+    if (!node || typeof node !== 'object') return ''
     
-    if (node.type === 'text') {
-      return node.text || ''
+    const nodeObj = node as { type?: string; text?: string; children?: unknown[] }
+    
+    if (nodeObj.type === 'text') {
+      return nodeObj.text || ''
     }
     
-    if (node.children && Array.isArray(node.children)) {
-      return node.children.map(extractText).join(' ')
+    if (nodeObj.children && Array.isArray(nodeObj.children)) {
+      return nodeObj.children.map(extractText).join(' ')
     }
     
     return ''
   }
   
-  const fullText = content.root.children.map(extractText).join(' ')
+  const fullText = contentObj.root.children.map(extractText).join(' ')
   // Return first 150 characters with word boundary
   if (fullText.length <= 150) return fullText
   return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
