@@ -80,6 +80,24 @@ export default async function ContactPage() {
             </div>
           </section>
 
+          {/* Currently At Section */}
+          <section className="mb-12">
+            <h2 className="text-2xl font-semibold mb-6 text-foreground">Currently at</h2>
+            <div className="bg-card rounded-lg border border-border p-6">
+              <div className="flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground">SKA India training workshop</h3>
+                  <p className="text-muted-foreground">IIT Indore, India</p>
+                  <p className="text-sm text-muted-foreground/80 mt-1">7th - 18th July</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Schedule a Meeting Section */}
           <section className="mb-12">
             <h2 className="text-2xl font-semibold mb-6 text-foreground">Schedule a Meeting</h2>

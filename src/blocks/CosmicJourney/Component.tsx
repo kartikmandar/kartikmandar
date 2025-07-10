@@ -820,13 +820,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.lineWidth = 2
       ctx.stroke()
 
-      ctx.fillStyle = '#fff'
-      ctx.beginPath()
-      ctx.arc(nodeX, nodeY, 15, 0, 2 * Math.PI)
-      ctx.fill()
-
-      ctx.font = getResponsiveFontSize(16, w)
-      ctx.fillStyle = '#0c0a1a'
+      ctx.font = `bold ${getResponsiveFontSize(32, w)} Poppins`
+      ctx.fillStyle = node.type === 'academic' ? '#fde047' : '#4ade80'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       const icon = node.type === 'academic' ? '📈' : '</>'
@@ -862,7 +857,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.font = getResponsiveFontSize(14, w)
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
-    ctx.fillText('Econ Science', centerX, centerY - compassRadius - 20)
+    ctx.fillText('Economic Sciences', centerX, centerY - compassRadius - 20)
 
     // Draw Physics Star
     const physicsStar = { x: w * 0.85, y: h * 0.5 }
@@ -918,6 +913,51 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     const orbit1Radius = Math.min(w, h) * 0.12
     const orbit2Radius = Math.min(w, h) * 0.22
     
+    // Draw dotted orbit paths
+    ctx.save()
+    ctx.setLineDash([3, 5])
+    ctx.strokeStyle = 'rgba(253, 224, 71, 0.3)'
+    ctx.lineWidth = 1
+    
+    // Orbit 1 around sun1 (fade out as planet leaves)
+    const orbit1Alpha = progress < 0.4 ? 0.5 : Math.max(0, 0.5 - (progress - 0.4) * 2)
+    if (orbit1Alpha > 0) {
+      ctx.globalAlpha = orbit1Alpha
+      ctx.beginPath()
+      ctx.arc(sun1.x, sun1.y, orbit1Radius, 0, 2 * Math.PI)
+      ctx.stroke()
+    }
+    
+    // Transition path (visible during slingshot)
+    if (progress >= 0.3 && progress <= 0.8) {
+      const transitionAlpha = progress < 0.4 ? (progress - 0.3) / 0.1 : progress > 0.7 ? (0.8 - progress) / 0.1 : 1
+      ctx.globalAlpha = transitionAlpha
+      ctx.strokeStyle = 'rgba(165, 180, 252, 0.3)'
+      ctx.beginPath()
+      const startX = sun1.x - orbit1Radius
+      const startY = sun1.y
+      const controlX = w * 0.5
+      const controlY = h * 0.2
+      const endX = sun2.x
+      const endY = sun2.y - orbit2Radius
+      ctx.moveTo(startX, startY)
+      ctx.quadraticCurveTo(controlX, controlY, endX, endY)
+      ctx.stroke()
+    }
+    
+    // Orbit 2 around sun2 (fade in as planet arrives)
+    const orbit2Alpha = progress < 0.6 ? 0 : Math.min(0.5, (progress - 0.6) * 2.5)
+    if (orbit2Alpha > 0) {
+      ctx.globalAlpha = orbit2Alpha
+      ctx.strokeStyle = 'rgba(165, 180, 252, 0.5)'
+      ctx.beginPath()
+      ctx.arc(sun2.x, sun2.y, orbit2Radius, 0, 2 * Math.PI)
+      ctx.stroke()
+    }
+    
+    ctx.restore()
+    
+    // Draw planet position
     if (progress < 0.4) {
       const angle = 2 * Math.PI * (progress / 0.4) + Math.PI
       planetX = sun1.x + Math.cos(angle) * orbit1Radius
@@ -981,17 +1021,17 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     // Draw two diverging paths from center
     const centerX = w / 2
     const centerY = h * 0.8
-    const pathProgress = Math.min(1, progress)
+    const pathProgress = Math.min(1, progress * 3) // Speed up 3x
     
     // Tech path (left side) - mobile app/EECS
     const techEndX = w * 0.2
     const techEndY = h * 0.3
-    const techPath = Math.min(1, pathProgress * 1.2)
+    const techPath = Math.min(1, pathProgress)
     
     // Bio path (right side) - iGEM/synthetic biology
     const bioEndX = w * 0.8
     const bioEndY = h * 0.3
-    const bioPath = Math.min(1, Math.max(0, pathProgress - 0.2) * 1.2)
+    const bioPath = Math.min(1, Math.max(0, pathProgress - 0.1)) // Reduce delay from 0.2 to 0.1
     
     // Draw tech pathway
     if (techPath > 0) {
@@ -1008,8 +1048,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.shadowBlur = 0
       
       // Draw mobile phone icon at end of tech path
-      if (techPath > 0.7) {
-        const phoneAlpha = (techPath - 0.7) / 0.3
+      if (techPath > 0.5) {
+        const phoneAlpha = (techPath - 0.5) / 0.5
         ctx.fillStyle = `rgba(59, 130, 246, ${phoneAlpha})`
         ctx.strokeStyle = `rgba(255, 255, 255, ${phoneAlpha})`
         ctx.lineWidth = 2
@@ -1027,8 +1067,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
       
       // Tech lab label
-      if (techPath > 0.5) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${(techPath - 0.5) * 2})`
+      if (techPath > 0.3) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${(techPath - 0.3) / 0.7})`
         ctx.font = '14px Poppins'
         ctx.textAlign = 'center'
         ctx.fillText('Sysmatics Lab', techEndX, techEndY + 40)
@@ -1051,8 +1091,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.shadowBlur = 0
       
       // Draw DNA helix at end of bio path
-      if (bioPath > 0.7) {
-        const dnaAlpha = (bioPath - 0.7) / 0.3
+      if (bioPath > 0.5) {
+        const dnaAlpha = (bioPath - 0.5) / 0.5
         ctx.strokeStyle = `rgba(34, 197, 94, ${dnaAlpha})`
         ctx.lineWidth = 2
         ctx.beginPath()
@@ -1091,8 +1131,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
       
       // iGEM label
-      if (bioPath > 0.5) {
-        ctx.fillStyle = `rgba(255, 255, 255, ${(bioPath - 0.5) * 2})`
+      if (bioPath > 0.3) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${(bioPath - 0.3) / 0.7})`
         ctx.font = '14px Poppins'
         ctx.textAlign = 'center'
         ctx.fillText('iGEM Team', bioEndX, bioEndY + 40)
@@ -1717,9 +1757,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
   const drawPublicationFlight = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
 
-    const paperPhase = Math.min(1, progress / 0.3)
-    const foldPhase = Math.max(0, (progress - 0.3) / 0.4)
-    const flightPhase = Math.max(0, (progress - 0.7) / 0.3)
+    const paperPhase = Math.min(1, progress / 0.2)
+    const foldPhase = Math.max(0, (progress - 0.2) / 0.2)
+    const flightPhase = Math.max(0, (progress - 0.4) / 0.6)
 
     const pW = w * 0.4
     const pH = h * 0.5
@@ -1727,23 +1767,23 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     if (flightPhase > 0) {
       const startX = w / 2
       const startY = h / 2
-      const endX = w * 1.3
-      const endY = h * 0.3
+      const endX = w * 0.9  // Changed from 1.3 to keep on screen
+      const endY = h * 0.2
       
-      const planeX = startX + (endX - startX) * flightPhase
-      const planeY = startY + (endY - startY) * flightPhase
+      const planeX = startX + (endX - startX) * Math.min(flightPhase, 0.8)  // Stop at 80% of flight
+      const planeY = startY + (endY - startY) * Math.min(flightPhase, 0.8)
       
       ctx.save()
       ctx.translate(planeX, planeY)
       ctx.rotate(-Math.PI / 10)
-      drawPaperPlane(ctx, 50, 1 - (flightPhase * 1.5))
+      drawPaperPlane(ctx, 50, Math.max(0.3, 1 - (flightPhase * 0.8)))  // Keep more visible
       ctx.restore()
       
-      if (flightPhase > 0.1) {
-        const splitProgress = Math.max(0, (flightPhase - 0.3) / 0.7)
+      if (flightPhase > 0.05) {
+        const splitProgress = Math.max(0, (flightPhase - 0.1) / 0.4)  // Start earlier, progress faster
         
-        const dest1 = { x: w * 0.25, y: h * 0.35 }
-        const dest2 = { x: w * 0.75, y: h * 0.65 }
+        const dest1 = { x: w * 0.25, y: h * 0.4 }
+        const dest2 = { x: w * 0.75, y: h * 0.6 }
 
         const midX1 = lerp(startX, dest1.x, splitProgress)
         const midY1 = lerp(startY, dest1.y, splitProgress)
@@ -1751,7 +1791,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         const midY2 = lerp(startY, dest2.y, splitProgress)
         
         ctx.lineWidth = 2
-        ctx.strokeStyle = `rgba(255, 255, 255, ${(1 - flightPhase) * 0.7})`
+        ctx.strokeStyle = `rgba(255, 255, 255, ${Math.max(0.3, 1 - flightPhase * 0.5)})`  // Fade slower
         ctx.shadowColor = `rgba(255, 255, 255, 0.5)`
         ctx.shadowBlur = 10
         
@@ -1766,16 +1806,16 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         ctx.stroke()
         ctx.shadowBlur = 0
 
-        const destAlpha = Math.min(1, splitProgress * 1.5)
+        const destAlpha = Math.min(1, splitProgress * 2)  // Appear faster
         if (destAlpha > 0) {
-          drawAStar(ctx, dest1.x, dest1.y, 10, `rgba(253, 224, 71, ${destAlpha})`)
-          drawAStar(ctx, dest2.x, dest2.y, 10, `rgba(165, 180, 252, ${destAlpha})`)
+          drawAStar(ctx, dest1.x, dest1.y, 15, `rgba(253, 224, 71, ${destAlpha})`)  // Bigger stars
+          drawAStar(ctx, dest2.x, dest2.y, 15, `rgba(165, 180, 252, ${destAlpha})`)
 
           ctx.fillStyle = `rgba(255, 255, 255, ${destAlpha})`
-          ctx.font = getResponsiveFontSize(14, w)
+          ctx.font = getResponsiveFontSize(16, w)  // Larger text
           ctx.textAlign = 'center'
-          ctx.fillText("U of Toronto", dest1.x, dest1.y + 28)
-          ctx.fillText("IIT Indore (SKA)", dest2.x, dest2.y - 28)
+          ctx.fillText("U of Toronto", dest1.x, dest1.y + 35)
+          ctx.fillText("IIT Indore (SKA)", dest2.x, dest2.y + 35)
         }
       }
     } else if (foldPhase > 0) {
@@ -1793,11 +1833,29 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.fillRect(pX, pY, pW, pH)
       ctx.strokeRect(pX, pY, pW, pH)
       
+      // Draw paper header
+      ctx.fillStyle = `rgba(30, 30, 30, ${paperPhase})`
+      ctx.font = `bold ${getResponsiveFontSize(18, w)} Poppins`
+      ctx.textAlign = 'center'
+      ctx.fillText('arXiv:2024.xxxxx', w/2, pY + 40)
+      
+      // Draw title
+      ctx.font = `bold ${getResponsiveFontSize(14, w)} Poppins`
+      ctx.fillText('fftvis: FFT-based Visibility', w/2, pY + 70)
+      ctx.fillText('Simulator for Radio Arrays', w/2, pY + 90)
+      
+      // Draw authors line
+      ctx.font = getResponsiveFontSize(11, w)
+      ctx.fillText('A. Adoni, K. Mandar, et al.', w/2, pY + 115)
+      
+      // Draw abstract lines
       ctx.lineWidth = 1
-      ctx.strokeStyle = `rgba(50, 50, 50, ${paperPhase * 0.7})`
-      for (let i = 0; i < 10; i++) {
-        const lineY = pY + 30 + i * (pH/12)
-        const lineWidth = pW * (0.8 + Math.random() * 0.15)
+      ctx.strokeStyle = `rgba(50, 50, 50, ${paperPhase * 0.5})`
+      ctx.font = getResponsiveFontSize(10, w)
+      const abstractY = pY + 140
+      for (let i = 0; i < 6; i++) {
+        const lineY = abstractY + i * 18
+        const lineWidth = pW * (0.8 - i * 0.05)
         const lineX = pX + (pW - lineWidth) / 2
         ctx.beginPath()
         ctx.moveTo(lineX, lineY)
@@ -2577,7 +2635,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             <p className="text-indigo-400 font-semibold mb-1">6th - 8th Standard</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Hands-On Exploration</h3>
             <p className="text-md md:text-lg">
-              Joined SPACE-India astronomy club at school. They were transformative be it: solar observation, making dry-ice comets, finding asteroids, and even calculating Earth&apos;s circumference. Overnight observation camps at Sariska somehow made the universe tangible.
+              Joined SPACE-India astronomy club at school. It was fascinaing. Solar observations, making dry-ice comets, finding asteroids, calculating Earth&apos;s circumference and overnight observation camps at Sariska somehow made the universe tangible.
             </p>
           </div>
         </section>
@@ -2607,7 +2665,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             <p className="text-indigo-400 font-semibold mb-1">11th - 12th Standard</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Forging My Own Path</h3>
             <p className="text-md md:text-lg">
-              Even though choosing PCM in my +2, I went with research over engineering, built my own refractor, started the &quot;Brittle Stars&quot; blog, and competed in state-level badminton. I also bagged AIR 14 in Heliodyssey, winning a fully sponsored solar expedition to Oman to study an annular eclipse.
+              Even though I chose PCM in my high school, I went on a goal to pursue research over engineering, built my own refractor, started the &quot;Brittle Stars&quot; blog, and played badminton competitively. I also bagged AIR 14 in Heliodyssey, winning a fully sponsored solar expedition to Oman to study an annular eclipse.
             </p>
           </div>
         </section>
@@ -2647,7 +2705,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             className="interactive-canvas"
           ></canvas>
           <div className="interactive-text">
-            <p className="text-indigo-400 font-semibold mb-1">Temporary Orbit</p>
+            <p className="text-indigo-400 font-semibold mb-1">Temporary Home</p>
             <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Fixated on Physics</h3>
             <p className="text-md md:text-lg">
               Though I started as an Economic Sciences student, my focus was always fixed on finding a way into physics and astronomy.

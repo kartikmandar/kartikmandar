@@ -104,120 +104,50 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
       focus: "Building research profile, job hunting",
       challenges: ["Job market", "Publication pressure", "Mobility"],
       color: "from-orange-500/20 to-red-500/20 border-orange-500/30"
+    },
+    {
+      stage: "Academic Career",
+      duration: "Ongoing",
+      focus: "Teaching, research, service",
+      challenges: ["Tenure track", "Funding", "Work-life balance"],
+      color: "from-gray-500/20 to-gray-700/20 border-gray-500/30"
     }
   ]
 
   const dailyRealities = [
     {
-      time: "6:00 AM",
-      activity: "Early morning reading",
-      description: "Coffee + latest papers in your field",
+      time: "9:23 AM",
+      activity: "bruhh...late for course/lab...gotta skip bath today",
+      description: "Breakfast? eat that 1 week old banana and get going",
     },
     {
-      time: "9:00 AM",
-      activity: "Research work",
-      description: "Experiments, coding, analysis, or writing",
+      time: "11:10 AM",
+      activity: "Reading that paper I was supposed to read last week",
+      description: "Experiments, coding, analysis, or meetings",
     },
     {
-      time: "12:00 PM",
-      activity: "Lunch & networking",
-      description: "Discussing ideas with peers and advisors",
+      time: "1:17 PM",
+      activity: "Lunch & chill",
+      description: "Alas lunch break, but I still don't know why that code is not working...",
     },
     {
-      time: "2:00 PM",
-      activity: "Coursework/Teaching",
-      description: "Classes, assignments, or TA duties",
+      time: "5:19 PM",
+      activity: "Tea Break",
+      description: "Green tea is almost like an elixir of life for me",
     },
     {
-      time: "6:00 PM",
-      activity: "Reading & planning",
-      description: "Literature review and next day preparation",
+      time: "7:26 PM",
+      activity: "Time to play badminton or go for jogging/calisthenics",
+      description: "It's the most sought after time of the day",
     },
     {
-      time: "9:00 PM",
-      activity: "Personal time",
-      description: "Hobbies, exercise, or just unwinding",
+      time: "10:32 PM",
+      activity: "Personal projects time",
+      description: "Coding some next gen idea, that may never hit I guess",
     }
   ]
 
-  const challenges = [
-    {
-      title: "Imposter Syndrome",
-      description: "Feeling like you don't belong or aren't smart enough",
-      impact: "High",
-      color: "from-red-500/20 to-pink-500/20 border-red-500/30"
-    },
-    {
-      title: "Financial Uncertainty",
-      description: "Living on stipends, uncertain funding, delayed gratification",
-      impact: "High",
-      color: "from-orange-500/20 to-red-500/20 border-orange-500/30"
-    },
-    {
-      title: "Work-Life Balance",
-      description: "Research never truly 'ends', always something more to do",
-      impact: "Medium",
-      color: "from-yellow-500/20 to-orange-500/20 border-yellow-500/30"
-    },
-    {
-      title: "Isolation",
-      description: "Working on very specific problems few people understand",
-      impact: "Medium",
-      color: "from-blue-500/20 to-purple-500/20 border-blue-500/30"
-    }
-  ]
 
-  const rewards = [
-    {
-      title: "Intellectual Freedom",
-      description: "Pursuing questions you're genuinely curious about",
-    },
-    {
-      title: "Making Discoveries",
-      description: "Contributing new knowledge to human understanding",
-    },
-    {
-      title: "Global Community",
-      description: "Collaborating with brilliant minds worldwide",
-    },
-    {
-      title: "Teaching Impact",
-      description: "Inspiring the next generation of researchers",
-    }
-  ]
-
-  const researchProcess = [
-    {
-      step: "Question",
-      description: "Identify an interesting, unanswered question",
-      duration: "Weeks to months"
-    },
-    {
-      step: "Literature Review",
-      description: "Read everything related to understand the field",
-      duration: "1-3 months"
-    },
-    {
-      step: "Methodology",
-      description: "Design experiments or theoretical approach",
-      duration: "Weeks to months"
-    },
-    {
-      step: "Research",
-      description: "Conduct experiments, collect data, analyze",
-      duration: "Months to years"
-    },
-    {
-      step: "Writing",
-      description: "Draft papers, get feedback, revise extensively",
-      duration: "3-6 months"
-    },
-    {
-      step: "Publication",
-      description: "Peer review process, revisions, final publication",
-      duration: "6-18 months"
-    }
-  ]
 
   return (
     <div className="container mx-auto px-4 py-20">
@@ -340,9 +270,9 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
             {academicStages.map((stage, index) => (
-              <div key={index} className={`bg-gradient-to-br ${stage.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300`}>
+              <div key={index} className={`bg-gradient-to-br ${stage.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[350px]`}>
                 <div className="mb-4">
                   <h3 className="font-bold text-foreground">{stage.stage}</h3>
                   <p className="text-sm text-muted-foreground">{stage.duration}</p>
@@ -388,47 +318,6 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           </div>
         </section>
 
-        {/* The Research Process */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How Research Actually Works</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              From curiosity to published paper - the real timeline and process behind academic research.
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              {researchProcess.map((step, index) => (
-                <div key={index} className="flex items-start gap-4 mb-8 relative">
-                  {index < researchProcess.length - 1 && (
-                    <div className="absolute left-4 top-12 w-0.5 h-16 bg-border"></div>
-                  )}
-                  <div className="flex-shrink-0 w-8 h-8 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-sm font-bold">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1 bg-card border rounded-lg p-6 hover:bg-muted/50 transition-colors">
-                    <div className="flex justify-between items-start mb-3">
-                      <h4 className="font-bold text-foreground">{step.step}</h4>
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
-                        {step.duration}
-                      </span>
-                    </div>
-                    <p className="text-muted-foreground">{step.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="text-center mt-8 p-4 bg-muted/30 rounded-lg">
-              <p className="text-sm text-muted-foreground">
-                <strong>Reality check:</strong> This process is rarely linear. You&apos;ll often cycle back to earlier steps, 
-                face rejections, and sometimes start over completely. That&apos;s normal!
-              </p>
-            </div>
-          </div>
-        </section>
-
-
         {/* Financial Reality */}
         <section className="mb-20">
           <div className="text-center mb-12">
@@ -442,13 +331,12 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
             <div className="bg-card border rounded-xl p-6">
               <h3 className="font-bold text-foreground mb-4">PhD Stipends</h3>
               <p className="text-muted-foreground text-sm mb-3">
-                In India: ₹31,000-₹35,000/month for PhD scholars (JRF/SRF). 
+                In India: ₹37,000-₹42,000/month for PhD scholars (JRF/SRF). 
                 Just enough to survive, rarely enough to thrive.
               </p>
               <div className="text-xs text-muted-foreground">
                 <div>• Basic living covered</div>
                 <div>• Limited savings</div>
-                <div>• Delayed financial milestones</div>
               </div>
             </div>
 

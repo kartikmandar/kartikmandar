@@ -47,7 +47,7 @@ export const AboutHero: React.FC = () => {
         </h1>
         
         <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            I completed my Bachelors in Physics from the Indian Institute of Science Education and Research, Bhopal, in May 2025.
+            I completed my Bachelors in Physics from the Indian Institute of Science Education and Research, Bhopal, India in May 2025.
           <br className="hidden md:block" />
         </p>
         
@@ -58,7 +58,11 @@ export const AboutHero: React.FC = () => {
             My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing and Dark Matter Substructure.
           </p><br/>
           <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
-            I am on the lookout for Research Assistant positions which align to my research interests and a Master&apos;s in Astrophysics.
+            <strong>I am on the lookout for Research Assistant positions which align to my research interests and a Master&apos;s in Astrophysics.</strong>
+          </p>
+          <br/><br/>
+          <p className="text-base md:text-lg text-gray-700 dark:text-gray-300"> 
+            I also offer consultancy and development services for research software, web and mobile applications.
           </p>
         </div>
         
