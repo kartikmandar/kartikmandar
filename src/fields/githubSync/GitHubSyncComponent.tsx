@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState, useMemo, useEffect } from 'react'
-import { useForm, useFormFields } from '@payloadcms/ui'
+import React, { useState, useMemo } from 'react'
+import { useForm } from '@payloadcms/ui'
 import { Button } from '@payloadcms/ui'
 
 interface GitHubSyncComponentProps {

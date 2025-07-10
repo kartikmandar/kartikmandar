@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { 
-  Calendar, 
   Users, 
   BookOpen, 
   MessageCircle,

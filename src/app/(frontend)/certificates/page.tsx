@@ -1,8 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { 
-  Award,
-  GraduationCap,
   Code,
   Telescope,
   BarChart3,

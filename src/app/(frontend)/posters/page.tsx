@@ -5,8 +5,7 @@ import {
   Calendar,
   MapPin,
   Users,
-  ExternalLink,
-  Award
+  ExternalLink
 } from 'lucide-react'
 
 export const dynamic = 'force-static'

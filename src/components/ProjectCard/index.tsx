@@ -37,7 +37,6 @@ import {
   Database,
   Settings,
   Terminal,
-  Braces,
   Package,
   Palette,
   Tag,

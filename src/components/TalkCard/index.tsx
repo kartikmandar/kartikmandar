@@ -15,17 +15,15 @@ import {
   ChevronRight,
   Mic,
   Globe,
-  Tag,
   Presentation,
   GraduationCap,
   Building,
-  Download,
   Image as ImageIcon,
   Play
 } from 'lucide-react'
 
 import { Media } from '@/components/Media'
-import type { Media as MediaType, Talk as PayloadTalk } from '@/payload-types'
+import type { Media as MediaType } from '@/payload-types'
 
 // Transform interface for cleaner component props
 export interface Talk {
