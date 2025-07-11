@@ -28,7 +28,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const posts = await payload.find({
     collection: 'posts',
     depth: 1,
-    limit: 12,
+    limit: 6,
     page: sanitizedPageNumber,
     overrideAccess: false,
   })
@@ -46,7 +46,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PageRange
           collection="posts"
           currentPage={posts.page}
-          limit={12}
+          limit={6}
           totalDocs={posts.totalDocs}
         />
       </div>
@@ -76,7 +76,7 @@ export async function generateStaticParams() {
     overrideAccess: false,
   })
 
-  const totalPages = Math.ceil(totalDocs / 10)
+  const totalPages = Math.ceil(totalDocs / 6)
 
   const pages: { pageNumber: string }[] = []
 
