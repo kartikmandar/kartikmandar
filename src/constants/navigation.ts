@@ -9,6 +9,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: 'Consultancy', url: '/consultancy' },
   { label: 'Talks', url: '/talks' },
   { label: 'Publications', url: '/publications' },
+  { label: 'Open Source', url: '/open-source' },
   { label: 'Posters', url: '/posters' },
   { label: 'Hobbies', url: '/hobbies' },
   { label: 'Certificates', url: '/certificates' },
