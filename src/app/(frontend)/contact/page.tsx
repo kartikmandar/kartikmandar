@@ -58,8 +58,14 @@ export default async function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Email</h3>
                   <a 
+                    href="mailto:contact@kartikmandar.com" 
+                    className="text-primary hover:text-primary/80 transition-colors text-sm break-all block"
+                  >
+                    contact@kartikmandar.com
+                  </a>
+                  <a 
                     href="mailto:kartik4321mandar@gmail.com" 
-                    className="text-primary hover:text-primary/80 transition-colors text-sm break-all"
+                    className="text-primary hover:text-primary/80 transition-colors text-sm break-all block mt-1"
                   >
                     kartik4321mandar@gmail.com
                   </a>
