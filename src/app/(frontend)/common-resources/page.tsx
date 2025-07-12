@@ -2622,7 +2622,7 @@ export default async function Page() {
             </span>
           </p>
           <a 
-            href="mailto:kartik4321mandar@gmail.com?subject=Common Resources Suggestion" 
+            href="mailto:contact@kartikmandar.com?subject=Common Resources Suggestion" 
             className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-md text-sm sm:text-base font-medium transition-colors"
           >
             Suggest/Change a Resource
