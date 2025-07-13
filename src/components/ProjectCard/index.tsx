@@ -1792,9 +1792,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                         h4: ({ children, ...props }) => <h4 id={generateHeadingId(children)} {...props}>{children}</h4>,
                         h5: ({ children, ...props }) => <h5 id={generateHeadingId(children)} {...props}>{children}</h5>,
                         h6: ({ children, ...props }) => <h6 id={generateHeadingId(children)} {...props}>{children}</h6>,
-                        img: ({ src, alt, ...props }) => {
+                        img: ({ src, alt, width, height, ...props }) => {
                           // Handle relative images - convert to GitHub raw URLs
-                          let finalSrc = src
+                          let finalSrc = src || ''
                           if (src && !src.startsWith('http') && project.links?.githubUrl) {
                             const githubUrl = project.links.githubUrl
                             const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
@@ -1804,12 +1804,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             }
                           }
                           
+                          if (!finalSrc) {
+                            return null
+                          }
+                          
                           return (
                             <NextImage
                               src={finalSrc}
-                              alt={alt}
-                              width={800}
-                              height={600}
+                              alt={alt || ''}
+                              width={width ? Number(width) : 800}
+                              height={height ? Number(height) : 600}
                               className="max-w-full h-auto rounded border border-border"
                               style={{ width: '100%', height: 'auto' }}
                               {...props}
@@ -1906,9 +1910,9 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                           h4: ({ children, ...props }) => <h4 id={generateHeadingId(children)} {...props}>{children}</h4>,
                           h5: ({ children, ...props }) => <h5 id={generateHeadingId(children)} {...props}>{children}</h5>,
                           h6: ({ children, ...props }) => <h6 id={generateHeadingId(children)} {...props}>{children}</h6>,
-                          img: ({ src, alt, ...props }) => {
+                          img: ({ src, alt, width, height, ...props }) => {
                             // Handle relative images - convert to GitHub raw URLs
-                            let finalSrc = src
+                            let finalSrc = src || ''
                             if (src && !src.startsWith('http') && project.links?.githubUrl) {
                               const githubUrl = project.links.githubUrl
                               const repoMatch = githubUrl.match(/github\.com\/([^\/]+)\/([^\/]+)/)
@@ -1918,12 +1922,16 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                               }
                             }
                             
+                            if (!finalSrc) {
+                              return null
+                            }
+                            
                             return (
                               <NextImage
                                 src={finalSrc}
-                                alt={alt}
-                                width={800}
-                                height={600}
+                                alt={alt || ''}
+                                width={width ? Number(width) : 800}
+                                height={height ? Number(height) : 600}
                                 className="max-w-full h-auto rounded border border-border"
                                 style={{ width: '100%', height: 'auto' }}
                                 {...props}

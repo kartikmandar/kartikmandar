@@ -329,6 +329,17 @@ export default function QuasarBackground() {
           baseDistance: number
           baseSize: number
           lifetime: number
+          idx?: number
+          t?: number
+          basePos?: [number, number, number]
+          theta?: number
+          r?: number
+          arm?: number
+          size0?: number
+          color?: THREE.Color
+          startTime?: number
+          speed?: number
+          spiralOffset?: number
         }
         const smokeParticles: SmokeParticle[] = []
         const smokeGeometry = new THREE.BufferGeometry()
@@ -382,7 +393,11 @@ export default function QuasarBackground() {
               lifetime: lifetimes[idx],
               startTime: startTimes[idx],
               speed: 0.12 + Math.random()*0.22,
-              spiralOffset: (Math.random()-0.5)*0.1
+              spiralOffset: (Math.random()-0.5)*0.1,
+              angle: theta,
+              distance: r,
+              baseDistance: r,
+              baseSize: sizes[idx]
             })
           }
         }
@@ -411,6 +426,7 @@ export default function QuasarBackground() {
           smokeTime += dt
           for (let i = 0; i < smokeParticles.length; i++) {
             const p = smokeParticles[i]
+            if (!p || p.startTime === undefined || p.lifetime === undefined || p.t === undefined || p.spiralOffset === undefined || p.arm === undefined || p.idx === undefined || p.speed === undefined || p.size0 === undefined) continue
             // Particle age
             let age = (smokeTime - p.startTime) % p.lifetime
             if (age < 0) age += p.lifetime

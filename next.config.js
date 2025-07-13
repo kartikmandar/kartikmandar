@@ -50,13 +50,6 @@ const nextConfig = {
       },
     ]
   },
-  // Increase timeout for slow operations
-  experimental: {
-    // Increase timeout for API routes
-    staticGeneration: {
-      timeout: 30, // 30 seconds timeout
-    },
-  },
   // Allow cross-origin requests during development
   // The IP address should match your Mac's network IP that's shown in the server logs
   // You might need to update this IP if your network changes

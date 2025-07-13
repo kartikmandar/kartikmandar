@@ -5,7 +5,8 @@ import type { Project } from '@/payload-types'
 import { 
   fetchGitHubRepoStats, 
   fetchGitHubBranches, 
-  fetchGitHubReleases 
+  fetchGitHubReleases,
+  fetchGitHubContributors 
 } from '@/utilities/github'
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
@@ -41,18 +42,31 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     const cleanRepo = repo!.replace(/\.git$/, '')
 
     // Fetch GitHub data
-    const [repoStats, branches, releases] = await Promise.allSettled([
+    const [repoStats, branches, releases, contributors] = await Promise.allSettled([
       fetchGitHubRepoStats(owner!, cleanRepo),
       fetchGitHubBranches(owner!, cleanRepo),
       fetchGitHubReleases(owner!, cleanRepo),
+      fetchGitHubContributors(owner!, cleanRepo),
     ])
 
     // Prepare update data
     interface ProjectUpdateData {
       lastGitHubSync: string
       links?: Partial<Project['links']>
-      techStack?: string[]
       projectDetails?: Partial<Project['projectDetails']>
+      branches?: Array<{
+        name: string
+        protected: boolean
+        commitSha: string
+      }>
+      latestRelease?: {
+        version: string
+        name?: string | null
+        publishedAt: string
+        description?: string | null
+        htmlUrl: string
+        downloadCount: number
+      }
     }
     
     const updateData: ProjectUpdateData = {
@@ -80,7 +94,8 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         ...project.projectDetails,
         readme: stats.readme,
         totalCommits: stats.totalCommits,
-        contributors: stats.contributors,
+        // contributors is a count in stats, but we need the actual contributor data
+        // We'll handle this separately below
         fileCount: stats.fileCount,
         directoryCount: stats.directoryCount,
         repositorySize: stats.repositorySize,
@@ -91,10 +106,31 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         topics: stats.topics?.map((topic: string) => ({ topic })),
         createdAt: stats.createdAt,
         homepage: stats.homepage,
-        fileTree: stats.fileTree,
+        fileTree: stats.fileTree?.tree?.map((item: { path: string; type: string; size?: number; url?: string }) => ({
+          path: item.path,
+          type: item.type as 'blob' | 'tree' | 'commit',
+          size: item.size,
+          url: item.url,
+        })),
         githubIssues: stats.githubIssues,
         githubPullRequests: stats.githubPullRequests,
       }
+    }
+
+    // Process contributors
+    if (contributors.status === 'fulfilled' && contributors.value) {
+      // Map contributor data to match the expected format
+      const topContributors = contributors.value.slice(0, 10).map(contributor => ({
+        name: contributor.login,
+        contributions: contributor.contributions,
+        githubUrl: contributor.html_url,
+        avatarUrl: contributor.avatar_url,
+      }))
+
+      if (!updateData.projectDetails) {
+        updateData.projectDetails = {}
+      }
+      updateData.projectDetails.contributors = topContributors
     }
 
     // Process branches
@@ -113,7 +149,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         updateData.latestRelease = {
           version: latestRelease.tag_name,
           name: latestRelease.name,
-          publishedAt: latestRelease.published_at,
+          publishedAt: latestRelease.published_at || new Date().toISOString(),
           description: latestRelease.body,
           htmlUrl: latestRelease.html_url,
           downloadCount: latestRelease.assets?.reduce((sum, asset) => sum + (asset.download_count || 0), 0) || 0,

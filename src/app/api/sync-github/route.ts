@@ -71,7 +71,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
       }
     }
 
-    const { repository, languages, contributors, latestRelease, totalCommits, fileTree, readme, linesOfCode, stats, branches } = githubData
+    const { repository, languages, contributors, latestRelease, totalCommits, fileTree, readme, linesOfCode, stats, branches, packageJson } = githubData
 
     // Update project with GitHub data
     const payload = await getPayload({ config: configPromise })
@@ -178,12 +178,17 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
       projectId: String(project.id),
       projectTitle: project.title,
       githubData: {
-        stars: repository.stargazers_count,
-        forks: repository.forks_count,
-        languages: Object.keys(languages),
+        repository,
+        languages,
         totalCommits,
-        contributors: contributors.length,
-        latestRelease: latestRelease?.tag_name,
+        contributors,
+        latestRelease,
+        fileTree,
+        readme,
+        stats,
+        packageJson,
+        branches,
+        linesOfCode,
       }
     }
 
@@ -208,9 +213,12 @@ export async function GET(request: NextRequest) {
     const checkRateLimit = searchParams.get('rateLimit') === 'true'
     
     // Check rate limit if requested
-    let rateLimit = null
+    let rateLimit: GitHubRateLimitResponse | undefined
     if (checkRateLimit) {
-      rateLimit = await getGitHubRateLimit()
+      const limit = await getGitHubRateLimit()
+      if (limit) {
+        rateLimit = limit
+      }
     }
     
     const payload = await getPayload({ config: configPromise })
