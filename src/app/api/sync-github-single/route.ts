@@ -52,7 +52,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       lastGitHubSync: string
       links?: Partial<Project['links']>
       techStack?: string[]
-      github?: Partial<Project['github']>
+      projectDetails?: Partial<Project['projectDetails']>
     }
     
     const updateData: ProjectUpdateData = {
