@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import type { Project } from '@/payload-types'
 import { 
   fetchGitHubRepoStats, 
   fetchGitHubBranches, 
