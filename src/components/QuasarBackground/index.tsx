@@ -167,6 +167,8 @@ export default function QuasarBackground() {
         scene.add(ambientLight)
 
         // --- Helper to create a 1D gradient texture (white to orange) ---
+        // Unused function - commenting out
+        /*
         function create1DGradientTexture(startColor: string, endColor: string, size = 128) {
           const canvas = document.createElement('canvas')
           canvas.width = size
@@ -184,8 +186,9 @@ export default function QuasarBackground() {
           texture.needsUpdate = true
           return texture
         }
+        */
 
-        const spiralGradientTexture = create1DGradientTexture('#fff', '#ff8800', 256)
+        // const spiralGradientTexture = create1DGradientTexture('#fff', '#ff8800', 256)  // Unused variable
 
         // --- Helper to create a much softer, larger, and blurrier particle texture for gas ---
         function createSoftGasTexture(size = 128, color = '#fff') {
@@ -320,7 +323,14 @@ export default function QuasarBackground() {
         // --- Smoke Particle Data ---
         const smokeParticlesPerArm = 90
         const smokeNumArms = 16
-        const smokeParticles: any[] = []
+        interface SmokeParticle {
+          angle: number
+          distance: number
+          baseDistance: number
+          baseSize: number
+          lifetime: number
+        }
+        const smokeParticles: SmokeParticle[] = []
         const smokeGeometry = new THREE.BufferGeometry()
         const totalParticles = smokeParticlesPerArm * smokeNumArms
         const positions = new Float32Array(totalParticles * 3)

@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
 import type { Media } from '@/payload-types'
+import NextImage from 'next/image'
 import { 
   Github, 
   ExternalLink, 
@@ -933,6 +934,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
     { id: 'future', label: 'Future Work', icon: Lightbulb, condition: !!project.futureWork },
   ].filter(tab => tab.condition)
 
+  const handleClose = React.useCallback(() => {
+    setIsVisible(false)
+    // Restore body scroll immediately when closing starts
+    document.body.style.overflow = 'unset'
+    setTimeout(() => onClose(), 200) // Wait for exit animation
+  }, [onClose])
+
   React.useEffect(() => {
     const handleEscKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -950,14 +958,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
       document.removeEventListener('keydown', handleEscKey)
       document.body.style.overflow = 'unset'
     }
-  }, [])
-
-  const handleClose = () => {
-    setIsVisible(false)
-    // Restore body scroll immediately when closing starts
-    document.body.style.overflow = 'unset'
-    setTimeout(() => onClose(), 200) // Wait for exit animation
-  }
+  }, [handleClose])
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -1351,11 +1352,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                     {project.contributors.map((contributor, index) => (
                       <div key={index} className="flex items-center gap-3 p-2 bg-background rounded border border-border">
                         {contributor.avatarUrl ? (
-                          <img 
-                            src={contributor.avatarUrl} 
-                            alt={contributor.name}
-                            className="w-8 h-8 rounded-full"
-                          />
+                          <div className="relative w-8 h-8">
+                            <NextImage 
+                              src={contributor.avatarUrl} 
+                              alt={contributor.name}
+                              fill
+                              className="rounded-full object-cover"
+                              sizes="32px"
+                            />
+                          </div>
                         ) : (
                           <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
                             <span className="text-primary text-sm font-medium">
@@ -1800,10 +1805,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                           }
                           
                           return (
-                            <img
+                            <NextImage
                               src={finalSrc}
                               alt={alt}
+                              width={800}
+                              height={600}
                               className="max-w-full h-auto rounded border border-border"
+                              style={{ width: '100%', height: 'auto' }}
                               {...props}
                             />
                           )
@@ -1911,10 +1919,13 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                             }
                             
                             return (
-                              <img
+                              <NextImage
                                 src={finalSrc}
                                 alt={alt}
+                                width={800}
+                                height={600}
                                 className="max-w-full h-auto rounded border border-border"
+                                style={{ width: '100%', height: 'auto' }}
                                 {...props}
                               />
                             )
@@ -1991,11 +2002,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.plots.map((plot, index) => (
                     <div key={index} className="bg-muted rounded-lg p-2">
-                      <img 
-                        src={plot.url} 
-                        alt={plot.alt || plot.caption} 
-                        className="w-full h-40 md:h-32 object-cover rounded border border-border" 
-                      />
+                      <div className="relative w-full h-40 md:h-32">
+                        <NextImage 
+                          src={plot.url} 
+                          alt={plot.alt || plot.caption} 
+                          fill
+                          className="object-cover rounded border border-border" 
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                      </div>
                       <p className="text-sm text-muted-foreground mt-2">{plot.caption}</p>
                     </div>
                   ))}
@@ -2009,11 +2024,15 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {project.images.map((image, index) => (
                     <div key={index} className="bg-muted rounded-lg p-2">
-                      <img 
-                        src={image.url} 
-                        alt={image.alt || image.caption} 
-                        className="w-full h-32 object-cover rounded border border-border" 
-                      />
+                      <div className="relative w-full h-32">
+                        <NextImage 
+                          src={image.url} 
+                          alt={image.alt || image.caption} 
+                          fill
+                          className="object-cover rounded border border-border" 
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                        />
+                      </div>
                       <p className="text-sm text-muted-foreground mt-2">{image.caption}</p>
                     </div>
                   ))}

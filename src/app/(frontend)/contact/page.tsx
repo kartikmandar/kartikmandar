@@ -44,7 +44,14 @@ export default async function ContactPage() {
                 <div>
                   <h3 className="font-semibold text-foreground mb-1">Institute</h3>
                   <p className="text-muted-foreground text-sm">
-                    Raman Research Institute<br />
+                    <a 
+                      href="https://www.rri.res.in/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 transition-colors"
+                    >
+                      Raman Research Institute
+                    </a><br />
                     Bangalore, Karnataka, India
                   </p>
                 </div>
@@ -96,7 +103,16 @@ export default async function ContactPage() {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
                 <div>
-                  <h3 className="text-lg font-semibold text-foreground">SKA India training workshop</h3>
+                  <h3 className="text-lg font-semibold text-foreground">
+                    <a 
+                      href="https://people.iiti.ac.in/~naren/ska-training/ska_training_school.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-foreground hover:text-primary transition-colors"
+                    >
+                      SKA India training workshop
+                    </a>
+                  </h3>
                   <p className="text-muted-foreground">IIT Indore, India</p>
                   <p className="text-sm text-muted-foreground/80 mt-1">7th - 18th July</p>
                 </div>

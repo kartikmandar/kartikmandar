@@ -6,7 +6,7 @@ import { slugField } from '@/fields/slug'
 import { githubSyncField } from '@/fields/githubSync'
 import { bulkSyncField } from '@/fields/bulkSync'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
-import { autoSyncGitHub } from './hooks/autoSyncGitHub'
+// import { autoSyncGitHub } from './hooks/autoSyncGitHub'
 
 import {
   MetaDescriptionField,

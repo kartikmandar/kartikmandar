@@ -325,7 +325,7 @@ export default function NotFound() {
         cancelAnimationFrame(animationRef.current)
       }
     }
-  }, [isPlaying, speed, randomize, updateStats, drawGrid, nextGeneration])
+  }, [isPlaying, speed, randomize, updateStats, drawGrid, nextGeneration, clear])
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying)

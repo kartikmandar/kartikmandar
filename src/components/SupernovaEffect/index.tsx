@@ -33,17 +33,18 @@ export default function SupernovaEffect({
   
   useEffect(() => {
     // Scene setup
-    if (!containerRef.current) return
+    const container = containerRef.current
+    if (!container) return
 
-    const containerWidth = containerRef.current.clientWidth
-    const containerHeight = containerRef.current.clientHeight
+    const containerWidth = container.clientWidth
+    const containerHeight = container.clientHeight
     
     const scene = new THREE.Scene()
     scene.background = new THREE.Color(0x000000) // Ensure pitch black background
     const camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 0.1, 1000)
     const renderer = new THREE.WebGLRenderer({ antialias: true })
     renderer.setSize(containerWidth, containerHeight)
-    containerRef.current.appendChild(renderer.domElement)
+    container.appendChild(renderer.domElement)
     
     // Camera position
     camera.position.z = 30
@@ -330,10 +331,10 @@ export default function SupernovaEffect({
     
     // Handle resize
     const handleResize = () => {
-        if (!containerRef.current) return
+        if (!container) return
         
-        const width = containerRef.current.clientWidth
-        const height = containerRef.current.clientHeight
+        const width = container.clientWidth
+        const height = container.clientHeight
         
         camera.aspect = width / height
         camera.updateProjectionMatrix()
@@ -350,8 +351,9 @@ export default function SupernovaEffect({
         cancelAnimationFrame(animationId)
         window.removeEventListener('resize', handleResize)
         
-        if (containerRef.current) {
-            containerRef.current.innerHTML = ''
+        // Use the captured container reference
+        if (container) {
+            container.innerHTML = ''
         }
         
         // Dispose of resources

@@ -39,7 +39,17 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   reactStrictMode: true,
-  redirects,
+  async redirects() {
+    const importedRedirects = await redirects()
+    return [
+      ...importedRedirects,
+      {
+        source: '/gsoc-2024/stingray-explorer',
+        destination: '/open-source/stingray-explorer',
+        permanent: true, // This creates a 301 redirect
+      },
+    ]
+  },
   // Increase timeout for slow operations
   experimental: {
     // Increase timeout for API routes

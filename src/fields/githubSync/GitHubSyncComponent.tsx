@@ -5,10 +5,11 @@ import { useForm } from '@payloadcms/ui'
 import { Button } from '@payloadcms/ui'
 
 interface GitHubSyncComponentProps {
-  path: string
+  // Component doesn't require props, using Record<string, never> for empty interface
+  [key: string]: never
 }
 
-export const GitHubSyncComponent: React.FC<GitHubSyncComponentProps> = ({ path }) => {
+export const GitHubSyncComponent: React.FC<GitHubSyncComponentProps> = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [lastSync, setLastSync] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle')

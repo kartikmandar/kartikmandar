@@ -296,10 +296,10 @@ export function Footer() {
   // Resources
   const resources = [
     { label: 'Projects', url: '/#my-projects' },
-    { label: 'Talks', url: '#' },
-    { label: 'Posters', url: '#' },
+    { label: 'Talks', url: '/talks' },
+    { label: 'Posters', url: '/posters' },
     { label: 'Courses/Labs', url: '/courses' },
-    { label: 'Clubs', url: '#' },
+    { label: 'Journal Club', url: '/journal-club' },
     { label: 'Common Resources', url: '/common-resources' }
   ]
 
@@ -552,29 +552,31 @@ export function Footer() {
               ))}
             </ul>
             
-            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Contact</h4>
+            <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">
+              <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+            </h4>
             <div className="space-y-3 text-sm">
-              <div className="flex gap-3 items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <a href="https://www.rri.res.in/" target="_blank" rel="noopener noreferrer" className="flex gap-3 items-start hover:text-white transition-colors group">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
-                <div className="text-gray-300 text-sm leading-relaxed">
+                <div className="text-gray-300 text-sm leading-relaxed group-hover:text-white">
                   Raman Research Institute<br />
                   Bangalore, Karnataka
                 </div>
-              </div>
-              <div className="flex gap-3 items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              </a>
+              <a href="mailto:contact@kartikmandar.com" className="flex gap-3 items-start hover:text-white transition-colors group">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <div className="text-gray-300 text-sm leading-relaxed break-all">contact@kartikmandar.com</div>
-              </div>
-              <div className="flex gap-3 items-start">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="text-gray-300 text-sm leading-relaxed break-all group-hover:text-white">contact@kartikmandar.com</div>
+              </a>
+              <Link href="/contact" className="flex gap-3 items-start hover:text-white transition-colors group">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <div className="text-gray-300 text-sm leading-relaxed">Meeting Hours: By appointment</div>
-              </div>
+                <div className="text-gray-300 text-sm leading-relaxed group-hover:text-white">Meeting Hours: By appointment</div>
+              </Link>
             </div>
           </div>
         </div>

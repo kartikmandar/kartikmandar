@@ -103,7 +103,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
   subtitle = 'The story of a path written in the stars.',
 }) => {
   const [typingStarted, setTypingStarted] = useState(false)
-  const [isCosmicJourneyVisible, setIsCosmicJourneyVisible] = useState(false)
+  const [, setIsCosmicJourneyVisible] = useState(false)
   const searchTextRef = useRef<HTMLSpanElement>(null)
   const canvasDataRef = useRef<{ [key: string]: CanvasData }>({})
   const animationFrameRef = useRef<number>(0)
@@ -201,7 +201,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
   // Load Three.js dynamically
   useEffect(() => {
     const loadThreeJS = async () => {
-      if (typeof window !== 'undefined' && !(window as any).THREE) {
+      if (typeof window !== 'undefined' && !(window as Window & { THREE?: unknown }).THREE) {
         const script = document.createElement('script')
         script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'
         script.async = true
@@ -578,7 +578,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     })
   }
 
-  const drawBuildAComet = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawBuildAComet = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const nucleus = { x: w * 0.5, y: h * 0.5 }
 
@@ -640,14 +640,14 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     rockGrad.addColorStop(1, '#555')
     ctx.fillStyle = rockGrad
     drawAStar(ctx, nucleus.x, nucleus.y, nucleusSize, '#999')
-  }
+  }, [])
 
-  const drawFocusingLens = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawFocusingLens = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
 
-    const zoom = 1 + progress * 15
+    // const zoom = 1 + progress * 15  // Unused variable
     const astronomerSharpness = Math.max(0, (progress - 0.4) / 0.6)
 
     // Removed starfield blobs per user request
@@ -733,7 +733,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.fillRect(0,0,w,h)
   }
 
-  const drawConstellations = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawConstellations = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     
     const researchStars = [
@@ -786,9 +786,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
     })
     ctx.shadowBlur = 0
-  }
+  }, [getResponsiveFontSize])
 
-  const drawVirtualNetwork = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawVirtualNetwork = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
@@ -835,9 +835,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.arc(pX, pY, 4, 0, 2 * Math.PI)
       ctx.fill()
     }
-  }
+  }, [getResponsiveFontSize, getResponsiveScale])
 
-  const drawUnwaveringCompass = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawUnwaveringCompass = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     const time = Date.now()
     const centerX = w * 0.4
@@ -899,9 +899,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.fill()
     
     ctx.restore()
-  }
+  }, [getResponsiveFontSize, getResponsiveScale])
 
-  const drawSlingshot = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawSlingshot = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     const sun1 = { x: w * 0.25, y: h * 0.5, radius: Math.min(w, h) * 0.02 }
     drawCircle(ctx, sun1.x, sun1.y, sun1.radius, '#fde047', '#facc15')
@@ -979,9 +979,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       planetY = sun2.y + Math.sin(angle) * orbit2Radius
     }
     drawCircle(ctx, planetX, planetY, Math.min(w, h) * 0.008, '#fff', '#a5b4fc')
-  }
+  }, [])
 
-  const drawMajorChoiceLens = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawMajorChoiceLens = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     const orbs = [
       { name: "Maths", pos: [0.2, 0.5] },
@@ -1013,7 +1013,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.beginPath()
     ctx.arc(w / 2, h / 2, lensRadius, 0, 2 * Math.PI)
     ctx.stroke()
-  }
+  }, [getResponsiveScale])
 
   const drawInternshipPathways = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
@@ -1160,7 +1160,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawShatteringShuttlecock = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawShatteringShuttlecock = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const riseProgress = Math.min(1, progress / 0.4)
@@ -1217,9 +1217,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         ctx.stroke()
       }
     }
-  }
+  }, [])
 
-  const drawSignalToSimulation = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawSignalToSimulation = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const time = Date.now() / 100
 
@@ -1303,9 +1303,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.textAlign = 'right'
       ctx.fillText("RRIViz", plotX + plotW - 10, plotY + 20)
     }
-  }
+  }, [getResponsiveFontSize])
 
-  const drawBuildingDashboard = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawBuildingDashboard = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     ctx.font = getResponsiveFontSize(14, w)
 
@@ -1411,7 +1411,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
       ctx.globalAlpha = 1
     }
-  }
+  }, [getResponsiveFontSize])
 
   const drawRadioInterferometry = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
@@ -1452,7 +1452,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.stroke()
   }
 
-  const drawBurningMidnightOil = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawBurningMidnightOil = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
 
     // Background gradient from day to night
@@ -1520,9 +1520,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     
     ctx.fillStyle = `rgba(0,0,0,0.8)`
     ctx.fillText("RRIViz", w/2, barY - 115)
-  }
+  }, [])
 
-  const drawDivergingPaths = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
+  const drawDivergingPaths = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const pathWidth = 20
@@ -1590,7 +1590,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.textAlign = 'left'
       ctx.fillText("BS-MS", centerX + 25, forkY + 40)
     }
-  }
+  }, [])
 
   // Gravitational Lensing with Three.js
   const initGravitationalLensing = ({ canvas }: { canvas: HTMLCanvasElement; section: HTMLElement }) => {
@@ -1754,7 +1754,56 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     return { update }
   }
 
-  const drawPublicationFlight = ({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawFoldingPlane = useCallback((ctx: CanvasRenderingContext2D, pW: number, pH: number, t: number) => {
+    ctx.fillStyle = 'white'
+    ctx.strokeStyle = '#aaa'
+    ctx.lineWidth = 1.5
+
+    const tl = { x: -pW / 2, y: -pH / 2 }
+    const tr = { x: pW / 2, y: -pH / 2 }
+    const bl = { x: -pW / 2, y: pH / 2 }
+    const br = { x: pW / 2, y: pH / 2 }
+    
+    const p1 = { x: -pW / 4, y: 0 }
+    const p2 = { x: pW / 4, y: 0 }
+
+    const nose = { x: 0, y: -pH / 4}
+    const tail = { x: 0, y: pH/2 }
+
+    const t1 = Math.min(1, t / 0.33)
+    const t2 = Math.min(1, Math.max(0, t - 0.33) / 0.33)
+    const t3 = Math.min(1, Math.max(0, t - 0.66) / 0.34)
+
+    const c_tl = { x: lerp(tl.x, p1.x, t1), y: lerp(tl.y, p1.y, t1) }
+    const c_tr = { x: lerp(tr.x, p2.x, t2), y: lerp(tr.y, p2.y, t2) }
+    const c_bl = { x: bl.x, y: bl.y }
+    const c_br = { x: br.x, y: br.y }
+
+    const final_tl = { x: lerp(c_tl.x, nose.x, t3), y: lerp(c_tl.y, nose.y, t3) }
+    const final_tr = { x: lerp(c_tr.x, nose.x, t3), y: lerp(c_tr.y, nose.y, t3) }
+    const final_bl = { x: lerp(c_bl.x, tail.x, t3), y: lerp(c_bl.y, tail.y, t3) }
+    const final_br = { x: lerp(c_br.x, tail.x, t3), y: lerp(c_br.y, tail.y, t3) }
+
+    // Left wing
+    ctx.beginPath()
+    ctx.moveTo(final_tl.x, final_tl.y)
+    ctx.lineTo(final_bl.x, final_bl.y)
+    ctx.lineTo(tail.x, tail.y)
+    ctx.closePath()
+    ctx.fill()
+    ctx.stroke()
+
+    // Right wing
+    ctx.beginPath()
+    ctx.moveTo(final_tr.x, final_tr.y)
+    ctx.lineTo(final_br.x, final_br.y)
+    ctx.lineTo(tail.x, tail.y)
+    ctx.closePath()
+    ctx.fill()
+    ctx.stroke()
+  }, [])
+
+  const drawPublicationFlight = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
 
     const paperPhase = Math.min(1, progress / 0.2)
@@ -1837,22 +1886,24 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       ctx.fillStyle = `rgba(30, 30, 30, ${paperPhase})`
       ctx.font = `bold ${getResponsiveFontSize(18, w)} Poppins`
       ctx.textAlign = 'center'
-      ctx.fillText('arXiv:2024.xxxxx', w/2, pY + 40)
+      ctx.fillText('arXiv:2506.02130', w/2, pY + 40)
       
       // Draw title
-      ctx.font = `bold ${getResponsiveFontSize(14, w)} Poppins`
-      ctx.fillText('fftvis: FFT-based Visibility', w/2, pY + 70)
-      ctx.fillText('Simulator for Radio Arrays', w/2, pY + 90)
+      ctx.font = `bold ${getResponsiveFontSize(13, w)} Poppins`
+      ctx.fillText('fftvis: A Non-Uniform Fast Fourier', w/2, pY + 70)
+      ctx.fillText('Transform Based Interferometric', w/2, pY + 90)
+      ctx.fillText('Visibility Simulator', w/2, pY + 110)
       
       // Draw authors line
-      ctx.font = getResponsiveFontSize(11, w)
-      ctx.fillText('A. Adoni, K. Mandar, et al.', w/2, pY + 115)
+      ctx.font = getResponsiveFontSize(10, w)
+      ctx.fillText('T.A. Cox, S.G. Murray, A.R. Parsons,', w/2, pY + 135)
+      ctx.fillText('J.S. Dillon, K. Mandar, et al.', w/2, pY + 150)
       
       // Draw abstract lines
       ctx.lineWidth = 1
       ctx.strokeStyle = `rgba(50, 50, 50, ${paperPhase * 0.5})`
       ctx.font = getResponsiveFontSize(10, w)
-      const abstractY = pY + 140
+      const abstractY = pY + 175
       for (let i = 0; i < 6; i++) {
         const lineY = abstractY + i * 18
         const lineWidth = pW * (0.8 - i * 0.05)
@@ -1863,56 +1914,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         ctx.stroke()
       }
     }
-  }
-
-  const drawFoldingPlane = (ctx: CanvasRenderingContext2D, pW: number, pH: number, t: number) => {
-    ctx.fillStyle = 'white'
-    ctx.strokeStyle = '#aaa'
-    ctx.lineWidth = 1.5
-
-    const tl = { x: -pW / 2, y: -pH / 2 }
-    const tr = { x: pW / 2, y: -pH / 2 }
-    const bl = { x: -pW / 2, y: pH / 2 }
-    const br = { x: pW / 2, y: pH / 2 }
-    
-    const p1 = { x: -pW / 4, y: 0 }
-    const p2 = { x: pW / 4, y: 0 }
-
-    const nose = { x: 0, y: -pH / 4}
-    const tail = { x: 0, y: pH/2 }
-
-    const t1 = Math.min(1, t / 0.33)
-    const t2 = Math.min(1, Math.max(0, t - 0.33) / 0.33)
-    const t3 = Math.min(1, Math.max(0, t - 0.66) / 0.34)
-
-    const c_tl = { x: lerp(tl.x, p1.x, t1), y: lerp(tl.y, p1.y, t1) }
-    const c_tr = { x: lerp(tr.x, p2.x, t2), y: lerp(tr.y, p2.y, t2) }
-    const c_bl = { x: bl.x, y: bl.y }
-    const c_br = { x: br.x, y: br.y }
-
-    const final_tl = { x: lerp(c_tl.x, nose.x, t3), y: lerp(c_tl.y, nose.y, t3) }
-    const final_tr = { x: lerp(c_tr.x, nose.x, t3), y: lerp(c_tr.y, nose.y, t3) }
-    const final_bl = { x: lerp(c_bl.x, tail.x, t3), y: lerp(c_bl.y, tail.y, t3) }
-    const final_br = { x: lerp(c_br.x, tail.x, t3), y: lerp(c_br.y, tail.y, t3) }
-
-    // Left wing
-    ctx.beginPath()
-    ctx.moveTo(final_tl.x, final_tl.y)
-    ctx.lineTo(final_bl.x, final_bl.y)
-    ctx.lineTo(tail.x, tail.y)
-    ctx.closePath()
-    ctx.fill()
-    ctx.stroke()
-
-    // Right wing
-    ctx.beginPath()
-    ctx.moveTo(final_tr.x, final_tr.y)
-    ctx.lineTo(final_br.x, final_br.y)
-    ctx.lineTo(tail.x, tail.y)
-    ctx.closePath()
-    ctx.fill()
-    ctx.stroke()
-  }
+  }, [drawFoldingPlane, getResponsiveFontSize])
 
   const drawPaperPlane = (ctx: CanvasRenderingContext2D, size: number, alpha: number) => {
     ctx.fillStyle = `rgba(240, 240, 240, ${alpha})`
@@ -1930,7 +1932,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     ctx.stroke()
   }
 
-  const drawCelestialWorkbench = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawCelestialWorkbench = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     const centerX = w / 2
     const centerY = h / 2
@@ -2055,7 +2057,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       data.latexParticles = []
       data.currentLatexSymbol = undefined
     }
-  }
+  }, [getResponsiveFontSize, getResponsiveScale])
 
   const drawMathSymbol = (ctx: CanvasRenderingContext2D, symbol: string, cx: number, cy: number) => {
     switch(symbol) {
@@ -2067,7 +2069,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }
 
-  const drawJourneyContinues = ({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+  const drawJourneyContinues = useCallback(({ ctx, w, h, progress, data }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
     ctx.clearRect(0, 0, w, h)
     
     const centerX = w / 2
@@ -2105,7 +2107,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     if (scale > 0) {
       drawWalker(ctx, centerX, travelerY, 30 * scale, progress)
     }
-  }
+  }, [])
 
   const drawWalker = (ctx: CanvasRenderingContext2D, x: number, y: number, size: number, progress: number) => {
     const legAngle = Math.sin(progress * 50) * (Math.PI / 6)
@@ -2307,7 +2309,25 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
         intersectionObserverRef.current.disconnect()
       }
     }
-  }, [calculateScrollProgress, memoizedData, throttledScrollUpdate])
+  }, [
+    calculateScrollProgress, 
+    memoizedData, 
+    throttledScrollUpdate,
+    drawBuildAComet,
+    drawBuildingDashboard,
+    drawBurningMidnightOil,
+    drawCelestialWorkbench,
+    drawConstellations,
+    drawDivergingPaths,
+    drawJourneyContinues,
+    drawMajorChoiceLens,
+    drawPublicationFlight,
+    drawShatteringShuttlecock,
+    drawSignalToSimulation,
+    drawSlingshot,
+    drawUnwaveringCompass,
+    drawVirtualNetwork
+  ])
 
   return (
     <div className="cosmic-journey-container relative" ref={cosmicJourneyRef}>

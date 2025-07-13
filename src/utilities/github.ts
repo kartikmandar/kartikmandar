@@ -293,6 +293,7 @@ async function rateLimitDelay(ms: number = 100): Promise<void> {
 /**
  * Enhanced fetch with rate limit handling
  */
+/*
 async function fetchWithRateLimit(url: string, options: RequestInit): Promise<Response> {
   const response = await fetch(url, options)
   
@@ -315,6 +316,7 @@ async function fetchWithRateLimit(url: string, options: RequestInit): Promise<Re
   
   return response
 }
+*/
 
 /**
  * Fetch repository data from GitHub API
@@ -466,7 +468,7 @@ export async function fetchGitHubFileTree(owner: string, repo: string, branch: s
         if (response.ok) {
           return await response.json()
         }
-      } catch (error) {
+      } catch {
         // Try next branch
         continue
       }
@@ -907,10 +909,45 @@ export function isGitHubTokenConfigured(): boolean {
   return !!process.env.GITHUB_TOKEN
 }
 
+interface GitHubRateLimitResponse {
+  resources: {
+    core: {
+      limit: number
+      remaining: number
+      reset: number
+      used: number
+    }
+    search: {
+      limit: number
+      remaining: number
+      reset: number
+      used: number
+    }
+    graphql: {
+      limit: number
+      remaining: number
+      reset: number
+      used: number
+    }
+    integration_manifest: {
+      limit: number
+      remaining: number
+      reset: number
+      used: number
+    }
+  }
+  rate: {
+    limit: number
+    remaining: number
+    reset: number
+    used: number
+  }
+}
+
 /**
  * Get GitHub API rate limit information
  */
-export async function getGitHubRateLimit(): Promise<any> {
+export async function getGitHubRateLimit(): Promise<GitHubRateLimitResponse | null> {
   try {
     const response = await fetch(
       'https://api.github.com/rate_limit',
@@ -960,10 +997,36 @@ export async function checkRateLimitBeforeSync(): Promise<boolean> {
   }
 }
 
+export interface GitHubRepoStatsBasic {
+  stars: number
+  forks: number
+  watchers: number
+  openIssues: number
+  language: string | null
+  size: number
+  lastUpdated: string
+  readme: string | null
+  totalCommits: number
+  contributors: number
+  fileCount: number
+  directoryCount: number
+  repositorySize: number
+  defaultBranch: string
+  isArchived: boolean
+  isFork: boolean
+  license: string | null
+  topics: string[]
+  createdAt: string
+  homepage: string | null
+  fileTree: GitHubTree | null
+  githubIssues: GitHubStats['issues']
+  githubPullRequests: GitHubStats['pullRequests']
+}
+
 /**
  * Fetch repository stats including basic info
  */
-export async function fetchGitHubRepoStats(owner: string, repo: string): Promise<any> {
+export async function fetchGitHubRepoStats(owner: string, repo: string): Promise<GitHubRepoStatsBasic | null> {
   try {
     const repository = await fetchGitHubRepository(owner, repo)
     if (!repository) return null

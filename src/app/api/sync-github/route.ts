@@ -1,24 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { fetchCompleteGitHubData, parseGitHubUrl, getGitHubRateLimit } from '@/utilities/github'
+import { fetchCompleteGitHubData, parseGitHubUrl, getGitHubRateLimit, type GitHubRepoStats } from '@/utilities/github'
 import type { Project } from '@/payload-types'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
+
+interface GitHubRateLimitResponse {
+  resources: {
+    core: {
+      limit: number
+      remaining: number
+      reset: number
+    }
+  }
+}
 
 interface SyncResult {
   success: boolean
   projectId?: string
   projectTitle?: string
   error?: string
-  githubData?: any
+  githubData?: GitHubRepoStats | null
 }
 
 interface SyncResponse {
   success: boolean
   results: SyncResult[]
-  rateLimit?: any
+  rateLimit?: GitHubRateLimitResponse
   totalProcessed: number
   totalSuccess: number
   totalErrors: number
@@ -66,7 +76,7 @@ async function syncProjectGitHubData(project: Project): Promise<SyncResult> {
     // Update project with GitHub data
     const payload = await getPayload({ config: configPromise })
     
-    const updatedProject = await payload.update({
+    await payload.update({
       collection: 'projects',
       id: project.id,
       data: {

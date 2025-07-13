@@ -47,7 +47,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
     ])
 
     // Prepare update data
-    const updateData: any = {
+    interface ProjectUpdateData {
+      lastGitHubSync: string
+      links?: Partial<Project['links']>
+      techStack?: string[]
+      github?: Partial<Project['github']>
+    }
+    
+    const updateData: ProjectUpdateData = {
       lastGitHubSync: new Date().toISOString(),
     }
 

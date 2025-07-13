@@ -19,10 +19,11 @@ interface SyncResponse {
 }
 
 interface BulkSyncComponentProps {
-  path: string
+  // Component doesn't require props, using Record<string, never> for empty interface
+  [key: string]: never
 }
 
-export const BulkSyncComponent: React.FC<BulkSyncComponentProps> = ({ path }) => {
+export const BulkSyncComponent: React.FC<BulkSyncComponentProps> = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [lastSync, setLastSync] = useState<string | null>(null)
   const [syncStatus, setSyncStatus] = useState<'idle' | 'success' | 'error'>('idle')

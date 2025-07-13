@@ -55,10 +55,10 @@ export default async function CoursesPage(): Promise<React.JSX.Element> {
         { title: "PHY103 General Physics Laboratory I", credits: 1, url: null },
         { title: "PHY205 General Physics Laboratory II", credits: 1, url: null },
         { title: "PHY210 General Physics Laboratory III", credits: 1, url: null },
-        { title: "PHY307 Physics Laboratory I", credits: 3, url: null },
-        { title: "PHY308 Physics Laboratory II", credits: 3, url: null },
-        { title: "PHY405 Condensed Matter Physics Laboratory", credits: 3, url: null },
-        { title: "PHY406 Nuclear Lab", credits: 3, url: null }
+        { title: "PHY307 Physics Laboratory I", credits: 3, url: "https://drive.google.com/drive/folders/1pCb4K2eC-VbRmfzq4pspOEtdixwzo1F0?usp=sharing" },
+        { title: "PHY308 Physics Laboratory II", credits: 3, url: "https://drive.google.com/drive/folders/1DenyGN62XTpiXMKFuvR3vwknHqJl1six?usp=sharing" },
+        { title: "PHY405 Condensed Matter Physics Laboratory", credits: 3, url: "https://drive.google.com/drive/folders/1KaoUrqvGBhLn2o-Yxk65_68EdCpFXuyU?usp=sharing" },
+        { title: "PHY406 Nuclear Lab", credits: 3, url: "https://drive.google.com/drive/folders/1oQgxrRIqhvYgU1uI8ubVgMNKnDzFVOch?usp=sharing" }
       ]
     },
     {

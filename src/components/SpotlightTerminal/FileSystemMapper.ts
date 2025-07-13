@@ -523,7 +523,6 @@ export class FileSystemMapper {
       if (child.description) {
         description = ` - ${child.description}`
       } else if (child.type === 'directory' && child.children && child.children.length > 0) {
-        const childCount = child.children.length
         const fileCount = child.children.filter(c => c.type === 'file').length
         const dirCount = child.children.filter(c => c.type === 'directory').length
         

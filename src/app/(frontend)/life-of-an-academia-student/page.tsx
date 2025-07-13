@@ -4,6 +4,7 @@ import {
   ChevronRight
 } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { formatAuthors } from '@/utilities/formatAuthors'
@@ -194,11 +195,13 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
                   <article key={index} className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
                     {/* Thumbnail */}
                     {thumbnailUrl && (
-                      <div className="aspect-video overflow-hidden">
-                        <img 
+                      <div className="aspect-video overflow-hidden relative">
+                        <Image 
                           src={thumbnailUrl} 
                           alt={thumbnailAlt}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       </div>
                     )}
