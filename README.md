@@ -3,7 +3,7 @@
 <div align="center">
   
   [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/kartikmandar)
-  <a href="https://www.kartikmandar.com"><img src="public/favicon.svg" alt="Website" height="20" style="vertical-align: middle;"></a>
+  [![Website](https://img.shields.io/badge/-Website-000000?style=flat&logo=data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiIGZpbGw9IiNGRkZGRkYiLz4KPC9zdmc+&logoColor=white)](https://www.kartikmandar.com)
   [![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/kartikmandar)
   [![Google Scholar](https://img.shields.io/badge/-Google%20Scholar-4285F4?style=flat&logo=google-scholar&logoColor=white)](https://scholar.google.com/citations?user=YOUR_ID)
   [![ORCID](https://img.shields.io/badge/-ORCID-A6CE39?style=flat&logo=orcid&logoColor=white)](https://orcid.org/0009-0002-6037-4613)
@@ -14,7 +14,7 @@
 ## About Me
 
 I completed my **Bachelors in Physics** from the Indian Institute of Science Education and Research, Bhopal, India in May 2025.
-I am currently working as a Visiting Student at the [Raman Research Institute](https://www.rri.res.in/), Bangalore. 
+I am currently working as a Visiting Student at the Raman Research Institute, Bangalore. 
 
 My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing and Dark Matter Substructure.
 
