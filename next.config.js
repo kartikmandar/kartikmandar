@@ -26,6 +26,10 @@ const nextConfig = {
           protocol: url.protocol.replace(':', ''),
         }
       }),
+      {
+        hostname: 'avatars.githubusercontent.com',
+        protocol: 'https',
+      },
     ],
     // Increase timeout for slow image loading
     dangerouslyAllowSVG: true,
