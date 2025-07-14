@@ -24,9 +24,7 @@ export default async function TalksPage(): Promise<React.JSX.Element> {
   const talksData = await payload.find({
     collection: 'talks',
     depth: 2,
-    limit: 50,
-    overrideAccess: false,
-    sort: '-talkDate',
+    limit: 1000,
   })
   
   const talks = talksData.docs
@@ -52,7 +50,7 @@ export default async function TalksPage(): Promise<React.JSX.Element> {
           subtitle=""
           showAllTalks={true}
           layout="grid-3"
-          maxTalks={50}
+          maxTalks={1000}
           talks={talks}
         />
 
