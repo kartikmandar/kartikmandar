@@ -60,6 +60,12 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
     depth: 2,
     limit: 6,
     overrideAccess: false,
+    where: {
+      _status: {
+        equals: 'published',
+      },
+    },
+    sort: '-publishedAt',
     select: {
       title: true,
       slug: true,
