@@ -3,7 +3,7 @@
 <div align="center">
   
   [![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat&logo=linkedin&logoColor=white)](https://linkedin.com/in/kartikmandar)
-  [![Website](public/favicon.svg)](https://www.kartikmandar.com)
+  <a href="https://www.kartikmandar.com"><img src="public/favicon.svg" alt="Website" height="20" style="vertical-align: middle;"></a>
   [![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat&logo=github&logoColor=white)](https://github.com/kartikmandar)
   [![Google Scholar](https://img.shields.io/badge/-Google%20Scholar-4285F4?style=flat&logo=google-scholar&logoColor=white)](https://scholar.google.com/citations?user=YOUR_ID)
   [![ORCID](https://img.shields.io/badge/-ORCID-A6CE39?style=flat&logo=orcid&logoColor=white)](https://orcid.org/0009-0002-6037-4613)
