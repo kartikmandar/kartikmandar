@@ -3,7 +3,7 @@ import { getServerSideURL } from './getURL'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
-  description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through research, innovation, and the cosmos.',
+  description: 'Welcome to my digital space where I try to showcase my work and interests. Also astronomy is cool and more people should know about it. I tend to work on using my software development skills to solve problems in astrophysics and related fields.',
   images: [
     {
       url: `${getServerSideURL()}/android-chrome-512x512.png`,

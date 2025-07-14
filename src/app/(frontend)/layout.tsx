@@ -67,14 +67,14 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: 'Kartik Mandar - Astrophysicist & Software Developer',
-  description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through research, innovation, and the cosmos.',
-  keywords: ['astrophysics', 'software development', 'research', 'kartik mandar', 'cosmos', 'innovation'],
+  description: 'Welcome to my digital space where I try to showcase my work and interests. Also astronomy is cool and more people should know about it. I tend to work on using my software development skills to solve problems in astrophysics and related fields.',
+  keywords: ['astrophysics', 'software development', 'research', 'kartik mandar'],
   authors: [{ name: 'Kartik Mandar' }],
   openGraph: mergeOpenGraph(),
   twitter: {
     card: 'summary_large_image',
     creator: '@kartikmandar',
     title: 'Kartik Mandar - Astrophysicist & Software Developer',
-    description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through research, innovation, and the cosmos.',
+    description: 'Welcome to my digital space where I try to showcase my work and interests. Also astronomy is cool and more people should know about it. I tend to work on using my software development skills to solve problems in astrophysics and related fields.',
   },
 }
