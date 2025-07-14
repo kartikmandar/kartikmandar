@@ -4,7 +4,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { TalksShowcase } from '@/blocks/TalksShowcase/Component'
 
-export const dynamic = 'force-static'
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {

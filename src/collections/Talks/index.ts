@@ -4,6 +4,7 @@ import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { slugField } from '@/fields/slug'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
+import { extractGoogleDriveId } from '../../hooks/extractGoogleDriveId'
 
 import {
   MetaDescriptionField,
@@ -728,7 +729,7 @@ export const Talks: CollectionConfig<'talks'> = {
     },
   ],
   hooks: {
-    beforeChange: [populatePublishedAt],
+    beforeChange: [populatePublishedAt, extractGoogleDriveId],
   },
   versions: {
     drafts: {
