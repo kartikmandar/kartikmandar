@@ -325,16 +325,16 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
             Academic life isn&apos;t for everyone, but for those called to it, it can be incredibly fulfilling. 
             The world needs curious minds pushing the boundaries of knowledge.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link 
               href="/posts"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             >
               Read More Stories
             </Link>
             <Link 
               href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
             >
               Connect & Discuss
             </Link>
