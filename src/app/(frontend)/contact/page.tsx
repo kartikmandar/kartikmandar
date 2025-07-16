@@ -66,13 +66,13 @@ export default async function ContactPage() {
                   <h3 className="font-semibold text-foreground mb-1">Email</h3>
                   <a 
                     href="mailto:contact@kartikmandar.com" 
-                    className="text-primary hover:text-primary/80 transition-colors text-sm break-all block"
+                    className="text-primary hover:text-primary/80 transition-colors text-sm break-words block"
                   >
                     contact@kartikmandar.com
                   </a>
                   <a 
                     href="mailto:kartik4321mandar@gmail.com" 
-                    className="text-primary hover:text-primary/80 transition-colors text-sm break-all block mt-1"
+                    className="text-primary hover:text-primary/80 transition-colors text-sm break-words block mt-1"
                   >
                     kartik4321mandar@gmail.com
                   </a>

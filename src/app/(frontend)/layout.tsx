@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
-import { GeistMono } from 'geist/font/mono'
-import { GeistSans } from 'geist/font/sans'
+import { Montserrat } from 'next/font/google'
+import { JetBrains_Mono } from 'next/font/google'
 import React from 'react'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -22,6 +22,18 @@ import { NAVIGATION_ITEMS } from '@/constants/navigation'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
+const montserrat = Montserrat({
+  subsets: ['latin'],
+  variable: '--font-montserrat',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  variable: '--font-jetbrains-mono',
+  display: 'swap',
+})
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
@@ -29,7 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const navItems = NAVIGATION_ITEMS.map(item => ({ link: item }))
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning>
       <head>
         <InitTheme />
         {/* Favicon and app icons */}

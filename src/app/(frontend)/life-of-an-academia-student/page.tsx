@@ -114,45 +114,13 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
     },
     {
       stage: "Academic Career",
-      duration: "Ongoing",
+      duration: "Never Ends",
       focus: "Teaching, research, service",
       challenges: ["Tenure track", "Funding", "Work-life balance"],
       color: "from-gray-500/20 to-gray-700/20 border-gray-500/30"
     }
   ]
 
-  const dailyRealities = [
-    {
-      time: "9:23 AM",
-      activity: "bruhh...late for course/lab...gotta skip bath today",
-      description: "Breakfast? eat that 1 week old banana and get going",
-    },
-    {
-      time: "11:10 AM",
-      activity: "Reading that paper I was supposed to read last week",
-      description: "Experiments, coding, analysis, or meetings",
-    },
-    {
-      time: "1:17 PM",
-      activity: "Lunch & chill",
-      description: "Alas lunch break, but I still don't know why that code is not working...",
-    },
-    {
-      time: "5:19 PM",
-      activity: "Tea Break",
-      description: "Green tea is almost like an elixir of life for me",
-    },
-    {
-      time: "7:26 PM",
-      activity: "Time to play badminton or go for jogging/calisthenics",
-      description: "It's the most sought after time of the day",
-    },
-    {
-      time: "10:32 PM",
-      activity: "Personal projects time",
-      description: "Coding some next gen idea, that may never hit I guess",
-    }
-  ]
 
 
 
@@ -168,6 +136,13 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
             An honest look into what life is really like for students and researchers in academia.
           </p>
+          
+          {/* Target Audience Note */}
+          <div className="max-w-3xl mx-auto mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <p className="text-blue-800 dark:text-blue-200 text-sm md:text-base">
+              <strong>For High School Students:</strong> This page is specifically designed for incoming high school students who are thinking of going into research!
+            </p>
+          </div>
         </div>
 
         {/* Personal Stories from Blog */}
@@ -303,29 +278,6 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           </div>
         </section>
 
-        {/* Daily Life Reality */}
-        <section className="mb-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">A Day in Academic Life</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              What does a typical day actually look like? Spoiler: it&apos;s rarely typical.
-            </p>
-          </div>
-          
-          <div className="max-w-4xl mx-auto">
-            {dailyRealities.map((item, index) => (
-              <div key={index} className="flex items-start gap-4 mb-6 p-4 bg-card border rounded-lg hover:bg-muted/50 transition-colors">
-                <div className="flex-shrink-0 w-16 text-sm font-mono text-primary">
-                  {item.time}
-                </div>
-                <div className="flex-1">
-                  <h4 className="font-semibold text-foreground mb-1">{item.activity}</h4>
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
         {/* Financial Reality */}
         <section className="mb-20">
@@ -339,40 +291,26 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-6">
             <div className="bg-card border rounded-xl p-6">
               <h3 className="font-bold text-foreground mb-4">PhD Stipends</h3>
-              <p className="text-muted-foreground text-sm mb-3">
+              <p className="text-muted-foreground text-sm">
                 In India: ₹37,000-₹42,000/month for PhD scholars (JRF/SRF). 
                 Just enough to survive, rarely enough to thrive.
               </p>
-              <div className="text-xs text-muted-foreground">
-                <div>• Basic living covered</div>
-                <div>• Limited savings</div>
-              </div>
             </div>
 
             <div className="bg-card border rounded-xl p-6">
               <h3 className="font-bold text-foreground mb-4">Funding Sources</h3>
-              <p className="text-muted-foreground text-sm mb-3">
+              <p className="text-muted-foreground text-sm">
                 Multiple income streams keep academics afloat: fellowships, 
                 teaching assistantships, research grants.
               </p>
-              <div className="text-xs text-muted-foreground">
-                <div>• Research fellowships</div>
-                <div>• Teaching assistantships</div>
-                <div>• Conference travel grants</div>
-              </div>
             </div>
 
             <div className="bg-card border rounded-xl p-6">
               <h3 className="font-bold text-foreground mb-4">Long-term View</h3>
-              <p className="text-muted-foreground text-sm mb-3">
+              <p className="text-muted-foreground text-sm">
                 Academic careers require patience. Financial stability 
                 often comes later but can be very rewarding.
               </p>
-              <div className="text-xs text-muted-foreground">
-                <div>• Delayed gratification</div>
-                <div>• Long-term stability</div>
-                <div>• Meaningful work</div>
-              </div>
             </div>
           </div>
         </section>
