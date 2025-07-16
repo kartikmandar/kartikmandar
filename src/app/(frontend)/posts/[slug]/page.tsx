@@ -14,6 +14,7 @@ import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
+import { Comments } from '@/components/Comments'
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -71,6 +72,12 @@ export default async function Post({ params: paramsPromise }: Args) {
           )}
         </div>
       </div>
+      
+      {/* Comments Section */}
+      <Comments
+        title={post.title}
+        className="mt-12"
+      />
     </article>
   )
 }

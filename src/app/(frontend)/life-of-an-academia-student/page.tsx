@@ -8,6 +8,7 @@ import Image from 'next/image'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { formatAuthors } from '@/utilities/formatAuthors'
+import { Comments } from '@/components/Comments'
 
 export const dynamic = 'force-static'
 
@@ -339,6 +340,12 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
             </Link>
           </div>
         </section>
+
+        {/* Comments Section */}
+        <Comments
+          title="Life of an Academia Student"
+          className="mt-16"
+        />
 
       </div>
     </div>
