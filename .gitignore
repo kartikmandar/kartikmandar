@@ -8,6 +8,7 @@ node_modules
 .env.production.local
 .next
 .vercel
+.env.production.backup
 
 # Payload default media upload directory
 public/media/
@@ -19,6 +20,10 @@ public/sitemap*.xml
 CLAUDE.md
 old-website.md
 reusable-components.md
+ARCHITECTURE.md
+BUILD.md
+CONDUCTOR.md
+JOURNAL.md
 
 # Claude configuration
 .claude/
