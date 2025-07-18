@@ -8,7 +8,11 @@ node_modules
 .env.production.local
 .next
 .vercel
+# Environment file backups and variations
 .env.production.backup
+.env*.backup
+.env*.bak
+.env*.tmp
 
 # Payload default media upload directory
 public/media/
