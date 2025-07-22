@@ -35,3 +35,12 @@ tsconfig.tsbuildinfo
 
 local_db_backup.sql
 .env.production
+
+# LaTeX build artifacts
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.pdf
+*.synctex.gz
