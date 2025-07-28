@@ -1,0 +1,606 @@
+\documentclass[a4paper,11pt]{article}
+
+% Package imports
+\usepackage{latexsym}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{ragged2e}
+\usepackage[empty]{fullpage}
+\usepackage{wrapfig}
+\usepackage{lipsum}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{marvosym}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{cfr-lm}
+\usepackage[T1]{fontenc}
+\usepackage{fontawesome5}
+
+% Color definitions
+\definecolor{darkblue}{RGB}{0,0,139}
+
+% Page layout
+\setlength{\multicolsep}{0pt} 
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\geometry{left=1.4cm, top=0.8cm, right=1.2cm, bottom=1cm}
+\setlength{\footskip}{5pt} % Addressing fancyhdr warning
+
+% Hyperlink setup (moved after fancyhdr to address warning)
+\usepackage[hidelinks]{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    filecolor=darkblue,
+    urlcolor=darkblue,
+}
+
+% Custom box settings
+\usepackage[most]{tcolorbox}
+\tcbset{
+    frame code={},
+    center title,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt,
+    colback=gray!20,
+    colframe=white,
+    width=\dimexpr\textwidth\relax,
+    enlarge left by=-2mm,
+    boxsep=4pt,
+    arc=0pt,outer arc=0pt,
+}
+
+% URL style
+\urlstyle{same}
+
+% Text alignment
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-7pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[2]{
+  \item{
+    \textbf{#1}{\hspace{0.5mm}#2 \vspace{-0.5mm}}
+  }
+}
+
+\newcommand{\resumePOR}[3]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1}\hspace{0.3mm}#2 & \textit{\small{#3}} 
+    \end{tabular*}
+    \vspace{-2mm}
+}
+
+\newcommand{\resumeSubheading}[4]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#4}} \\
+        \textit{\footnotesize{#3}} &  \footnotesize{#2}\\
+    \end{tabular*}
+    \vspace{-2.4mm}
+}
+
+\newcommand{\resumeProject}[4]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#3}} \\
+        \footnotesize{\textit{#2}} & \footnotesize{#4}
+    \end{tabular*}
+    \vspace{-2.4mm}
+}
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-2pt}}
+
+\renewcommand{\labelitemi}{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand{\labelitemii}{$\vcenter{\hbox{\tiny$\circ$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*,labelsep=1mm]}
+\newcommand{\resumeHeadingSkillStart}{\begin{itemize}[leftmargin=*,itemsep=1.7mm, rightmargin=2ex]}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*,labelsep=1mm,itemsep=0.2mm]}
+
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{2mm}}
+\newcommand{\resumeHeadingSkillEnd}{\end{itemize}\vspace{-2mm}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-2mm}}
+\newcommand{\cvsection}[1]{%
+\vspace{2mm}
+\begin{tcolorbox}
+    \textbf{\large #1}
+\end{tcolorbox}
+    \vspace{-4mm}
+}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}%
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}%
+\newcolumntype{C}{>{\centering\arraybackslash}X}%
+
+% Commands for icon sizing and positioning
+\newcommand{\socialicon}[1]{\raisebox{-0.05em}{\resizebox{!}{1em}{#1}}}
+\newcommand{\ieeeicon}[1]{\raisebox{-0.3em}{\resizebox{!}{1.3em}{#1}}}
+
+% Font options
+\newcommand{\headerfonti}{\fontfamily{phv}\selectfont} % Helvetica-like (similar to Arial/Calibri)
+\newcommand{\headerfontii}{\fontfamily{ptm}\selectfont} % Times-like (similar to Times New Roman)
+\newcommand{\headerfontiii}{\fontfamily{ppl}\selectfont} % Palatino (elegant serif)
+\newcommand{\headerfontiv}{\fontfamily{pbk}\selectfont} % Bookman (readable serif)
+\newcommand{\headerfontv}{\fontfamily{pag}\selectfont} % Avant Garde-like (similar to Trebuchet MS)
+\newcommand{\headerfontvi}{\fontfamily{cmss}\selectfont} % Computer Modern Sans Serif
+\newcommand{\headerfontvii}{\fontfamily{qhv}\selectfont} % Quasi-Helvetica (another Arial/Calibri alternative)
+\newcommand{\headerfontviii}{\fontfamily{qpl}\selectfont} % Quasi-Palatino (another elegant serif option)
+\newcommand{\headerfontix}{\fontfamily{qtm}\selectfont} % Quasi-Times (another Times New Roman alternative)
+\newcommand{\headerfontx}{\fontfamily{bch}\selectfont} % Charter (clean serif font)
+
+
+
+
+\begin{document}
+\headerfontiii
+
+% Header
+
+\begin{flushright}
+    \small Last edited: July 17th, 2025
+\end{flushright}
+\begin{center}
+    {\Huge\textbf{Kartik Mandar}}
+\end{center}
+
+
+\vspace{-4mm}
+
+\begin{center}
+    \small{
+    +91-79827-85917 | \href{mailto:kartik21@iiserb.ac.in}{kartik21@iiserb.ac.in} | \href{mailto:kartik4321mandar@gmail.com}{kartik4321mandar@gmail.com} |   \href{mailto:contact@kartikmandar.com}{contact@kartikmandar.com}
+    }
+\end{center}
+\vspace{-6mm}
+
+\begin{center}
+    \small{
+        \socialicon{\faGithub} \href{https://github.com/kartikmandar}{kartikmandar} |
+    \socialicon{\faLinkedin} \href{https://www.linkedin.com/in/kartikmandar/}{kartikmandar} | \socialicon{\faGlobe} \href{https://www.kartikmandar.com/}{kartikmandar.com}
+
+    }
+\end{center}
+\vspace{-6mm}
+\begin{center}
+    \small{Raman Research Institute, Bangalore - 560080, India}
+\end{center}
+
+\vspace{-4mm}
+
+
+% \section{\textbf{Objective}}
+% \vspace{1mm}
+% \small{
+% Seeking a challenging position in [your field] to leverage my expertise in [your key skills]. Aiming to contribute to innovative projects at the intersection of [your interests] and practical problem-solving in fields such as [specific areas of interest].
+% }
+% \vspace{-2mm}
+
+\section{\textbf{Publications}}
+
+\begin{enumerate}[
+    label=\textbf{[\arabic*]},
+    leftmargin=*,
+    topsep=0pt,
+    itemsep=4pt % Increased itemsep slightly for better separation
+]
+    \small
+
+    \item \href{https://arxiv.org/abs/2506.02130}{\textbf{fftvis: A Non-Uniform Fast Fourier Transform Based Interferometric Visibility Simulator}}. \\
+    Tyler A. Cox, Steven G. Murray, Aaron R. Parsons, Joshua S. Dillon, Kartik Mandar, et al.
+
+    \item \textbf{Hard X-Ray Observations of Cygnus X-1 with NuSTAR}. \\
+    Kshitij Duraphe, Kartik Mandar, Abha Pareek, Tejaswi Kondhiya, V Sree Suswara, et al.
+    % Assuming this is for a journal, you would add: \textit{Journal Name, Vol, Page (Year)}.
+
+\end{enumerate}
+\vspace{-4mm}
+
+\section{\textbf{Research Experience}}
+\vspace{-0.4mm}
+  \resumeSubHeadingListStart
+  
+\resumeSubheading
+    {{fftvis: A Non-Uniform FFT Based Interferometric Visibility Simulator}}{}
+    {HERA Validation}{February 2025 - Present}
+    \resumeItemListStart
+      \item Developed matvis like API for fftvis
+      \item Developed GPU implementation for fftvis
+      \item Code at Github: \href{https://github.com/tyler-a-cox/fftvis}{fftvis}
+    \resumeItemListEnd
+
+\resumeSubheading
+    {{Data Processing Pipeline for LSST (Rubin Observatory)}}{}
+    {Google Summer of Code Contributor}{March 2025 - Present}
+    \resumeItemListStart
+      \item Developing scalable pipeline to handle the 20TB of nightly data and 60 petabytes over the 10-year survey
+      \item Developing the package for integrating DeepLense workflows with the LSST Science tools and Butler API
+      \item Code at Github: \href{https://github.com/kartikmandar/RIPPLe}{RIPPLe}
+    \resumeItemListEnd
+
+  \resumeSubheading
+      {Cgynus X1 xray group }{Bangalore, India}
+      {Visiting Student @ Raman Research Institute}{May 2024 - Present}
+
+    \resumeSubheading
+      {Cgynus X1 xray group }{Bangalore, India}
+      {Visiting Student @ Raman Research Institute}{May 2024 - Present}
+
+  \resumeSubheading
+      {HERA validation (Radio Interferometry) }{Bangalore, India}
+      {Visiting Student @ Raman Research Institute}{May 2024 - Present}
+      \resumeItemListStart
+      \item Visiting Research Student under \href{https://saurabhsastro.wixsite.com/home}{Dr. Saurabh Singh} (\href{https://www.rri.res.in/}{Raman Research Institute, India})
+        \item Built my own accurate complex visibility simulator (\href{https://github.com/RRI-interferometry/HERA/tree/main/RRIviz}{RRI viz}) from first principles.
+        \item Compared my simulator with Matvis (HERA), FFTvis (HERA), healvis and pyuvsim.
+    % \item Scalable python app with per baseline visibility computation, allows for individual diameters and beams(EBeam/Power Beam) for each antenna, on-the-fly HPBW calculation, freq dependent beam response (Analytic(Gaussian, Airy), UVBeam, pyuvdata analytic, Beam Interface) both with and without HEALPix, selective baselines simulations using length or Auto/Cross-correlations, test sources both with and without healpix, diffused radiation (GSM 2008) in HEALPix, discrete sources (GLEAM) both in HEALPix/arrays, GSM + GLEAM in healpix, saving visibility data as h5py files, saving config.yaml and console.log, saving and automatic plotting of interactive bokeh plots of [Visibility vs LST, Phase vs LST, Visibility vs freq, Phase vs freq, LST vs freq heatmaps for visibility and phase, GLEAM overlay on transformed GSM HEALPix map], unit testing and docstrings for functions and documentation at readthedocs. 
+    % \item Working on parallel processing of the visibility calculation, Polarization using Jones matrices, the ability to use different types of feeds, faster matrix products, and adding support for sky models from pyuvradiosky. Adding an option to directly compare the results with FFTVis, Matvis and pyuvsim from RRIViz.
+    % \item After an in-depth verification of FFTvis using RRIviz, would compute visibilities for HERA validation group using FFTvis
+    % \item Learned about 21cm astronomy and went through papers by HERA collaboration, Essential Astronomy by Condon and Ransom, and Interferometry and Synthesis by Thompson. 
+
+    \item Code at Github: \href{https://github.com/RRI-interferometry/HERA}{RRI viz}
+      \resumeItemListEnd 
+  \resumeSubheading
+    {\href{https://www.kartikmandar.com/gsoc-2024/stingray-explorer}{Stingray Explorer} (Open Astronomy) }{Remote}
+    {Google Summer of Code}{Feb 2024 - Present}
+    \resumeItemListStart
+      \item Worked under the mentorship of \href{https://www.matteobachetti.it/}{Dr. Matteo Bachetti} (\href{https://www.oa-cagliari.inaf.it/index.php?set_language=1}{Cagliari Astronomical Observatory, Italy}) and \href{https://expertise.unimi.it/get/person/guglielmo-mastroserio}{Dr. Guglielmo Mastroserio} (\href{https://www.unimi.it/it}{Università degli Studi di Milano Statale, Italy}).
+      \item Developed a QuickLook dashboard for X-ray time series analysis using \href{https://docs.stingray.science/en/stable/}{Stingray}.
+        \item Developed functionalities for Light Curves, Power Spectrum, Average Power Spectrum, Cross Spectrum, Average Cross Spectrum, Dynamical Power Spectrum, Power Colors, and Bispectrum analysis from Event Lists, allowing user to have full interactivity and do quicklook analysis on the fly.
+      \item Went through papers on Fourier Analysis (for High Energy astronomy), Stingray paper, and x-ray variability in x-ray binaries.
+    \item Containerised the application using Docker for ease of deployment, provided a Conda environment for reproducibility and wrote extensive documentation and user guides. 
+    \item Deployed the dashboard on Hugging Face for \href{https://kartikmandar-stingrayexplorer.hf.space/explorer}{demo} access; actively maintaining and developing more features for it as an alpha release.
+    \item Code at Github: \href{https://github.com/StingraySoftware/StingrayExplorer}{Stingray Explorer}
+    \resumeItemListEnd
+
+    \resumeSubheading
+    {Building a two-element pyramid horn antenna interferometer}{Bangalore, India}
+    {Independent Project}{Ongoing}
+    \resumeItemListStart
+    \item Designing and constructing a two-element pyramidal horn antenna interferometer for detecting 21 cm Hydrogen signal from the Milky Way
+    \item Simulating the design in CST studio suite and optimising it for 1420.4 MHz
+    \item Learning from Balanis: Antenna Theory and Design and tinkering with the designs to learn more about the practical challenges of interferometry. 
+    \resumeItemListEnd
+
+  \resumeSubHeadingListEnd
+\vspace{-6mm}
+
+\section{\textbf{Education}}
+\vspace{-0.4mm}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+{Indian Institute of Science Education and Research Bhopal}{Bangalore, India}
+{BS (Physics)}{December 2021 - April 2025}
+\resumeItemListStart
+\item CGPA: 7.18/10.00
+\resumeItemListEnd
+
+\resumeSubheading
+{Bal Bharati Public School}{New Delhi, India}
+{Secondary School}{May 2020}
+\resumeItemListStart
+\item Grade: 88.8\%
+\resumeItemListEnd
+
+\resumeSubheading
+{Bal Bharati Public School}{New Delhi, India}
+{Primary School}{May 2018}
+\resumeItemListStart
+\item Grade: 92.8\%
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+\vspace{-6mm}
+
+\section{\textbf{Technical Experience}}
+\vspace{-0.4mm}
+\resumeSubHeadingListStart
+
+\resumeSubheading
+    {Open Source Contributor}{Remote}
+    {Free Time}{Jan 2024 - }
+    \resumeItemListStart
+    \item Contribute to bug fixes and documentation in Stingray, Pyuvsim, pyuvdata, Astropy, tardis.
+
+    \resumeItemListEnd
+
+\resumeSubheading
+    {MicroBlogging Platform for IISERB Community — Mastodon}{IISER Bhopal, India}
+    {Personal Project}{Jan 2024 - March 2024}
+    \resumeItemListStart
+    \item Hosted Mastodon server on Digital Ocean (Ubuntu 20.04) with DNS management and port forwarding.
+    \item Configured SSL encryption with Let's Encrypt and an intrusion prevention system using Crowdsec.
+    \item Installed Ruby gems and dependencies to support Mastodon features.
+    \item Set up PostgreSQL for data storage and external object storage with Digital Ocean Spaces.
+    \resumeItemListEnd
+\resumeSubheading
+    {Mobile Sensor Data Collection App}{IISER Bhopal, India}
+    {Intern under Dr. Haroon Lone}{May 2023 - November 2023}
+    \resumeItemListStart
+    \item Developed a Kotlin app for sensor data logging with automated server transfers.
+    \item Ported the app to React Native for cross-platform compatibility and integrated NodeJS backend with a MySQL database.
+    \item Used Express.js and Multer for handling file uploads on an Ubuntu server.
+    \item Built for a study analyzing anxiety and depression using machine learning on collected data.
+    \item Code: \href{https://github.com/kartikmandar/SysmaticsLab}{Sysmatics Lab App}, Lab website: \href{https://sites.google.com/iiserb.ac.in/sirl}{Systems and Informatics Lab}
+    \resumeItemListEnd
+
+
+
+
+\resumeSubheading
+    {iGEM 2023 — Core Member}{IISER Bhopal, India}
+    {Team Member}{February 2023 -- December 2023}
+    \resumeItemListStart
+    \item Contributed to IISER Bhopal's iGEM team, developing the project wiki for KeratiNoMore.
+    \item Performed molecular dynamics simulations in GROMACS to validate gene insertion in the membrane.
+    \item Gained experience in team collaboration and large-scale project management.
+    \item Project: \href{https://2023.igem.wiki/iiser-bhopal/description}{KeratiNoMore}, Repository: \href{https://gitlab.igem.org/2023/iiser-bhopal}{GitLab Repo}
+    \resumeItemListEnd
+
+\resumeSubheading
+    {Astronomical Data Science with Python}{Remote}
+    {Participant}{September 2022 -- December 2022}
+    \resumeItemListStart
+    \item Completed a 10-week course by Dr. Savyasachi Malu, covering galaxy image processing, feature extraction, and black hole detection.
+    \item Course: \href{https://spartificial.com/training-programs}{Spartificial}
+    \resumeItemListEnd
+
+\resumeSubheading
+    {Web Development Roles}{Multiple Locations}
+    {Various Web Development Projects}{August 2022 – July 2023}
+    \resumeItemListStart
+    \item Designed and maintained the website for the University of Toronto's annual science fest, Science Rendezvous 2023. Collaborated with team leads to tailor sections. 
+          Website: \href{http://www.sciencerendezvousuoft.ca/}{Science Rendezvous 2023}, National Website: \href{https://www.sciencerendezvous.ca/event_sites/university-of-toronto-st-george-campus/}{Science Rendezvous}.
+    \item Built and hosted the AIIM 2023 conference website using HTML, CSS (Bootstrap), and JavaScript. Contributed as part of the organizing committee for the national iGEM meet at IISER Bhopal. 
+          Website: \href{https://aiim2023.github.io/}{AIIM 2023}, Repository: \href{https://github.com/AIIM2023}{GitHub Repo}.
+    \item Developed the Enthuzia 2023 cultural fest website and configured an OpenLiteSpeed stack on a Digital Ocean Droplet (Ubuntu 20.04). 
+          Project: \href{https://www.kartikmandar.com/projectswork}{Enthuzia 2023}.
+    \item Planned and developed the website for Inter IISER Sports Meet 2022, handling housing, mess, and results logistics. 
+          Website: \href{https://iism2022.iiserb.ac.in/}{IISM 2022}.
+    \resumeItemListEnd
+
+
+
+\resumeSubHeadingListEnd
+
+% \section{\textbf{Patents and Publications} \hfill \textcolor{darkblue}{\scriptsize C=Conference, J=Journal, P=Patent, S=In Submission, T=Thesis}}
+% \vspace{0.2mm}
+% \small{
+% \begin{enumerate}[leftmargin=*, labelsep=0.5em, align=left, widest={[\textbf{S.1}]}, itemindent=0em, label={\textbf{[\arabic*]}]}]
+% \item[\textbf{[C.1]}] Your Name, et al. (Year). \href{https://doi.org/XX.XXXX/XXXXXXX.XXXX.XXXXXXX}{\textbf{Title of Conference Paper}}. In \textit{Name of Conference Proceedings}, pp. XX-XX. Publisher. Date, Location. DOI: XX.XXXX/XXXXXXX.XXXX.XXXXXXX
+
+% \item[\textbf{[S.1]}] Your Name, et al. (Year). \textbf{Title of Submitted Paper}. Manuscript submitted for publication in \textit{Journal Name}.
+
+% \item[\textbf{[P.1]}] Inventor 1, Your Name, Inventor 3, et al. (Year). \href{https://patentoffice.gov/patent/XXXXXXXXX}{\textbf{Title of Patent}}. Patent Office, Patent No. XXXXXXXXX. Registration Date: Date, Grant Date: Date, Publication Date: Date.
+
+% \item[\textbf{[J.1]}] Author 1, Your Name, Author 3, et al. (Year). \href{https://doi.org/XX.XXXX/XXXXX.XXXX.XXXXXXX}{\textbf{Title of Journal Article}}. \textit{Journal Name}, Vol. XX, Issue X, pp. XXX-XXX. DOI: XX.XXXX/XXXXX.XXXX.XXXXXXX
+% \end{enumerate}
+% }
+
+\section{\textbf{Technical Skills}}
+\vspace{-0.4mm}
+ \resumeHeadingSkillStart
+  \resumeSubItem{Programming Languages:}
+    {Python, C, Kotlin, React Native, JavaScript, Julia}
+  \resumeSubItem{Web Technologies:}
+    {HTML/CSS, React, Vite.js, Bootstrap, Tailwind, Apache, OpenLiteSpeed, CyberPanel, cPanel, WordPress, Webflow}
+  \resumeSubItem{Database Systems:}
+    {MySQL, SQLite}
+  \resumeSubItem{Backends:}
+    {NodeJS, Django, Flask}
+\resumeSubItem{Cloud Technologies:}
+    {Google Cloud Platform, Digital Ocean, Linode, Hugging Face, Firebase}
+  \resumeSubItem{Dev Tools:}
+    {Git, GitHub/GitLab, CI/CD, Bash, Vi, Nano, Docker, VS Code, Shell Scripting, Slurm, SSH/SCP, JupyterHub/notebook/lab}
+      \resumeSubItem{Data Tools:}
+    {Pandas, Bokeh, Plotly, Matplotlib, HoloViews, Datashader, HVplot}
+  \resumeSubItem{Mathematical \& Statistical Tools:}
+    {STATA, Matlab, Mathematica}
+  \resumeSubItem{Other Tools \& Technologies:}
+    {Expo, Astro, CST Studio suite}
+ \resumeHeadingSkillEnd
+
+\section{\textbf{Grants and Awards}}
+\vspace{-0.4mm}
+\resumeSubHeadingListStart
+
+\resumeProject
+  {Google Summer of Code 2024}
+  {Google}
+  {May 2024 - August 2024}
+  {{}[\href{https://summerofcode.withgoogle.com/archive/2024/projects/rba4Di99}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item Received a 3000 USD grant to work on Open Source project Stingray (Open Astronomy)
+\resumeItemListEnd
+
+\resumeProject
+  {iGEM 2023}
+  {IISER Bhopal}
+  {Feb 2023 - Dec 2023}
+  {{}[\href{https://2023.igem.wiki/iiser-bhopal/}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item Our team received a 12000 USD grant to work on the synthetic biology project (KeratiNoMore)
+  \item We qualified for the Gold medal 
+\resumeItemListEnd
+
+\resumeProject
+  {Heliodyssey 2019}
+  {Space India}
+  {Dec 2019}
+  {{}[\href{https://space-india.com/services/competition-and-olympiad/heliodyssey/}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item Got All India Rank 14 in Heliodyssey 2019 (Astronomy Olympiad)
+  \item Received a fully sponsored solar expedition to Oman
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\vspace{-6mm}
+
+\section{\textbf{Leadership Experience}}
+\vspace{-0.4mm}
+\resumeSubHeadingListStart
+
+\resumeProject
+  {Founder}
+  {Astrophysics Journal Club, IISER Bhopal}
+  {Jan 2024 - Present}
+  {{}[\href{https://www.kartikmandar.com/journal-club}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item The Astrophysics Journal Club at IISER Bhopal is a space for informal discussions on recent and impactful papers in astronomy and astrophysics.
+\resumeItemListEnd
+
+\resumeProject
+  {Tech head}
+  {AIIM, IISER Bhopal}
+  {Jun 2023 - July 2023}
+  {{}[\href{https://aiim2023.github.io/}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item In the organization committee of All India iGEM meet (July 23) at IISER Bhopal
+\resumeItemListEnd
+\resumeProject
+  {Badminton Captain}
+  {Badminton Team, IISER Bhopal}
+  {March 2021 - Feb 2024}
+  {{}[\href{https://linktr.ee/Sportscounciliiserb}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item Led the team in two Inter IISER Sports Meet (All India)
+\resumeItemListEnd
+
+\resumeProject
+  {Event coordinator}
+  {Astronomy Club, IISER Bhopal}
+  {Feb 2023}
+  {{}[\href{https://sites.google.com/view/astronomyiiserb/events?authuser=0}{\textcolor{darkblue}{\faIcon{globe}}}]}
+\resumeItemListStart
+  \item Organised Hunting the Heavens event in Science Fest
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+\vspace{-6mm}
+
+% \section{\textbf{Volunteer Experience}}
+% \vspace{-0.4mm}
+% \resumeSubHeadingListStart
+% \resumeProject
+%   {Volunteer Role A}
+%   {Organization Name}
+%   {Month Year - Month Year}
+%   {{}[\href{https://volunteer-org-a-link.com}{\textcolor{darkblue}{\faIcon{globe}}}]}
+% \resumeItemListStart
+%   \item Key responsibility or contribution in this role
+%   \item Impact of your volunteer work
+%   \item Skills developed or applied during this experience
+% \resumeItemListEnd
+
+% \resumeProject
+%   {Volunteer Role B}
+%   {Organization Name}
+%   {Month Year - Present}
+%   {{}[\href{https://volunteer-org-b-link.com}{\textcolor{darkblue}{\faIcon{globe}}}]}
+% \resumeItemListStart
+%   \item Key responsibility or contribution in this role
+%   \item Impact of your volunteer work
+%   \item Skills developed or applied during this experience
+% \resumeItemListEnd
+
+% \resumeSubHeadingListEnd
+% \vspace{-6mm}
+
+% \section{\textbf{Professional Memberships}}
+% \vspace{-0.4mm}
+% \resumeSubHeadingListStart
+% \resumePOR{Professional Organization A}
+%     {, Membership ID: XXXXXXXX}
+%     {Month Year - Present}
+% \resumePOR{Professional Organization B}
+%     {, \href{https://membership-certificate-link.com}{Membership ID: XXXXXXXX}}
+%     {Month Year - Present}
+% \resumePOR{Professional Organization C}
+%     {, \href{https://membership-certificate-link.com}{Membership ID: XXXXXXXX}}
+%     {Month Year - Present}
+
+% \resumeSubHeadingListEnd
+% \vspace{-6mm}
+
+\section{\textbf{Certifications}}
+\vspace{-0.2mm}
+\resumeSubHeadingListStart
+\resumePOR{}{\href{https://www.kartikmandar.com/certificates}{
+\textbf{Summer Analytics IIT Guwahati}
+}}{June 2024}
+\resumePOR{}{\href{https://www.kartikmandar.com/certificates}{
+\textbf{AICTE Mathworks Virtual Internship}
+}}{September 2023}
+\resumePOR{}{\href{https://www.kartikmandar.com/certificates}{
+\textbf{Mobile App Development}
+}}{June 2023}
+
+
+\resumeSubHeadingListEnd
+\vspace{-6mm}
+
+\section{\textbf{Additional Information}}
+\vspace{-0.4mm}
+\small{
+\textbf{Languages:} English (Fluent, TOEFL iBT: 107/120), Hindi (Native), German (Conversational)
+
+
+\textbf{Talks:} Celestial Sphere Mechanics(April 2023), Introduction to Open Source: GSOC and beyond (Jan 2025), Backyard Interferometry (scheduled Feb 2025)
+
+\textbf{Posters:} RRIVis: 21cm Visibility Simulator
+
+\textbf{Interests:} Badminton, Calisthenics, Cycling, Jogging, Green Tea
+
+\textbf{Acknowledgments:} \href{https://arxiv.org/abs/2501.11772}{A New Master Supernovae Ia sample and the investigation of the H0 tension}
+}
+
+\vspace{-4mm}
+
+
+% \section{\textbf{References}}
+% \vspace{-0.2mm}
+% \small{
+% \begin{enumerate}[leftmargin=*,labelsep=2mm]
+% \item \textbf{Reference Person 1}\\
+%    Job Title, Department\\
+%    Organization/Institution Name\\
+%    Email: email1@example.com\\
+%    Phone: +X-XXX-XXX-XXXX\\
+%    \textit{Relationship: [e.g., Thesis Advisor, Manager, etc.]}
+
+% \item \textbf{Reference Person 2}\\
+%    Job Title, Department\\
+%    Organization/Institution Name\\
+%    Email: email2@example.com\\
+%    Phone: +X-XXX-XXX-XXXX\\
+%    \textit{Relationship: [e.g., Project Supervisor, Colleague, etc.]}
+
+% \item \textbf{Reference Person 3}\\
+%    Job Title, Department\\
+%    Organization/Institution Name\\
+%    Email: email3@example.com\\
+%    Phone: +X-XXX-XXX-XXXX\\
+%    \textit{Relationship: [e.g., Mentor, Collaborator, etc.]}
+% \end{enumerate}
+% }
+
+\end{document}

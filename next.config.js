@@ -30,6 +30,10 @@ const nextConfig = {
         hostname: 'avatars.githubusercontent.com',
         protocol: 'https',
       },
+      {
+        hostname: 'media.focusmate.com',
+        protocol: 'https',
+      },
     ],
     // Increase timeout for slow image loading
     dangerouslyAllowSVG: true,
