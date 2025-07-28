@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function AccountabilityPage() {
   return (
-    <div className="container mx-auto px-4 py-8 sm:py-20">
+    <div className="container mx-auto px-4 pt-24 pb-8 sm:pb-20">
       <div className="max-w-7xl mx-auto">
         
         {/* Hero Section */}

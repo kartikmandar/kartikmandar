@@ -10,6 +10,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { AdminBar } from '@/components/AdminBar'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
 import { FloatingBottomNav } from '@/components/FloatingBottomNav'
+import { FloatingTasksButton } from '@/components/FloatingTasksButton'
 import { GlobalAudioButton } from '@/components/GlobalAudioButton'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
@@ -67,6 +68,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           {children}
           <Footer />
           <FloatingBottomNav navItems={navItems} />
+          <FloatingTasksButton />
           <GlobalAudioButton />
           <Analytics />
           <SpeedInsights />
