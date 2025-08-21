@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, FileText, BookOpen, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase, Presentation, User, GitBranch } from 'lucide-react'
+import { Home, FileText, BookOpen, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase, Presentation, User, GitBranch, Sparkles } from 'lucide-react'
 
 interface NavItem {
   label: string
@@ -26,6 +26,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
   const getIconForNavItem = (label: string): React.ReactNode => {
     const iconMap: { [key: string]: React.ReactNode } = {
       'Home': <Home size={20} />,
+      'My Story': <Sparkles size={20} />,
       'CV': <FileText size={20} />,
       'Projects': <Folder size={20} />,
       'Consultancy': <Briefcase size={20} />,

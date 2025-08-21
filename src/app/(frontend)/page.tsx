@@ -1,9 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import PageClient from './[slug]/page.client'
-import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
 import { AboutHero } from '@/components/AboutHero'
-import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
@@ -13,7 +11,7 @@ export const dynamic = 'force-dynamic' // Changed to dynamic to fetch data
 export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Kartik Mandar - Astrophysicist & Software Developer',
-    description: 'Welcome to my digital space where astrophysics meets modern software development. Explore my journey through the cosmos and code.',
+    description: 'Welcome to my digital space where astrophysics meets modern software development. Discover my projects, research, and expertise.',
   }
 }
 
@@ -36,22 +34,11 @@ export default async function HomePage() {
     <>
       <PageClient />
       
-      {/* Quasar background - 80vh to show content below */}
-      <div className="w-full" style={{ height: '80vh' }}>
-        <QuasarBackgroundWrapper height="100%" />
-      </div>
-      
       {/* About Me Section */}
       <AboutHero />
       
+      {/* Projects Showcase Component */}
       <article className="pb-24">
-        {/* Cosmic Journey Component */}
-        <CosmicJourney 
-          blockType="cosmicJourney"
-          blockName="Cosmic Journey"
-        />
-        
-        {/* Projects Showcase Component */}
         <ProjectsShowcase
           blockType="projectsShowcase" 
           blockName="My Projects"

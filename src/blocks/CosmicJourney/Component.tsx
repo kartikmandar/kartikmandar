@@ -2584,46 +2584,6 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           <p className="text-lg md:text-xl text-indigo-300 mb-4">
             {subtitle}
           </p>
-          <button
-            onClick={() => {
-              // Find projects section by looking for heading text
-              const headings = Array.from(document.querySelectorAll('h2'))
-              const projectsHeading = headings.find(h => h.textContent?.includes('Projects'))
-              
-              if (projectsHeading) {
-                projectsHeading.scrollIntoView({ 
-                  behavior: 'smooth',
-                  block: 'start'
-                })
-              } else {
-                // Fallback: scroll to the next section after cosmic journey
-                const cosmicJourneyContainer = document.querySelector('.cosmic-journey-container')
-                const nextSection = cosmicJourneyContainer?.nextElementSibling as HTMLElement
-                if (nextSection) {
-                  nextSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                  })
-                }
-              }
-            }}
-            className="group relative inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:from-yellow-300 hover:via-orange-400 hover:to-red-400 text-black font-bold text-sm rounded-full transition-all duration-300 hover:scale-110 shadow-2xl hover:shadow-yellow-500/50 border border-white animate-pulse hover:animate-none"
-            style={{
-              boxShadow: '0 0 30px rgba(255, 215, 0, 0.6), 0 0 60px rgba(255, 165, 0, 0.4), 0 0 90px rgba(255, 69, 0, 0.3)',
-              animation: 'glow 2s ease-in-out infinite alternate'
-            }}
-          >
-            <span className="relative z-10 tracking-wide">Skip to Projects</span>
-            <svg 
-              className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-2 group-hover:scale-125 relative z-10" 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-200 via-orange-300 to-red-300 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
-          </button>
         </div>
       </header>
 

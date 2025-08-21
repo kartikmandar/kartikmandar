@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export const AboutHero: React.FC = () => {
   return (
-    <section className="relative py-20 px-4 overflow-hidden">
+    <section className="relative min-h-screen flex items-center px-4 py-8 md:py-0 overflow-hidden">
       {/* Subtle starfield background */}
       <div 
         className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05]"
@@ -22,107 +22,93 @@ export const AboutHero: React.FC = () => {
         }}
       />
       
-      <div className="relative max-w-4xl mx-auto text-center">
-        {/* Profile Photo */}
-        <div className="mb-8">
-          <div className="relative inline-block">
-            <div className="relative w-40 h-40 overflow-hidden rounded-full border-4 border-white dark:border-gray-800 shadow-xl">
-              <Image
-                src="/kartik-mandar.jpeg"
-                alt="Kartik Mandar"
-                fill
-                className="object-cover"
-                priority
-                sizes="160px"
-              />
+      <div className="relative max-w-7xl mx-auto w-full mt-16 md:mt-0">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Column - Profile Photo */}
+          <div className="order-2 lg:order-1 flex justify-center lg:justify-center">
+            <div className="relative">
+              <div className="relative w-80 h-80 md:w-96 md:h-96 lg:w-[450px] lg:h-[450px] overflow-hidden rounded-2xl border-4 border-white dark:border-white shadow-2xl dark:shadow-white/20">
+                <Image
+                  src="/kartik-mandar.jpeg"
+                  alt="Kartik Mandar"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 320px, (max-width: 1024px) 384px, 450px"
+                />
+              </div>
+              {/* Subtle glow effect */}
+              <div className="absolute inset-0 rounded-2xl bg-blue-400 dark:bg-blue-600 blur-3xl opacity-20 -z-10 scale-105" />
             </div>
-            {/* Optional: Add a subtle glow effect */}
-            <div className="absolute inset-0 rounded-full bg-blue-400 dark:bg-blue-600 blur-2xl opacity-20 -z-10 scale-110" />
+          </div>
+
+          {/* Right Column - Text Content */}
+          <div className="order-1 lg:order-2 text-center lg:text-left flex flex-col justify-center">
+            {/* Name and Introduction */}
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+              Hi, I&apos;m Kartik Mandar
+            </h1>
+            
+            <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 leading-relaxed">
+              I completed my Bachelors in Physics from the Indian Institute of Science Education and Research, Bhopal, India in May 2025.
+            </p>
+            
+            {/* Research Interests */}
+            <div className="mb-10 space-y-4">
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing and Dark Matter Substructure.
+              </p>
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
+                <strong>I am on the lookout for Research Assistant positions which align to my research interests and a Master&apos;s in Astrophysics.</strong>
+              </p>
+              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed"> 
+                I also offer consultancy and development services for research software, web and mobile applications.
+              </p>
+            </div>
+            
+            {/* CTA Buttons */}
+            <div className="flex gap-4 justify-center lg:justify-start flex-wrap mb-8">
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="min-w-[140px] hover:scale-105 transition-transform border-gray-300 dark:border-white"
+                onClick={() => {
+                  // Find projects section by looking for heading text
+                  const headings = Array.from(document.querySelectorAll('h2'))
+                  const projectsHeading = headings.find(h => h.textContent?.includes('Projects'))
+                  
+                  if (projectsHeading) {
+                    projectsHeading.scrollIntoView({ 
+                      behavior: 'smooth',
+                      block: 'start'
+                    })
+                  } else {
+                    // Fallback: look for projects showcase component
+                    const projectsSection = document.querySelector('[class*="projects-showcase"]')
+                    if (projectsSection) {
+                      projectsSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                      })
+                    }
+                  }
+                }}
+              >
+                View Projects
+              </Button>
+              <Link href="/publications">
+                <Button 
+                  size="lg"
+                  variant="outline"
+                  className="min-w-[140px] hover:scale-105 transition-transform border-gray-300 dark:border-white"
+                >
+                  Read Papers
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
-        
-        {/* Name and Introduction */}
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-gray-900 to-gray-700 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-          Hi, I&apos;m Kartik Mandar
-        </h1>
-        
-        <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-2xl mx-auto leading-relaxed">
-            I completed my Bachelors in Physics from the Indian Institute of Science Education and Research, Bhopal, India in May 2025.
-          <br className="hidden md:block" />
-        </p>
-        
-        {/* Research Interests */}
-        <div className="mb-10">
-        
-          <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
-            My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing and Dark Matter Substructure.
-          </p><br/>
-          <p className="text-base md:text-lg text-gray-700 dark:text-gray-300">
-            <strong>I am on the lookout for Research Assistant positions which align to my research interests and a Master&apos;s in Astrophysics.</strong>
-          </p>
-          <br/><br/>
-          <p className="text-base md:text-lg text-gray-700 dark:text-gray-300"> 
-            I also offer consultancy and development services for research software, web and mobile applications.
-          </p>
-        </div>
-        
-        {/* CTA Buttons */}
-        <div className="flex gap-4 justify-center flex-wrap">
-          <Button 
-            size="lg" 
-            variant="outline"
-            className="min-w-[140px] hover:scale-105 transition-transform"
-            onClick={() => {
-              // Find projects section by looking for heading text
-              const headings = Array.from(document.querySelectorAll('h2'))
-              const projectsHeading = headings.find(h => h.textContent?.includes('Projects'))
-              
-              if (projectsHeading) {
-                projectsHeading.scrollIntoView({ 
-                  behavior: 'smooth',
-                  block: 'start'
-                })
-              } else {
-                // Fallback: look for projects showcase component
-                const projectsSection = document.querySelector('[class*="projects-showcase"]')
-                if (projectsSection) {
-                  projectsSection.scrollIntoView({ 
-                    behavior: 'smooth',
-                    block: 'start'
-                  })
-                }
-              }
-            }}
-          >
-            View Projects
-          </Button>
-          <Link href="/publications">
-            <Button 
-              size="lg"
-              variant="outline"
-              className="min-w-[140px] hover:scale-105 transition-transform"
-            >
-              Read Papers
-            </Button>
-          </Link>
-        </div>
-        
-        {/* Optional: Add a scroll indicator */}
-        <div className="mt-16 animate-bounce">
-          <svg 
-            className="w-6 h-6 mx-auto text-gray-400 dark:text-gray-600"
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M19 14l-7 7m0 0l-7-7m7 7V3" 
-            />
-          </svg>
-        </div>
+
       </div>
     </section>
   )

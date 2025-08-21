@@ -5,6 +5,7 @@ export interface NavItem {
 
 export const NAVIGATION_ITEMS: NavItem[] = [
   { label: 'Home', url: '/' },
+  { label: 'My Story', url: '/my-story' },
   { label: 'CV', url: 'https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing' },
   { label: 'Consultancy', url: '/consultancy' },
   { label: 'Talks', url: '/talks' },
