@@ -22,7 +22,7 @@ My research interests are in Radio Interferometry (Visibility Simulators), Radio
 
 **Research Focus:** Radio interferometry, Black Hole X-ray Binaries, Epoch of Reionization, ML/DL techniques for DeepLensing
 
-**Side Quest:** Scientific software consultancy & open-source contributions
+**Free time:** Scientific software consultancy & open-source contributions
 
 ## Let's Connect!
 
@@ -36,6 +36,7 @@ I'm always excited to collaborate on astrophysics research, open-source projects
   
 </div>
 
+<a href="https://www.buymeacoffee.com/kartikmandar"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=☕&slug=kartikmandar&button_colour=FFDD00&font_colour=000000&font_family=Lato&outline_colour=000000&coffee_colour=ffffff" /></a>
 ---
 
 <div align="center">
