@@ -2482,8 +2482,8 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       }
     }
   }, [
-    calculateScrollProgress, 
-    memoizedData, 
+    calculateScrollProgress,
+    memoizedData,
     throttledScrollUpdate,
     drawBuildAComet,
     drawBuildingDashboard,
@@ -2494,6 +2494,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     drawJourneyContinues,
     drawMajorChoiceLens,
     drawPublicationFlight,
+    drawPublicationJourney,
     drawShatteringShuttlecock,
     drawSignalToSimulation,
     drawSlingshot,

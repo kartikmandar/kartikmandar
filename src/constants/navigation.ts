@@ -8,6 +8,7 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: 'My Story', url: '/my-story' },
   { label: 'CV', url: 'https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing' },
   { label: 'Consultancy', url: '/consultancy' },
+  { label: 'Developer', url: '/developer' },
   { label: 'Talks', url: '/talks' },
   { label: 'Publications', url: '/publications' },
   { label: 'Open Source', url: '/open-source' },

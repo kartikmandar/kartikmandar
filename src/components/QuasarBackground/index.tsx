@@ -24,7 +24,7 @@ export default function QuasarBackground() {
     const detectTouchDevice = () => {
       const hasTouch = 'ontouchstart' in window ||
                       navigator.maxTouchPoints > 0 ||
-                      (navigator as any).msMaxTouchPoints > 0 ||
+                      ('msMaxTouchPoints' in navigator && (navigator as Navigator & { msMaxTouchPoints: number }).msMaxTouchPoints > 0) ||
                       window.matchMedia('(pointer: coarse)').matches
       setIsTouchDevice(hasTouch)
     }

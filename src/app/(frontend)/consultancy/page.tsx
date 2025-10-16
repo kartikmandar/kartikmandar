@@ -97,7 +97,6 @@ export default async function ConsultancyPage() {
               Scientific Software Consultancy
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-              Bridging the gap between astrophysics research and modern software development. 
               Specialized in data visualization, app and web development, machine learning application for astrophysics, cloud deployments.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -264,8 +263,8 @@ export default async function ConsultancyPage() {
                 >
                   Schedule Consultation
                 </Link>
-                <Link 
-                  href="/#my-projects" 
+                <Link
+                  href="/developer"
                   className="inline-flex items-center justify-center px-8 py-4 bg-card border border-border text-card-foreground font-semibold rounded-lg hover:bg-accent hover:text-accent-foreground transition-colors"
                 >
                   My Work

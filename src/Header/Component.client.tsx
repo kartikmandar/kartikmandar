@@ -13,6 +13,7 @@ const _iconMap: Record<string, React.ReactNode> = {
   CV: <User size={28} />,
   Projects: <FolderOpen size={28} />,
   Consultancy: <Briefcase size={28} />,
+  Developer: <Code2 size={28} />,
   'GSoC 2024': <Code2 size={28} />,
   'GSoC 2025': <Code2 size={28} />,
   Talks: <Mic size={28} />,
