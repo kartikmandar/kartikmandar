@@ -671,7 +671,7 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '20px' : '30px',
+            bottom: isTouchDevice ? '60px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             padding: '10px 15px',
@@ -747,7 +747,7 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '20px' : '30px',
+            bottom: isTouchDevice ? '60px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
