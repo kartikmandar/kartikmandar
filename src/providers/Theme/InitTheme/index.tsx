@@ -7,6 +7,7 @@ export const InitTheme: React.FC = () => {
   return (
     // eslint-disable-next-line @next/next/no-before-interactive-script-outside-document
     <Script
+      suppressHydrationWarning
       dangerouslySetInnerHTML={{
         __html: `
   (function () {

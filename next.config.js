@@ -62,7 +62,8 @@ const nextConfig = {
   // The IP address should match your Mac's network IP that's shown in the server logs
   // You might need to update this IP if your network changes
   allowedDevOrigins: [
-    "http://192.168.0.102:3000",  // Your current IP
+    "http://192.168.0.12:3000",   // Your current network IP
+    "http://192.168.0.102:3000",  // Previous IP (keep as backup)
     // Add any additional IP addresses or origins that might access your dev server
   ],
   // Add crossOrigin attribute to help with resource loading

@@ -43,7 +43,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning>
-      <head>
+      <head suppressHydrationWarning>
         <InitTheme />
         {/* Favicon and app icons */}
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
