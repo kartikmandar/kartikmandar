@@ -17,7 +17,6 @@ export function CookieConsentBanner({ className = '' }: CookieConsentBannerProps
     acceptAll,
     acceptNecessaryOnly,
     savePreferences,
-    preferences: currentPreferences,
   } = useCookieConsent();
 
   const [showSettings, setShowSettings] = useState(false);
@@ -47,8 +46,8 @@ export function CookieConsentBanner({ className = '' }: CookieConsentBannerProps
 
           <p className="text-sm text-muted-foreground mb-6">
             This website uses Vercel Analytics to understand how visitors interact with the site.
-            It's basically for me to feel good about how many people have visited the website.
-            It's privacy-focused, doesn't use cookies, and only collects anonymized data.
+            It&apos;s basically for me to feel good about how many people have visited the website.
+            It&apos;s privacy-focused, doesn&apos;t use cookies, and only collects anonymized data.
           </p>
 
           <div className="space-y-4 mb-6">
@@ -113,8 +112,8 @@ export function CookieConsentBanner({ className = '' }: CookieConsentBannerProps
           <div className="text-center sm:text-left">
             <p className="text-sm text-muted-foreground leading-relaxed">
               This website uses Vercel Analytics to understand how visitors interact with the site.
-              It's basically for me to feel good about how many people have visited the website.
-              It's privacy-focused, cookie-free, and only collects anonymized data.
+              It&apos;s basically for me to feel good about how many people have visited the website.
+              It&apos;s privacy-focused, cookie-free, and only collects anonymized data.
             </p>
           </div>
 
@@ -176,7 +175,7 @@ export function CookieConsentSettings({ className = '' }: CookieConsentSettingsP
     <>
       <button
         onClick={() => setShowModal(true)}
-        className={`text-xs text-muted-foreground hover:text-foreground transition-colors ${className}`}
+        className={`text-xs text-muted-foreground hover:text-white transition-colors ${className}`}
       >
         Cookie Settings
       </button>

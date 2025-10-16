@@ -6,10 +6,10 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { useCookieConsent } from '@/hooks/useCookieConsent';
 
 interface ConsentAwareAnalyticsProps {
-  className?: string;
+  _className?: string;
 }
 
-export function ConsentAwareAnalytics({ className = '' }: ConsentAwareAnalyticsProps) {
+export function ConsentAwareAnalytics({ _className = '' }: ConsentAwareAnalyticsProps) {
   const { analyticsConsent, isLoading } = useCookieConsent();
   const [showAnalytics, setShowAnalytics] = useState(false);
 

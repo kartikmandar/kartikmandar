@@ -131,9 +131,10 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ 
-        opacity: isVisible ? 1 : 0, 
-        y: isVisible ? 0 : 20 
+      animate={{
+        opacity: isVisible ? 1 : 0,
+        y: isVisible ? 0 : 20,
+        pointerEvents: isVisible ? 'auto' : 'none'
       }}
       transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
       className="hidden lg:block fixed bottom-7 left-0 right-0 mx-auto w-fit z-50"

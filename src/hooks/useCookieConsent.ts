@@ -5,7 +5,6 @@ import type { ConsentPreferences, ConsentState } from '@/utilities/cookieConsent
 import {
   getConsentFromCookies,
   hasValidConsent,
-  getConsentPreferences,
   initializeConsent,
   clearConsent,
   hasAnalyticsConsent,
