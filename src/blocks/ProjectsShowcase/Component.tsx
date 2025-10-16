@@ -189,7 +189,7 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
 export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({ 
   blockName: _blockName,
   title = 'Featured Projects',
-  subtitle = 'Discover our latest work showcasing innovation, technical excellence, and creative problem-solving',
+  subtitle = 'Discover some of the projects I am proud of.',
   showAllProjects = false,
   projects: payloadProjects = [],
   layout = 'grid-3',
