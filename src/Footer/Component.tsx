@@ -255,6 +255,12 @@ export function Footer() {
   // Publications
   const publications = [
     {
+      title: 'State-Dependent X-ray Variability in Cygnus X-1: A 12-Year NuSTAR Timing Study of Accretion Flow Geometry',
+      authors: 'Duraphe, Mandar, et. al',
+      journal: 'arXiv preprint',
+      url: '#'
+    },
+    {
       title: 'fftvis: A Non-Uniform Fast Fourier Transform Based Interferometric Visibility Simulator',
       authors: 'Cox et. al',
       journal: 'arXiv preprint',

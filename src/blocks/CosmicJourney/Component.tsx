@@ -1916,6 +1916,177 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }, [drawFoldingPlane, getResponsiveFontSize])
 
+  const drawPublicationJourney = useCallback(({ ctx, w, h, progress }: { ctx: CanvasRenderingContext2D; w: number; h: number; progress: number; data?: DrawFunctionData }) => {
+    ctx.clearRect(0, 0, w, h)
+
+    const time = Date.now() / 1000
+    const padding = w * 0.1
+    const centerY = h / 2
+
+    // Define key points along the journey
+    const points = [
+      { x: padding, y: centerY, label: 'NuSTAR', phase: 0 },
+      { x: w * 0.25, y: centerY - 20, label: 'Data', phase: 0.2 },
+      { x: w * 0.4, y: centerY + 30, label: 'Analysis', phase: 0.4 },
+      { x: w * 0.6, y: centerY - 15, label: 'Results', phase: 0.6 },
+      { x: w * 0.75, y: centerY + 20, label: 'Paper', phase: 0.8 },
+      { x: w - padding, y: centerY, label: 'ZTF', phase: 1.0 }
+    ]
+
+    // Draw the path
+    ctx.strokeStyle = `rgba(100, 150, 255, ${0.3 * progress})`
+    ctx.lineWidth = 2
+    ctx.setLineDash([5, 5])
+    ctx.beginPath()
+    points.forEach((point, i) => {
+      if (i === 0) {
+        ctx.moveTo(point.x, point.y)
+      } else {
+        const prevPoint = points[i - 1]
+        if (prevPoint) {
+          const cpx = (prevPoint.x + point.x) / 2
+          const cpy = (prevPoint.y + point.y) / 2 - 30
+          ctx.quadraticCurveTo(cpx, cpy, point.x, point.y)
+        }
+      }
+    })
+    ctx.stroke()
+    ctx.setLineDash([])
+
+    // Draw milestone indicators
+    points.forEach((point, i) => {
+      const pointProgress = Math.max(0, Math.min(1, (progress - point.phase) / 0.1))
+
+      // Draw circle for milestone
+      ctx.fillStyle = `rgba(100, 150, 255, ${0.8 * pointProgress})`
+      ctx.strokeStyle = `rgba(255, 255, 255, ${0.9 * pointProgress})`
+      ctx.lineWidth = 2
+      ctx.beginPath()
+      ctx.arc(point.x, point.y, 8, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.stroke()
+
+      // Draw labels (positioned higher to avoid conflicts with larger icons)
+      ctx.fillStyle = `rgba(255, 255, 255, ${pointProgress})`
+      ctx.font = `${getResponsiveFontSize(10, w)} Poppins`
+      ctx.textAlign = 'center'
+      ctx.fillText(point.label, point.x, point.y - 40)
+
+      // Draw simple icons for key milestones
+      ctx.save()
+      ctx.translate(point.x, point.y)
+
+      if (i === 0) {
+        // NuSTAR telescope (much bigger satellite)
+        ctx.strokeStyle = `rgba(100, 150, 255, ${pointProgress})`
+        ctx.lineWidth = 2
+        // Solar panels
+        ctx.fillStyle = `rgba(100, 150, 255, ${pointProgress})`
+        ctx.fillRect(-35, -4, 20, 8)
+        ctx.fillRect(15, -4, 20, 8)
+        // Main body
+        ctx.fillStyle = `rgba(150, 180, 255, ${pointProgress})`
+        ctx.fillRect(-10, -10, 20, 20)
+        // Antenna
+        ctx.strokeStyle = `rgba(200, 200, 255, ${pointProgress})`
+        ctx.beginPath()
+        ctx.moveTo(0, -10)
+        ctx.lineTo(0, -20)
+        ctx.stroke()
+      } else if (i === 2) {
+        // Analysis - bigger histogram
+        ctx.strokeStyle = `rgba(255, 200, 100, ${pointProgress})`
+        ctx.lineWidth = 2
+        const barHeight = 30
+        for (let j = 0; j < 7; j++) {
+          const height = barHeight * (0.3 + Math.random() * 0.7)
+          ctx.fillStyle = `rgba(255, 200, 100, ${pointProgress * 0.8})`
+          ctx.fillRect(-20 + j * 6, -height, 5, height)
+        }
+      } else if (i === 4) {
+        // Paper document (much bigger)
+        ctx.strokeStyle = `rgba(255, 255, 255, ${pointProgress})`
+        ctx.lineWidth = 2
+        ctx.strokeRect(-15, -20, 30, 40)
+        ctx.fillStyle = `rgba(255, 255, 255, ${pointProgress * 0.1})`
+        ctx.fillRect(-15, -20, 30, 40)
+        // Paper lines
+        ctx.strokeStyle = `rgba(100, 100, 100, ${pointProgress})`
+        ctx.lineWidth = 1
+        ctx.beginPath()
+        ctx.moveTo(-10, -12)
+        ctx.lineTo(10, -12)
+        ctx.moveTo(-10, -6)
+        ctx.lineTo(10, -6)
+        ctx.moveTo(-10, 0)
+        ctx.lineTo(10, 0)
+        ctx.moveTo(-10, 6)
+        ctx.lineTo(10, 6)
+        ctx.moveTo(-10, 12)
+        ctx.lineTo(10, 12)
+        ctx.stroke()
+        // arXiv label
+        ctx.fillStyle = `rgba(100, 150, 255, ${pointProgress})`
+        ctx.font = `${getResponsiveFontSize(8, w)} monospace`
+        ctx.textAlign = 'center'
+        ctx.fillText('arXiv', 0, 0)
+      } else if (i === 5) {
+        // ZTF/Caltech telescope
+        ctx.strokeStyle = `rgba(255, 150, 50, ${pointProgress})`
+        ctx.lineWidth = 1
+        // Telescope tube
+        ctx.beginPath()
+        ctx.moveTo(0, -8)
+        ctx.lineTo(0, 8)
+        ctx.stroke()
+        // Base
+        ctx.beginPath()
+        ctx.moveTo(-6, 8)
+        ctx.lineTo(6, 8)
+        ctx.stroke()
+      }
+
+      ctx.restore()
+    })
+
+    // Draw moving particles along the path
+    const particleCount = 5
+    for (let i = 0; i < particleCount; i++) {
+      const particleProgress = ((time * 0.3 + i * 0.2) % 1.0) * progress
+      const segmentIndex = Math.floor(particleProgress * (points.length - 1))
+      const segmentProgress = (particleProgress * (points.length - 1)) % 1
+
+      if (segmentIndex < points.length - 1) {
+        const start = points[segmentIndex]
+        const end = points[segmentIndex + 1]
+        const t = segmentProgress
+
+        if (start && end) {
+          // Quadratic bezier interpolation
+          const cpx = (start.x + end.x) / 2
+          const cpy = (start.y + end.y) / 2 - 30
+
+          const x = (1 - t) * (1 - t) * start.x + 2 * (1 - t) * t * cpx + t * t * end.x
+          const y = (1 - t) * (1 - t) * start.y + 2 * (1 - t) * t * cpy + t * t * end.y
+
+          // Draw particle
+          const particleSize = 3 + Math.sin(time * 3 + i) * 1
+          ctx.fillStyle = `rgba(255, 255, 255, ${0.8 * progress})`
+          ctx.beginPath()
+          ctx.arc(x, y, particleSize, 0, Math.PI * 2)
+          ctx.fill()
+
+          // Particle glow
+          ctx.fillStyle = `rgba(100, 150, 255, ${0.3 * progress})`
+          ctx.beginPath()
+          ctx.arc(x, y, particleSize + 3, 0, Math.PI * 2)
+          ctx.fill()
+        }
+      }
+    }
+
+  }, [getResponsiveFontSize])
+
   const drawPaperPlane = (ctx: CanvasRenderingContext2D, size: number, alpha: number) => {
     ctx.fillStyle = `rgba(240, 240, 240, ${alpha})`
     ctx.strokeStyle = `rgba(150, 150, 150, ${alpha})`
@@ -2184,6 +2355,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
       { id: 'bs-exit-canvas', sectionId: 'bs-exit-section', drawFn: drawDivergingPaths },
       { id: 'lensing-canvas', sectionId: 'lensing-section', initFn: initGravitationalLensing },
       { id: 'publication-canvas', sectionId: 'publication-section', drawFn: drawPublicationFlight },
+      { id: 'cygnus-publication-canvas', sectionId: 'cygnus-publication-section', drawFn: drawPublicationJourney },
       { id: 'analysis-canvas', sectionId: 'analysis-section', drawFn: drawCelestialWorkbench, data: { latexParticles: [], currentLatexSymbol: undefined } },
       { id: 'journey-continues-canvas', sectionId: 'journey-continues-section', drawFn: drawJourneyContinues, data: { pathStars: data.pathStars100 } },
     ]
