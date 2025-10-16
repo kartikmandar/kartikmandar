@@ -8,13 +8,33 @@ export default function QuasarBackground() {
   const containerRef = useRef<HTMLDivElement>(null)
   const [showSupernova, setShowSupernova] = useState(false)
   const [isTouchDevice, setIsTouchDevice] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const [overlayText, setOverlayText] = useState("Astrophysics is fascinating, you can't deny this quasar looks cool")
   const [supernovaCompleted, setSupernovaCompleted] = useState(false)
   
-  // Detect touch device
+  // Set mounted state to avoid hydration issues
   useEffect(() => {
-    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0)
+    setMounted(true)
   }, [])
+
+  // Detect touch device with immediate detection and fallback methods
+  useEffect(() => {
+    if (!mounted) return
+
+    const detectTouchDevice = () => {
+      const hasTouch = 'ontouchstart' in window ||
+                      navigator.maxTouchPoints > 0 ||
+                      (navigator as any).msMaxTouchPoints > 0 ||
+                      window.matchMedia('(pointer: coarse)').matches
+      setIsTouchDevice(hasTouch)
+    }
+
+    detectTouchDevice()
+
+    // Also detect on resize in case device capabilities change
+    window.addEventListener('resize', detectTouchDevice)
+    return () => window.removeEventListener('resize', detectTouchDevice)
+  }, [mounted])
   
   // Add CSS animation for bounce effect
   useEffect(() => {
@@ -667,27 +687,31 @@ export default function QuasarBackground() {
           overflow: 'hidden'
         }} 
       />
-      {!showSupernova && (
+      {mounted && !showSupernova && (
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '60px' : '30px',
+            bottom: isTouchDevice ? '120px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
-            padding: '10px 15px',
-            background: 'rgba(0, 0, 0, 0.5)',
-            color: 'rgba(255, 255, 255, 0.8)',
-            borderRadius: '20px',
-            fontSize: isTouchDevice ? '12px' : '14px',
-            fontWeight: 'normal',
+            padding: isTouchDevice ? '12px 18px' : '10px 15px',
+            background: 'rgba(0, 0, 0, 0.7)',
+            color: 'rgba(255, 255, 255, 0.9)',
+            borderRadius: '25px',
+            fontSize: isTouchDevice ? '14px' : '14px',
+            fontWeight: '500',
             letterSpacing: '0.5px',
-            backdropFilter: 'blur(4px)',
-            zIndex: 2,
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            zIndex: 10,
             pointerEvents: 'none',
             transition: 'opacity 0.3s ease-in-out',
             fontFamily: 'sans-serif',
             whiteSpace: 'nowrap',
-            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 10px)' : '0'
+            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 20px)' : '0',
+            border: isTouchDevice ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+            boxShadow: isTouchDevice ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none',
+            textAlign: 'center'
           }}
         >
           {isTouchDevice ? 'Pinch to zoom • Drag to spin' : 'Scroll to zoom • Drag to spin'}
@@ -743,37 +767,41 @@ export default function QuasarBackground() {
       >
         {overlayText}
       </div>
-      {supernovaCompleted && (
+      {supernovaCompleted && mounted && (
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '60px' : '30px',
+            bottom: isTouchDevice ? '120px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '8px',
-            zIndex: 4,
+            zIndex: 15,
             pointerEvents: 'none',
-            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 10px)' : '0'
+            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 20px)' : '0'
           }}
         >
           <div
             style={{
-              padding: '10px 15px',
-              background: 'rgba(0, 0, 0, 0.5)',
-              color: 'rgba(255, 255, 255, 0.8)',
-              borderRadius: '20px',
-              fontSize: isTouchDevice ? '12px' : '14px',
-              fontWeight: 'normal',
+              padding: isTouchDevice ? '12px 18px' : '10px 15px',
+              background: 'rgba(0, 0, 0, 0.7)',
+              color: 'rgba(255, 255, 255, 0.9)',
+              borderRadius: '25px',
+              fontSize: isTouchDevice ? '14px' : '14px',
+              fontWeight: '500',
               letterSpacing: '0.5px',
-              backdropFilter: 'blur(4px)',
+              backdropFilter: 'blur(8px)',
+              WebkitBackdropFilter: 'blur(8px)',
               transition: 'opacity 0.3s ease-in-out',
-              fontFamily: 'sans-serif'
+              fontFamily: 'sans-serif',
+              border: isTouchDevice ? '1px solid rgba(255, 255, 255, 0.1)' : 'none',
+              boxShadow: isTouchDevice ? '0 4px 20px rgba(0, 0, 0, 0.3)' : 'none',
+              textAlign: 'center'
             }}
           >
-            Scroll down to glimpse into my <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> simple journey
+            👇 Scroll down to glimpse into my <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> simple journey
           </div>
           <div
             style={{

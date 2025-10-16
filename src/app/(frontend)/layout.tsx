@@ -44,6 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning>
       <head suppressHydrationWarning>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
         <InitTheme />
         {/* Favicon and app icons */}
         <link href="/favicon.ico" rel="icon" sizes="32x32" />

@@ -63,15 +63,13 @@ const nextConfig = {
     ]
   },
   // Allow cross-origin requests during development
-  // The IP address should match your Mac's network IP that's shown in the server logs
+  // The IP address should match your network IP that's shown in the server logs
   // You might need to update this IP if your network changes
   allowedDevOrigins: [
-    "http://192.168.0.12:3000",   // Your current network IP
-    "http://192.168.0.102:3000",  // Previous IP (keep as backup)
+    "192.168.0.12:3000",   // Your current network IP
+    "localhost:3000",       // Fallback for localhost
     // Add any additional IP addresses or origins that might access your dev server
   ],
-  // Add crossOrigin attribute to help with resource loading
-  crossOrigin: 'anonymous',
 }
 
 export default withPayload(nextConfig)
