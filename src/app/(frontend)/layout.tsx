@@ -4,10 +4,11 @@ import { cn } from '@/utilities/ui'
 import { Montserrat } from 'next/font/google'
 import { JetBrains_Mono } from 'next/font/google'
 import React from 'react'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 
 import { AdminBar } from '@/components/AdminBar'
+import { CookieConsentBanner } from '@/components/CookieConsent'
+import { ProfileSelectorBanner } from '@/components/CookieConsent'
+import { ConsentAwareAnalytics } from '@/components/ConsentAwareAnalytics'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
 import { FloatingBottomNav } from '@/components/FloatingBottomNav'
 import { FloatingTasksButton } from '@/components/FloatingTasksButton'
@@ -71,8 +72,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <FloatingBottomNav navItems={navItems} />
           <FloatingTasksButton />
           <GlobalAudioButton />
-          <Analytics />
-          <SpeedInsights />
+          <CookieConsentBanner />
+          <ProfileSelectorBanner />
+          <ConsentAwareAnalytics />
         </Providers>
       </body>
     </html>

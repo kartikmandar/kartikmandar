@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { CookieConsentSettings } from '@/components/CookieConsent'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
 import { useForm, ValidationError } from '@formspree/react'
 
@@ -599,8 +600,11 @@ export function Footer() {
               ))}
             </nav>
             {/* Copyright */}
-            <div className="text-center text-gray-500 text-xs sm:text-sm">
-              &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Student
+            <div className="text-center text-gray-500 text-xs sm:text-sm space-y-1">
+              <div>
+                &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Student
+              </div>
+              <CookieConsentSettings className="text-center" />
             </div>
           </div>
         </div>
