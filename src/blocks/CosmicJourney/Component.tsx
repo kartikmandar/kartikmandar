@@ -2854,7 +2854,22 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
             </p>
           </div>
         </section>
-        
+
+        {/* Second Publication & ZTF School Section */}
+        <section className="interactive-section" id="cygnus-publication-section">
+          <canvas
+            id="cygnus-publication-canvas"
+            className="interactive-canvas"
+          ></canvas>
+          <div className="interactive-text">
+            <p className="text-indigo-400 font-semibold mb-1">Second Publication & Some Training</p>
+            <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Cygnus X-1 Discovery & ZTF Summer School</h3>
+            <p className="text-md md:text-lg">
+              Timing analysis of Cygnus X-1 using 26 NuSTAR observations resulted in my second co-authored paper submitted to arXiv. Selected for the prestigious ZTF Summer School at Caltech, focusing on data science techniques for the Rubin Observatory era.
+            </p>
+          </div>
+        </section>
+
         {/* Celestial Workbench Section */}
         <section className="interactive-section" id="analysis-section">
           <canvas 
@@ -2863,9 +2878,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
           ></canvas>
           <div className="interactive-text">
             <p className="text-indigo-400 font-semibold mb-1">Current Endeavors</p>
-            <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">Analysis and Innovation</h3>
+            <h3 className="text-2xl md:text-4xl font-bold text-white mb-2">What I am working on?</h3>
             <p className="text-md md:text-lg">
-              I am working on the spectral and timing analysis of Cygnus X-1, improving RRIViz, learning about EM solvers, and participating in the world&apos;s largest hackathon building a WYSIWYG LaTeX editor.
+              Currently working across different projects: spectral analysis of Cygnus X-1, RRIVis version 2 with polarization and antenna beam support, contributing to RIPPLe, DAVE and Stingray, and maintaining fftvis.
             </p>
           </div>
         </section>

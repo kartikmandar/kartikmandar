@@ -691,7 +691,7 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '120px' : '30px',
+            bottom: isTouchDevice ? '40px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             padding: isTouchDevice ? '12px 18px' : '10px 15px',
@@ -771,14 +771,14 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: isTouchDevice ? '120px' : '30px',
+            bottom: isTouchDevice ? '40px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
             gap: '8px',
-            zIndex: 15,
+            zIndex: 10,
             pointerEvents: 'none',
             marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 20px)' : '0'
           }}
@@ -801,7 +801,7 @@ export default function QuasarBackground() {
               textAlign: 'center'
             }}
           >
-            👇 Scroll down to glimpse into my <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> simple journey
+            Scroll down to glimpse into my <span style={{ textDecoration: 'line-through', opacity: 0.7 }}>boring</span> simple journey
           </div>
           <div
             style={{

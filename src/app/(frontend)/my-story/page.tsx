@@ -18,8 +18,8 @@ export default function MyStoryPage() {
     <>
       <PageClient />
       
-      {/* Quasar background - full viewport height for immersive experience */}
-      <div className="w-full" style={{ height: '100vh' }}>
+      {/* Quasar background - 80% viewport height for immersive experience */}
+      <div className="w-full" style={{ height: '80vh' }}>
         <QuasarBackgroundWrapper height="100%" />
       </div>
       
