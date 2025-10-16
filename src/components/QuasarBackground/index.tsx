@@ -671,14 +671,14 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: '30px',
+            bottom: isTouchDevice ? '20px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             padding: '10px 15px',
             background: 'rgba(0, 0, 0, 0.5)',
             color: 'rgba(255, 255, 255, 0.8)',
             borderRadius: '20px',
-            fontSize: '14px',
+            fontSize: isTouchDevice ? '12px' : '14px',
             fontWeight: 'normal',
             letterSpacing: '0.5px',
             backdropFilter: 'blur(4px)',
@@ -686,7 +686,8 @@ export default function QuasarBackground() {
             pointerEvents: 'none',
             transition: 'opacity 0.3s ease-in-out',
             fontFamily: 'sans-serif',
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 10px)' : '0'
           }}
         >
           {isTouchDevice ? 'Pinch to zoom • Drag to spin' : 'Scroll to zoom • Drag to spin'}
@@ -746,7 +747,7 @@ export default function QuasarBackground() {
         <div
           style={{
             position: 'absolute',
-            bottom: '30px',
+            bottom: isTouchDevice ? '20px' : '30px',
             left: '50%',
             transform: 'translateX(-50%)',
             display: 'flex',
@@ -755,6 +756,7 @@ export default function QuasarBackground() {
             gap: '8px',
             zIndex: 4,
             pointerEvents: 'none',
+            marginBottom: isTouchDevice ? 'env(safe-area-inset-bottom, 10px)' : '0'
           }}
         >
           <div
@@ -763,7 +765,7 @@ export default function QuasarBackground() {
               background: 'rgba(0, 0, 0, 0.5)',
               color: 'rgba(255, 255, 255, 0.8)',
               borderRadius: '20px',
-              fontSize: '14px',
+              fontSize: isTouchDevice ? '12px' : '14px',
               fontWeight: 'normal',
               letterSpacing: '0.5px',
               backdropFilter: 'blur(4px)',
