@@ -797,13 +797,29 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         onClick={handleModalOpen}
       >
         {project.coverImage ? (
-          <MediaComponent 
-            resource={project.coverImage} 
-            imgClassName="object-cover object-center"
-            className="w-full h-full bg-muted/20"
-            fill={true}
-            alt={project.title}
-          />
+          (() => {
+            const coverImage = project.coverImage
+            const coverImageUrl = coverImage && typeof coverImage === 'object' && coverImage.url ? coverImage.url : null
+            const coverImageAlt = coverImage && typeof coverImage === 'object' && coverImage.alt ? coverImage.alt : project.title
+
+            return coverImageUrl ? (
+              <NextImage
+                src={coverImageUrl}
+                alt={coverImageAlt}
+                fill
+                className="object-cover object-center"
+                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              />
+            ) : (
+              <MediaComponent
+                resource={project.coverImage}
+                imgClassName="object-cover object-center"
+                className="w-full h-full bg-muted/20"
+                fill={true}
+                alt={project.title}
+              />
+            )
+          })()
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="text-muted-foreground text-4xl opacity-60">

@@ -8,6 +8,10 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {
+    // Turbopack configuration options can go here
+    // For now, we'll keep it empty to acknowledge we're using Turbopack
+  },
   webpack: (config, { webpack }) => {
     config.plugins.push(
       new webpack.IgnorePlugin({
