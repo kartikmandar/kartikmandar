@@ -59,9 +59,6 @@ export const AboutHero: React.FC = () => {
                 My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing.
               </p>
               <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                <strong>I am on the lookout for  a Master&apos;s in Astrophysics.</strong>
-              </p>
-              <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed"> 
                 I also offer consultancy and development services for research software, web and mobile applications.
               </p>
             </div>
