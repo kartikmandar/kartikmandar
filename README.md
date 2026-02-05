@@ -17,8 +17,6 @@ I am currently working as a Visiting Student at the Raman Research Institute, Ba
 
 My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing.
 
-**Currently seeking:** Masters opportunities in Astrophysics  
-
 ## Let's Connect!
 
 I'm always excited to collaborate on astrophysics research, open-source projects, or discuss the mysteries of the universe over a cup of green tea!
