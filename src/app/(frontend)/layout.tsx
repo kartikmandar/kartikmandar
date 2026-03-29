@@ -5,7 +5,6 @@ import { Montserrat } from 'next/font/google'
 import { JetBrains_Mono } from 'next/font/google'
 import React from 'react'
 
-import { AdminBar } from '@/components/AdminBar'
 import { CookieConsentBanner } from '@/components/CookieConsent'
 import { ProfileSelectorBanner } from '@/components/CookieConsent'
 import { ConsentAwareAnalytics } from '@/components/ConsentAwareAnalytics'
@@ -18,7 +17,6 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { draftMode } from 'next/headers'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
 
 import './globals.css'
@@ -36,9 +34,7 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 })
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   // Navigation items for both header and floating bottom nav
   const navItems = NAVIGATION_ITEMS.map(item => ({ link: item }))
 
@@ -60,11 +56,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body>
         <Providers>
           <ExternalLinkHandler />
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
 
           <Header />
           {children}

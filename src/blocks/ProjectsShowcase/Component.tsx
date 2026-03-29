@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { ProjectCard, ProjectModal, type Project } from '@/components/ProjectCard'
 import type { Project as DataProject } from '@/data/types'
-import type { Media } from '@/payload-types'
+import type { Media } from '@/data/types'
 
 interface ProjectsShowcaseProps {
   blockName?: string

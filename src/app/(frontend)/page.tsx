@@ -1,6 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import PageClient from './[slug]/page.client'
+import PageClient from '@/components/PageClient'
 import { AboutHero } from '@/components/AboutHero'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
 import { getPublishedProjects } from '@/data/projects'

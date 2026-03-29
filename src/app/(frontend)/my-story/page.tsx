@@ -1,6 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import PageClient from '../[slug]/page.client'
+import PageClient from '@/components/PageClient'
 import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
 import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
 

@@ -3,7 +3,7 @@ import { cn } from '@/utilities/ui'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Page, Post } from '@/payload-types'
+import type { Page, Post } from '@/data/types'
 
 type CMSLinkType = {
   appearance?: 'inline' | ButtonProps['variant']

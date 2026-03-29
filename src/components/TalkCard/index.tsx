@@ -23,7 +23,7 @@ import {
 } from 'lucide-react'
 
 import { Media } from '@/components/Media'
-import type { Media as MediaType } from '@/payload-types'
+import type { Media as MediaType } from '@/data/types'
 
 // Transform interface for cleaner component props
 export interface Talk {

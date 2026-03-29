@@ -1,88 +1,67 @@
 import type { Metadata } from 'next/types'
-
-import { CollectionArchive } from '@/components/CollectionArchive'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import React from 'react'
-import { Search } from '@/search/Component'
-import PageClient from './page.client'
-import { CardPostData } from '@/components/Card'
+import { getAllPosts } from '@/lib/posts'
+import { getPublishedProjects } from '@/data/projects'
+import { getTalks } from '@/data/talks'
+import type { SearchDocument } from '@/data/types'
+import SearchPageClient from './page.client'
 
-type Args = {
-  searchParams: Promise<{
-    q: string
-  }>
+function buildSearchIndex(): SearchDocument[] {
+  const docs: SearchDocument[] = []
+
+  // Add posts
+  const posts = getAllPosts()
+  for (const post of posts) {
+    docs.push({
+      title: post.title,
+      slug: post.slug,
+      type: 'post',
+      description: post.excerpt || post.meta?.description || '',
+      categories: (post.categories || []).map((c) =>
+        typeof c === 'object' && c !== null ? c.title : String(c),
+      ),
+      url: `/posts/${post.slug}`,
+    })
+  }
+
+  // Add projects
+  const projects = getPublishedProjects()
+  for (const project of projects) {
+    docs.push({
+      title: project.title,
+      slug: project.slug || '',
+      type: 'project',
+      description: project.shortDescription || project.description || '',
+      categories: project.category ? [project.category] : [],
+      url: `/open-source`,
+    })
+  }
+
+  // Add talks
+  const talks = getTalks()
+  for (const talk of talks) {
+    docs.push({
+      title: talk.title,
+      slug: talk.slug || '',
+      type: 'talk',
+      description: talk.shortDescription || talk.abstract || '',
+      categories: (talk.topics || []).map((t) => t.topic),
+      url: `/talks`,
+    })
+  }
+
+  return docs
 }
-export default async function Page({ searchParams: searchParamsPromise }: Args) {
-  const { q: query } = await searchParamsPromise
-  const payload = await getPayload({ config: configPromise })
 
-  const posts = await payload.find({
-    collection: 'search',
-    depth: 1,
-    limit: 12,
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-    },
-    // pagination: false reduces overhead if you don't need totalDocs
-    pagination: false,
-    ...(query
-      ? {
-          where: {
-            or: [
-              {
-                title: {
-                  like: query,
-                },
-              },
-              {
-                'meta.description': {
-                  like: query,
-                },
-              },
-              {
-                'meta.title': {
-                  like: query,
-                },
-              },
-              {
-                slug: {
-                  like: query,
-                },
-              },
-            ],
-          },
-        }
-      : {}),
-  })
+export default function SearchPage() {
+  const searchIndex = buildSearchIndex()
 
-  return (
-    <div className="pt-24 pb-24">
-      <PageClient />
-      <div className="container mb-16">
-        <div className="prose dark:prose-invert max-w-none text-center">
-          <h1 className="mb-8 lg:mb-16">Search</h1>
-
-          <div className="max-w-[50rem] mx-auto">
-            <Search />
-          </div>
-        </div>
-      </div>
-
-      {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
-      ) : (
-        <div className="container">No results found.</div>
-      )}
-    </div>
-  )
+  return <SearchPageClient searchIndex={searchIndex} />
 }
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Search`,
+    title: 'Search - Kartik Mandar',
+    description: 'Search posts, projects, and talks.',
   }
 }

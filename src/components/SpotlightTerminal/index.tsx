@@ -6,13 +6,14 @@ import { Terminal } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
 import { TerminalInterface } from './TerminalInterface'
 import { CommandProcessor } from './CommandProcessor'
-import { FileSystemMapper } from './FileSystemMapper'
+import { FileSystemMapper, type StaticContent } from './FileSystemMapper'
 
 interface SpotlightTerminalProps {
   navItems: Array<{ link: { label: string; url: string } }>
+  content: StaticContent
 }
 
-export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }) => {
+export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, content }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [currentDirectory, setCurrentDirectory] = useState<string>('/')
   const [commandHistory, setCommandHistory] = useState<string[]>([])
@@ -28,7 +29,7 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems }
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
   
   // Initialize file system mapper and command processor with useMemo to prevent recreation
-  const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems), [navItems])
+  const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems, content), [navItems, content])
   const commandProcessor = React.useMemo(() => new CommandProcessor(fileSystemMapper, router, pathname), [fileSystemMapper, router, pathname])
 
   // Update current directory based on pathname

@@ -1,6 +1,5 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import PageClient from './page.client'
 
 export const dynamic = 'force-static'
 
@@ -2500,7 +2499,6 @@ export default async function Page() {
 
   return (
     <div className="pt-16 pb-16 sm:pt-24 sm:pb-24 scroll-smooth">
-      <PageClient />
       <div className="container px-4 sm:px-6 lg:px-8">
         <div className="prose dark:prose-invert max-w-none mb-8 sm:mb-16">
           <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 leading-tight">A Comprehensive Compendium of Resources in Astronomy and Astrophysics</h1>

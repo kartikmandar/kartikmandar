@@ -430,9 +430,8 @@ ${examples}`,
       'Access Level: public',
       'Location: website filesystem',
       '',
-      `Content: ${stats.posts} posts, ${stats.pages} pages, ${stats.projects} projects, ${stats.talks} talks`,
+      `Content: ${stats.posts} posts, ${stats.projects} projects, ${stats.talks} talks`,
       `Routes: ${stats.routes} discovered`,
-      `Last Updated: ${stats.lastUpdated?.toLocaleString() || 'Never'}`,
       '',
       `Available commands: ${availableCommands}`,
       'Tip: Use Cmd/Ctrl+K to toggle this terminal'
@@ -450,7 +449,7 @@ ${examples}`,
       const stats = this.fileSystemMapper.getContentStats()
       
       return {
-        output: `Filesystem refreshed successfully!\nDiscovered: ${stats.posts} posts, ${stats.pages} pages, ${stats.projects} projects, ${stats.talks} talks, ${stats.routes} routes`,
+        output: `Filesystem refreshed successfully!\nDiscovered: ${stats.posts} posts, ${stats.projects} projects, ${stats.talks} talks, ${stats.routes} routes`,
         error: false
       }
     } catch (error) {
@@ -516,14 +515,10 @@ ${examples}`,
       'Website Content Statistics:',
       '==========================',
       `Blog Posts: ${stats.posts}`,
-      `CMS Pages: ${stats.pages}`,
       `Projects: ${stats.projects}`,
       `Talks: ${stats.talks}`,
       `App Routes: ${stats.routes}`,
       '',
-      `Last Content Fetch: ${stats.lastUpdated?.toLocaleString() || 'Never'}`,
-      '',
-      'Use "refresh" to update content from CMS',
       'Use "tree" to see the full directory structure'
     ]
 

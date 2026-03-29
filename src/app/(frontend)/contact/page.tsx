@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import Script from 'next/script'
-import PageClient from './page.client'
 
 export const dynamic = 'force-static'
 
@@ -19,7 +18,6 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function ContactPage() {
   return (
     <>
-      <PageClient />
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto">
           {/* Header */}

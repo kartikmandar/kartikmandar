@@ -3,7 +3,7 @@ import React from 'react'
 import Image from 'next/image'
 
 import type { Post } from '@/data/types'
-import type { Media as MediaType } from '@/payload-types'
+import type { Media as MediaType } from '@/data/types'
 
 import { Media } from '@/components/Media'
 

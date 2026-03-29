@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { TalkCard, TalkModal, type Talk } from '@/components/TalkCard'
 import type { Talk as DataTalk } from '@/data/types'
-import type { Media } from '@/payload-types'
+import type { Media } from '@/data/types'
 
 interface TalksShowcaseProps {
   blockName?: string

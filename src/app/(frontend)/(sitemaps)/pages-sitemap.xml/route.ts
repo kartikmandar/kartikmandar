@@ -1,68 +1,37 @@
 import { getServerSideSitemap } from 'next-sitemap'
-import { getPayload } from 'payload'
-import config from '@payload-config'
-import { unstable_cache } from 'next/cache'
 
-const getPagesSitemap = unstable_cache(
-  async () => {
-    const payload = await getPayload({ config })
-    const SITE_URL =
-      process.env.NEXT_PUBLIC_SERVER_URL ||
-      process.env.VERCEL_PROJECT_PRODUCTION_URL ||
-      'https://example.com'
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SERVER_URL ||
+  process.env.VERCEL_PROJECT_PRODUCTION_URL ||
+  'https://kartikmandar.com'
 
-    const results = await payload.find({
-      collection: 'pages',
-      overrideAccess: false,
-      draft: false,
-      depth: 0,
-      limit: 1000,
-      pagination: false,
-      where: {
-        _status: {
-          equals: 'published',
-        },
-      },
-      select: {
-        slug: true,
-        updatedAt: true,
-      },
-    })
-
-    const dateFallback = new Date().toISOString()
-
-    const defaultSitemap = [
-      {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/posts`,
-        lastmod: dateFallback,
-      },
-    ]
-
-    const sitemap = results.docs
-      ? results.docs
-          .filter((page) => Boolean(page?.slug))
-          .map((page) => {
-            return {
-              loc: page?.slug === 'home' ? `${SITE_URL}/` : `${SITE_URL}/${page?.slug}`,
-              lastmod: page.updatedAt || dateFallback,
-            }
-          })
-      : []
-
-    return [...defaultSitemap, ...sitemap]
-  },
-  ['pages-sitemap'],
-  {
-    tags: ['pages-sitemap'],
-  },
-)
+// All known static pages
+const STATIC_PAGES = [
+  { slug: '', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'my-story', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'open-source', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'developer', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'publications', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'talks', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'certificates', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'hobbies', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'courses', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'posters', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'contact', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'consultancy', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'common-resources', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'journal-club', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'life-of-an-academia-student', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'tasks', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'search', lastmod: '2026-03-29T00:00:00.000Z' },
+  { slug: 'posts', lastmod: '2026-03-29T00:00:00.000Z' },
+]
 
 export async function GET() {
-  const sitemap = await getPagesSitemap()
+  const sitemap = STATIC_PAGES.map((page) => ({
+    loc: page.slug ? `${SITE_URL}/${page.slug}` : `${SITE_URL}/`,
+    lastmod: page.lastmod,
+  }))
 
   return getServerSideSitemap(sitemap)
 }

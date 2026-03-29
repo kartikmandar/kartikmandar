@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
 import Link from 'next/link'
-import PageClient from './page.client'
 
 export const dynamic = 'force-static'
 
@@ -87,7 +86,6 @@ export default async function ConsultancyPage() {
 
   return (
     <>
-      <PageClient />
       <div className="container mx-auto px-4 py-20">
         <div className="max-w-6xl mx-auto">
           

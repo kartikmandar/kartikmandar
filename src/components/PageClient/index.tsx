@@ -21,19 +21,19 @@ const PageClient: React.FC = () => {
     // On homepage, only handle hash fragments with delay - let normal scroll restoration work
     if (pathname === '/') {
       const hash = window.location.hash
-      
+
       if (hash) {
         // Only for hash fragments, delay to prevent CosmicJourney interference
         const timeoutId = setTimeout(() => {
           const element = document.querySelector(hash)
           if (element) {
-            element.scrollIntoView({ 
+            element.scrollIntoView({
               behavior: 'smooth',
               block: 'start'
             })
           }
         }, 1500) // Give time for CosmicJourney to fully load
-        
+
         return () => clearTimeout(timeoutId)
       }
       // For normal reloads without hash, let browser handle scroll restoration naturally

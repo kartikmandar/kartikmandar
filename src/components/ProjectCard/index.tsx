@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown'
-import type { Media } from '@/payload-types'
+import type { Media } from '@/data/types'
 import NextImage from 'next/image'
 import { 
   Github, 

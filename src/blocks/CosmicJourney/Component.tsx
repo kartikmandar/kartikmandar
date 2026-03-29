@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
-import type { CosmicJourneyBlock as CosmicJourneyBlockProps } from '@/payload-types'
+import type { CosmicJourneyBlock as CosmicJourneyBlockProps } from '@/data/types'
 import type * as THREE from 'three'
 
 // Type definitions for various data structures
