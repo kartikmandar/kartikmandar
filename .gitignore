@@ -15,8 +15,6 @@ node_modules
 .env*.bak
 .env*.tmp
 
-# Payload default media upload directory
-public/media/
 
 public/robots.txt
 public/sitemap*.xml

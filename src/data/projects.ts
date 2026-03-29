@@ -24,8 +24,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-06-24T18:29:13.633Z",
       "createdAt": "2025-06-24T18:29:12.494Z",
-      "url": "/api/media/file/fftvis_visibilties.png",
-      "thumbnailURL": "/api/media/file/fftvis_visibilties-300x182.png",
+      "url": "/media/fftvis_visibilties.png",
+      "thumbnailURL": "/media/fftvis_visibilties-300x182.png",
       "filename": "fftvis_visibilties.png",
       "mimeType": "image/png",
       "filesize": 78769,
@@ -35,7 +35,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/fftvis_visibilties-300x182.png",
+          "url": "/media/fftvis_visibilties-300x182.png",
           "width": 300,
           "height": 182,
           "mimeType": "image/png",
@@ -43,7 +43,7 @@ export const projects: Project[] = [
           "filename": "fftvis_visibilties-300x182.png"
         },
         "square": {
-          "url": "/api/media/file/fftvis_visibilties-500x500.png",
+          "url": "/media/fftvis_visibilties-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -51,7 +51,7 @@ export const projects: Project[] = [
           "filename": "fftvis_visibilties-500x500.png"
         },
         "small": {
-          "url": "/api/media/file/fftvis_visibilties-600x364.png",
+          "url": "/media/fftvis_visibilties-600x364.png",
           "width": 600,
           "height": 364,
           "mimeType": "image/png",
@@ -600,8 +600,8 @@ export const projects: Project[] = [
         "caption": null,
         "updatedAt": "2025-06-24T18:29:13.633Z",
         "createdAt": "2025-06-24T18:29:12.494Z",
-        "url": "/api/media/file/fftvis_visibilties.png",
-        "thumbnailURL": "/api/media/file/fftvis_visibilties-300x182.png",
+        "url": "/media/fftvis_visibilties.png",
+        "thumbnailURL": "/media/fftvis_visibilties-300x182.png",
         "filename": "fftvis_visibilties.png",
         "mimeType": "image/png",
         "filesize": 78769,
@@ -611,7 +611,7 @@ export const projects: Project[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/fftvis_visibilties-300x182.png",
+            "url": "/media/fftvis_visibilties-300x182.png",
             "width": 300,
             "height": 182,
             "mimeType": "image/png",
@@ -619,7 +619,7 @@ export const projects: Project[] = [
             "filename": "fftvis_visibilties-300x182.png"
           },
           "square": {
-            "url": "/api/media/file/fftvis_visibilties-500x500.png",
+            "url": "/media/fftvis_visibilties-500x500.png",
             "width": 500,
             "height": 500,
             "mimeType": "image/png",
@@ -627,7 +627,7 @@ export const projects: Project[] = [
             "filename": "fftvis_visibilties-500x500.png"
           },
           "small": {
-            "url": "/api/media/file/fftvis_visibilties-600x364.png",
+            "url": "/media/fftvis_visibilties-600x364.png",
             "width": 600,
             "height": 364,
             "mimeType": "image/png",
@@ -688,8 +688,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-07-14T06:03:39.279Z",
       "createdAt": "2025-07-14T06:03:36.996Z",
-      "url": "/api/media/file/ML4Sci.png",
-      "thumbnailURL": "/api/media/file/ML4Sci-300x115.png",
+      "url": "/media/ML4Sci.png",
+      "thumbnailURL": "/media/ML4Sci-300x115.png",
       "filename": "ML4Sci.png",
       "mimeType": "image/png",
       "filesize": 2175063,
@@ -699,7 +699,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/ML4Sci-300x115.png",
+          "url": "/media/ML4Sci-300x115.png",
           "width": 300,
           "height": 115,
           "mimeType": "image/png",
@@ -707,7 +707,7 @@ export const projects: Project[] = [
           "filename": "ML4Sci-300x115.png"
         },
         "square": {
-          "url": "/api/media/file/ML4Sci-500x500.png",
+          "url": "/media/ML4Sci-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -715,7 +715,7 @@ export const projects: Project[] = [
           "filename": "ML4Sci-500x500.png"
         },
         "small": {
-          "url": "/api/media/file/ML4Sci-600x231.png",
+          "url": "/media/ML4Sci-600x231.png",
           "width": 600,
           "height": 231,
           "mimeType": "image/png",
@@ -723,7 +723,7 @@ export const projects: Project[] = [
           "filename": "ML4Sci-600x231.png"
         },
         "medium": {
-          "url": "/api/media/file/ML4Sci-900x346.png",
+          "url": "/media/ML4Sci-900x346.png",
           "width": 900,
           "height": 346,
           "mimeType": "image/png",
@@ -731,7 +731,7 @@ export const projects: Project[] = [
           "filename": "ML4Sci-900x346.png"
         },
         "large": {
-          "url": "/api/media/file/ML4Sci-1400x538.png",
+          "url": "/media/ML4Sci-1400x538.png",
           "width": 1400,
           "height": 538,
           "mimeType": "image/png",
@@ -747,7 +747,7 @@ export const projects: Project[] = [
           "filename": null
         },
         "og": {
-          "url": "/api/media/file/ML4Sci-1200x630.png",
+          "url": "/media/ML4Sci-1200x630.png",
           "width": 1200,
           "height": 630,
           "mimeType": "image/png",
@@ -825,8 +825,8 @@ export const projects: Project[] = [
         "caption": null,
         "updatedAt": "2025-07-14T06:03:39.279Z",
         "createdAt": "2025-07-14T06:03:36.996Z",
-        "url": "/api/media/file/ML4Sci.png",
-        "thumbnailURL": "/api/media/file/ML4Sci-300x115.png",
+        "url": "/media/ML4Sci.png",
+        "thumbnailURL": "/media/ML4Sci-300x115.png",
         "filename": "ML4Sci.png",
         "mimeType": "image/png",
         "filesize": 2175063,
@@ -836,7 +836,7 @@ export const projects: Project[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/ML4Sci-300x115.png",
+            "url": "/media/ML4Sci-300x115.png",
             "width": 300,
             "height": 115,
             "mimeType": "image/png",
@@ -844,7 +844,7 @@ export const projects: Project[] = [
             "filename": "ML4Sci-300x115.png"
           },
           "square": {
-            "url": "/api/media/file/ML4Sci-500x500.png",
+            "url": "/media/ML4Sci-500x500.png",
             "width": 500,
             "height": 500,
             "mimeType": "image/png",
@@ -852,7 +852,7 @@ export const projects: Project[] = [
             "filename": "ML4Sci-500x500.png"
           },
           "small": {
-            "url": "/api/media/file/ML4Sci-600x231.png",
+            "url": "/media/ML4Sci-600x231.png",
             "width": 600,
             "height": 231,
             "mimeType": "image/png",
@@ -860,7 +860,7 @@ export const projects: Project[] = [
             "filename": "ML4Sci-600x231.png"
           },
           "medium": {
-            "url": "/api/media/file/ML4Sci-900x346.png",
+            "url": "/media/ML4Sci-900x346.png",
             "width": 900,
             "height": 346,
             "mimeType": "image/png",
@@ -868,7 +868,7 @@ export const projects: Project[] = [
             "filename": "ML4Sci-900x346.png"
           },
           "large": {
-            "url": "/api/media/file/ML4Sci-1400x538.png",
+            "url": "/media/ML4Sci-1400x538.png",
             "width": 1400,
             "height": 538,
             "mimeType": "image/png",
@@ -884,7 +884,7 @@ export const projects: Project[] = [
             "filename": null
           },
           "og": {
-            "url": "/api/media/file/ML4Sci-1200x630.png",
+            "url": "/media/ML4Sci-1200x630.png",
             "width": 1200,
             "height": 630,
             "mimeType": "image/png",
@@ -913,8 +913,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-07-14T06:10:18.323Z",
       "createdAt": "2025-07-14T06:10:17.056Z",
-      "url": "/api/media/file/CygnusX1.png",
-      "thumbnailURL": "/api/media/file/CygnusX1-300x192.png",
+      "url": "/media/CygnusX1.png",
+      "thumbnailURL": "/media/CygnusX1-300x192.png",
       "filename": "CygnusX1.png",
       "mimeType": "image/png",
       "filesize": 521968,
@@ -924,7 +924,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/CygnusX1-300x192.png",
+          "url": "/media/CygnusX1-300x192.png",
           "width": 300,
           "height": 192,
           "mimeType": "image/png",
@@ -932,7 +932,7 @@ export const projects: Project[] = [
           "filename": "CygnusX1-300x192.png"
         },
         "square": {
-          "url": "/api/media/file/CygnusX1-500x500.png",
+          "url": "/media/CygnusX1-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -940,7 +940,7 @@ export const projects: Project[] = [
           "filename": "CygnusX1-500x500.png"
         },
         "small": {
-          "url": "/api/media/file/CygnusX1-600x385.png",
+          "url": "/media/CygnusX1-600x385.png",
           "width": 600,
           "height": 385,
           "mimeType": "image/png",
@@ -948,7 +948,7 @@ export const projects: Project[] = [
           "filename": "CygnusX1-600x385.png"
         },
         "medium": {
-          "url": "/api/media/file/CygnusX1-900x577.png",
+          "url": "/media/CygnusX1-900x577.png",
           "width": 900,
           "height": 577,
           "mimeType": "image/png",
@@ -972,7 +972,7 @@ export const projects: Project[] = [
           "filename": null
         },
         "og": {
-          "url": "/api/media/file/CygnusX1-1200x630.png",
+          "url": "/media/CygnusX1-1200x630.png",
           "width": 1200,
           "height": 630,
           "mimeType": "image/png",
@@ -1456,8 +1456,8 @@ export const projects: Project[] = [
         "caption": null,
         "updatedAt": "2025-07-14T06:10:18.323Z",
         "createdAt": "2025-07-14T06:10:17.056Z",
-        "url": "/api/media/file/CygnusX1.png",
-        "thumbnailURL": "/api/media/file/CygnusX1-300x192.png",
+        "url": "/media/CygnusX1.png",
+        "thumbnailURL": "/media/CygnusX1-300x192.png",
         "filename": "CygnusX1.png",
         "mimeType": "image/png",
         "filesize": 521968,
@@ -1467,7 +1467,7 @@ export const projects: Project[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/CygnusX1-300x192.png",
+            "url": "/media/CygnusX1-300x192.png",
             "width": 300,
             "height": 192,
             "mimeType": "image/png",
@@ -1475,7 +1475,7 @@ export const projects: Project[] = [
             "filename": "CygnusX1-300x192.png"
           },
           "square": {
-            "url": "/api/media/file/CygnusX1-500x500.png",
+            "url": "/media/CygnusX1-500x500.png",
             "width": 500,
             "height": 500,
             "mimeType": "image/png",
@@ -1483,7 +1483,7 @@ export const projects: Project[] = [
             "filename": "CygnusX1-500x500.png"
           },
           "small": {
-            "url": "/api/media/file/CygnusX1-600x385.png",
+            "url": "/media/CygnusX1-600x385.png",
             "width": 600,
             "height": 385,
             "mimeType": "image/png",
@@ -1491,7 +1491,7 @@ export const projects: Project[] = [
             "filename": "CygnusX1-600x385.png"
           },
           "medium": {
-            "url": "/api/media/file/CygnusX1-900x577.png",
+            "url": "/media/CygnusX1-900x577.png",
             "width": 900,
             "height": 577,
             "mimeType": "image/png",
@@ -1515,7 +1515,7 @@ export const projects: Project[] = [
             "filename": null
           },
           "og": {
-            "url": "/api/media/file/CygnusX1-1200x630.png",
+            "url": "/media/CygnusX1-1200x630.png",
             "width": 1200,
             "height": 630,
             "mimeType": "image/png",
@@ -1544,8 +1544,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-07-14T05:46:34.891Z",
       "createdAt": "2025-07-14T05:46:34.630Z",
-      "url": "/api/media/file/stingray-explorer.png",
-      "thumbnailURL": "/api/media/file/stingray-explorer-300x300.png",
+      "url": "/media/stingray-explorer.png",
+      "thumbnailURL": "/media/stingray-explorer-300x300.png",
       "filename": "stingray-explorer.png",
       "mimeType": "image/png",
       "filesize": 79531,
@@ -1555,7 +1555,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/stingray-explorer-300x300.png",
+          "url": "/media/stingray-explorer-300x300.png",
           "width": 300,
           "height": 300,
           "mimeType": "image/png",
@@ -1563,7 +1563,7 @@ export const projects: Project[] = [
           "filename": "stingray-explorer-300x300.png"
         },
         "square": {
-          "url": "/api/media/file/stingray-explorer-500x500.png",
+          "url": "/media/stingray-explorer-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -2185,8 +2185,8 @@ export const projects: Project[] = [
         "caption": null,
         "updatedAt": "2025-07-14T05:46:34.891Z",
         "createdAt": "2025-07-14T05:46:34.630Z",
-        "url": "/api/media/file/stingray-explorer.png",
-        "thumbnailURL": "/api/media/file/stingray-explorer-300x300.png",
+        "url": "/media/stingray-explorer.png",
+        "thumbnailURL": "/media/stingray-explorer-300x300.png",
         "filename": "stingray-explorer.png",
         "mimeType": "image/png",
         "filesize": 79531,
@@ -2196,7 +2196,7 @@ export const projects: Project[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/stingray-explorer-300x300.png",
+            "url": "/media/stingray-explorer-300x300.png",
             "width": 300,
             "height": 300,
             "mimeType": "image/png",
@@ -2204,7 +2204,7 @@ export const projects: Project[] = [
             "filename": "stingray-explorer-300x300.png"
           },
           "square": {
-            "url": "/api/media/file/stingray-explorer-500x500.png",
+            "url": "/media/stingray-explorer-500x500.png",
             "width": 500,
             "height": 500,
             "mimeType": "image/png",
@@ -2273,8 +2273,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-07-14T06:37:49.998Z",
       "createdAt": "2025-07-14T06:37:45.925Z",
-      "url": "/api/media/file/DAVE.png",
-      "thumbnailURL": "/api/media/file/DAVE-300x162.png",
+      "url": "/media/DAVE.png",
+      "thumbnailURL": "/media/DAVE-300x162.png",
       "filename": "DAVE.png",
       "mimeType": "image/png",
       "filesize": 1425570,
@@ -2284,7 +2284,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/DAVE-300x162.png",
+          "url": "/media/DAVE-300x162.png",
           "width": 300,
           "height": 162,
           "mimeType": "image/png",
@@ -2292,7 +2292,7 @@ export const projects: Project[] = [
           "filename": "DAVE-300x162.png"
         },
         "square": {
-          "url": "/api/media/file/DAVE-500x500.png",
+          "url": "/media/DAVE-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -2300,7 +2300,7 @@ export const projects: Project[] = [
           "filename": "DAVE-500x500.png"
         },
         "small": {
-          "url": "/api/media/file/DAVE-600x323.png",
+          "url": "/media/DAVE-600x323.png",
           "width": 600,
           "height": 323,
           "mimeType": "image/png",
@@ -2308,7 +2308,7 @@ export const projects: Project[] = [
           "filename": "DAVE-600x323.png"
         },
         "medium": {
-          "url": "/api/media/file/DAVE-900x485.png",
+          "url": "/media/DAVE-900x485.png",
           "width": 900,
           "height": 485,
           "mimeType": "image/png",
@@ -2316,7 +2316,7 @@ export const projects: Project[] = [
           "filename": "DAVE-900x485.png"
         },
         "large": {
-          "url": "/api/media/file/DAVE-1400x754.png",
+          "url": "/media/DAVE-1400x754.png",
           "width": 1400,
           "height": 754,
           "mimeType": "image/png",
@@ -2324,7 +2324,7 @@ export const projects: Project[] = [
           "filename": "DAVE-1400x754.png"
         },
         "xlarge": {
-          "url": "/api/media/file/DAVE-1920x1034.png",
+          "url": "/media/DAVE-1920x1034.png",
           "width": 1920,
           "height": 1034,
           "mimeType": "image/png",
@@ -2332,7 +2332,7 @@ export const projects: Project[] = [
           "filename": "DAVE-1920x1034.png"
         },
         "og": {
-          "url": "/api/media/file/DAVE-1200x630.png",
+          "url": "/media/DAVE-1200x630.png",
           "width": 1200,
           "height": 630,
           "mimeType": "image/png",
@@ -4768,8 +4768,8 @@ export const projects: Project[] = [
         "caption": null,
         "updatedAt": "2025-07-14T06:37:49.998Z",
         "createdAt": "2025-07-14T06:37:45.925Z",
-        "url": "/api/media/file/DAVE.png",
-        "thumbnailURL": "/api/media/file/DAVE-300x162.png",
+        "url": "/media/DAVE.png",
+        "thumbnailURL": "/media/DAVE-300x162.png",
         "filename": "DAVE.png",
         "mimeType": "image/png",
         "filesize": 1425570,
@@ -4779,7 +4779,7 @@ export const projects: Project[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/DAVE-300x162.png",
+            "url": "/media/DAVE-300x162.png",
             "width": 300,
             "height": 162,
             "mimeType": "image/png",
@@ -4787,7 +4787,7 @@ export const projects: Project[] = [
             "filename": "DAVE-300x162.png"
           },
           "square": {
-            "url": "/api/media/file/DAVE-500x500.png",
+            "url": "/media/DAVE-500x500.png",
             "width": 500,
             "height": 500,
             "mimeType": "image/png",
@@ -4795,7 +4795,7 @@ export const projects: Project[] = [
             "filename": "DAVE-500x500.png"
           },
           "small": {
-            "url": "/api/media/file/DAVE-600x323.png",
+            "url": "/media/DAVE-600x323.png",
             "width": 600,
             "height": 323,
             "mimeType": "image/png",
@@ -4803,7 +4803,7 @@ export const projects: Project[] = [
             "filename": "DAVE-600x323.png"
           },
           "medium": {
-            "url": "/api/media/file/DAVE-900x485.png",
+            "url": "/media/DAVE-900x485.png",
             "width": 900,
             "height": 485,
             "mimeType": "image/png",
@@ -4811,7 +4811,7 @@ export const projects: Project[] = [
             "filename": "DAVE-900x485.png"
           },
           "large": {
-            "url": "/api/media/file/DAVE-1400x754.png",
+            "url": "/media/DAVE-1400x754.png",
             "width": 1400,
             "height": 754,
             "mimeType": "image/png",
@@ -4819,7 +4819,7 @@ export const projects: Project[] = [
             "filename": "DAVE-1400x754.png"
           },
           "xlarge": {
-            "url": "/api/media/file/DAVE-1920x1034.png",
+            "url": "/media/DAVE-1920x1034.png",
             "width": 1920,
             "height": 1034,
             "mimeType": "image/png",
@@ -4827,7 +4827,7 @@ export const projects: Project[] = [
             "filename": "DAVE-1920x1034.png"
           },
           "og": {
-            "url": "/api/media/file/DAVE-1200x630.png",
+            "url": "/media/DAVE-1200x630.png",
             "width": 1200,
             "height": 630,
             "mimeType": "image/png",
@@ -4856,8 +4856,8 @@ export const projects: Project[] = [
       "caption": null,
       "updatedAt": "2025-10-16T13:44:37.637Z",
       "createdAt": "2025-10-16T13:44:36.852Z",
-      "url": "/api/media/file/rrivis_poster.png",
-      "thumbnailURL": "/api/media/file/rrivis_poster-300x345.png",
+      "url": "/media/rrivis_poster.png",
+      "thumbnailURL": "/media/rrivis_poster-300x345.png",
       "filename": "rrivis_poster.png",
       "mimeType": "image/png",
       "filesize": 346873,
@@ -4867,7 +4867,7 @@ export const projects: Project[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/rrivis_poster-300x345.png",
+          "url": "/media/rrivis_poster-300x345.png",
           "width": 300,
           "height": 345,
           "mimeType": "image/png",
@@ -4875,7 +4875,7 @@ export const projects: Project[] = [
           "filename": "rrivis_poster-300x345.png"
         },
         "square": {
-          "url": "/api/media/file/rrivis_poster-500x500.png",
+          "url": "/media/rrivis_poster-500x500.png",
           "width": 500,
           "height": 500,
           "mimeType": "image/png",
@@ -4883,7 +4883,7 @@ export const projects: Project[] = [
           "filename": "rrivis_poster-500x500.png"
         },
         "small": {
-          "url": "/api/media/file/rrivis_poster-600x691.png",
+          "url": "/media/rrivis_poster-600x691.png",
           "width": 600,
           "height": 691,
           "mimeType": "image/png",
@@ -4915,7 +4915,7 @@ export const projects: Project[] = [
           "filename": null
         },
         "og": {
-          "url": "/api/media/file/rrivis_poster-1200x630.png",
+          "url": "/media/rrivis_poster-1200x630.png",
           "width": 1200,
           "height": 630,
           "mimeType": "image/png",

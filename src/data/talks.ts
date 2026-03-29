@@ -25,7 +25,7 @@ export const talks: Talk[] = [
       "caption": null,
       "updatedAt": "2025-07-14T07:27:11.220Z",
       "createdAt": "2025-07-14T07:27:11.109Z",
-      "url": "/api/media/file/gsoc.png",
+      "url": "/media/gsoc.png",
       "thumbnailURL": null,
       "filename": "gsoc.png",
       "mimeType": "image/png",
@@ -160,8 +160,8 @@ export const talks: Talk[] = [
       "caption": null,
       "updatedAt": "2025-07-14T07:18:58.362Z",
       "createdAt": "2025-07-14T07:18:57.338Z",
-      "url": "/api/media/file/talk1.jpg",
-      "thumbnailURL": "/api/media/file/talk1-300x390.jpg",
+      "url": "/media/talk1.jpg",
+      "thumbnailURL": "/media/talk1-300x390.jpg",
       "filename": "talk1.jpg",
       "mimeType": "image/jpeg",
       "filesize": 423000,
@@ -171,7 +171,7 @@ export const talks: Talk[] = [
       "focalY": 50,
       "sizes": {
         "thumbnail": {
-          "url": "/api/media/file/talk1-300x390.jpg",
+          "url": "/media/talk1-300x390.jpg",
           "width": 300,
           "height": 390,
           "mimeType": "image/jpeg",
@@ -179,7 +179,7 @@ export const talks: Talk[] = [
           "filename": "talk1-300x390.jpg"
         },
         "square": {
-          "url": "/api/media/file/talk1-500x500.jpg",
+          "url": "/media/talk1-500x500.jpg",
           "width": 500,
           "height": 500,
           "mimeType": "image/jpeg",
@@ -187,7 +187,7 @@ export const talks: Talk[] = [
           "filename": "talk1-500x500.jpg"
         },
         "small": {
-          "url": "/api/media/file/talk1-600x779.jpg",
+          "url": "/media/talk1-600x779.jpg",
           "width": 600,
           "height": 779,
           "mimeType": "image/jpeg",
@@ -195,7 +195,7 @@ export const talks: Talk[] = [
           "filename": "talk1-600x779.jpg"
         },
         "medium": {
-          "url": "/api/media/file/talk1-900x1169.jpg",
+          "url": "/media/talk1-900x1169.jpg",
           "width": 900,
           "height": 1169,
           "mimeType": "image/jpeg",
@@ -219,7 +219,7 @@ export const talks: Talk[] = [
           "filename": null
         },
         "og": {
-          "url": "/api/media/file/talk1-1200x630.jpg",
+          "url": "/media/talk1-1200x630.jpg",
           "width": 1200,
           "height": 630,
           "mimeType": "image/jpeg",
@@ -278,8 +278,8 @@ export const talks: Talk[] = [
         "caption": null,
         "updatedAt": "2025-07-14T07:18:58.362Z",
         "createdAt": "2025-07-14T07:18:57.338Z",
-        "url": "/api/media/file/talk1.jpg",
-        "thumbnailURL": "/api/media/file/talk1-300x390.jpg",
+        "url": "/media/talk1.jpg",
+        "thumbnailURL": "/media/talk1-300x390.jpg",
         "filename": "talk1.jpg",
         "mimeType": "image/jpeg",
         "filesize": 423000,
@@ -289,7 +289,7 @@ export const talks: Talk[] = [
         "focalY": 50,
         "sizes": {
           "thumbnail": {
-            "url": "/api/media/file/talk1-300x390.jpg",
+            "url": "/media/talk1-300x390.jpg",
             "width": 300,
             "height": 390,
             "mimeType": "image/jpeg",
@@ -297,7 +297,7 @@ export const talks: Talk[] = [
             "filename": "talk1-300x390.jpg"
           },
           "square": {
-            "url": "/api/media/file/talk1-500x500.jpg",
+            "url": "/media/talk1-500x500.jpg",
             "width": 500,
             "height": 500,
             "mimeType": "image/jpeg",
@@ -305,7 +305,7 @@ export const talks: Talk[] = [
             "filename": "talk1-500x500.jpg"
           },
           "small": {
-            "url": "/api/media/file/talk1-600x779.jpg",
+            "url": "/media/talk1-600x779.jpg",
             "width": 600,
             "height": 779,
             "mimeType": "image/jpeg",
@@ -313,7 +313,7 @@ export const talks: Talk[] = [
             "filename": "talk1-600x779.jpg"
           },
           "medium": {
-            "url": "/api/media/file/talk1-900x1169.jpg",
+            "url": "/media/talk1-900x1169.jpg",
             "width": 900,
             "height": 1169,
             "mimeType": "image/jpeg",
@@ -337,7 +337,7 @@ export const talks: Talk[] = [
             "filename": null
           },
           "og": {
-            "url": "/api/media/file/talk1-1200x630.jpg",
+            "url": "/media/talk1-1200x630.jpg",
             "width": 1200,
             "height": 630,
             "mimeType": "image/jpeg",
