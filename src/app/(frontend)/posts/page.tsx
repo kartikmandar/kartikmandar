@@ -3,39 +3,14 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPaginatedPosts } from '@/lib/posts'
 import React from 'react'
 import PageClient from './page.client'
 
 export const dynamic = 'force-static'
-export const revalidate = 600
 
-export default async function Page() {
-  const payload = await getPayload({ config: configPromise })
-
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 2,
-    limit: 6,
-    overrideAccess: false,
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-    sort: '-publishedAt',
-    select: {
-      title: true,
-      slug: true,
-      categories: true,
-      meta: true,
-      publishedAt: true,
-      populatedAuthors: true,
-      authors: true,
-      content: true,
-    },
-  })
+export default function Page() {
+  const posts = getPaginatedPosts(1, 6)
 
   return (
     <div className="pt-24 pb-24">
@@ -70,6 +45,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: `Payload Website Template Posts`,
+    title: 'Posts | Kartik Mandar',
   }
 }

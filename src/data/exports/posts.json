@@ -1,0 +1,2079 @@
+[
+  {
+    "id": 4,
+    "title": "Anxiety and being an imposter",
+    "heroImage": {
+      "id": 19,
+      "alt": "IIT Indore Library",
+      "caption": null,
+      "updatedAt": "2025-07-16T13:11:27.417Z",
+      "createdAt": "2025-07-16T13:11:24.726Z",
+      "url": "/api/media/file/Library.jpg",
+      "thumbnailURL": "/api/media/file/Library-300x400.jpg",
+      "filename": "Library.jpg",
+      "mimeType": "image/jpeg",
+      "filesize": 288713,
+      "width": 3024,
+      "height": 4032,
+      "focalX": 50,
+      "focalY": 50,
+      "sizes": {
+        "thumbnail": {
+          "url": "/api/media/file/Library-300x400.jpg",
+          "width": 300,
+          "height": 400,
+          "mimeType": "image/jpeg",
+          "filesize": 23647,
+          "filename": "Library-300x400.jpg"
+        },
+        "square": {
+          "url": "/api/media/file/Library-500x500.jpg",
+          "width": 500,
+          "height": 500,
+          "mimeType": "image/jpeg",
+          "filesize": 47709,
+          "filename": "Library-500x500.jpg"
+        },
+        "small": {
+          "url": "/api/media/file/Library-600x800.jpg",
+          "width": 600,
+          "height": 800,
+          "mimeType": "image/jpeg",
+          "filesize": 77931,
+          "filename": "Library-600x800.jpg"
+        },
+        "medium": {
+          "url": "/api/media/file/Library-900x1200.jpg",
+          "width": 900,
+          "height": 1200,
+          "mimeType": "image/jpeg",
+          "filesize": 160322,
+          "filename": "Library-900x1200.jpg"
+        },
+        "large": {
+          "url": "/api/media/file/Library-1400x1867.jpg",
+          "width": 1400,
+          "height": 1867,
+          "mimeType": "image/jpeg",
+          "filesize": 332517,
+          "filename": "Library-1400x1867.jpg"
+        },
+        "xlarge": {
+          "url": "/api/media/file/Library-1920x2560.jpg",
+          "width": 1920,
+          "height": 2560,
+          "mimeType": "image/jpeg",
+          "filesize": 549895,
+          "filename": "Library-1920x2560.jpg"
+        },
+        "og": {
+          "url": "/api/media/file/Library-1200x630.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "filesize": 132881,
+          "filename": "Library-1200x630.jpg"
+        }
+      }
+    },
+    "content": {
+      "root": {
+        "type": "root",
+        "format": "",
+        "indent": 0,
+        "version": 1,
+        "children": [
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Look at the 4 floor library, isn't this awesome. Just coming here everyday to a place so peaceful is, I would say, a privilege.",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Sometimes I wonder do we, people who want to get into research do it because it's our passion? Or are we trying to rub intellectual superiority in front of others?",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "We think we have escaped the forbidden ropes of money, guilt, fame and tread the path where less people stride, but is that even true? What is exactly different? Are we doing world a favour? I mean yes and no, but isn't everyone playing a little part? Then what is so unique about researchers that we are so proud of?",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "As my bachelor progressed, I came to those questions again and again but I still haven't gotten to the bottom of it. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "What is that I am chasing? What do I want to do? I mean yes I am pursuing certain subjects (and subtopics) in astrophysics. And yes they are intriguing. I still feel the fire is there within me. But am I doing enough?",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Am I doing everything that is in my capacity to learn more and advance the collective understanding? I don't think so! I feel there is so much more I could have done and should be doing. But I what in turn end up doing is enjoying some pizzas or maybe some episodes of my favourite series. But wait is it wrong to enjoy? I guess people always say moderation is the key. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "But are we, people who are in research, ever do things in moderation? Don't we end up working 7 days a week, the whole year. Or running an experiment late to the night. Are we obsessing over what we do? Or are we scared to not fill in before the deadline. To write the next paper. To get into the best college. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "And when opportunities do fall into my way, why do I feel like I am not really giving them justice. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Am I even a good student? I wonder what path of passion is this, that doesn't let me sleep properly at nights. Or is that normal for everyone else?",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          }
+        ],
+        "direction": "ltr"
+      }
+    },
+    "relatedPosts": [
+      {
+        "id": 2,
+        "title": "A day at IIT Indore",
+        "content": {
+          "root": {
+            "type": "root",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Well it's a Sunday but rather than resting, working on \"",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Hard X-Ray Observations of Cygnus X-1 with NuSTAR",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 1,
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "\" paper. I mean not saying the work is not interesting, but why does paper writing feels like a chore. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "And you overwork yourself on weekends and feel drained out. Is this normal? ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "I don't really know at this point. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "horizontalrule",
+                "version": 1
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "I am currently at SKA India training workshop at IIT Indore, we made a horn antenna this week and had some good lectures throughout. It is fun. Also got my VISA approved and waiting for my passport to be stamped. If it comes by 17th, I will be off to Toronto, otherwise, well bad luck I guess.",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              }
+            ],
+            "direction": "ltr"
+          }
+        },
+        "categories": [],
+        "meta": {
+          "image": {
+            "id": 3,
+            "alt": "A day",
+            "caption": null,
+            "updatedAt": "2025-07-13T12:17:40.692Z",
+            "createdAt": "2025-07-13T12:17:36.851Z",
+            "url": "/api/media/file/day.jpeg",
+            "thumbnailURL": "/api/media/file/day-300x225.jpg",
+            "filename": "day.jpeg",
+            "mimeType": "image/jpeg",
+            "filesize": 1802450,
+            "width": 4032,
+            "height": 3024,
+            "focalX": 50,
+            "focalY": 50,
+            "sizes": {
+              "thumbnail": {
+                "url": "/api/media/file/day-300x225.jpg",
+                "width": 300,
+                "height": 225,
+                "mimeType": "image/jpeg",
+                "filesize": 12221,
+                "filename": "day-300x225.jpg"
+              },
+              "square": {
+                "url": "/api/media/file/day-500x500.jpg",
+                "width": 500,
+                "height": 500,
+                "mimeType": "image/jpeg",
+                "filesize": 41076,
+                "filename": "day-500x500.jpg"
+              },
+              "small": {
+                "url": "/api/media/file/day-600x450.jpg",
+                "width": 600,
+                "height": 450,
+                "mimeType": "image/jpeg",
+                "filesize": 39974,
+                "filename": "day-600x450.jpg"
+              },
+              "medium": {
+                "url": "/api/media/file/day-900x675.jpg",
+                "width": 900,
+                "height": 675,
+                "mimeType": "image/jpeg",
+                "filesize": 85333,
+                "filename": "day-900x675.jpg"
+              },
+              "large": {
+                "url": "/api/media/file/day-1400x1050.jpg",
+                "width": 1400,
+                "height": 1050,
+                "mimeType": "image/jpeg",
+                "filesize": 216398,
+                "filename": "day-1400x1050.jpg"
+              },
+              "xlarge": {
+                "url": "/api/media/file/day-1920x1440.jpg",
+                "width": 1920,
+                "height": 1440,
+                "mimeType": "image/jpeg",
+                "filesize": 425250,
+                "filename": "day-1920x1440.jpg"
+              },
+              "og": {
+                "url": "/api/media/file/day-1200x630.jpg",
+                "width": 1200,
+                "height": 630,
+                "mimeType": "image/jpeg",
+                "filesize": 116779,
+                "filename": "day-1200x630.jpg"
+              }
+            }
+          },
+          "description": null
+        },
+        "publishedAt": "2025-07-13T14:39:19.606Z",
+        "populatedAuthors": [],
+        "slug": "a-day-at-iit-indore"
+      },
+      {
+        "id": 1,
+        "title": "Starting this website",
+        "content": {
+          "root": {
+            "type": "root",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Well finally after 3 months of work this website is done. I have much more content (like projects, talks, posts), but migrating the postgres database from the local development environment to vercel production turned out to be a nightmare. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "After hours of retries I decided to try and make a fresh vercel project and add content to the CMS manually as I go. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "I guess I can better curate things as I go now. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Nevertheless this post is one of the first. There will be many more but I don't know when and how these would come. I plan to make detailed posts about what happens in the life of academia people. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "It serves two purposes, either motivated school students can get inspired from it and join the scientific community  or people who thought this to be a shiny medal to achieve will drop that goal and search for something more practical. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Academic life is no doubt really rewarding in some aspects but for sure is not the easiest path to money. There are much more pracical avenues in that respect. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Yesterday had been so unlucky that I can't really comprehend what was going on. I will explain in detail in probably another post! It was a bad bad day, visa got rejected, the masala chaas got stuck (the photo above) and I cracked my phone screen. I couldn't sleep due to electricity going out. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "It was actually interesting how bad ones's luck could one after another. But nevertheless that is past and I am over it lol..",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Maybe I will invite some of my colleagues too, to write about their lives!",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              }
+            ],
+            "direction": "ltr"
+          }
+        },
+        "categories": [],
+        "meta": {
+          "image": {
+            "id": 2,
+            "alt": "Buttermilk stuck in vending machine",
+            "caption": null,
+            "updatedAt": "2025-06-24T18:32:34.469Z",
+            "createdAt": "2025-06-24T18:32:34.520Z",
+            "url": "/api/media/file/buttermilk_stuck.JPG",
+            "thumbnailURL": "/api/media/file/buttermilk_stuck-300x400.jpg",
+            "filename": "buttermilk_stuck.JPG",
+            "mimeType": "image/jpeg",
+            "filesize": 2581227,
+            "width": 4032,
+            "height": 3024,
+            "focalX": 50,
+            "focalY": 50,
+            "sizes": {
+              "thumbnail": {
+                "url": "/api/media/file/buttermilk_stuck-300x400.jpg",
+                "width": 300,
+                "height": 400,
+                "mimeType": "image/jpeg",
+                "filesize": 30692,
+                "filename": "buttermilk_stuck-300x400.jpg"
+              },
+              "square": {
+                "url": "/api/media/file/buttermilk_stuck-500x500.jpg",
+                "width": 500,
+                "height": 500,
+                "mimeType": "image/jpeg",
+                "filesize": 53808,
+                "filename": "buttermilk_stuck-500x500.jpg"
+              },
+              "small": {
+                "url": "/api/media/file/buttermilk_stuck-600x800.jpg",
+                "width": 600,
+                "height": 800,
+                "mimeType": "image/jpeg",
+                "filesize": 101629,
+                "filename": "buttermilk_stuck-600x800.jpg"
+              },
+              "medium": {
+                "url": "/api/media/file/buttermilk_stuck-900x1200.jpg",
+                "width": 900,
+                "height": 1200,
+                "mimeType": "image/jpeg",
+                "filesize": 199719,
+                "filename": "buttermilk_stuck-900x1200.jpg"
+              },
+              "large": {
+                "url": "/api/media/file/buttermilk_stuck-1400x1867.jpg",
+                "width": 1400,
+                "height": 1867,
+                "mimeType": "image/jpeg",
+                "filesize": 401165,
+                "filename": "buttermilk_stuck-1400x1867.jpg"
+              },
+              "xlarge": {
+                "url": "/api/media/file/buttermilk_stuck-1920x2560.jpg",
+                "width": 1920,
+                "height": 2560,
+                "mimeType": "image/jpeg",
+                "filesize": 676034,
+                "filename": "buttermilk_stuck-1920x2560.jpg"
+              },
+              "og": {
+                "url": "/api/media/file/buttermilk_stuck-1200x630.jpg",
+                "width": 1200,
+                "height": 630,
+                "mimeType": "image/jpeg",
+                "filesize": 117098,
+                "filename": "buttermilk_stuck-1200x630.jpg"
+              }
+            }
+          },
+          "description": null
+        },
+        "publishedAt": "2025-06-24T18:39:07.946Z",
+        "populatedAuthors": [],
+        "slug": "starting-this-website"
+      }
+    ],
+    "categories": [
+      {
+        "id": 1,
+        "title": "Self Doubt",
+        "slug": "self-doubt",
+        "slugLock": true,
+        "parent": null,
+        "breadcrumbs": [
+          {
+            "id": "6877a52f938ae40004d1b7c8",
+            "doc": 1,
+            "url": "/self-doubt",
+            "label": "Self Doubt"
+          }
+        ],
+        "updatedAt": "2025-07-16T13:12:15.763Z",
+        "createdAt": "2025-07-16T13:12:15.709Z"
+      }
+    ],
+    "meta": {
+      "title": "Anxiety and being an imposter",
+      "image": {
+        "id": 19,
+        "alt": "IIT Indore Library",
+        "caption": null,
+        "updatedAt": "2025-07-16T13:11:27.417Z",
+        "createdAt": "2025-07-16T13:11:24.726Z",
+        "url": "/api/media/file/Library.jpg",
+        "thumbnailURL": "/api/media/file/Library-300x400.jpg",
+        "filename": "Library.jpg",
+        "mimeType": "image/jpeg",
+        "filesize": 288713,
+        "width": 3024,
+        "height": 4032,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumbnail": {
+            "url": "/api/media/file/Library-300x400.jpg",
+            "width": 300,
+            "height": 400,
+            "mimeType": "image/jpeg",
+            "filesize": 23647,
+            "filename": "Library-300x400.jpg"
+          },
+          "square": {
+            "url": "/api/media/file/Library-500x500.jpg",
+            "width": 500,
+            "height": 500,
+            "mimeType": "image/jpeg",
+            "filesize": 47709,
+            "filename": "Library-500x500.jpg"
+          },
+          "small": {
+            "url": "/api/media/file/Library-600x800.jpg",
+            "width": 600,
+            "height": 800,
+            "mimeType": "image/jpeg",
+            "filesize": 77931,
+            "filename": "Library-600x800.jpg"
+          },
+          "medium": {
+            "url": "/api/media/file/Library-900x1200.jpg",
+            "width": 900,
+            "height": 1200,
+            "mimeType": "image/jpeg",
+            "filesize": 160322,
+            "filename": "Library-900x1200.jpg"
+          },
+          "large": {
+            "url": "/api/media/file/Library-1400x1867.jpg",
+            "width": 1400,
+            "height": 1867,
+            "mimeType": "image/jpeg",
+            "filesize": 332517,
+            "filename": "Library-1400x1867.jpg"
+          },
+          "xlarge": {
+            "url": "/api/media/file/Library-1920x2560.jpg",
+            "width": 1920,
+            "height": 2560,
+            "mimeType": "image/jpeg",
+            "filesize": 549895,
+            "filename": "Library-1920x2560.jpg"
+          },
+          "og": {
+            "url": "/api/media/file/Library-1200x630.jpg",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/jpeg",
+            "filesize": 132881,
+            "filename": "Library-1200x630.jpg"
+          }
+        }
+      },
+      "description": "Sometimes, you feel, I don't know, not enough."
+    },
+    "publishedAt": "2025-07-16T13:27:58.539Z",
+    "authors": [
+      1
+    ],
+    "populatedAuthors": [
+      {
+        "id": 1,
+        "name": "Kartik Mandar"
+      }
+    ],
+    "slug": "anxiety-and-being-an-imposter",
+    "slugLock": true,
+    "updatedAt": "2025-07-16T13:27:58.564Z",
+    "createdAt": "2025-07-16T13:04:45.564Z",
+    "_status": "published"
+  },
+  {
+    "id": 2,
+    "title": "A day at IIT Indore",
+    "heroImage": {
+      "id": 3,
+      "alt": "A day",
+      "caption": null,
+      "updatedAt": "2025-07-13T12:17:40.692Z",
+      "createdAt": "2025-07-13T12:17:36.851Z",
+      "url": "/api/media/file/day.jpeg",
+      "thumbnailURL": "/api/media/file/day-300x225.jpg",
+      "filename": "day.jpeg",
+      "mimeType": "image/jpeg",
+      "filesize": 1802450,
+      "width": 4032,
+      "height": 3024,
+      "focalX": 50,
+      "focalY": 50,
+      "sizes": {
+        "thumbnail": {
+          "url": "/api/media/file/day-300x225.jpg",
+          "width": 300,
+          "height": 225,
+          "mimeType": "image/jpeg",
+          "filesize": 12221,
+          "filename": "day-300x225.jpg"
+        },
+        "square": {
+          "url": "/api/media/file/day-500x500.jpg",
+          "width": 500,
+          "height": 500,
+          "mimeType": "image/jpeg",
+          "filesize": 41076,
+          "filename": "day-500x500.jpg"
+        },
+        "small": {
+          "url": "/api/media/file/day-600x450.jpg",
+          "width": 600,
+          "height": 450,
+          "mimeType": "image/jpeg",
+          "filesize": 39974,
+          "filename": "day-600x450.jpg"
+        },
+        "medium": {
+          "url": "/api/media/file/day-900x675.jpg",
+          "width": 900,
+          "height": 675,
+          "mimeType": "image/jpeg",
+          "filesize": 85333,
+          "filename": "day-900x675.jpg"
+        },
+        "large": {
+          "url": "/api/media/file/day-1400x1050.jpg",
+          "width": 1400,
+          "height": 1050,
+          "mimeType": "image/jpeg",
+          "filesize": 216398,
+          "filename": "day-1400x1050.jpg"
+        },
+        "xlarge": {
+          "url": "/api/media/file/day-1920x1440.jpg",
+          "width": 1920,
+          "height": 1440,
+          "mimeType": "image/jpeg",
+          "filesize": 425250,
+          "filename": "day-1920x1440.jpg"
+        },
+        "og": {
+          "url": "/api/media/file/day-1200x630.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "filesize": 116779,
+          "filename": "day-1200x630.jpg"
+        }
+      }
+    },
+    "content": {
+      "root": {
+        "type": "root",
+        "format": "",
+        "indent": 0,
+        "version": 1,
+        "children": [
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Well it's a Sunday but rather than resting, working on \"",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Hard X-Ray Observations of Cygnus X-1 with NuSTAR",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 1,
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "\" paper. I mean not saying the work is not interesting, but why does paper writing feels like a chore. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "And you overwork yourself on weekends and feel drained out. Is this normal? ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "I don't really know at this point. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "horizontalrule",
+            "version": 1
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "I am currently at SKA India training workshop at IIT Indore, we made a horn antenna this week and had some good lectures throughout. It is fun. Also got my VISA approved and waiting for my passport to be stamped. If it comes by 17th, I will be off to Toronto, otherwise, well bad luck I guess.",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          }
+        ],
+        "direction": "ltr"
+      }
+    },
+    "relatedPosts": [
+      {
+        "id": 1,
+        "title": "Starting this website",
+        "content": {
+          "root": {
+            "type": "root",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Well finally after 3 months of work this website is done. I have much more content (like projects, talks, posts), but migrating the postgres database from the local development environment to vercel production turned out to be a nightmare. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "After hours of retries I decided to try and make a fresh vercel project and add content to the CMS manually as I go. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "I guess I can better curate things as I go now. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Nevertheless this post is one of the first. There will be many more but I don't know when and how these would come. I plan to make detailed posts about what happens in the life of academia people. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "It serves two purposes, either motivated school students can get inspired from it and join the scientific community  or people who thought this to be a shiny medal to achieve will drop that goal and search for something more practical. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Academic life is no doubt really rewarding in some aspects but for sure is not the easiest path to money. There are much more pracical avenues in that respect. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Yesterday had been so unlucky that I can't really comprehend what was going on. I will explain in detail in probably another post! It was a bad bad day, visa got rejected, the masala chaas got stuck (the photo above) and I cracked my phone screen. I couldn't sleep due to electricity going out. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [],
+                "direction": null,
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "It was actually interesting how bad ones's luck could one after another. But nevertheless that is past and I am over it lol..",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Maybe I will invite some of my colleagues too, to write about their lives!",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              }
+            ],
+            "direction": "ltr"
+          }
+        },
+        "categories": [],
+        "meta": {
+          "image": {
+            "id": 2,
+            "alt": "Buttermilk stuck in vending machine",
+            "caption": null,
+            "updatedAt": "2025-06-24T18:32:34.469Z",
+            "createdAt": "2025-06-24T18:32:34.520Z",
+            "url": "/api/media/file/buttermilk_stuck.JPG",
+            "thumbnailURL": "/api/media/file/buttermilk_stuck-300x400.jpg",
+            "filename": "buttermilk_stuck.JPG",
+            "mimeType": "image/jpeg",
+            "filesize": 2581227,
+            "width": 4032,
+            "height": 3024,
+            "focalX": 50,
+            "focalY": 50,
+            "sizes": {
+              "thumbnail": {
+                "url": "/api/media/file/buttermilk_stuck-300x400.jpg",
+                "width": 300,
+                "height": 400,
+                "mimeType": "image/jpeg",
+                "filesize": 30692,
+                "filename": "buttermilk_stuck-300x400.jpg"
+              },
+              "square": {
+                "url": "/api/media/file/buttermilk_stuck-500x500.jpg",
+                "width": 500,
+                "height": 500,
+                "mimeType": "image/jpeg",
+                "filesize": 53808,
+                "filename": "buttermilk_stuck-500x500.jpg"
+              },
+              "small": {
+                "url": "/api/media/file/buttermilk_stuck-600x800.jpg",
+                "width": 600,
+                "height": 800,
+                "mimeType": "image/jpeg",
+                "filesize": 101629,
+                "filename": "buttermilk_stuck-600x800.jpg"
+              },
+              "medium": {
+                "url": "/api/media/file/buttermilk_stuck-900x1200.jpg",
+                "width": 900,
+                "height": 1200,
+                "mimeType": "image/jpeg",
+                "filesize": 199719,
+                "filename": "buttermilk_stuck-900x1200.jpg"
+              },
+              "large": {
+                "url": "/api/media/file/buttermilk_stuck-1400x1867.jpg",
+                "width": 1400,
+                "height": 1867,
+                "mimeType": "image/jpeg",
+                "filesize": 401165,
+                "filename": "buttermilk_stuck-1400x1867.jpg"
+              },
+              "xlarge": {
+                "url": "/api/media/file/buttermilk_stuck-1920x2560.jpg",
+                "width": 1920,
+                "height": 2560,
+                "mimeType": "image/jpeg",
+                "filesize": 676034,
+                "filename": "buttermilk_stuck-1920x2560.jpg"
+              },
+              "og": {
+                "url": "/api/media/file/buttermilk_stuck-1200x630.jpg",
+                "width": 1200,
+                "height": 630,
+                "mimeType": "image/jpeg",
+                "filesize": 117098,
+                "filename": "buttermilk_stuck-1200x630.jpg"
+              }
+            }
+          },
+          "description": null
+        },
+        "publishedAt": "2025-06-24T18:39:07.946Z",
+        "populatedAuthors": [],
+        "slug": "starting-this-website"
+      }
+    ],
+    "categories": [],
+    "meta": {
+      "title": "A day at IIT Indore",
+      "image": {
+        "id": 3,
+        "alt": "A day",
+        "caption": null,
+        "updatedAt": "2025-07-13T12:17:40.692Z",
+        "createdAt": "2025-07-13T12:17:36.851Z",
+        "url": "/api/media/file/day.jpeg",
+        "thumbnailURL": "/api/media/file/day-300x225.jpg",
+        "filename": "day.jpeg",
+        "mimeType": "image/jpeg",
+        "filesize": 1802450,
+        "width": 4032,
+        "height": 3024,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumbnail": {
+            "url": "/api/media/file/day-300x225.jpg",
+            "width": 300,
+            "height": 225,
+            "mimeType": "image/jpeg",
+            "filesize": 12221,
+            "filename": "day-300x225.jpg"
+          },
+          "square": {
+            "url": "/api/media/file/day-500x500.jpg",
+            "width": 500,
+            "height": 500,
+            "mimeType": "image/jpeg",
+            "filesize": 41076,
+            "filename": "day-500x500.jpg"
+          },
+          "small": {
+            "url": "/api/media/file/day-600x450.jpg",
+            "width": 600,
+            "height": 450,
+            "mimeType": "image/jpeg",
+            "filesize": 39974,
+            "filename": "day-600x450.jpg"
+          },
+          "medium": {
+            "url": "/api/media/file/day-900x675.jpg",
+            "width": 900,
+            "height": 675,
+            "mimeType": "image/jpeg",
+            "filesize": 85333,
+            "filename": "day-900x675.jpg"
+          },
+          "large": {
+            "url": "/api/media/file/day-1400x1050.jpg",
+            "width": 1400,
+            "height": 1050,
+            "mimeType": "image/jpeg",
+            "filesize": 216398,
+            "filename": "day-1400x1050.jpg"
+          },
+          "xlarge": {
+            "url": "/api/media/file/day-1920x1440.jpg",
+            "width": 1920,
+            "height": 1440,
+            "mimeType": "image/jpeg",
+            "filesize": 425250,
+            "filename": "day-1920x1440.jpg"
+          },
+          "og": {
+            "url": "/api/media/file/day-1200x630.jpg",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/jpeg",
+            "filesize": 116779,
+            "filename": "day-1200x630.jpg"
+          }
+        }
+      },
+      "description": null
+    },
+    "publishedAt": "2025-07-13T14:39:19.606Z",
+    "authors": [
+      1
+    ],
+    "populatedAuthors": [
+      {
+        "id": 1,
+        "name": "Kartik Mandar"
+      }
+    ],
+    "slug": "a-day-at-iit-indore",
+    "slugLock": true,
+    "updatedAt": "2025-07-13T14:41:04.051Z",
+    "createdAt": "2025-07-13T12:12:59.193Z",
+    "_status": "published"
+  },
+  {
+    "id": 1,
+    "title": "Starting this website",
+    "heroImage": {
+      "id": 2,
+      "alt": "Buttermilk stuck in vending machine",
+      "caption": null,
+      "updatedAt": "2025-06-24T18:32:34.469Z",
+      "createdAt": "2025-06-24T18:32:34.520Z",
+      "url": "/api/media/file/buttermilk_stuck.JPG",
+      "thumbnailURL": "/api/media/file/buttermilk_stuck-300x400.jpg",
+      "filename": "buttermilk_stuck.JPG",
+      "mimeType": "image/jpeg",
+      "filesize": 2581227,
+      "width": 4032,
+      "height": 3024,
+      "focalX": 50,
+      "focalY": 50,
+      "sizes": {
+        "thumbnail": {
+          "url": "/api/media/file/buttermilk_stuck-300x400.jpg",
+          "width": 300,
+          "height": 400,
+          "mimeType": "image/jpeg",
+          "filesize": 30692,
+          "filename": "buttermilk_stuck-300x400.jpg"
+        },
+        "square": {
+          "url": "/api/media/file/buttermilk_stuck-500x500.jpg",
+          "width": 500,
+          "height": 500,
+          "mimeType": "image/jpeg",
+          "filesize": 53808,
+          "filename": "buttermilk_stuck-500x500.jpg"
+        },
+        "small": {
+          "url": "/api/media/file/buttermilk_stuck-600x800.jpg",
+          "width": 600,
+          "height": 800,
+          "mimeType": "image/jpeg",
+          "filesize": 101629,
+          "filename": "buttermilk_stuck-600x800.jpg"
+        },
+        "medium": {
+          "url": "/api/media/file/buttermilk_stuck-900x1200.jpg",
+          "width": 900,
+          "height": 1200,
+          "mimeType": "image/jpeg",
+          "filesize": 199719,
+          "filename": "buttermilk_stuck-900x1200.jpg"
+        },
+        "large": {
+          "url": "/api/media/file/buttermilk_stuck-1400x1867.jpg",
+          "width": 1400,
+          "height": 1867,
+          "mimeType": "image/jpeg",
+          "filesize": 401165,
+          "filename": "buttermilk_stuck-1400x1867.jpg"
+        },
+        "xlarge": {
+          "url": "/api/media/file/buttermilk_stuck-1920x2560.jpg",
+          "width": 1920,
+          "height": 2560,
+          "mimeType": "image/jpeg",
+          "filesize": 676034,
+          "filename": "buttermilk_stuck-1920x2560.jpg"
+        },
+        "og": {
+          "url": "/api/media/file/buttermilk_stuck-1200x630.jpg",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/jpeg",
+          "filesize": 117098,
+          "filename": "buttermilk_stuck-1200x630.jpg"
+        }
+      }
+    },
+    "content": {
+      "root": {
+        "type": "root",
+        "format": "",
+        "indent": 0,
+        "version": 1,
+        "children": [
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Well finally after 3 months of work this website is done. I have much more content (like projects, talks, posts), but migrating the postgres database from the local development environment to vercel production turned out to be a nightmare. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "After hours of retries I decided to try and make a fresh vercel project and add content to the CMS manually as I go. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "I guess I can better curate things as I go now. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Nevertheless this post is one of the first. There will be many more but I don't know when and how these would come. I plan to make detailed posts about what happens in the life of academia people. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "It serves two purposes, either motivated school students can get inspired from it and join the scientific community  or people who thought this to be a shiny medal to achieve will drop that goal and search for something more practical. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "Academic life is no doubt really rewarding in some aspects but for sure is not the easiest path to money. There are much more pracical avenues in that respect. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Yesterday had been so unlucky that I can't really comprehend what was going on. I will explain in detail in probably another post! It was a bad bad day, visa got rejected, the masala chaas got stuck (the photo above) and I cracked my phone screen. I couldn't sleep due to electricity going out. ",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [],
+            "direction": null,
+            "textStyle": "",
+            "textFormat": 0
+          },
+          {
+            "type": "paragraph",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "mode": "normal",
+                "text": "It was actually interesting how bad ones's luck could one after another. But nevertheless that is past and I am over it lol..",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "type": "linebreak",
+                "version": 1
+              },
+              {
+                "mode": "normal",
+                "text": "Maybe I will invite some of my colleagues too, to write about their lives!",
+                "type": "text",
+                "style": "",
+                "detail": 0,
+                "format": 0,
+                "version": 1
+              }
+            ],
+            "direction": "ltr",
+            "textStyle": "",
+            "textFormat": 0
+          }
+        ],
+        "direction": "ltr"
+      }
+    },
+    "relatedPosts": [
+      {
+        "id": 2,
+        "title": "A day at IIT Indore",
+        "content": {
+          "root": {
+            "type": "root",
+            "format": "",
+            "indent": 0,
+            "version": 1,
+            "children": [
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "Well it's a Sunday but rather than resting, working on \"",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "Hard X-Ray Observations of Cygnus X-1 with NuSTAR",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 1,
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "\" paper. I mean not saying the work is not interesting, but why does paper writing feels like a chore. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "And you overwork yourself on weekends and feel drained out. Is this normal? ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "type": "linebreak",
+                    "version": 1
+                  },
+                  {
+                    "mode": "normal",
+                    "text": "I don't really know at this point. ",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              },
+              {
+                "type": "horizontalrule",
+                "version": 1
+              },
+              {
+                "type": "paragraph",
+                "format": "",
+                "indent": 0,
+                "version": 1,
+                "children": [
+                  {
+                    "mode": "normal",
+                    "text": "I am currently at SKA India training workshop at IIT Indore, we made a horn antenna this week and had some good lectures throughout. It is fun. Also got my VISA approved and waiting for my passport to be stamped. If it comes by 17th, I will be off to Toronto, otherwise, well bad luck I guess.",
+                    "type": "text",
+                    "style": "",
+                    "detail": 0,
+                    "format": 0,
+                    "version": 1
+                  }
+                ],
+                "direction": "ltr",
+                "textStyle": "",
+                "textFormat": 0
+              }
+            ],
+            "direction": "ltr"
+          }
+        },
+        "categories": [],
+        "meta": {
+          "image": {
+            "id": 3,
+            "alt": "A day",
+            "caption": null,
+            "updatedAt": "2025-07-13T12:17:40.692Z",
+            "createdAt": "2025-07-13T12:17:36.851Z",
+            "url": "/api/media/file/day.jpeg",
+            "thumbnailURL": "/api/media/file/day-300x225.jpg",
+            "filename": "day.jpeg",
+            "mimeType": "image/jpeg",
+            "filesize": 1802450,
+            "width": 4032,
+            "height": 3024,
+            "focalX": 50,
+            "focalY": 50,
+            "sizes": {
+              "thumbnail": {
+                "url": "/api/media/file/day-300x225.jpg",
+                "width": 300,
+                "height": 225,
+                "mimeType": "image/jpeg",
+                "filesize": 12221,
+                "filename": "day-300x225.jpg"
+              },
+              "square": {
+                "url": "/api/media/file/day-500x500.jpg",
+                "width": 500,
+                "height": 500,
+                "mimeType": "image/jpeg",
+                "filesize": 41076,
+                "filename": "day-500x500.jpg"
+              },
+              "small": {
+                "url": "/api/media/file/day-600x450.jpg",
+                "width": 600,
+                "height": 450,
+                "mimeType": "image/jpeg",
+                "filesize": 39974,
+                "filename": "day-600x450.jpg"
+              },
+              "medium": {
+                "url": "/api/media/file/day-900x675.jpg",
+                "width": 900,
+                "height": 675,
+                "mimeType": "image/jpeg",
+                "filesize": 85333,
+                "filename": "day-900x675.jpg"
+              },
+              "large": {
+                "url": "/api/media/file/day-1400x1050.jpg",
+                "width": 1400,
+                "height": 1050,
+                "mimeType": "image/jpeg",
+                "filesize": 216398,
+                "filename": "day-1400x1050.jpg"
+              },
+              "xlarge": {
+                "url": "/api/media/file/day-1920x1440.jpg",
+                "width": 1920,
+                "height": 1440,
+                "mimeType": "image/jpeg",
+                "filesize": 425250,
+                "filename": "day-1920x1440.jpg"
+              },
+              "og": {
+                "url": "/api/media/file/day-1200x630.jpg",
+                "width": 1200,
+                "height": 630,
+                "mimeType": "image/jpeg",
+                "filesize": 116779,
+                "filename": "day-1200x630.jpg"
+              }
+            }
+          },
+          "description": null
+        },
+        "publishedAt": "2025-07-13T14:39:19.606Z",
+        "populatedAuthors": [],
+        "slug": "a-day-at-iit-indore"
+      }
+    ],
+    "categories": [],
+    "meta": {
+      "title": null,
+      "image": {
+        "id": 2,
+        "alt": "Buttermilk stuck in vending machine",
+        "caption": null,
+        "updatedAt": "2025-06-24T18:32:34.469Z",
+        "createdAt": "2025-06-24T18:32:34.520Z",
+        "url": "/api/media/file/buttermilk_stuck.JPG",
+        "thumbnailURL": "/api/media/file/buttermilk_stuck-300x400.jpg",
+        "filename": "buttermilk_stuck.JPG",
+        "mimeType": "image/jpeg",
+        "filesize": 2581227,
+        "width": 4032,
+        "height": 3024,
+        "focalX": 50,
+        "focalY": 50,
+        "sizes": {
+          "thumbnail": {
+            "url": "/api/media/file/buttermilk_stuck-300x400.jpg",
+            "width": 300,
+            "height": 400,
+            "mimeType": "image/jpeg",
+            "filesize": 30692,
+            "filename": "buttermilk_stuck-300x400.jpg"
+          },
+          "square": {
+            "url": "/api/media/file/buttermilk_stuck-500x500.jpg",
+            "width": 500,
+            "height": 500,
+            "mimeType": "image/jpeg",
+            "filesize": 53808,
+            "filename": "buttermilk_stuck-500x500.jpg"
+          },
+          "small": {
+            "url": "/api/media/file/buttermilk_stuck-600x800.jpg",
+            "width": 600,
+            "height": 800,
+            "mimeType": "image/jpeg",
+            "filesize": 101629,
+            "filename": "buttermilk_stuck-600x800.jpg"
+          },
+          "medium": {
+            "url": "/api/media/file/buttermilk_stuck-900x1200.jpg",
+            "width": 900,
+            "height": 1200,
+            "mimeType": "image/jpeg",
+            "filesize": 199719,
+            "filename": "buttermilk_stuck-900x1200.jpg"
+          },
+          "large": {
+            "url": "/api/media/file/buttermilk_stuck-1400x1867.jpg",
+            "width": 1400,
+            "height": 1867,
+            "mimeType": "image/jpeg",
+            "filesize": 401165,
+            "filename": "buttermilk_stuck-1400x1867.jpg"
+          },
+          "xlarge": {
+            "url": "/api/media/file/buttermilk_stuck-1920x2560.jpg",
+            "width": 1920,
+            "height": 2560,
+            "mimeType": "image/jpeg",
+            "filesize": 676034,
+            "filename": "buttermilk_stuck-1920x2560.jpg"
+          },
+          "og": {
+            "url": "/api/media/file/buttermilk_stuck-1200x630.jpg",
+            "width": 1200,
+            "height": 630,
+            "mimeType": "image/jpeg",
+            "filesize": 117098,
+            "filename": "buttermilk_stuck-1200x630.jpg"
+          }
+        }
+      },
+      "description": null
+    },
+    "publishedAt": "2025-06-24T18:39:07.946Z",
+    "authors": [
+      1
+    ],
+    "populatedAuthors": [
+      {
+        "id": 1,
+        "name": "Kartik Mandar"
+      }
+    ],
+    "slug": "starting-this-website",
+    "slugLock": true,
+    "updatedAt": "2025-07-13T14:41:23.493Z",
+    "createdAt": "2025-06-24T18:30:47.145Z",
+    "_status": "published"
+  }
+]

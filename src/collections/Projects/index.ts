@@ -3,10 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
 import { slugField } from '@/fields/slug'
-import { githubSyncField } from '@/fields/githubSync'
-import { bulkSyncField } from '@/fields/bulkSync'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
-// import { autoSyncGitHub } from './hooks/autoSyncGitHub'
 
 import {
   MetaDescriptionField,
@@ -725,17 +722,6 @@ export const Projects: CollectionConfig<'projects'> = {
       },
     },
     {
-      name: 'lastGitHubSync',
-      type: 'date',
-      admin: {
-        description: 'Last time GitHub data was synchronized',
-        readOnly: true,
-        position: 'sidebar',
-      },
-    },
-    ...bulkSyncField(),
-    ...githubSyncField(),
-    {
       name: 'featured',
       type: 'checkbox',
       defaultValue: false,
@@ -782,7 +768,6 @@ export const Projects: CollectionConfig<'projects'> = {
   ],
   hooks: {
     beforeChange: [populatePublishedAt],
-    // afterChange: [autoSyncGitHub], // Disabled auto-sync - use manual sync to avoid timeouts
   },
   versions: {
     drafts: {

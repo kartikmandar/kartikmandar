@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "title": "Self Doubt",
+    "slug": "self-doubt",
+    "slugLock": true,
+    "parent": null,
+    "breadcrumbs": [
+      {
+        "id": "6877a52f938ae40004d1b7c8",
+        "doc": 1,
+        "url": "/self-doubt",
+        "label": "Self Doubt"
+      }
+    ],
+    "updatedAt": "2025-07-16T13:12:15.763Z",
+    "createdAt": "2025-07-16T13:12:15.709Z"
+  }
+]

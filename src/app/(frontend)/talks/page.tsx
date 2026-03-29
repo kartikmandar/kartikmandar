@@ -1,10 +1,9 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { TalksShowcase } from '@/blocks/TalksShowcase/Component'
+import { getTalks } from '@/data/talks'
 
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-static'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -17,22 +16,13 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function TalksPage(): Promise<React.JSX.Element> {
-  // Fetch talks data from CMS
-  const payload = await getPayload({ config: configPromise })
-  
-  const talksData = await payload.find({
-    collection: 'talks',
-    depth: 2,
-    limit: 1000,
-  })
-  
-  const talks = talksData.docs
+export default function TalksPage(): React.JSX.Element {
+  const talks = getTalks()
 
   return (
     <div className="container mx-auto px-4 py-20">
       <div className="max-w-6xl mx-auto">
-        
+
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
@@ -44,7 +34,7 @@ export default async function TalksPage(): Promise<React.JSX.Element> {
         </div>
 
         {/* TalksShowcase Block */}
-        <TalksShowcase 
+        <TalksShowcase
           blockType="talksShowcase"
           title=""
           subtitle=""

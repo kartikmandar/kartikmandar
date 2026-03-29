@@ -5,10 +5,8 @@ import Link from 'next/link'
 import React, { Fragment } from 'react'
 import { ChevronRight } from 'lucide-react'
 
-import type { Post } from '@/payload-types'
-
+import Image from 'next/image'
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
 
 // Helper function to extract text from Lexical content
 function extractTextFromContent(content: unknown): string {
@@ -39,8 +37,22 @@ function extractTextFromContent(content: unknown): string {
   return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
 }
 
-export type CardPostData = Pick<Post, 'slug' | 'categories' | 'meta' | 'title' | 'publishedAt' | 'populatedAuthors' | 'authors'> & {
-  content?: Post['content']
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CardPostData = {
+  slug?: string | null
+  title?: string | null
+  categories?: any[] | null
+  meta?: {
+    title?: string | null
+    description?: string | null
+    image?: any
+  } | null
+  publishedAt?: string | null
+  populatedAuthors?: Array<{ name?: string | null }> | null
+  authors?: any[] | null
+  content?: unknown
+  /** Plain text excerpt for MDX-based posts */
+  excerpt?: string
 }
 
 export const Card: React.FC<{
@@ -54,7 +66,7 @@ export const Card: React.FC<{
   const { card, link } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title, publishedAt, populatedAuthors, content } = doc || {}
+  const { slug, categories, meta, title, publishedAt, populatedAuthors, content, excerpt } = doc || {} as CardPostData
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
@@ -63,11 +75,13 @@ export const Card: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   // Get formatted authors
-  const hasAuthors = populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
-  const authorsText = hasAuthors ? formatAuthors(populatedAuthors) : null
+  const authorNames = (populatedAuthors || [])
+    .map((a) => (typeof a === 'object' && a !== null ? a.name : null))
+    .filter(Boolean) as string[]
+  const authorsText = authorNames.length > 0 ? authorNames.join(', ') : null
 
-  // Extract content preview
-  const contentPreview = extractTextFromContent(content)
+  // Use excerpt for MDX posts, fall back to Lexical content extraction
+  const contentPreview = excerpt || extractTextFromContent(content)
 
   return (
     <article
@@ -79,12 +93,23 @@ export const Card: React.FC<{
     >
       <div className="relative w-full">
         {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage !== 'string' && (
+        {metaImage && typeof metaImage === 'object' && metaImage !== null && 'url' in metaImage && (
           <div className="aspect-video overflow-hidden">
-            <Media 
-              resource={metaImage} 
-              size="33vw" 
+            <Media
+              resource={metaImage as Parameters<typeof Media>[0]['resource']}
+              size="33vw"
               imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
+        {metaImage && typeof metaImage === 'string' && (
+          <div className="aspect-video overflow-hidden relative">
+            <Image
+              src={metaImage}
+              alt={titleToUse || ''}
+              fill
+              sizes="33vw"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             />
           </div>
         )}

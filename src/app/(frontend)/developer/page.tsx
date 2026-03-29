@@ -9,170 +9,177 @@ import PageClient from './page.client'
 
 export const dynamic = 'force-static'
 
-// GitHub repositories configuration - add your repos in the order you want them to appear
-const GITHUB_REPOS_CONFIG = [
+// Static GitHub repository data (no API calls needed)
+const GITHUB_REPOS = [
   {
-    owner: 'kartikmandar',
-    repo: 'kartikmandar',
-    featured: true,
-    description: 'Personal portfolio website showcasing projects and professional experience'
+    name: 'kartikmandar',
+    owner: { login: 'kartikmandar' },
+    description: 'Personal portfolio website showcasing projects and professional experience',
+    language: 'TypeScript',
+    updated_at: '2026-02-05T16:27:20Z',
+    html_url: 'https://github.com/kartikmandar/kartikmandar',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'promptprep',
-    featured: true,
-    description: 'Python CLI tool to aggregate code files & directory structure into one file, perfect for LLM context preparation'
+    name: 'promptprep',
+    owner: { login: 'kartikmandar' },
+    description: 'Python CLI to aggregate code files & directory structure into one file. Perfect for LLM context prep.',
+    language: 'Python',
+    updated_at: '2025-06-15T18:27:23Z',
+    html_url: 'https://github.com/kartikmandar/promptprep',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'RIPPLe',
-    featured: true,
-    description: 'Data Processing Pipeline for LSST gravitational lensing studies'
+    name: 'RIPPLe',
+    owner: { login: 'kartikmandar' },
+    description: 'Data Processing Pipeline for LSST gravitational lensing studies',
+    language: 'Python',
+    updated_at: '2026-02-18T15:48:21Z',
+    html_url: 'https://github.com/kartikmandar/RIPPLe',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'dave',
-    featured: true,
-    description: 'Modernized astronomical data analysis GUI application'
+    name: 'dave',
+    owner: { login: 'kartikmandar' },
+    description: 'A GUI for spectral-timing analysis of X-ray astronomical data.',
+    language: 'JavaScript',
+    updated_at: '2024-02-27T17:59:37Z',
+    html_url: 'https://github.com/kartikmandar/dave',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'iGEM',
-    featured: true,
-    description: 'Synthetic biology project wiki and computational analysis for KeratiNoMore project'
+    name: 'iGEM',
+    owner: { login: 'kartikmandar' },
+    description: 'Synthetic biology project wiki and computational analysis for KeratiNoMore project',
+    language: 'TypeScript',
+    updated_at: '2025-07-14T14:16:08Z',
+    html_url: 'https://github.com/kartikmandar/iGEM',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'fftvis',
-    featured: true,
-    description: 'Non-uniform Fast Fourier Transform based interferometric visibility simulator'
+    name: 'fftvis',
+    owner: { login: 'kartikmandar' },
+    description: 'Non-uniform Fast Fourier Transform based interferometric visibility simulator',
+    language: 'Python',
+    updated_at: '2026-02-26T20:45:47Z',
+    html_url: 'https://github.com/kartikmandar/fftvis',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'deeplense-tasks',
-    featured: true,
-    description: 'Deep learning workflows for gravitational lensing analysis tasks'
+    name: 'deeplense-tasks',
+    owner: { login: 'kartikmandar' },
+    description: 'Deep learning workflows for gravitational lensing analysis tasks',
+    language: 'Jupyter Notebook',
+    updated_at: '2025-04-22T06:04:56Z',
+    html_url: 'https://github.com/kartikmandar/deeplense-tasks',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'makeahomie',
-    featured: true,
-    description: 'Homelab management and automation scripts for personal infrastructure'
+    name: 'makeahomie',
+    owner: { login: 'kartikmandar' },
+    description: 'A smart platform that connects like-minded students for study partnerships and friendships.',
+    language: 'JavaScript',
+    updated_at: '2025-04-17T09:34:12Z',
+    html_url: 'https://github.com/kartikmandar/makeahomie',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'all_code',
-    featured: true,
-    description: 'Collection of code snippets and utilities for various programming tasks'
+    name: 'all_code',
+    owner: { login: 'kartikmandar' },
+    description: 'Collection of code snippets and utilities for various programming tasks',
+    language: 'Python',
+    updated_at: '2025-03-18T05:02:51Z',
+    html_url: 'https://github.com/kartikmandar/all_code',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'stingray-notebooks',
-    featured: true,
-    description: 'Jupyter notebooks for X-ray astronomy analysis using Stingray library'
+    name: 'stingray-notebooks',
+    owner: { login: 'kartikmandar' },
+    description: 'Jupyter notebooks for X-ray astronomy analysis using Stingray library',
+    language: 'Jupyter Notebook',
+    updated_at: '2025-01-06T12:39:21Z',
+    html_url: 'https://github.com/kartikmandar/stingray-notebooks',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'RRIsecretsanta',
-    featured: true,
-    description: 'Secret Santa gift exchange management system for Raman Research Institute'
+    name: 'RRIsecretsanta',
+    owner: { login: 'kartikmandar' },
+    description: 'Secret Santa gift exchange management system for Raman Research Institute',
+    language: 'JavaScript',
+    updated_at: '2025-06-16T11:18:59Z',
+    html_url: 'https://github.com/kartikmandar/RRIsecretsanta',
   },
   {
-    owner: 'kartikmandar',
-    repo: 'AstroBlog',
-    featured: true,
-    description: 'Astronomy and astrophysics blog platform for sharing research and insights'
+    name: 'AstroBlog',
+    owner: { login: 'kartikmandar' },
+    description: 'Astronomy and astrophysics blog platform for sharing research and insights',
+    language: 'HTML',
+    updated_at: '2023-05-25T09:39:34Z',
+    html_url: 'https://github.com/kartikmandar/AstroBlog',
   },
   {
-    owner: 'StingraySoftware',
-    repo: 'StingrayExplorer',
-    featured: true,
-    description: 'Interactive quicklook dashboard for X-ray astronomy data analysis'
+    name: 'StingrayExplorer',
+    owner: { login: 'StingraySoftware' },
+    description: 'Interactive quicklook dashboard for X-ray astronomy data analysis',
+    language: 'Python',
+    updated_at: '2025-12-12T18:51:28Z',
+    html_url: 'https://github.com/StingraySoftware/StingrayExplorer',
   },
   {
-    owner: 'AIIM2023',
-    repo: 'AIIM2023.github.io',
-    featured: true,
-    description: 'Official website for All India iGEM Meet 2023 conference'
+    name: 'AIIM2023.github.io',
+    owner: { login: 'AIIM2023' },
+    description: 'Official website for All India iGEM Meet 2023 conference',
+    language: 'CSS',
+    updated_at: '2023-07-20T17:29:07Z',
+    html_url: 'https://github.com/AIIM2023/AIIM2023.github.io',
   },
   {
-    owner: 'cygnus-x1-analysis',
-    repo: 'Analysis',
-    featured: true,
-    description: 'Timing and spectral analysis of Cygnus X-1 using NuSTAR observations'
+    name: 'Analysis',
+    owner: { login: 'cygnus-x1-analysis' },
+    description: 'Timing and spectral analysis of Cygnus X-1 using NuSTAR observations',
+    language: 'Python',
+    updated_at: '2025-07-14T06:06:37Z',
+    html_url: 'https://github.com/cygnus-x1-analysis/Analysis',
   },
   {
-    owner: 'cygnus-x1-analysis',
-    repo: 'scripts',
-    featured: true,
-    description: 'Data processing scripts for Cygnus X-1 X-ray analysis workflows'
+    name: 'scripts',
+    owner: { login: 'cygnus-x1-analysis' },
+    description: 'Data processing scripts for Cygnus X-1 X-ray analysis workflows',
+    language: 'Jupyter Notebook',
+    updated_at: '2025-06-15T14:54:04Z',
+    html_url: 'https://github.com/cygnus-x1-analysis/scripts',
   },
   {
-    owner: 'RRI-interferometry',
-    repo: 'hera_strip',
-    featured: true,
-    description: 'HERA data strip processing and analysis tools for radio interferometry'
+    name: 'hera_strip',
+    owner: { login: 'RRI-interferometry' },
+    description: 'HERA data strip processing and analysis tools for radio interferometry',
+    language: 'Python',
+    updated_at: '2025-12-05T13:22:45Z',
+    html_url: 'https://github.com/RRI-interferometry/hera_strip',
   },
   {
-    owner: 'RRI-interferometry',
-    repo: 'RRIVis',
-    featured: true,
-    description: 'Radio interferometric visibility simulator for HERA validation'
+    name: 'RRIVis',
+    owner: { login: 'RRI-interferometry' },
+    description: 'Radio interferometric visibility simulator for HERA validation',
+    language: 'Python',
+    updated_at: '2026-03-28T06:49:35Z',
+    html_url: 'https://github.com/RRI-interferometry/RRIVis',
   },
   {
-    owner: 'RRI-interferometry',
-    repo: 'HERA',
-    featured: true,
-    description: 'Hydrogen Epoch of Reionization Array data analysis and validation tools'
+    name: 'HERA',
+    owner: { login: 'RRI-interferometry' },
+    description: 'Hydrogen Epoch of Reionization Array data analysis and validation tools',
+    language: 'Jupyter Notebook',
+    updated_at: '2025-10-23T07:54:39Z',
+    html_url: 'https://github.com/RRI-interferometry/HERA',
   },
   {
-    owner: 'LinkSpace-by-Merakinist',
-    repo: 'chrome_extension',
-    featured: true,
-    description: 'Chrome extension for enhanced browsing and productivity features'
+    name: 'chrome_extension',
+    owner: { login: 'LinkSpace-by-Merakinist' },
+    description: 'Chrome extension for enhanced browsing and productivity features',
+    language: 'JavaScript',
+    updated_at: '2025-09-16T07:57:46Z',
+    html_url: 'https://github.com/LinkSpace-by-Merakinist/chrome_extension',
   },
   {
-    owner: 'Capstone-Projects-for-courses',
-    repo: 'CustomerSupportAutomation',
-    featured: true,
-    description: 'Automated customer support system with AI-powered responses and ticket management'
-  }
+    name: 'CustomerSupportAutomation',
+    owner: { login: 'Capstone-Projects-for-courses' },
+    description: 'Automated customer support system with AI-powered responses and ticket management',
+    language: 'Python',
+    updated_at: '2024-07-14T17:53:27Z',
+    html_url: 'https://github.com/Capstone-Projects-for-courses/CustomerSupportAutomation',
+  },
 ]
-
-// GitHub API functions
-async function fetchGitHubRepo(owner: string, repo: string) {
-  try {
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      next: { revalidate: 3600 } // Cache for 1 hour
-    })
-
-    if (!response.ok) {
-      console.warn(`Failed to fetch ${owner}/${repo}: ${response.status}`)
-      return null
-    }
-
-    return await response.json()
-  } catch (error) {
-    console.error(`Error fetching ${owner}/${repo}:`, error)
-    return null
-  }
-}
-
-async function fetchGitHubReposData() {
-  const reposData = []
-
-  for (const repoConfig of GITHUB_REPOS_CONFIG) {
-    const data = await fetchGitHubRepo(repoConfig.owner, repoConfig.repo)
-    if (data) {
-      reposData.push({
-        ...data,
-        config: repoConfig
-      })
-    }
-  }
-
-  return reposData
-}
 
 // Language color mapping
 const LANGUAGE_COLORS: { [key: string]: string } = {
@@ -299,9 +306,8 @@ const developmentExperience = [
 
 
 
-export default async function DeveloperPage() {
-  // Fetch GitHub repositories data
-  const githubRepos = await fetchGitHubReposData()
+export default function DeveloperPage() {
+  const githubRepos = GITHUB_REPOS
   return (
     <>
       <PageClient />
@@ -338,7 +344,7 @@ export default async function DeveloperPage() {
                     </div>
 
                     <p className="text-muted-foreground mb-4">
-                      {repo.config.description || repo.description}
+                      {repo.description}
                     </p>
 
                     <div className="flex items-center justify-between mb-4">

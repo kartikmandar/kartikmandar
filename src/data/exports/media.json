@@ -1,0 +1,1556 @@
+[
+  {
+    "id": 21,
+    "alt": "RRIVis Poster",
+    "caption": null,
+    "updatedAt": "2025-10-16T13:44:37.637Z",
+    "createdAt": "2025-10-16T13:44:36.852Z",
+    "url": "/api/media/file/rrivis_poster.png",
+    "thumbnailURL": "/api/media/file/rrivis_poster-300x345.png",
+    "filename": "rrivis_poster.png",
+    "mimeType": "image/png",
+    "filesize": 346873,
+    "width": 629,
+    "height": 724,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/rrivis_poster-300x345.png",
+        "width": 300,
+        "height": 345,
+        "mimeType": "image/png",
+        "filesize": 95228,
+        "filename": "rrivis_poster-300x345.png"
+      },
+      "square": {
+        "url": "/api/media/file/rrivis_poster-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 199888,
+        "filename": "rrivis_poster-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/rrivis_poster-600x691.png",
+        "width": 600,
+        "height": 691,
+        "mimeType": "image/png",
+        "filesize": 301185,
+        "filename": "rrivis_poster-600x691.png"
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/rrivis_poster-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 562244,
+        "filename": "rrivis_poster-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 20,
+    "alt": null,
+    "caption": null,
+    "updatedAt": "2025-10-16T12:04:01.549Z",
+    "createdAt": "2025-10-16T12:04:00.701Z",
+    "url": "/api/media/file/test1.png",
+    "thumbnailURL": "/api/media/file/test1-300x309.png",
+    "filename": "test1.png",
+    "mimeType": "image/png",
+    "filesize": 35277,
+    "width": 729,
+    "height": 752,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/test1-300x309.png",
+        "width": 300,
+        "height": 309,
+        "mimeType": "image/png",
+        "filesize": 26606,
+        "filename": "test1-300x309.png"
+      },
+      "square": {
+        "url": "/api/media/file/test1-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 53909,
+        "filename": "test1-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/test1-600x619.png",
+        "width": 600,
+        "height": 619,
+        "mimeType": "image/png",
+        "filesize": 70163,
+        "filename": "test1-600x619.png"
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/test1-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 83243,
+        "filename": "test1-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 19,
+    "alt": "IIT Indore Library",
+    "caption": null,
+    "updatedAt": "2025-07-16T13:11:27.417Z",
+    "createdAt": "2025-07-16T13:11:24.726Z",
+    "url": "/api/media/file/Library.jpg",
+    "thumbnailURL": "/api/media/file/Library-300x400.jpg",
+    "filename": "Library.jpg",
+    "mimeType": "image/jpeg",
+    "filesize": 288713,
+    "width": 3024,
+    "height": 4032,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/Library-300x400.jpg",
+        "width": 300,
+        "height": 400,
+        "mimeType": "image/jpeg",
+        "filesize": 23647,
+        "filename": "Library-300x400.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/Library-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 47709,
+        "filename": "Library-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/Library-600x800.jpg",
+        "width": 600,
+        "height": 800,
+        "mimeType": "image/jpeg",
+        "filesize": 77931,
+        "filename": "Library-600x800.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/Library-900x1200.jpg",
+        "width": 900,
+        "height": 1200,
+        "mimeType": "image/jpeg",
+        "filesize": 160322,
+        "filename": "Library-900x1200.jpg"
+      },
+      "large": {
+        "url": "/api/media/file/Library-1400x1867.jpg",
+        "width": 1400,
+        "height": 1867,
+        "mimeType": "image/jpeg",
+        "filesize": 332517,
+        "filename": "Library-1400x1867.jpg"
+      },
+      "xlarge": {
+        "url": "/api/media/file/Library-1920x2560.jpg",
+        "width": 1920,
+        "height": 2560,
+        "mimeType": "image/jpeg",
+        "filesize": 549895,
+        "filename": "Library-1920x2560.jpg"
+      },
+      "og": {
+        "url": "/api/media/file/Library-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 132881,
+        "filename": "Library-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 18,
+    "alt": "KeratiNoMore",
+    "caption": null,
+    "updatedAt": "2025-07-14T14:18:32.888Z",
+    "createdAt": "2025-07-14T14:18:28.009Z",
+    "url": "/api/media/file/KeratiNoMore.png",
+    "thumbnailURL": "/api/media/file/KeratiNoMore-300x157.png",
+    "filename": "KeratiNoMore.png",
+    "mimeType": "image/png",
+    "filesize": 2482054,
+    "width": 2838,
+    "height": 1484,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/KeratiNoMore-300x157.png",
+        "width": 300,
+        "height": 157,
+        "mimeType": "image/png",
+        "filesize": 64946,
+        "filename": "KeratiNoMore-300x157.png"
+      },
+      "square": {
+        "url": "/api/media/file/KeratiNoMore-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 240008,
+        "filename": "KeratiNoMore-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/KeratiNoMore-600x314.png",
+        "width": 600,
+        "height": 314,
+        "mimeType": "image/png",
+        "filesize": 198321,
+        "filename": "KeratiNoMore-600x314.png"
+      },
+      "medium": {
+        "url": "/api/media/file/KeratiNoMore-900x471.png",
+        "width": 900,
+        "height": 471,
+        "mimeType": "image/png",
+        "filesize": 376130,
+        "filename": "KeratiNoMore-900x471.png"
+      },
+      "large": {
+        "url": "/api/media/file/KeratiNoMore-1400x732.png",
+        "width": 1400,
+        "height": 732,
+        "mimeType": "image/png",
+        "filesize": 752813,
+        "filename": "KeratiNoMore-1400x732.png"
+      },
+      "xlarge": {
+        "url": "/api/media/file/KeratiNoMore-1920x1004.png",
+        "width": 1920,
+        "height": 1004,
+        "mimeType": "image/png",
+        "filesize": 1309548,
+        "filename": "KeratiNoMore-1920x1004.png"
+      },
+      "og": {
+        "url": "/api/media/file/KeratiNoMore-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 597268,
+        "filename": "KeratiNoMore-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 17,
+    "alt": "GSoC",
+    "caption": null,
+    "updatedAt": "2025-07-14T07:27:11.220Z",
+    "createdAt": "2025-07-14T07:27:11.109Z",
+    "url": "/api/media/file/gsoc.png",
+    "thumbnailURL": null,
+    "filename": "gsoc.png",
+    "mimeType": "image/png",
+    "filesize": 2457,
+    "width": 176,
+    "height": 159,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "square": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "small": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      }
+    }
+  },
+  {
+    "id": 16,
+    "alt": "Talk 1",
+    "caption": null,
+    "updatedAt": "2025-07-14T07:18:58.362Z",
+    "createdAt": "2025-07-14T07:18:57.338Z",
+    "url": "/api/media/file/talk1.jpg",
+    "thumbnailURL": "/api/media/file/talk1-300x390.jpg",
+    "filename": "talk1.jpg",
+    "mimeType": "image/jpeg",
+    "filesize": 423000,
+    "width": 1280,
+    "height": 1662,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/talk1-300x390.jpg",
+        "width": 300,
+        "height": 390,
+        "mimeType": "image/jpeg",
+        "filesize": 19923,
+        "filename": "talk1-300x390.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/talk1-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 42919,
+        "filename": "talk1-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/talk1-600x779.jpg",
+        "width": 600,
+        "height": 779,
+        "mimeType": "image/jpeg",
+        "filesize": 77682,
+        "filename": "talk1-600x779.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/talk1-900x1169.jpg",
+        "width": 900,
+        "height": 1169,
+        "mimeType": "image/jpeg",
+        "filesize": 167147,
+        "filename": "talk1-900x1169.jpg"
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/talk1-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 88279,
+        "filename": "talk1-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 15,
+    "alt": "AIIM",
+    "caption": null,
+    "updatedAt": "2025-07-14T07:13:45.703Z",
+    "createdAt": "2025-07-14T07:13:45.450Z",
+    "url": "/api/media/file/AIIM.png",
+    "thumbnailURL": "/api/media/file/AIIM-300x299.png",
+    "filename": "AIIM.png",
+    "mimeType": "image/png",
+    "filesize": 21945,
+    "width": 450,
+    "height": 448,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/AIIM-300x299.png",
+        "width": 300,
+        "height": 299,
+        "mimeType": "image/png",
+        "filesize": 20447,
+        "filename": "AIIM-300x299.png"
+      },
+      "square": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "small": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      }
+    }
+  },
+  {
+    "id": 14,
+    "alt": "VAST",
+    "caption": null,
+    "updatedAt": "2025-07-14T07:08:36.093Z",
+    "createdAt": "2025-07-14T07:08:34.677Z",
+    "url": "/api/media/file/VAST.png",
+    "thumbnailURL": "/api/media/file/VAST-300x300.png",
+    "filename": "VAST.png",
+    "mimeType": "image/png",
+    "filesize": 1168737,
+    "width": 1024,
+    "height": 1024,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/VAST-300x300.png",
+        "width": 300,
+        "height": 300,
+        "mimeType": "image/png",
+        "filesize": 70695,
+        "filename": "VAST-300x300.png"
+      },
+      "square": {
+        "url": "/api/media/file/VAST-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 201218,
+        "filename": "VAST-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/VAST-600x600.png",
+        "width": 600,
+        "height": 600,
+        "mimeType": "image/png",
+        "filesize": 306204,
+        "filename": "VAST-600x600.png"
+      },
+      "medium": {
+        "url": "/api/media/file/VAST-900x900.png",
+        "width": 900,
+        "height": 900,
+        "mimeType": "image/png",
+        "filesize": 767908,
+        "filename": "VAST-900x900.png"
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/VAST-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 765481,
+        "filename": "VAST-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 13,
+    "alt": "ROC",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:57:33.674Z",
+    "createdAt": "2025-07-14T06:56:49.029Z",
+    "url": "/api/media/file/AOC.png",
+    "thumbnailURL": "/api/media/file/AOC-300x322.png",
+    "filename": "AOC.png",
+    "mimeType": "image/png",
+    "filesize": 173269,
+    "width": 1086,
+    "height": 1164,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/AOC-300x322.png",
+        "width": 300,
+        "height": 322,
+        "mimeType": "image/png",
+        "filesize": 37569,
+        "filename": "AOC-300x322.png"
+      },
+      "square": {
+        "url": "/api/media/file/AOC-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 66779,
+        "filename": "AOC-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/AOC-600x643.png",
+        "width": 600,
+        "height": 643,
+        "mimeType": "image/png",
+        "filesize": 90035,
+        "filename": "AOC-600x643.png"
+      },
+      "medium": {
+        "url": "/api/media/file/AOC-900x965.png",
+        "width": 900,
+        "height": 965,
+        "mimeType": "image/png",
+        "filesize": 131373,
+        "filename": "AOC-900x965.png"
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/AOC-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 92344,
+        "filename": "AOC-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 12,
+    "alt": "DAVE",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:37:49.998Z",
+    "createdAt": "2025-07-14T06:37:45.925Z",
+    "url": "/api/media/file/DAVE.png",
+    "thumbnailURL": "/api/media/file/DAVE-300x162.png",
+    "filename": "DAVE.png",
+    "mimeType": "image/png",
+    "filesize": 1425570,
+    "width": 2770,
+    "height": 1492,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/DAVE-300x162.png",
+        "width": 300,
+        "height": 162,
+        "mimeType": "image/png",
+        "filesize": 54088,
+        "filename": "DAVE-300x162.png"
+      },
+      "square": {
+        "url": "/api/media/file/DAVE-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 136484,
+        "filename": "DAVE-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/DAVE-600x323.png",
+        "width": 600,
+        "height": 323,
+        "mimeType": "image/png",
+        "filesize": 167273,
+        "filename": "DAVE-600x323.png"
+      },
+      "medium": {
+        "url": "/api/media/file/DAVE-900x485.png",
+        "width": 900,
+        "height": 485,
+        "mimeType": "image/png",
+        "filesize": 314615,
+        "filename": "DAVE-900x485.png"
+      },
+      "large": {
+        "url": "/api/media/file/DAVE-1400x754.png",
+        "width": 1400,
+        "height": 754,
+        "mimeType": "image/png",
+        "filesize": 604697,
+        "filename": "DAVE-1400x754.png"
+      },
+      "xlarge": {
+        "url": "/api/media/file/DAVE-1920x1034.png",
+        "width": 1920,
+        "height": 1034,
+        "mimeType": "image/png",
+        "filesize": 966134,
+        "filename": "DAVE-1920x1034.png"
+      },
+      "og": {
+        "url": "/api/media/file/DAVE-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 471153,
+        "filename": "DAVE-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 11,
+    "alt": "PromptPrep Docs",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:30:31.550Z",
+    "createdAt": "2025-07-14T06:30:27.692Z",
+    "url": "/api/media/file/PromptPrep.png",
+    "thumbnailURL": "/api/media/file/PromptPrep-300x162.png",
+    "filename": "PromptPrep.png",
+    "mimeType": "image/png",
+    "filesize": 414233,
+    "width": 2770,
+    "height": 1492,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/PromptPrep-300x162.png",
+        "width": 300,
+        "height": 162,
+        "mimeType": "image/png",
+        "filesize": 21522,
+        "filename": "PromptPrep-300x162.png"
+      },
+      "square": {
+        "url": "/api/media/file/PromptPrep-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 64580,
+        "filename": "PromptPrep-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/PromptPrep-600x323.png",
+        "width": 600,
+        "height": 323,
+        "mimeType": "image/png",
+        "filesize": 62443,
+        "filename": "PromptPrep-600x323.png"
+      },
+      "medium": {
+        "url": "/api/media/file/PromptPrep-900x485.png",
+        "width": 900,
+        "height": 485,
+        "mimeType": "image/png",
+        "filesize": 114877,
+        "filename": "PromptPrep-900x485.png"
+      },
+      "large": {
+        "url": "/api/media/file/PromptPrep-1400x754.png",
+        "width": 1400,
+        "height": 754,
+        "mimeType": "image/png",
+        "filesize": 221446,
+        "filename": "PromptPrep-1400x754.png"
+      },
+      "xlarge": {
+        "url": "/api/media/file/PromptPrep-1920x1034.png",
+        "width": 1920,
+        "height": 1034,
+        "mimeType": "image/png",
+        "filesize": 349040,
+        "filename": "PromptPrep-1920x1034.png"
+      },
+      "og": {
+        "url": "/api/media/file/PromptPrep-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 174333,
+        "filename": "PromptPrep-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 10,
+    "alt": "Make a Homie",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:28:45.530Z",
+    "createdAt": "2025-07-14T06:28:44.011Z",
+    "url": "/api/media/file/makeAHomie.png",
+    "thumbnailURL": "/api/media/file/makeAHomie-300x450.png",
+    "filename": "makeAHomie.png",
+    "mimeType": "image/png",
+    "filesize": 2557755,
+    "width": 1024,
+    "height": 1536,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/makeAHomie-300x450.png",
+        "width": 300,
+        "height": 450,
+        "mimeType": "image/png",
+        "filesize": 143226,
+        "filename": "makeAHomie-300x450.png"
+      },
+      "square": {
+        "url": "/api/media/file/makeAHomie-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 346363,
+        "filename": "makeAHomie-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/makeAHomie-600x900.png",
+        "width": 600,
+        "height": 900,
+        "mimeType": "image/png",
+        "filesize": 742015,
+        "filename": "makeAHomie-600x900.png"
+      },
+      "medium": {
+        "url": "/api/media/file/makeAHomie-900x1350.png",
+        "width": 900,
+        "height": 1350,
+        "mimeType": "image/png",
+        "filesize": 1953111,
+        "filename": "makeAHomie-900x1350.png"
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/makeAHomie-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 1430203,
+        "filename": "makeAHomie-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 9,
+    "alt": "RRI Secret Santa",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:23:59.860Z",
+    "createdAt": "2025-07-14T06:23:54.703Z",
+    "url": "/api/media/file/RRISecretSanta.png",
+    "thumbnailURL": "/api/media/file/RRISecretSanta-300x162.png",
+    "filename": "RRISecretSanta.png",
+    "mimeType": "image/png",
+    "filesize": 3994949,
+    "width": 2770,
+    "height": 1492,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/RRISecretSanta-300x162.png",
+        "width": 300,
+        "height": 162,
+        "mimeType": "image/png",
+        "filesize": 84332,
+        "filename": "RRISecretSanta-300x162.png"
+      },
+      "square": {
+        "url": "/api/media/file/RRISecretSanta-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 332598,
+        "filename": "RRISecretSanta-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/RRISecretSanta-600x323.png",
+        "width": 600,
+        "height": 323,
+        "mimeType": "image/png",
+        "filesize": 303947,
+        "filename": "RRISecretSanta-600x323.png"
+      },
+      "medium": {
+        "url": "/api/media/file/RRISecretSanta-900x485.png",
+        "width": 900,
+        "height": 485,
+        "mimeType": "image/png",
+        "filesize": 622889,
+        "filename": "RRISecretSanta-900x485.png"
+      },
+      "large": {
+        "url": "/api/media/file/RRISecretSanta-1400x754.png",
+        "width": 1400,
+        "height": 754,
+        "mimeType": "image/png",
+        "filesize": 1366500,
+        "filename": "RRISecretSanta-1400x754.png"
+      },
+      "xlarge": {
+        "url": "/api/media/file/RRISecretSanta-1920x1034.png",
+        "width": 1920,
+        "height": 1034,
+        "mimeType": "image/png",
+        "filesize": 2370356,
+        "filename": "RRISecretSanta-1920x1034.png"
+      },
+      "og": {
+        "url": "/api/media/file/RRISecretSanta-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 1010959,
+        "filename": "RRISecretSanta-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 8,
+    "alt": "Sysmatics App",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:18:12.956Z",
+    "createdAt": "2025-07-14T06:18:12.099Z",
+    "url": "/api/media/file/Sysmatics.jpg",
+    "thumbnailURL": "/api/media/file/Sysmatics-300x169.jpg",
+    "filename": "Sysmatics.jpg",
+    "mimeType": "image/jpeg",
+    "filesize": 238753,
+    "width": 1600,
+    "height": 900,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/Sysmatics-300x169.jpg",
+        "width": 300,
+        "height": 169,
+        "mimeType": "image/jpeg",
+        "filesize": 13628,
+        "filename": "Sysmatics-300x169.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/Sysmatics-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 55020,
+        "filename": "Sysmatics-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/Sysmatics-600x338.jpg",
+        "width": 600,
+        "height": 338,
+        "mimeType": "image/jpeg",
+        "filesize": 47184,
+        "filename": "Sysmatics-600x338.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/Sysmatics-900x506.jpg",
+        "width": 900,
+        "height": 506,
+        "mimeType": "image/jpeg",
+        "filesize": 97706,
+        "filename": "Sysmatics-900x506.jpg"
+      },
+      "large": {
+        "url": "/api/media/file/Sysmatics-1400x788.jpg",
+        "width": 1400,
+        "height": 788,
+        "mimeType": "image/jpeg",
+        "filesize": 197184,
+        "filename": "Sysmatics-1400x788.jpg"
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/Sysmatics-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 146034,
+        "filename": "Sysmatics-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 7,
+    "alt": "Hard vs Soft Flux for Cygnus X1",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:10:18.323Z",
+    "createdAt": "2025-07-14T06:10:17.056Z",
+    "url": "/api/media/file/CygnusX1.png",
+    "thumbnailURL": "/api/media/file/CygnusX1-300x192.png",
+    "filename": "CygnusX1.png",
+    "mimeType": "image/png",
+    "filesize": 521968,
+    "width": 1176,
+    "height": 754,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/CygnusX1-300x192.png",
+        "width": 300,
+        "height": 192,
+        "mimeType": "image/png",
+        "filesize": 46065,
+        "filename": "CygnusX1-300x192.png"
+      },
+      "square": {
+        "url": "/api/media/file/CygnusX1-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 191309,
+        "filename": "CygnusX1-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/CygnusX1-600x385.png",
+        "width": 600,
+        "height": 385,
+        "mimeType": "image/png",
+        "filesize": 156151,
+        "filename": "CygnusX1-600x385.png"
+      },
+      "medium": {
+        "url": "/api/media/file/CygnusX1-900x577.png",
+        "width": 900,
+        "height": 577,
+        "mimeType": "image/png",
+        "filesize": 322399,
+        "filename": "CygnusX1-900x577.png"
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/CygnusX1-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 500196,
+        "filename": "CygnusX1-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 6,
+    "alt": "Machine Learning for Science",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:03:39.279Z",
+    "createdAt": "2025-07-14T06:03:36.996Z",
+    "url": "/api/media/file/ML4Sci.png",
+    "thumbnailURL": "/api/media/file/ML4Sci-300x115.png",
+    "filename": "ML4Sci.png",
+    "mimeType": "image/png",
+    "filesize": 2175063,
+    "width": 1816,
+    "height": 698,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/ML4Sci-300x115.png",
+        "width": 300,
+        "height": 115,
+        "mimeType": "image/png",
+        "filesize": 75070,
+        "filename": "ML4Sci-300x115.png"
+      },
+      "square": {
+        "url": "/api/media/file/ML4Sci-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 603425,
+        "filename": "ML4Sci-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/ML4Sci-600x231.png",
+        "width": 600,
+        "height": 231,
+        "mimeType": "image/png",
+        "filesize": 281399,
+        "filename": "ML4Sci-600x231.png"
+      },
+      "medium": {
+        "url": "/api/media/file/ML4Sci-900x346.png",
+        "width": 900,
+        "height": 346,
+        "mimeType": "image/png",
+        "filesize": 616287,
+        "filename": "ML4Sci-900x346.png"
+      },
+      "large": {
+        "url": "/api/media/file/ML4Sci-1400x538.png",
+        "width": 1400,
+        "height": 538,
+        "mimeType": "image/png",
+        "filesize": 1459137,
+        "filename": "ML4Sci-1400x538.png"
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": "/api/media/file/ML4Sci-1200x630.png",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/png",
+        "filesize": 1566620,
+        "filename": "ML4Sci-1200x630.png"
+      }
+    }
+  },
+  {
+    "id": 5,
+    "alt": "Rubin Observatory",
+    "caption": null,
+    "updatedAt": "2025-07-14T06:03:04.148Z",
+    "createdAt": "2025-07-14T06:03:02.159Z",
+    "url": "/api/media/file/rubin.jpg",
+    "thumbnailURL": "/api/media/file/rubin-300x117.jpg",
+    "filename": "rubin.jpg",
+    "mimeType": "image/jpeg",
+    "filesize": 248353,
+    "width": 2560,
+    "height": 1000,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/rubin-300x117.jpg",
+        "width": 300,
+        "height": 117,
+        "mimeType": "image/jpeg",
+        "filesize": 6356,
+        "filename": "rubin-300x117.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/rubin-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 42237,
+        "filename": "rubin-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/rubin-600x234.jpg",
+        "width": 600,
+        "height": 234,
+        "mimeType": "image/jpeg",
+        "filesize": 20804,
+        "filename": "rubin-600x234.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/rubin-900x352.jpg",
+        "width": 900,
+        "height": 352,
+        "mimeType": "image/jpeg",
+        "filesize": 44653,
+        "filename": "rubin-900x352.jpg"
+      },
+      "large": {
+        "url": "/api/media/file/rubin-1400x547.jpg",
+        "width": 1400,
+        "height": 547,
+        "mimeType": "image/jpeg",
+        "filesize": 105615,
+        "filename": "rubin-1400x547.jpg"
+      },
+      "xlarge": {
+        "url": "/api/media/file/rubin-1920x750.jpg",
+        "width": 1920,
+        "height": 750,
+        "mimeType": "image/jpeg",
+        "filesize": 183541,
+        "filename": "rubin-1920x750.jpg"
+      },
+      "og": {
+        "url": "/api/media/file/rubin-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 111679,
+        "filename": "rubin-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 4,
+    "alt": "Stingray Explorer",
+    "caption": null,
+    "updatedAt": "2025-07-14T05:46:34.891Z",
+    "createdAt": "2025-07-14T05:46:34.630Z",
+    "url": "/api/media/file/stingray-explorer.png",
+    "thumbnailURL": "/api/media/file/stingray-explorer-300x300.png",
+    "filename": "stingray-explorer.png",
+    "mimeType": "image/png",
+    "filesize": 79531,
+    "width": 500,
+    "height": 500,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/stingray-explorer-300x300.png",
+        "width": 300,
+        "height": 300,
+        "mimeType": "image/png",
+        "filesize": 34675,
+        "filename": "stingray-explorer-300x300.png"
+      },
+      "square": {
+        "url": "/api/media/file/stingray-explorer-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 59937,
+        "filename": "stingray-explorer-500x500.png"
+      },
+      "small": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      }
+    }
+  },
+  {
+    "id": 3,
+    "alt": "A day",
+    "caption": null,
+    "updatedAt": "2025-07-13T12:17:40.692Z",
+    "createdAt": "2025-07-13T12:17:36.851Z",
+    "url": "/api/media/file/day.jpeg",
+    "thumbnailURL": "/api/media/file/day-300x225.jpg",
+    "filename": "day.jpeg",
+    "mimeType": "image/jpeg",
+    "filesize": 1802450,
+    "width": 4032,
+    "height": 3024,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/day-300x225.jpg",
+        "width": 300,
+        "height": 225,
+        "mimeType": "image/jpeg",
+        "filesize": 12221,
+        "filename": "day-300x225.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/day-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 41076,
+        "filename": "day-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/day-600x450.jpg",
+        "width": 600,
+        "height": 450,
+        "mimeType": "image/jpeg",
+        "filesize": 39974,
+        "filename": "day-600x450.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/day-900x675.jpg",
+        "width": 900,
+        "height": 675,
+        "mimeType": "image/jpeg",
+        "filesize": 85333,
+        "filename": "day-900x675.jpg"
+      },
+      "large": {
+        "url": "/api/media/file/day-1400x1050.jpg",
+        "width": 1400,
+        "height": 1050,
+        "mimeType": "image/jpeg",
+        "filesize": 216398,
+        "filename": "day-1400x1050.jpg"
+      },
+      "xlarge": {
+        "url": "/api/media/file/day-1920x1440.jpg",
+        "width": 1920,
+        "height": 1440,
+        "mimeType": "image/jpeg",
+        "filesize": 425250,
+        "filename": "day-1920x1440.jpg"
+      },
+      "og": {
+        "url": "/api/media/file/day-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 116779,
+        "filename": "day-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 2,
+    "alt": "Buttermilk stuck in vending machine",
+    "caption": null,
+    "updatedAt": "2025-06-24T18:32:34.469Z",
+    "createdAt": "2025-06-24T18:32:34.520Z",
+    "url": "/api/media/file/buttermilk_stuck.JPG",
+    "thumbnailURL": "/api/media/file/buttermilk_stuck-300x400.jpg",
+    "filename": "buttermilk_stuck.JPG",
+    "mimeType": "image/jpeg",
+    "filesize": 2581227,
+    "width": 4032,
+    "height": 3024,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/buttermilk_stuck-300x400.jpg",
+        "width": 300,
+        "height": 400,
+        "mimeType": "image/jpeg",
+        "filesize": 30692,
+        "filename": "buttermilk_stuck-300x400.jpg"
+      },
+      "square": {
+        "url": "/api/media/file/buttermilk_stuck-500x500.jpg",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/jpeg",
+        "filesize": 53808,
+        "filename": "buttermilk_stuck-500x500.jpg"
+      },
+      "small": {
+        "url": "/api/media/file/buttermilk_stuck-600x800.jpg",
+        "width": 600,
+        "height": 800,
+        "mimeType": "image/jpeg",
+        "filesize": 101629,
+        "filename": "buttermilk_stuck-600x800.jpg"
+      },
+      "medium": {
+        "url": "/api/media/file/buttermilk_stuck-900x1200.jpg",
+        "width": 900,
+        "height": 1200,
+        "mimeType": "image/jpeg",
+        "filesize": 199719,
+        "filename": "buttermilk_stuck-900x1200.jpg"
+      },
+      "large": {
+        "url": "/api/media/file/buttermilk_stuck-1400x1867.jpg",
+        "width": 1400,
+        "height": 1867,
+        "mimeType": "image/jpeg",
+        "filesize": 401165,
+        "filename": "buttermilk_stuck-1400x1867.jpg"
+      },
+      "xlarge": {
+        "url": "/api/media/file/buttermilk_stuck-1920x2560.jpg",
+        "width": 1920,
+        "height": 2560,
+        "mimeType": "image/jpeg",
+        "filesize": 676034,
+        "filename": "buttermilk_stuck-1920x2560.jpg"
+      },
+      "og": {
+        "url": "/api/media/file/buttermilk_stuck-1200x630.jpg",
+        "width": 1200,
+        "height": 630,
+        "mimeType": "image/jpeg",
+        "filesize": 117098,
+        "filename": "buttermilk_stuck-1200x630.jpg"
+      }
+    }
+  },
+  {
+    "id": 1,
+    "alt": "Plots using Fftvis",
+    "caption": null,
+    "updatedAt": "2025-06-24T18:29:13.633Z",
+    "createdAt": "2025-06-24T18:29:12.494Z",
+    "url": "/api/media/file/fftvis_visibilties.png",
+    "thumbnailURL": "/api/media/file/fftvis_visibilties-300x182.png",
+    "filename": "fftvis_visibilties.png",
+    "mimeType": "image/png",
+    "filesize": 78769,
+    "width": 859,
+    "height": 521,
+    "focalX": 50,
+    "focalY": 50,
+    "sizes": {
+      "thumbnail": {
+        "url": "/api/media/file/fftvis_visibilties-300x182.png",
+        "width": 300,
+        "height": 182,
+        "mimeType": "image/png",
+        "filesize": 25861,
+        "filename": "fftvis_visibilties-300x182.png"
+      },
+      "square": {
+        "url": "/api/media/file/fftvis_visibilties-500x500.png",
+        "width": 500,
+        "height": 500,
+        "mimeType": "image/png",
+        "filesize": 66883,
+        "filename": "fftvis_visibilties-500x500.png"
+      },
+      "small": {
+        "url": "/api/media/file/fftvis_visibilties-600x364.png",
+        "width": 600,
+        "height": 364,
+        "mimeType": "image/png",
+        "filesize": 65403,
+        "filename": "fftvis_visibilties-600x364.png"
+      },
+      "medium": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "large": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "xlarge": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      },
+      "og": {
+        "url": null,
+        "width": null,
+        "height": null,
+        "mimeType": null,
+        "filesize": null,
+        "filename": null
+      }
+    }
+  }
+]

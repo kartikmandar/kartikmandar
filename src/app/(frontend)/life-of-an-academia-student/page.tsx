@@ -1,18 +1,16 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import { 
+import {
   ChevronRight
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { formatAuthors } from '@/utilities/formatAuthors'
+import { getAllPosts, postToCardData } from '@/lib/posts'
 import { Comments } from '@/components/Comments'
 
 export const dynamic = 'force-static'
 
-export async function generateMetadata(): Promise<Metadata> {
+export function generateMetadata(): Metadata {
   return {
     title: 'Life of an Academia Student | Kartik Mandar - The Real Academic Journey',
     description: 'An honest look into what life is really like for students and researchers in academia - from undergraduate studies to PhD and beyond.',
@@ -23,66 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-// Helper function to extract text from Lexical content
-function extractTextFromContent(content: unknown): string {
-  if (!content || typeof content !== 'object') return ''
-  
-  const contentObj = content as { root?: { children?: unknown[] } }
-  if (!contentObj.root || !contentObj.root.children) return ''
-  
-  const extractText = (node: unknown): string => {
-    if (!node || typeof node !== 'object') return ''
-    
-    const nodeObj = node as { type?: string; text?: string; children?: unknown[] }
-    
-    if (nodeObj.type === 'text') {
-      return nodeObj.text || ''
-    }
-    
-    if (nodeObj.children && Array.isArray(nodeObj.children)) {
-      return nodeObj.children.map(extractText).join(' ')
-    }
-    
-    return ''
-  }
-  
-  const fullText = contentObj.root.children.map(extractText).join(' ')
-  // Return first 150 characters with word boundary
-  if (fullText.length <= 150) return fullText
-  return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
-}
-
-export default async function AcademicLifePage(): Promise<React.JSX.Element> {
-  // Fetch blog posts from CMS
-  const payload = await getPayload({ config: configPromise })
-  
-  const postsData = await payload.find({
-    collection: 'posts',
-    depth: 2,
-    limit: 6,
-    overrideAccess: false,
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-    sort: '-publishedAt',
-    select: {
-      title: true,
-      slug: true,
-      meta: true,
-      publishedAt: true,
-      heroImage: true,
-      populatedAuthors: true,
-      authors: true,
-      content: true,
-    },
-  })
-  
-  const posts = postsData.docs
-  
-  // Debug: Log the posts data to see what we're getting
-  console.log('Posts data:', JSON.stringify(posts, null, 2))
+export default function AcademicLifePage(): React.JSX.Element {
+  const allPosts = getAllPosts()
+  const posts = allPosts.slice(0, 6).map(postToCardData)
 
   const academicStages = [
     {
@@ -158,28 +99,24 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
           {posts && posts.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
               {posts.map((post, index) => {
-                // Get thumbnail from meta.image (same as posts page)
+                // Get thumbnail from meta.image
                 const thumbnail = post.meta?.image
-                const thumbnailUrl = thumbnail && typeof thumbnail === 'object' && thumbnail.url ? thumbnail.url : null
-                const thumbnailAlt = thumbnail && typeof thumbnail === 'object' && thumbnail.alt ? thumbnail.alt : post.title
-                
-                // Get formatted authors
-                console.log(`Post "${post.title}" populatedAuthors:`, post.populatedAuthors)
-                console.log(`Post "${post.title}" authors:`, post.authors)
-                const hasAuthors = post.populatedAuthors && post.populatedAuthors.length > 0 && formatAuthors(post.populatedAuthors) !== ''
-                const authorsText = hasAuthors && post.populatedAuthors ? formatAuthors(post.populatedAuthors) : null
-                console.log(`Post "${post.title}" authorsText:`, authorsText)
-                
-                // Extract content preview
-                const contentPreview = extractTextFromContent(post.content)
-                
+                const thumbnailUrl = thumbnail && typeof thumbnail === 'object' && 'url' in thumbnail ? thumbnail.url : null
+                const thumbnailAlt = thumbnail && typeof thumbnail === 'object' && 'alt' in thumbnail ? (thumbnail.alt || post.title) : post.title
+
+                // Get author names
+                const authorNames = (post.populatedAuthors || [])
+                  .map((a) => a?.name)
+                  .filter(Boolean)
+                const authorsText = authorNames.length > 0 ? authorNames.join(', ') : null
+
                 return (
                   <article key={index} className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
                     {/* Thumbnail */}
                     {thumbnailUrl && (
                       <div className="aspect-video overflow-hidden relative">
-                        <Image 
-                          src={thumbnailUrl} 
+                        <Image
+                          src={thumbnailUrl}
                           alt={thumbnailAlt}
                           fill
                           className="object-cover group-hover:scale-105 transition-transform duration-300"
@@ -187,21 +124,19 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
                         />
                       </div>
                     )}
-                    
+
                     {/* Content */}
                     <div className="p-6">
                       <div className="mb-4">
                         <h3 className="font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
                           {post.title}
                         </h3>
-                        {/* Content preview from post content */}
-                        {contentPreview && (
+                        {post.excerpt && (
                           <p className="text-muted-foreground text-sm line-clamp-3 mb-2">
-                            {contentPreview}
+                            {post.excerpt}
                           </p>
                         )}
-                        {/* Fallback to meta description if no content preview */}
-                        {!contentPreview && post.meta?.description && (
+                        {!post.excerpt && post.meta?.description && (
                           <p className="text-muted-foreground text-sm line-clamp-3 mb-2">
                             {post.meta.description}
                           </p>
@@ -216,7 +151,7 @@ export default async function AcademicLifePage(): Promise<React.JSX.Element> {
                           )}
                           {post.publishedAt && new Date(post.publishedAt).toLocaleDateString()}
                         </div>
-                        <Link 
+                        <Link
                           href={`/posts/${post.slug}`}
                           className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors"
                         >

@@ -1,39 +1,20 @@
 import type { Metadata } from 'next'
 
 import { RelatedPosts } from '@/blocks/RelatedPosts/Component'
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { draftMode } from 'next/headers'
-import React, { cache } from 'react'
-import RichText from '@/components/RichText'
-
-import type { Post } from '@/payload-types'
+import React from 'react'
+import MarkdownContent from '@/components/MarkdownContent'
 
 import { PostHero } from '@/heros/PostHero'
-import { generateMeta } from '@/utilities/generateMeta'
+import { getServerSideURL } from '@/utilities/getURL'
+import { getAllPostSlugs, getPostBySlug } from '@/lib/posts'
 import PageClient from './page.client'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Comments } from '@/components/Comments'
+import { notFound } from 'next/navigation'
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: {
-      slug: true,
-    },
-  })
+export const dynamic = 'force-static'
 
-  const params = posts.docs.map(({ slug }) => {
-    return { slug }
-  })
-
-  return params
+export function generateStaticParams() {
+  return getAllPostSlugs().map((slug) => ({ slug }))
 }
 
 type Args = {
@@ -42,70 +23,82 @@ type Args = {
   }>
 }
 
-export default async function Post({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
+export default async function PostPage({ params: paramsPromise }: Args) {
   const { slug = '' } = await paramsPromise
-  const url = '/posts/' + slug
-  const post = await queryPostBySlug({ slug })
+  const post = getPostBySlug(slug)
 
-  if (!post) return <PayloadRedirects url={url} />
+  if (!post) return notFound()
 
   return (
     <article className="pt-16 pb-16">
       <PageClient />
 
-      {/* Allows redirects for valid pages too */}
-      <PayloadRedirects disableNotFound url={url} />
-
-      {draft && <LivePreviewListener />}
-
       <PostHero post={post} />
 
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">
-          <RichText className="max-w-[48rem] mx-auto" data={post.content} enableGutter={false} />
+          <MarkdownContent
+            className="max-w-[48rem] mx-auto"
+            content={post.content}
+            enableGutter={false}
+          />
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
-              docs={post.relatedPosts.filter((post) => typeof post === 'object')}
+              docs={post.relatedPosts
+                .map((relatedSlug) => {
+                  const related = getPostBySlug(relatedSlug)
+                  return related
+                    ? {
+                        slug: related.slug,
+                        title: related.title,
+                        categories: related.categories,
+                        meta: related.meta,
+                        publishedAt: related.publishedAt,
+                        populatedAuthors: related.populatedAuthors,
+                      }
+                    : null
+                })
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                .filter(Boolean) as any[]}
             />
           )}
         </div>
       </div>
-      
-      {/* Comments Section */}
-      <Comments
-        title={post.title}
-        className="mt-12"
-      />
+
+      <Comments title={post.title} className="mt-12" />
     </article>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug = '' } = await paramsPromise
-  const post = await queryPostBySlug({ slug })
+  const post = getPostBySlug(slug)
 
-  return generateMeta({ doc: post })
-}
+  if (!post) return {}
 
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
+  const serverUrl = getServerSideURL()
+  const metaImage = post.meta?.image
+  let ogImageUrl = serverUrl + '/website-template-OG.webp'
 
-  const payload = await getPayload({ config: configPromise })
+  if (metaImage && typeof metaImage === 'object' && 'url' in metaImage) {
+    const ogUrl = metaImage.sizes?.og?.url
+    ogImageUrl = ogUrl ? serverUrl + ogUrl : serverUrl + (metaImage.url || '')
+  } else if (typeof metaImage === 'string') {
+    ogImageUrl = serverUrl + metaImage
+  }
 
-  const result = await payload.find({
-    collection: 'posts',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    where: {
-      slug: {
-        equals: slug,
-      },
+  const title = post.meta?.title
+    ? `${post.meta.title} | Kartik Mandar`
+    : `${post.title} | Kartik Mandar`
+
+  return {
+    title,
+    description: post.meta?.description || post.excerpt,
+    openGraph: {
+      title,
+      description: post.meta?.description || post.excerpt || '',
+      images: [{ url: ogImageUrl }],
     },
-  })
-
-  return result.docs?.[0] || null
-})
+  }
+}

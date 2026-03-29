@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { ProjectCard, ProjectModal, type Project } from '@/components/ProjectCard'
-import type { Media, Project as PayloadProject } from '@/payload-types'
+import type { Project as DataProject } from '@/data/types'
+import type { Media } from '@/payload-types'
 
 interface ProjectsShowcaseProps {
   blockName?: string
@@ -10,7 +11,7 @@ interface ProjectsShowcaseProps {
   title?: string
   subtitle?: string
   showAllProjects?: boolean
-  projects?: (string | PayloadProject)[]
+  projects?: (string | DataProject)[]
   showFeaturedOnly?: boolean
   maxProjects?: number
   layout?: 'grid-3' | 'grid-2' | 'grid-4' | 'mixed'
@@ -19,126 +20,119 @@ interface ProjectsShowcaseProps {
   viewAllButtonUrl?: string
 }
 
-// Helper function to transform Payload project to component project
-const transformPayloadProject = (payloadProject: PayloadProject): Project => {
+// Helper function to transform data project to component project
+const transformDataProject = (dataProject: DataProject): Project => {
   const project: Project = {
-    id: payloadProject.id,
-    title: payloadProject.title,
-    shortDescription: payloadProject.shortDescription || undefined,
-    description: payloadProject.description,
-    coverImage: payloadProject.coverImage,
-    category: payloadProject.category ? 
-      payloadProject.category.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) : 
+    id: dataProject.id,
+    title: dataProject.title,
+    shortDescription: dataProject.shortDescription || undefined,
+    description: dataProject.description,
+    coverImage: dataProject.coverImage as Project['coverImage'],
+    category: dataProject.category ?
+      String(dataProject.category).replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) :
       undefined,
-    status: payloadProject.projectStatus as 'active' | 'completed' | 'archived',
-    techStack: payloadProject.techStack?.map(tech => tech.technology) || [],
+    status: dataProject.projectStatus as 'active' | 'completed' | 'archived',
+    techStack: dataProject.techStack?.map(tech => typeof tech === 'string' ? tech : tech.technology) || [],
   }
 
   // Transform links
-  if (payloadProject.links?.githubUrl) {
+  if (dataProject.links?.githubUrl) {
     project.github = {
-      url: payloadProject.links.githubUrl,
-      stars: payloadProject.links.githubStats?.stars || 0,
-      forks: payloadProject.links.githubStats?.forks || 0,
+      url: dataProject.links.githubUrl,
+      stars: dataProject.links.githubStats?.stars || 0,
+      forks: dataProject.links.githubStats?.forks || 0,
     }
-    
-    // Add additional GitHub stats for metadata
+
     project.links = {
-      githubUrl: payloadProject.links.githubUrl,
+      githubUrl: dataProject.links.githubUrl,
       githubStats: {
-        stars: payloadProject.links.githubStats?.stars || 0,
-        forks: payloadProject.links.githubStats?.forks || 0,
-        language: payloadProject.links.githubStats?.language || undefined,
-        watchers: payloadProject.links.githubStats?.watchers || 0,
-        openIssues: payloadProject.links.githubStats?.openIssues || 0,
-        size: payloadProject.links.githubStats?.size || 0,
-        lastUpdated: payloadProject.links.githubStats?.lastUpdated || undefined,
+        stars: dataProject.links.githubStats?.stars || 0,
+        forks: dataProject.links.githubStats?.forks || 0,
+        language: dataProject.links.githubStats?.language || undefined,
+        watchers: dataProject.links.githubStats?.watchers || 0,
+        openIssues: dataProject.links.githubStats?.openIssues || 0,
+        size: dataProject.links.githubStats?.size || 0,
+        lastUpdated: dataProject.links.githubStats?.lastUpdated || undefined,
       }
     }
   }
 
-  if (payloadProject.links?.demoUrl) {
-    project.demoUrl = payloadProject.links.demoUrl
+  if (dataProject.links?.demoUrl) {
+    project.demoUrl = dataProject.links.demoUrl
   }
 
   // Transform project details
-  if (payloadProject.projectDetails) {
-    project.linesOfCode = payloadProject.projectDetails.linesOfCode || undefined
-    project.architecture = payloadProject.projectDetails.architecture || undefined
-    project.usageGuide = payloadProject.projectDetails.usageGuide || undefined
-    project.problemSolving = payloadProject.projectDetails.problemSolving || undefined
-    project.futureWork = payloadProject.projectDetails.futureWork || undefined
-    project.readme = payloadProject.projectDetails.readme || undefined
-    project.readmeIsMarkdown = payloadProject.projectDetails.readmeIsMarkdown || false
-    
-    // Add GitHub synced data
-    project.totalCommits = payloadProject.projectDetails.totalCommits || undefined
-    project.fileCount = payloadProject.projectDetails.fileCount || undefined
-    project.directoryCount = payloadProject.projectDetails.directoryCount || undefined
-    project.repositorySize = payloadProject.projectDetails.repositorySize || undefined
-    project.contributors = payloadProject.projectDetails.contributors?.map(c => ({
+  if (dataProject.projectDetails) {
+    project.linesOfCode = dataProject.projectDetails.linesOfCode || undefined
+    project.architecture = dataProject.projectDetails.architecture || undefined
+    project.usageGuide = dataProject.projectDetails.usageGuide || undefined
+    project.problemSolving = dataProject.projectDetails.problemSolving || undefined
+    project.futureWork = dataProject.projectDetails.futureWork || undefined
+    project.readme = dataProject.projectDetails.readme || undefined
+    project.readmeIsMarkdown = dataProject.projectDetails.readmeIsMarkdown || false
+
+    project.totalCommits = dataProject.projectDetails.totalCommits || undefined
+    project.fileCount = dataProject.projectDetails.fileCount || undefined
+    project.directoryCount = dataProject.projectDetails.directoryCount || undefined
+    project.repositorySize = dataProject.projectDetails.repositorySize || undefined
+    project.contributors = dataProject.projectDetails.contributors?.map(c => ({
       name: c.name,
       contributions: c.contributions,
       githubUrl: c.githubUrl || undefined,
       avatarUrl: c.avatarUrl || undefined
     })) || undefined
-    project.createdAt = payloadProject.projectDetails.createdAt || undefined
-    
-    // Get last updated from either GitHub sync or repository data
-    project.updatedAt = payloadProject.links?.githubStats?.lastUpdated || 
-                       payloadProject.updatedAt ||
+    project.createdAt = dataProject.projectDetails.createdAt || undefined
+
+    project.updatedAt = dataProject.links?.githubStats?.lastUpdated ||
+                       dataProject.updatedAt ||
                        undefined
-    
-    // Add file tree data
-    project.fileTree = payloadProject.projectDetails.fileTree?.filter(item => item.url).map(item => ({
+
+    project.fileTree = dataProject.projectDetails.fileTree?.filter(item => item.url).map(item => ({
       path: item.path,
       type: item.type,
       size: item.size || undefined,
       url: item.url!
     })) || undefined
-    
-    // Add GitHub sync timestamp
-    project.lastGitHubSync = payloadProject.lastGitHubSync || undefined
-    
-    // Add GitHub Issues and Pull Requests data
-    project.githubIssues = payloadProject.projectDetails.githubIssues ? {
-      total: payloadProject.projectDetails.githubIssues.total || 0,
-      open: payloadProject.projectDetails.githubIssues.open || 0,
-      closed: payloadProject.projectDetails.githubIssues.closed || 0
+
+    project.lastGitHubSync = dataProject.lastGitHubSync || undefined
+
+    project.githubIssues = dataProject.projectDetails.githubIssues ? {
+      total: dataProject.projectDetails.githubIssues.total || 0,
+      open: dataProject.projectDetails.githubIssues.open || 0,
+      closed: dataProject.projectDetails.githubIssues.closed || 0
     } : undefined
-    project.githubPullRequests = payloadProject.projectDetails.githubPullRequests ? {
-      total: payloadProject.projectDetails.githubPullRequests.total || 0,
-      open: payloadProject.projectDetails.githubPullRequests.open || 0,
-      closed: payloadProject.projectDetails.githubPullRequests.closed || 0,
-      merged: payloadProject.projectDetails.githubPullRequests.merged || 0
+    project.githubPullRequests = dataProject.projectDetails.githubPullRequests ? {
+      total: dataProject.projectDetails.githubPullRequests.total || 0,
+      open: dataProject.projectDetails.githubPullRequests.open || 0,
+      closed: dataProject.projectDetails.githubPullRequests.closed || 0,
+      merged: dataProject.projectDetails.githubPullRequests.merged || 0
     } : undefined
-    
-    // Add repository metadata
+
     project.projectDetails = {
       ...project.projectDetails,
-      license: payloadProject.projectDetails.license || undefined,
-      defaultBranch: payloadProject.projectDetails.defaultBranch || undefined,
-      homepage: payloadProject.projectDetails.homepage || undefined,
-      topics: payloadProject.projectDetails.topics || undefined,
-      isArchived: payloadProject.projectDetails.isArchived ?? undefined,
-      isFork: payloadProject.projectDetails.isFork ?? undefined,
+      license: dataProject.projectDetails.license || undefined,
+      defaultBranch: dataProject.projectDetails.defaultBranch || undefined,
+      homepage: dataProject.projectDetails.homepage || undefined,
+      topics: dataProject.projectDetails.topics || undefined,
+      isArchived: dataProject.projectDetails.isArchived ?? undefined,
+      isFork: dataProject.projectDetails.isFork ?? undefined,
     }
   }
 
   // Transform publication
-  if (payloadProject.publication?.title) {
+  if (dataProject.publication?.title) {
     project.publication = {
-      title: payloadProject.publication.title,
-      authors: payloadProject.publication.authors || '',
-      venue: payloadProject.publication.venue || '',
-      year: payloadProject.publication.year || new Date().getFullYear(),
-      url: payloadProject.publication.url || undefined,
+      title: dataProject.publication.title,
+      authors: dataProject.publication.authors || '',
+      venue: dataProject.publication.venue || '',
+      year: dataProject.publication.year || new Date().getFullYear(),
+      url: dataProject.publication.url || undefined,
     }
   }
 
   // Transform branches
-  if (payloadProject.branches?.length) {
-    project.branches = payloadProject.branches.map(branch => ({
+  if (dataProject.branches?.length) {
+    project.branches = dataProject.branches.map(branch => ({
       name: branch.name,
       protected: branch.protected ?? undefined,
       commitSha: branch.commitSha || undefined,
@@ -146,36 +140,36 @@ const transformPayloadProject = (payloadProject: PayloadProject): Project => {
   }
 
   // Transform latest release
-  if (payloadProject.latestRelease?.version) {
+  if (dataProject.latestRelease?.version) {
     project.latestRelease = {
-      version: payloadProject.latestRelease.version,
-      name: payloadProject.latestRelease.name || undefined,
-      publishedAt: payloadProject.latestRelease.publishedAt || undefined,
-      description: payloadProject.latestRelease.description || undefined,
-      htmlUrl: payloadProject.latestRelease.htmlUrl || undefined,
-      downloadCount: payloadProject.latestRelease.downloadCount || undefined,
+      version: dataProject.latestRelease.version,
+      name: dataProject.latestRelease.name || undefined,
+      publishedAt: dataProject.latestRelease.publishedAt || undefined,
+      description: dataProject.latestRelease.description || undefined,
+      htmlUrl: dataProject.latestRelease.htmlUrl || undefined,
+      downloadCount: dataProject.latestRelease.downloadCount || undefined,
     }
   }
 
   // Transform media
-  if (payloadProject.media?.plots?.length) {
-    project.plots = payloadProject.media.plots.map(plot => ({
+  if (dataProject.media?.plots?.length) {
+    project.plots = dataProject.media.plots.map(plot => ({
       url: typeof plot.image === 'object' ? (plot.image as Media).url || '' : '',
       caption: plot.caption,
       alt: plot.alt || plot.caption,
     }))
   }
 
-  if (payloadProject.media?.screenshots?.length) {
-    project.images = payloadProject.media.screenshots.map(screenshot => ({
+  if (dataProject.media?.screenshots?.length) {
+    project.images = dataProject.media.screenshots.map(screenshot => ({
       url: typeof screenshot.image === 'object' ? (screenshot.image as Media).url || '' : '',
       caption: screenshot.caption,
       alt: screenshot.alt || screenshot.caption,
     }))
   }
 
-  if (payloadProject.media?.posters?.length) {
-    project.posters = payloadProject.media.posters.map(poster => ({
+  if (dataProject.media?.posters?.length) {
+    project.posters = dataProject.media.posters.map(poster => ({
       title: poster.title,
       conference: poster.conference,
       year: poster.year,
@@ -200,21 +194,19 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
 }) => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null)
 
-  // Transform Payload projects to component projects
+  // Transform data projects to component projects
   const projects: Project[] = payloadProjects
-    .filter((project): project is PayloadProject => typeof project === 'object' && project !== null)
+    .filter((project): project is DataProject => typeof project === 'object' && project !== null)
     .sort((a, b) => {
-      // Sort by displayOrder (ascending), then by createdAt (descending) for ties
       const orderA = a.displayOrder ?? 999999
       const orderB = b.displayOrder ?? 999999
       if (orderA !== orderB) {
         return orderA - orderB
       }
-      // If displayOrder is the same, sort by createdAt (newest first)
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     })
     .slice(0, maxProjects)
-    .map(transformPayloadProject)
+    .map(transformDataProject)
 
   // Always show debugging info to help with project limits
   console.log('ProjectsShowcase Debug:', {
@@ -246,7 +238,7 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
             {subtitle}
           </p>
           <p className="text-muted-foreground">
-            No projects have been added yet. Add some projects in the CMS to see them here.
+            No projects have been added yet. Add some projects to src/data/projects.ts to see them here.
           </p>
         </div>
       </div>

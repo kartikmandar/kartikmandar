@@ -3,13 +3,12 @@ import type { Metadata } from 'next/types'
 import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getAllPosts, getPaginatedPosts } from '@/lib/posts'
 import React from 'react'
 import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 
-export const revalidate = 600
+export const dynamic = 'force-static'
 
 type Args = {
   params: Promise<{
@@ -19,19 +18,11 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise
-  const payload = await getPayload({ config: configPromise })
-
   const sanitizedPageNumber = Number(pageNumber)
 
   if (!Number.isInteger(sanitizedPageNumber)) notFound()
 
-  const posts = await payload.find({
-    collection: 'posts',
-    depth: 1,
-    limit: 6,
-    page: sanitizedPageNumber,
-    overrideAccess: false,
-  })
+  const posts = getPaginatedPosts(sanitizedPageNumber, 6)
 
   return (
     <div className="pt-24 pb-24">
@@ -54,7 +45,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       <CollectionArchive posts={posts.docs} />
 
       <div className="container">
-        {posts?.page && posts?.totalPages > 1 && (
+        {posts.page && posts.totalPages > 1 && (
           <Pagination page={posts.page} totalPages={posts.totalPages} />
         )}
       </div>
@@ -65,21 +56,15 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { pageNumber } = await paramsPromise
   return {
-    title: `Payload Website Template Posts Page ${pageNumber || ''}`,
+    title: `Posts Page ${pageNumber || ''} | Kartik Mandar`,
   }
 }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({
-    collection: 'posts',
-    overrideAccess: false,
-  })
-
+export function generateStaticParams() {
+  const totalDocs = getAllPosts().length
   const totalPages = Math.ceil(totalDocs / 6)
 
   const pages: { pageNumber: string }[] = []
-
   for (let i = 1; i <= totalPages; i++) {
     pages.push({ pageNumber: String(i) })
   }

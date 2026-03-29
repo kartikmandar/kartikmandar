@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react'
 import { TalkCard, TalkModal, type Talk } from '@/components/TalkCard'
-import type { Media, Talk as PayloadTalk } from '@/payload-types'
+import type { Talk as DataTalk } from '@/data/types'
+import type { Media } from '@/payload-types'
 
 interface TalksShowcaseProps {
   blockName?: string
@@ -10,7 +11,7 @@ interface TalksShowcaseProps {
   title?: string
   subtitle?: string
   showAllTalks?: boolean
-  talks?: (string | PayloadTalk)[]
+  talks?: (string | DataTalk)[]
   showFeaturedOnly?: boolean
   maxTalks?: number
   layout?: 'grid-3' | 'grid-2' | 'grid-4' | 'mixed'
@@ -19,51 +20,50 @@ interface TalksShowcaseProps {
   viewAllButtonUrl?: string
 }
 
-// Helper function to transform Payload talk to component talk
-const transformPayloadTalk = (payloadTalk: PayloadTalk): Talk => {
+// Helper function to transform data talk to component talk
+const transformDataTalk = (dataTalk: DataTalk): Talk => {
   const talk: Talk = {
-    id: payloadTalk.id.toString(),
-    title: payloadTalk.title,
-    shortDescription: payloadTalk.shortDescription || undefined,
-    abstract: payloadTalk.abstract,
-    coverImage: typeof payloadTalk.coverImage === 'number' ? undefined : payloadTalk.coverImage,
-    talkType: payloadTalk.talkType || undefined,
-    duration: payloadTalk.duration || undefined,
-    language: payloadTalk.language || undefined,
-    audienceLevel: payloadTalk.audienceLevel || undefined,
-    targetAudience: payloadTalk.targetAudience || undefined,
+    id: dataTalk.id.toString(),
+    title: dataTalk.title,
+    shortDescription: dataTalk.shortDescription || undefined,
+    abstract: dataTalk.abstract,
+    coverImage: typeof dataTalk.coverImage === 'number' ? undefined : dataTalk.coverImage,
+    talkType: dataTalk.talkType || undefined,
+    duration: dataTalk.duration || undefined,
+    language: dataTalk.language || undefined,
+    audienceLevel: dataTalk.audienceLevel || undefined,
+    targetAudience: dataTalk.targetAudience || undefined,
   }
 
   // Transform event details
-  if (payloadTalk.eventDetails) {
-    talk.eventName = payloadTalk.eventDetails.eventName
-    talk.eventType = payloadTalk.eventDetails.eventType || undefined
-    talk.venue = payloadTalk.eventDetails.venue || undefined
-    talk.city = payloadTalk.eventDetails.city || undefined
-    talk.country = payloadTalk.eventDetails.country || undefined
-    talk.eventUrl = payloadTalk.eventDetails.eventWebsite || undefined
-    talk.organizerName = payloadTalk.eventDetails.eventOrganizer || undefined
+  if (dataTalk.eventDetails) {
+    talk.eventName = dataTalk.eventDetails.eventName
+    talk.eventType = dataTalk.eventDetails.eventType || undefined
+    talk.venue = dataTalk.eventDetails.venue || undefined
+    talk.city = dataTalk.eventDetails.city || undefined
+    talk.country = dataTalk.eventDetails.country || undefined
+    talk.eventUrl = dataTalk.eventDetails.eventWebsite || undefined
+    talk.organizerName = dataTalk.eventDetails.eventOrganizer || undefined
   }
 
   // Transform scheduling details
-  if (payloadTalk.scheduling) {
-    talk.talkDate = payloadTalk.scheduling.talkDate
-    talk.talkStatus = payloadTalk.scheduling.talkStatus as 'upcoming' | 'completed' | 'cancelled'
+  if (dataTalk.scheduling) {
+    talk.talkDate = dataTalk.scheduling.talkDate
+    talk.talkStatus = dataTalk.scheduling.talkStatus as 'upcoming' | 'completed' | 'cancelled'
   }
 
   // Transform Google Drive materials
-  if (payloadTalk.materials) {
-    talk.gDriveFolderId = payloadTalk.materials.gDriveFolderId || undefined
-    talk.gDriveFolderUrl = payloadTalk.materials.gDriveFolderUrl || undefined
-    talk.enableEmbedView = payloadTalk.materials.enableEmbedView || false
-    talk.embedHeight = payloadTalk.materials.embedHeight || 400
-    talk.materialDescription = payloadTalk.materials.materialDescription || undefined
-    talk.recordingUrl = payloadTalk.materials.videoRecording || undefined
-    talk.liveStreamUrl = payloadTalk.materials.liveStreamUrl || undefined
-    
-    // Transform additional links
-    if (payloadTalk.materials.additionalLinks?.length) {
-      talk.additionalLinks = payloadTalk.materials.additionalLinks.map(link => ({
+  if (dataTalk.materials) {
+    talk.gDriveFolderId = dataTalk.materials.gDriveFolderId || undefined
+    talk.gDriveFolderUrl = dataTalk.materials.gDriveFolderUrl || undefined
+    talk.enableEmbedView = dataTalk.materials.enableEmbedView || false
+    talk.embedHeight = dataTalk.materials.embedHeight || 400
+    talk.materialDescription = dataTalk.materials.materialDescription || undefined
+    talk.recordingUrl = dataTalk.materials.videoRecording || undefined
+    talk.liveStreamUrl = dataTalk.materials.liveStreamUrl || undefined
+
+    if (dataTalk.materials.additionalLinks?.length) {
+      talk.additionalLinks = dataTalk.materials.additionalLinks.map(link => ({
         title: link.title,
         url: link.url,
         description: link.description || undefined,
@@ -73,16 +73,16 @@ const transformPayloadTalk = (payloadTalk: PayloadTalk): Talk => {
   }
 
   // Transform topics and technologies
-  if (payloadTalk.topics?.length) {
-    talk.topics = payloadTalk.topics.map(topic => topic.topic)
+  if (dataTalk.topics?.length) {
+    talk.topics = dataTalk.topics.map(topic => topic.topic)
   }
-  if (payloadTalk.technologies?.length) {
-    talk.technologies = payloadTalk.technologies.map(tech => tech.technology)
+  if (dataTalk.technologies?.length) {
+    talk.technologies = dataTalk.technologies.map(tech => tech.technology)
   }
 
   // Transform collaboration details
-  if (payloadTalk.collaboration?.coSpeakers?.length) {
-    talk.coSpeakers = payloadTalk.collaboration.coSpeakers.map(speaker => ({
+  if (dataTalk.collaboration?.coSpeakers?.length) {
+    talk.coSpeakers = dataTalk.collaboration.coSpeakers.map(speaker => ({
       name: speaker.name,
       role: speaker.title || undefined,
       contact: speaker.linkedinUrl || speaker.twitterUrl || undefined,
@@ -90,34 +90,31 @@ const transformPayloadTalk = (payloadTalk: PayloadTalk): Talk => {
   }
 
   // Transform professional details
-  if (payloadTalk.professional) {
-    talk.honorarium = payloadTalk.professional.honorarium ? 1 : undefined
-    talk.travelSponsorship = payloadTalk.professional.travelSponsored || false
+  if (dataTalk.professional) {
+    talk.honorarium = dataTalk.professional.honorarium ? 1 : undefined
+    talk.travelSponsorship = dataTalk.professional.travelSponsored || false
   }
 
   // Transform media
-  if (payloadTalk.media) {
-    // Transform photos
-    if (payloadTalk.media.eventPhotos?.length) {
-      talk.photos = payloadTalk.media.eventPhotos.map(photo => ({
-        url: typeof photo.image === 'object' ? (photo.image as Media).url || '' : '',
+  if (dataTalk.media) {
+    if (dataTalk.media.eventPhotos?.length) {
+      talk.photos = dataTalk.media.eventPhotos.map(photo => ({
+        url: typeof photo.photo === 'object' ? (photo.photo as Media).url || '' : '',
         caption: photo.caption || undefined,
         alt: photo.caption || undefined,
       }))
     }
 
-    // Transform social media coverage  
-    if (payloadTalk.media.socialMediaPosts?.length) {
-      talk.socialMediaCoverage = payloadTalk.media.socialMediaPosts.map(post => ({
+    if (dataTalk.media.socialMediaPosts?.length) {
+      talk.socialMediaCoverage = dataTalk.media.socialMediaPosts.map(post => ({
         platform: post.platform,
         url: post.url,
         description: post.description || undefined,
       }))
     }
 
-    // Transform press articles
-    if (payloadTalk.media.pressCoverage?.length) {
-      talk.pressArticles = payloadTalk.media.pressCoverage.map(article => ({
+    if (dataTalk.media.pressCoverage?.length) {
+      talk.pressArticles = dataTalk.media.pressCoverage.map(article => ({
         title: article.title,
         publication: article.publication,
         url: article.url,
@@ -139,25 +136,22 @@ export const TalksShowcase: React.FC<TalksShowcaseProps> = ({
 }) => {
   const [selectedTalk, setSelectedTalk] = useState<Talk | null>(null)
 
-  // Transform Payload talks to component talks
+  // Transform data talks to component talks
   const talks: Talk[] = payloadTalks
-    .filter((talk): talk is PayloadTalk => typeof talk === 'object' && talk !== null)
+    .filter((talk): talk is DataTalk => typeof talk === 'object' && talk !== null)
     .sort((a, b) => {
-      // Sort by displayOrder (ascending), then by talkDate (descending) for ties
       const orderA = a.displayOrder ?? 999999
       const orderB = b.displayOrder ?? 999999
       if (orderA !== orderB) {
         return orderA - orderB
       }
-      // If displayOrder is the same, sort by talkDate (newest first)
       if (a.scheduling?.talkDate && b.scheduling?.talkDate) {
         return new Date(b.scheduling.talkDate).getTime() - new Date(a.scheduling.talkDate).getTime()
       }
-      // Fallback to createdAt
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     })
     .slice(0, maxTalks)
-    .map(transformPayloadTalk)
+    .map(transformDataTalk)
 
   // Debug logging
   console.log('TalksShowcase Debug:', {
@@ -200,7 +194,7 @@ export const TalksShowcase: React.FC<TalksShowcaseProps> = ({
             {subtitle}
           </p>
           <p className="text-muted-foreground">
-            No talks have been added yet. Add some talks in the CMS to see them here.
+            No talks have been added yet. Add some talks to src/data/talks.ts to see them here.
           </p>
         </div>
       </div>

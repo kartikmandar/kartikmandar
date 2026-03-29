@@ -1,18 +1,25 @@
 import { formatDateTime } from 'src/utilities/formatDateTime'
 import React from 'react'
+import Image from 'next/image'
 
-import type { Post } from '@/payload-types'
+import type { Post } from '@/data/types'
+import type { Media as MediaType } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-import { formatAuthors } from '@/utilities/formatAuthors'
 
 export const PostHero: React.FC<{
   post: Post
 }> = ({ post }) => {
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
 
-  const hasAuthors =
-    populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ''
+  const authorNames = (populatedAuthors || [])
+    .map((a) => a.name)
+    .filter(Boolean)
+  const hasAuthors = authorNames.length > 0
+
+  // Determine hero image rendering
+  const heroImageUrl = typeof heroImage === 'string' ? heroImage : null
+  const heroImageMedia = heroImage && typeof heroImage === 'object' ? heroImage : null
 
   return (
     <div className="relative -mt-[10.4rem] flex items-end">
@@ -47,8 +54,7 @@ export const PostHero: React.FC<{
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
                   <p className="text-sm">Author</p>
-
-                  <p>{formatAuthors(populatedAuthors)}</p>
+                  <p>{authorNames.join(', ')}</p>
                 </div>
               </div>
             )}
@@ -63,8 +69,17 @@ export const PostHero: React.FC<{
         </div>
       </div>
       <div className="min-h-[80vh] select-none">
-        {heroImage && typeof heroImage !== 'string' && (
-          <Media fill priority imgClassName="-z-10 object-cover" resource={heroImage} />
+        {heroImageMedia && (
+          <Media fill priority imgClassName="-z-10 object-cover" resource={heroImageMedia as MediaType} />
+        )}
+        {heroImageUrl && (
+          <Image
+            src={heroImageUrl}
+            alt={title}
+            fill
+            priority
+            className="-z-10 object-cover"
+          />
         )}
         <div className="absolute pointer-events-none left-0 bottom-0 w-full h-1/2 bg-gradient-to-t from-black to-transparent" />
       </div>

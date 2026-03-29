@@ -3,10 +3,9 @@ import React from 'react'
 import PageClient from './[slug]/page.client'
 import { AboutHero } from '@/components/AboutHero'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
+import { getPublishedProjects } from '@/data/projects'
 
-export const dynamic = 'force-dynamic' // Changed to dynamic to fetch data
+export const dynamic = 'force-static'
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -15,35 +14,23 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
-export default async function HomePage() {
-  // Fetch projects from database
-  const payload = await getPayload({ config: configPromise })
-  
-  const projectsData = await payload.find({
-    collection: 'projects',
-    where: {
-      _status: {
-        equals: 'published',
-      },
-    },
-    limit: 100, // Show max 100 projects on homepage
-    sort: 'displayOrder',
-  })
+export default function HomePage() {
+  const projects = getPublishedProjects()
 
   return (
     <>
       <PageClient />
-      
+
       {/* About Me Section */}
       <AboutHero />
-      
+
       {/* Projects Showcase Component */}
       <article className="pb-24">
         <ProjectsShowcase
-          blockType="projectsShowcase" 
+          blockType="projectsShowcase"
           blockName="My Projects"
           layout="grid-3"
-          projects={projectsData.docs}
+          projects={projects}
           maxProjects={100}
           showViewAllButton={false}
         />
