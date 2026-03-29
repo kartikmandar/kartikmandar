@@ -7,6 +7,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=--no-deprecation next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
+    "ci": "pnpm build",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --turbopack",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "lint": "cross-env NODE_OPTIONS=--no-deprecation next lint",
@@ -72,7 +73,7 @@
   },
   "packageManager": "pnpm@10.7.1",
   "engines": {
-    "node": "^18.20.2 || >=20.9.0"
+    "node": ">=20.9.0 <25"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
