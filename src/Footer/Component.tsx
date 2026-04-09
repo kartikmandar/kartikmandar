@@ -286,7 +286,7 @@ export function Footer() {
   const blogPosts = [
     { label: 'GSoC 2024 Journey', url: 'https://gsoc2024.blogspot.com/' },
     { label: 'GSoC 2025 Adventure', url: 'https://gsoc2025.blogspot.com/' },
-    { label: 'Life of an Academia Student', url: '/life-of-an-academia-student' },
+    { label: 'Posts', url: '/posts' },
     { label: 'Open Source Contributions', url: '/open-source' }
   ]
   

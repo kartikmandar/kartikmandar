@@ -4,7 +4,7 @@ import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Home, FileText, BookOpen, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase, Presentation, User, GitBranch, Sparkles } from 'lucide-react'
+import { Home, FileText, BookOpen, FolderOpen, Folder, Trophy, Mic, Award, Users, GraduationCap, Gamepad2, Phone, Briefcase, Presentation, User, GitBranch, Sparkles, Newspaper } from 'lucide-react'
 
 interface NavItem {
   label: string
@@ -40,7 +40,7 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
       'Certificates': <Award size={20} />,
       'Journal Club': <Users size={20} />,
       'Courses': <GraduationCap size={20} />,
-      'Academic Life': <User size={20} />,
+      'Posts': <Newspaper size={20} />,
       'Contact': <Phone size={20} />,
     }
     return iconMap[label] || <Home size={20} />
