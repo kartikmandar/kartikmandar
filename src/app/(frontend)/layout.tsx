@@ -6,7 +6,6 @@ import { JetBrains_Mono } from 'next/font/google'
 import React from 'react'
 
 import { CookieConsentBanner } from '@/components/CookieConsent'
-import { ProfileSelectorBanner } from '@/components/CookieConsent'
 import { ConsentAwareAnalytics } from '@/components/ConsentAwareAnalytics'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
 import { FloatingBottomNav } from '@/components/FloatingBottomNav'
@@ -62,7 +61,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <FloatingBottomNav navItems={navItems} />
           <GlobalAudioButton />
           <CookieConsentBanner />
-          <ProfileSelectorBanner />
           <ConsentAwareAnalytics />
         </Providers>
       </body>
