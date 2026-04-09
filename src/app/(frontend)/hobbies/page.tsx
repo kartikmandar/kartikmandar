@@ -51,9 +51,6 @@ export default async function HobbiesPage() {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Hobbies
           </h1>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            Beyond the realm of astrophysics research, these passions and interests fuel creativity, provide balance, and keep life interesting.
-          </p>
         </div>
 
         {/* Hobbies Grid */}

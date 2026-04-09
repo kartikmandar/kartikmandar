@@ -122,9 +122,6 @@ export default async function CoursesPage(): Promise<React.JSX.Element> {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Courses and Labs
           </h1>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            Comprehensive academic coursework spanning physics, mathematics, engineering, economics, and interdisciplinary studies at IISER Bhopal.
-          </p>
         </div>
 
         {/* Courses by Category */}

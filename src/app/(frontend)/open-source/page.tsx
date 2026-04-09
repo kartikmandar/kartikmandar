@@ -109,9 +109,6 @@ export default function OpenSourcePage(): React.JSX.Element {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Open Source Contributions
           </h1>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            Building the future of technology, one commit at a time.
-          </p>
         </div>
 
 
@@ -121,9 +118,6 @@ export default function OpenSourcePage(): React.JSX.Element {
             <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Google Summer of Code
             </h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Contributing to open source through Google&apos;s Summer of Code mentorship program.
-            </p>
           </div>
           
           <div className="space-y-6">

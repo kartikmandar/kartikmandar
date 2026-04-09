@@ -97,9 +97,6 @@ export default async function JournalClubPage() {
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-2">
             IISER Bhopal
           </p>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto leading-relaxed">
-            A space for informal discussions on recent and impactful papers in astronomy and astrophysics. Our sessions are open to everyone, fostering a collaborative environment where participants can engage in thought-provoking conversations about the latest research.
-          </p>
         </div>
 
         {/* How It Works Section */}

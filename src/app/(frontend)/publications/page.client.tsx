@@ -140,9 +140,6 @@ const PageClient: React.FC = () => {
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Publications
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            My research contributions in astrophysics.
-          </p>
         </div>
 
         {/* ArXiv Publications Feed */}

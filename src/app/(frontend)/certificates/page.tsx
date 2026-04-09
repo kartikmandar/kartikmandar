@@ -214,9 +214,6 @@ export default async function CertificatesPage(): Promise<React.JSX.Element> {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Certificates
           </h1>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            Here are some certificates to look at I guess.
-          </p>
         </div>
 
         {/* Certificates by Category */}

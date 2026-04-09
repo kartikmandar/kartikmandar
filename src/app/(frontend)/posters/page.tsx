@@ -52,9 +52,6 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
           <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Posters
           </h1>
-          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            Academic posters and presentations showcasing research contributions in astrophysics, radio interferometry, and computational astronomy.
-          </p>
         </div>
 
         {/* Posters by Category */}
