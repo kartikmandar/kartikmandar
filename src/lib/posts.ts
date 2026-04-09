@@ -127,11 +127,17 @@ export function getPaginatedPosts(
  * Convert a full Post to the subset used by Card components.
  */
 export function postToCardData(post: Post): CardPostData {
+  // Map heroImage into meta.image so Card component can render it
+  // Keep as string so Card uses the fill-based Image path (no width/height needed)
+  const meta = post.heroImage
+    ? { ...post.meta, image: post.heroImage }
+    : post.meta
+
   return {
     slug: post.slug,
     title: post.title,
     categories: post.categories,
-    meta: post.meta,
+    meta,
     publishedAt: post.publishedAt,
     populatedAuthors: post.populatedAuthors,
     excerpt: post.excerpt,
