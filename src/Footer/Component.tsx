@@ -478,12 +478,6 @@ export function Footer() {
                 </svg>
                 <div className="text-gray-300 text-sm leading-relaxed break-all group-hover:text-white">contact@kartikmandar.com</div>
               </a>
-              <Link href="/contact" className="flex gap-3 items-start hover:text-white transition-colors group">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <div className="text-gray-300 text-sm leading-relaxed group-hover:text-white">Meeting Hours: By appointment</div>
-              </Link>
             </div>
           </div>
         </div>
