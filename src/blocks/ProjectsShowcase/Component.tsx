@@ -1,9 +1,8 @@
-'use client'
-
-import React, { useState } from 'react'
-import { ProjectCard, ProjectModal, type Project } from '@/components/ProjectCard'
+import React from 'react'
+import NextImage from 'next/image'
 import type { Project as DataProject } from '@/data/types'
 import type { Media } from '@/data/types'
+import { Github, ExternalLink } from 'lucide-react'
 
 interface ProjectsShowcaseProps {
   blockName?: string
@@ -20,205 +19,22 @@ interface ProjectsShowcaseProps {
   viewAllButtonUrl?: string
 }
 
-// Helper function to transform data project to component project
-const transformDataProject = (dataProject: DataProject): Project => {
-  const project: Project = {
-    id: dataProject.id,
-    title: dataProject.title,
-    shortDescription: dataProject.shortDescription || undefined,
-    description: dataProject.description,
-    coverImage: dataProject.coverImage as Project['coverImage'],
-    category: dataProject.category ?
-      String(dataProject.category).replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()) :
-      undefined,
-    status: dataProject.projectStatus as 'active' | 'completed' | 'archived',
-    techStack: dataProject.techStack?.map(tech => typeof tech === 'string' ? tech : tech.technology) || [],
-  }
-
-  // Transform links
-  if (dataProject.links?.githubUrl) {
-    project.github = {
-      url: dataProject.links.githubUrl,
-      stars: dataProject.links.githubStats?.stars || 0,
-      forks: dataProject.links.githubStats?.forks || 0,
-    }
-
-    project.links = {
-      githubUrl: dataProject.links.githubUrl,
-      githubStats: {
-        stars: dataProject.links.githubStats?.stars || 0,
-        forks: dataProject.links.githubStats?.forks || 0,
-        language: dataProject.links.githubStats?.language || undefined,
-        watchers: dataProject.links.githubStats?.watchers || 0,
-        openIssues: dataProject.links.githubStats?.openIssues || 0,
-        size: dataProject.links.githubStats?.size || 0,
-        lastUpdated: dataProject.links.githubStats?.lastUpdated || undefined,
-      }
-    }
-  }
-
-  if (dataProject.links?.demoUrl) {
-    project.demoUrl = dataProject.links.demoUrl
-  }
-
-  // Transform project details
-  if (dataProject.projectDetails) {
-    project.linesOfCode = dataProject.projectDetails.linesOfCode || undefined
-    project.architecture = dataProject.projectDetails.architecture || undefined
-    project.usageGuide = dataProject.projectDetails.usageGuide || undefined
-    project.problemSolving = dataProject.projectDetails.problemSolving || undefined
-    project.futureWork = dataProject.projectDetails.futureWork || undefined
-    project.readme = dataProject.projectDetails.readme || undefined
-    project.readmeIsMarkdown = dataProject.projectDetails.readmeIsMarkdown || false
-
-    project.totalCommits = dataProject.projectDetails.totalCommits || undefined
-    project.fileCount = dataProject.projectDetails.fileCount || undefined
-    project.directoryCount = dataProject.projectDetails.directoryCount || undefined
-    project.repositorySize = dataProject.projectDetails.repositorySize || undefined
-    project.contributors = dataProject.projectDetails.contributors?.map(c => ({
-      name: c.name,
-      contributions: c.contributions,
-      githubUrl: c.githubUrl || undefined,
-      avatarUrl: c.avatarUrl || undefined
-    })) || undefined
-    project.createdAt = dataProject.projectDetails.createdAt || undefined
-
-    project.updatedAt = dataProject.links?.githubStats?.lastUpdated ||
-                       dataProject.updatedAt ||
-                       undefined
-
-    project.fileTree = dataProject.projectDetails.fileTree?.filter(item => item.url).map(item => ({
-      path: item.path,
-      type: item.type,
-      size: item.size || undefined,
-      url: item.url!
-    })) || undefined
-
-    project.lastGitHubSync = dataProject.lastGitHubSync || undefined
-
-    project.githubIssues = dataProject.projectDetails.githubIssues ? {
-      total: dataProject.projectDetails.githubIssues.total || 0,
-      open: dataProject.projectDetails.githubIssues.open || 0,
-      closed: dataProject.projectDetails.githubIssues.closed || 0
-    } : undefined
-    project.githubPullRequests = dataProject.projectDetails.githubPullRequests ? {
-      total: dataProject.projectDetails.githubPullRequests.total || 0,
-      open: dataProject.projectDetails.githubPullRequests.open || 0,
-      closed: dataProject.projectDetails.githubPullRequests.closed || 0,
-      merged: dataProject.projectDetails.githubPullRequests.merged || 0
-    } : undefined
-
-    project.projectDetails = {
-      ...project.projectDetails,
-      license: dataProject.projectDetails.license || undefined,
-      defaultBranch: dataProject.projectDetails.defaultBranch || undefined,
-      homepage: dataProject.projectDetails.homepage || undefined,
-      topics: dataProject.projectDetails.topics || undefined,
-      isArchived: dataProject.projectDetails.isArchived ?? undefined,
-      isFork: dataProject.projectDetails.isFork ?? undefined,
-    }
-  }
-
-  // Transform publication
-  if (dataProject.publication?.title) {
-    project.publication = {
-      title: dataProject.publication.title,
-      authors: dataProject.publication.authors || '',
-      venue: dataProject.publication.venue || '',
-      year: dataProject.publication.year || new Date().getFullYear(),
-      url: dataProject.publication.url || undefined,
-    }
-  }
-
-  // Transform branches
-  if (dataProject.branches?.length) {
-    project.branches = dataProject.branches.map(branch => ({
-      name: branch.name,
-      protected: branch.protected ?? undefined,
-      commitSha: branch.commitSha || undefined,
-    }))
-  }
-
-  // Transform latest release
-  if (dataProject.latestRelease?.version) {
-    project.latestRelease = {
-      version: dataProject.latestRelease.version,
-      name: dataProject.latestRelease.name || undefined,
-      publishedAt: dataProject.latestRelease.publishedAt || undefined,
-      description: dataProject.latestRelease.description || undefined,
-      htmlUrl: dataProject.latestRelease.htmlUrl || undefined,
-      downloadCount: dataProject.latestRelease.downloadCount || undefined,
-    }
-  }
-
-  // Transform media
-  if (dataProject.media?.plots?.length) {
-    project.plots = dataProject.media.plots.map(plot => ({
-      url: typeof plot.image === 'object' ? (plot.image as Media).url || '' : '',
-      caption: plot.caption,
-      alt: plot.alt || plot.caption,
-    }))
-  }
-
-  if (dataProject.media?.screenshots?.length) {
-    project.images = dataProject.media.screenshots.map(screenshot => ({
-      url: typeof screenshot.image === 'object' ? (screenshot.image as Media).url || '' : '',
-      caption: screenshot.caption,
-      alt: screenshot.alt || screenshot.caption,
-    }))
-  }
-
-  if (dataProject.media?.posters?.length) {
-    project.posters = dataProject.media.posters.map(poster => ({
-      title: poster.title,
-      conference: poster.conference,
-      year: poster.year,
-      url: typeof poster.file === 'object' ? (poster.file as Media).url || '' : '',
-    }))
-  }
-
-  return project
-}
-
-export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({ 
-  blockName: _blockName,
+export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
   title = 'Featured Projects',
-  subtitle = 'Discover some of the projects I am proud of.',
-  showAllProjects = false,
   projects: payloadProjects = [],
   layout = 'grid-3',
-  showViewAllButton = true,
-  viewAllButtonText = 'View All Projects',
-  viewAllButtonUrl = '/projects',
   maxProjects = 20,
 }) => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null)
-
-  // Transform data projects to component projects
-  const projects: Project[] = payloadProjects
+  const projects = payloadProjects
     .filter((project): project is DataProject => typeof project === 'object' && project !== null)
     .sort((a, b) => {
       const orderA = a.displayOrder ?? 999999
       const orderB = b.displayOrder ?? 999999
-      if (orderA !== orderB) {
-        return orderA - orderB
-      }
+      if (orderA !== orderB) return orderA - orderB
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     })
     .slice(0, maxProjects)
-    .map(transformDataProject)
 
-  // Always show debugging info to help with project limits
-  console.log('ProjectsShowcase Debug:', {
-    showAllProjects,
-    payloadProjectsCount: payloadProjects.length,
-    payloadProjects: payloadProjects.map(p => typeof p === 'object' ? p.title : p),
-    maxProjects,
-    actualProjectsShown: projects.length,
-    isLimitingResults: payloadProjects.length > maxProjects
-  })
-
-  // Grid class mapping
   const gridClasses = {
     'grid-2': 'md:grid-cols-2',
     'grid-3': 'md:grid-cols-2 lg:grid-cols-3',
@@ -226,67 +42,126 @@ export const ProjectsShowcase: React.FC<ProjectsShowcaseProps> = ({
     'mixed': 'md:grid-cols-2 lg:grid-cols-3',
   }
 
-  // If no projects, show fallback content
   if (projects.length === 0) {
     return (
       <div id="my-projects" className="container my-16">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             {title}
           </h2>
-          <p className="text-lg text-muted-foreground mb-8">
-            {subtitle}
-          </p>
-          <p className="text-muted-foreground">
-            No projects have been added yet. Add some projects to src/data/projects.ts to see them here.
-          </p>
+          <p className="text-muted-foreground">No projects yet.</p>
         </div>
       </div>
     )
   }
 
   return (
-    <>
-      <div id="my-projects" className="container my-16">
-        <div className="max-w-4xl mx-auto text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+    <div id="my-projects" className="container my-16">
+      <div className="max-w-5xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             {title}
           </h2>
-          <p className="text-lg text-muted-foreground">
-            {subtitle}
-          </p>
         </div>
 
-        <div className={`grid grid-cols-1 ${gridClasses[layout]} gap-8`}>
-          {projects.map((project) => (
-            <ProjectCard
-              key={project.id}
-              project={project}
-              onExpand={setSelectedProject}
-            />
-          ))}
-        </div>
+        <div className={`grid grid-cols-1 ${gridClasses[layout]} gap-6`}>
+          {projects.map((project) => {
+            const coverImage = project.coverImage as Media | null
+            const coverImageUrl = coverImage?.url || null
+            const coverImageAlt = coverImage?.alt || project.title
+            const githubUrl = project.links?.githubUrl
+            const demoUrl = project.links?.demoUrl
+            const techStack = project.techStack?.slice(0, 4) || []
+            const remainingTech = (project.techStack?.length || 0) - 4
 
-        {showViewAllButton && (
-          <div className="text-center mt-12">
-            <a
-              href={viewAllButtonUrl}
-              className="inline-flex items-center px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors font-medium"
-            >
-              {viewAllButtonText}
-            </a>
-          </div>
-        )}
+            return (
+              <div
+                key={project.id}
+                className="bg-card border border-border rounded-lg overflow-hidden transition-colors hover:bg-accent/50 flex flex-col"
+              >
+                {/* Cover Image */}
+                {coverImageUrl && (
+                  <div className="relative h-40 md:h-48 bg-muted">
+                    <NextImage
+                      src={coverImageUrl}
+                      alt={coverImageAlt}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
+                  </div>
+                )}
+
+                {/* Content */}
+                <div className="p-5 flex flex-col flex-1">
+                  <h3 className="text-lg font-bold text-foreground mb-1">
+                    {project.title}
+                  </h3>
+
+                  {project.category && (
+                    <span className="text-xs uppercase text-muted-foreground font-medium tracking-wide mb-3">
+                      {project.category.replace('-', ' ')}
+                    </span>
+                  )}
+
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-3 flex-1">
+                    {project.shortDescription || project.description}
+                  </p>
+
+                  {/* Tech Stack */}
+                  {techStack.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {techStack.map((tech, index) => {
+                        const techName = typeof tech === 'string' ? tech : tech.technology
+                        return (
+                          <span
+                            key={index}
+                            className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full"
+                          >
+                            {techName}
+                          </span>
+                        )
+                      })}
+                      {remainingTech > 0 && (
+                        <span className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full">
+                          +{remainingTech} more
+                        </span>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Links */}
+                  <div className="flex items-center gap-2 mt-auto pt-2">
+                      {githubUrl && (
+                        <a
+                          href={githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                        >
+                          <Github className="w-3.5 h-3.5" />
+                          Repo
+                        </a>
+                      )}
+                      {demoUrl && (
+                        <a
+                          href={demoUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-muted text-muted-foreground hover:bg-accent transition-colors"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5" />
+                          Demo
+                        </a>
+                      )}
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
-
-      {/* Modal */}
-      {selectedProject && (
-        <ProjectModal
-          project={selectedProject}
-          onClose={() => setSelectedProject(null)}
-        />
-      )}
-    </>
+    </div>
   )
 }
 

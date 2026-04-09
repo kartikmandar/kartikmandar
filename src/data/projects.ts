@@ -4936,7 +4936,7 @@ export const projects: Project[] = [
       }
     ],
     "links": {
-      "githubUrl": "https://github.com/RRI-interferometry/HERA",
+      "githubUrl": "https://github.com/RRI-interferometry/RRIVis",
       "githubStats": {
         "stars": 0,
         "forks": 0,
