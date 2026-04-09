@@ -5,14 +5,11 @@ import Link from 'next/link'
 import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
 import { CookieConsentSettings } from '@/components/CookieConsent'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
-import { useForm, ValidationError } from '@formspree/react'
 
 export function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const starsContainerRef = useRef<HTMLDivElement>(null);
   const shootingStarsRef = useRef<HTMLDivElement>(null);
-  const [state, handleSubmit] = useForm("xyzjpnrj");
-  
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 300) {
@@ -329,102 +326,6 @@ export function Footer() {
         
         {/* Shooting stars */}
         <div className="shooting-stars-container" ref={shootingStarsRef}></div>
-        
-        {/* Connect section */}
-        <div className="border-t border-border bg-gradient-to-r from-black to-zinc-900 py-8 sm:py-10 text-center relative">
-          <div className="container max-w-4xl mx-auto px-4 sm:px-6">
-            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-zinc-200 to-zinc-400 inline-block">
-              Connect for Research Collaboration
-            </h3>
-            <p className="mb-4 sm:mb-6 text-gray-300 max-w-xl mx-auto text-sm sm:text-base leading-relaxed">
-              Interested in collaborating on radio interferometry projects, spectral timing analysis of BHXBs, ML applications in gravitation lensing, or exploring data analysis projects? Let&apos;s connect!
-            </p>
-            {state.succeeded ? (
-              <div className="text-center mb-4 sm:mb-6">
-                <div className="inline-block px-6 py-4 bg-card border border-border rounded-lg shadow-lg">
-                  <p className="text-foreground font-semibold">Thanks for reaching out!</p>
-                  <p className="text-muted-foreground text-sm mt-1">I&apos;ll get back to you soon.</p>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-3 justify-center mb-3 sm:mb-4 max-w-2xl mx-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div>
-                    <input
-                      type="text"
-                      name="name"
-                      placeholder="Your name"
-                      required
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
-                    />
-                    <ValidationError 
-                      prefix="Name" 
-                      field="name"
-                      errors={state.errors}
-                      className="text-destructive text-xs mt-1"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      name="designation"
-                      placeholder="Your designation (e.g., PhD Student)"
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
-                    />
-                    <ValidationError 
-                      prefix="Designation" 
-                      field="designation"
-                      errors={state.errors}
-                      className="text-destructive text-xs mt-1"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    name="email"
-                    placeholder="Your email address"
-                    required
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400"
-                  />
-                  <ValidationError 
-                    prefix="Email" 
-                    field="email"
-                    errors={state.errors}
-                    className="text-destructive text-xs mt-1"
-                  />
-                </div>
-                <div>
-                  <textarea
-                    name="message"
-                    placeholder="Why do you want to connect? (e.g., research collaboration, academic discussion, project inquiry)"
-                    required
-                    rows={3}
-                    className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-md bg-opacity-10 bg-white border border-gray-700 text-white text-sm sm:text-base placeholder-gray-400 resize-none"
-                  />
-                  <ValidationError 
-                    prefix="Message" 
-                    field="message"
-                    errors={state.errors}
-                    className="text-destructive text-xs mt-1"
-                  />
-                </div>
-                <button 
-                  type="submit"
-                  disabled={state.submitting}
-                  className={`px-4 sm:px-6 py-3 sm:py-4 bg-zinc-700 text-white font-semibold rounded-md transition-all text-sm sm:text-base ${
-                    state.submitting 
-                      ? 'opacity-50 cursor-not-allowed' 
-                      : 'hover:bg-zinc-600 hover:translate-y-[-2px]'
-                  }`}
-                >
-                  {state.submitting ? 'Connecting...' : 'Connect'}
-                </button>
-              </form>
-            )}
-            <p className="text-gray-400 text-xs sm:text-sm">I&apos;m open to collaborations, presentations, and academic discussions.</p>
-          </div>
-        </div>
         
         {/* Main footer content */}
         <div className="container py-8 sm:py-10 lg:py-12 px-4 sm:px-6 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
