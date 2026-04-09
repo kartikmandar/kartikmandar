@@ -6,8 +6,133 @@ import type { Talk } from './types'
  */
 export const talks: Talk[] = [
   {
-    "id": 2,
+    "id": 3,
     "displayOrder": 1,
+    "title": "RRIVis",
+    "shortDescription": "Talk on RRIVis at the School and Workshop on 21-cm Cosmology, TIFR Mumbai",
+    "abstract": "Presented RRIVis, a full-RIME, GPU-accelerated radio interferometric visibility simulator developed at the Raman Research Institute. RRIVis is an interferometric visibility simulator (no approximation) for forward modelling the whole pipeline, used for validating radio interferometry data in the context of 21-cm cosmology and the Epoch of Reionization.",
+    "talkType": "presentation",
+    "language": "english",
+    "audienceLevel": "advanced",
+    "publishedAt": "2026-03-15T00:00:00.000Z",
+    "slug": "rrivis-21cm-cosmology-tifr",
+    "updatedAt": "2026-04-10T00:00:00.000Z",
+    "createdAt": "2026-04-10T00:00:00.000Z",
+    "coverImage": {
+      "id": 100,
+      "alt": "RRIVis Poster",
+      "caption": null,
+      "updatedAt": "2026-04-10T00:00:00.000Z",
+      "createdAt": "2026-04-10T00:00:00.000Z",
+      "url": "/media/rrivis_poster.png",
+      "thumbnailURL": "/media/rrivis_poster-300x345.png",
+      "filename": "rrivis_poster.png",
+      "mimeType": "image/png",
+      "filesize": null,
+      "width": 629,
+      "height": 724,
+      "focalX": 50,
+      "focalY": 50,
+      "sizes": {
+        "thumbnail": {
+          "url": "/media/rrivis_poster-300x345.png",
+          "width": 300,
+          "height": 345,
+          "mimeType": "image/png",
+          "filesize": null,
+          "filename": "rrivis_poster-300x345.png"
+        },
+        "square": {
+          "url": "/media/rrivis_poster-500x500.png",
+          "width": 500,
+          "height": 500,
+          "mimeType": "image/png",
+          "filesize": null,
+          "filename": "rrivis_poster-500x500.png"
+        },
+        "small": {
+          "url": "/media/rrivis_poster-600x691.png",
+          "width": 600,
+          "height": 691,
+          "mimeType": "image/png",
+          "filesize": null,
+          "filename": "rrivis_poster-600x691.png"
+        },
+        "medium": {
+          "url": null,
+          "width": null,
+          "height": null,
+          "mimeType": null,
+          "filesize": null,
+          "filename": null
+        },
+        "large": {
+          "url": null,
+          "width": null,
+          "height": null,
+          "mimeType": null,
+          "filesize": null,
+          "filename": null
+        },
+        "xlarge": {
+          "url": null,
+          "width": null,
+          "height": null,
+          "mimeType": null,
+          "filesize": null,
+          "filename": null
+        },
+        "og": {
+          "url": "/media/rrivis_poster-1200x630.png",
+          "width": 1200,
+          "height": 630,
+          "mimeType": "image/png",
+          "filesize": null,
+          "filename": "rrivis_poster-1200x630.png"
+        }
+      }
+    },
+    "eventDetails": {
+      "eventName": "School and Workshop on 21-cm Cosmology",
+      "eventType": "workshop",
+      "venue": "TIFR Mumbai",
+      "eventWebsite": null,
+      "eventOrganizer": "TIFR",
+      "eventDescription": "School and Workshop on 21-cm Cosmology",
+      "city": "Mumbai",
+      "country": "India"
+    },
+    "scheduling": {
+      "talkDate": "2026-03-15T00:00:00.000Z",
+      "talkTime": null,
+      "timezone": "IST",
+      "talkStatus": "completed",
+      "registrationUrl": null
+    },
+    "materials": {
+      "gDriveFolderId": null,
+      "gDriveFolderUrl": "https://drive.google.com/file/d/1usZ9caTdVYfHhdMfRdVLDHnIV8zaK6oh/view?usp=sharing",
+      "enableEmbedView": false,
+      "embedHeight": 400
+    },
+    "topics": [
+      { "topic": "21-cm Cosmology" },
+      { "topic": "Radio Interferometry" },
+      { "topic": "Visibility Simulation" },
+      { "topic": "Epoch of Reionization" }
+    ],
+    "collaboration": {
+      "peerReviewed": false,
+      "invitedSpeaker": false
+    },
+    "professional": {
+      "honorarium": false,
+      "travelSponsored": false
+    }
+  },
+  {
+    "id": 2,
+    "displayOrder": 2,
     "title": "Contributing to Open Source: A Primer to GSoC and beyond",
     "shortDescription": "Google Summer of Code talk",
     "abstract": "This talk dives into Google Summer of Code (GSoC) from a natural science and engineering perspective. Srutanik Bhaduri and I share our personal journeys, such as building tools like the \"Stingray Explorer\" for X-ray astronomy and integrating gprMax with Jupyter Notebooks. It’s not just about coding but connecting with mentors, learning new skills, and contributing meaningfully to open source. \n",
@@ -143,7 +268,7 @@ export const talks: Talk[] = [
   },
   {
     "id": 1,
-    "displayOrder": 2,
+    "displayOrder": 3,
     "title": "Talk on Celestial Sphere Mechanics",
     "abstract": "Human beings have long looked up at the sky and pondered its mysteries. Evidence of the long struggle to understand its secrets may be seen in remnants of cultures around the world: the great Stonehenge monument in England, the structures and the writings of the Maya and Aztecs, and the medicine wheels of the Native Americans. However, our modern scientific view of the universe traces its beginnings to the ancient Greek tradition of natural philosophy.\n",
     "talkType": "presentation",
