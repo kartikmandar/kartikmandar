@@ -40,10 +40,10 @@ export const AboutHero: React.FC = () => {
             {/* Research Interests */}
             <div className="mb-10 space-y-4">
               <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing.
+                My research centers on 21-cm cosmology, with a focus on forward-modelling interferometric pipelines (visibility simulators, antenna/beam simulations) and validating systematics for experiments like HERA. I also work on time-domain and spectral analysis of black hole X-ray binaries, ML methods for strong gravitational lensing, and open-source scientific software.
               </p>
               <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
-                I also offer consultancy and development services for research software, web and mobile applications.
+                I also work as a freelance developer and consultant, building research software, web platforms, and mobile applications for academic and industry clients.
               </p>
             </div>
             

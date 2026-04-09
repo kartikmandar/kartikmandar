@@ -332,8 +332,7 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-4 sm:mb-6">
               <h3 className="text-lg sm:text-xl font-bold mb-1">Kartik Mandar</h3>
-              <p className="text-zinc-400 mb-2 text-sm sm:text-base">BS Physics | Looking for Astrophysics Masters</p>
-              <p className="text-gray-400 text-xs sm:text-sm">Specializing in radio interferometry and spectral analysis</p>
+              <p className="text-zinc-400 mb-2 text-sm sm:text-base">BS Physics</p>
             </div>
             
             {/* Social links */}
@@ -353,33 +352,37 @@ export function Footer() {
             </div>
             
             {/* Academic buttons */}
-            <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Academic CV</span>
-              </a>
-              <a href="https://drive.google.com/file/d/15PZLNWHPzwWEzjf4GhA3WJhXWlJXqkXg/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Professional CV</span>
-              </a>
-              <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path d="M12 14l9-5-9-5-9 5 9 5z" />
-                  <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
-                </svg>
-                <span>Google Scholar</span>
-              </a>
-              <a href="https://orcid.org/0009-0002-6037-4613" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/>
-                </svg>
-                <span>ORCID</span>
-              </a>
+            <div className="flex flex-col gap-2 sm:gap-3 mb-4 sm:mb-6">
+              <div className="flex flex-row gap-2 sm:gap-3">
+                <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Academic CV</span>
+                </a>
+                <a href="https://drive.google.com/file/d/15PZLNWHPzwWEzjf4GhA3WJhXWlJXqkXg/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>Professional CV</span>
+                </a>
+              </div>
+              <div className="flex flex-row gap-2 sm:gap-3">
+                <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path d="M12 14l9-5-9-5-9 5 9 5z" />
+                    <path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998a12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" />
+                  </svg>
+                  <span>Google Scholar</span>
+                </a>
+                <a href="https://orcid.org/0009-0002-6037-4613" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-all hover:bg-zinc-600 touch-target min-h-[44px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 0C5.372 0 0 5.372 0 12s5.372 12 12 12 12-5.372 12-12S18.628 0 12 0zM7.369 4.378c.525 0 .947.431.947.947s-.422.947-.947.947a.95.95 0 0 1-.947-.947c0-.525.422-.947.947-.947zm-.722 3.038h1.444v10.041H6.647V7.416zm3.562 0h3.9c3.712 0 5.344 2.653 5.344 5.025 0 2.578-2.016 5.025-5.325 5.025h-3.919V7.416zm1.444 1.303v7.444h2.297c3.272 0 4.022-2.484 4.022-3.722 0-2.016-1.284-3.722-4.097-3.722h-2.222z"/>
+                  </svg>
+                  <span>ORCID</span>
+                </a>
+              </div>
             </div>
             
             {/* Make sure the theme selector is visible */}
@@ -394,12 +397,23 @@ export function Footer() {
             <ul className="space-y-2 mb-4 sm:mb-6">
               {blogPosts.map((post, index) => (
                 <li key={index}>
-                  <Link 
-                    href={post.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
-                  >
-                    {post.label}
-                  </Link>
+                  {post.url.startsWith('http') ? (
+                    <a
+                      href={post.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
+                    >
+                      {post.label}
+                    </a>
+                  ) : (
+                    <Link
+                      href={post.url}
+                      className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
+                    >
+                      {post.label}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
