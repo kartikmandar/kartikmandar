@@ -35,7 +35,7 @@ export default function TalksPage(): React.JSX.Element {
 
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
         <div className="text-center mb-12">
           <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
@@ -79,13 +79,7 @@ export default function TalksPage(): React.JSX.Element {
                   </p>
 
                   {talk.scheduling?.talkStatus && (
-                    <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-3 ${
-                      talk.scheduling.talkStatus === 'completed'
-                        ? 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300'
-                        : talk.scheduling.talkStatus === 'upcoming'
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300'
-                          : 'bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300'
-                    }`}>
+                    <span className="inline-block text-xs font-medium px-2 py-0.5 rounded-full mb-3 bg-muted text-muted-foreground">
                       {talk.scheduling.talkStatus.charAt(0).toUpperCase() + talk.scheduling.talkStatus.slice(1)}
                     </span>
                   )}
@@ -97,7 +91,7 @@ export default function TalksPage(): React.JSX.Element {
                   {tags.length > 0 && (
                     <div className="flex flex-wrap gap-1.5 mb-3">
                       {tags.map((tag, i) => (
-                        <span key={i} className="px-2 py-0.5 bg-primary/10 text-primary text-xs rounded-full">
+                        <span key={i} className="px-2 py-0.5 bg-muted text-muted-foreground text-xs rounded-full">
                           {tag}
                         </span>
                       ))}

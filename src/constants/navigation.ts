@@ -8,7 +8,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: 'My Story', url: '/my-story' },
   { label: 'CV', url: '/cv' },
   { label: 'Consultancy', url: '/consultancy' },
-  { label: 'Developer', url: '/developer' },
   { label: 'Talks', url: '/talks' },
   { label: 'Publications', url: '/publications' },
   { label: 'Open Source', url: '/open-source' },

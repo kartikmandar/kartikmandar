@@ -1,12 +1,8 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import { 
-  Users, 
-  BookOpen, 
-  MessageCircle,
-  ExternalLink,
-  Clock,
-  Presentation
+import {
+  BookOpen,
+  ExternalLink
 } from 'lucide-react'
 
 export const dynamic = 'force-static'
@@ -27,26 +23,18 @@ export default async function JournalClubPage() {
     {
       title: "Open Discussions",
       description: "Papers can be from any field of astronomy and astrophysics. Discussions are open—anyone can participate, share insights, or ask questions.",
-      icon: <MessageCircle className="w-8 h-8" />,
-      color: "from-blue-500/20 to-cyan-500/20 border-blue-500/30"
     },
     {
       title: "Regular Presentations",
       description: "Core members are expected to present at least two papers per month that they have read, ensuring consistent engagement.",
-      icon: <Presentation className="w-8 h-8" />,
-      color: "from-green-500/20 to-emerald-500/20 border-green-500/30"
     },
     {
       title: "Weekly Sessions",
       description: "We hold weekly sessions Friday nights, making it a regular habit to explore and analyze new research.",
-      icon: <Clock className="w-8 h-8" />,
-      color: "from-purple-500/20 to-pink-500/20 border-purple-500/30"
     },
     {
       title: "Guest Speakers",
       description: "We invite speakers to discuss their own research papers and findings, providing insights from active researchers.",
-      icon: <Users className="w-8 h-8" />,
-      color: "from-orange-500/20 to-red-500/20 border-orange-500/30"
     }
   ]
 
@@ -99,11 +87,11 @@ export default async function JournalClubPage() {
 
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-6xl mx-auto">
-        
+      <div className="max-w-5xl mx-auto">
+
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Astrophysics Journal Club
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-2">
@@ -116,12 +104,12 @@ export default async function JournalClubPage() {
 
         {/* How It Works Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-foreground">How It Works</h2>
-          <div className="grid md:grid-cols-2 gap-8">
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-foreground">How It Works</h2>
+          <div className="grid md:grid-cols-2 gap-6">
             {features.map((feature, index) => (
-              <div 
-                key={index} 
-                className={`bg-gradient-to-br ${feature.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg`}
+              <div
+                key={index}
+                className="bg-card border border-border rounded-lg p-6 transition-colors hover:bg-accent/50"
               >
                 <div>
                   <h3 className="text-xl font-bold mb-3 text-foreground">
@@ -138,7 +126,7 @@ export default async function JournalClubPage() {
 
         {/* Why Join Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-foreground">Why Join?</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-foreground">Why Join?</h2>
           <div className="bg-card border border-border rounded-xl p-8">
             <div className="grid md:grid-cols-2 gap-6">
               {benefits.map((benefit, index) => (
@@ -158,10 +146,10 @@ export default async function JournalClubPage() {
 
         {/* Recent Presentations */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 text-center text-foreground">Recent Presentations</h2>
+          <h2 className="text-2xl md:text-3xl font-bold mb-8 text-center text-foreground">Recent Presentations</h2>
           <div className="space-y-6">
             {recentPresentations.map((presentation, index) => (
-              <div key={index} className="bg-card border border-border rounded-xl p-6 hover:shadow-lg transition-all duration-300">
+              <div key={index} className="bg-card border border-border rounded-lg p-6 transition-colors hover:bg-accent/50">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex-1">
                     <h3 className="text-lg font-semibold text-foreground mb-2">

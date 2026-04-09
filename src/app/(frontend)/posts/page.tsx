@@ -17,7 +17,7 @@ export default function Page() {
       <PageClient />
       <div className="container mb-16">
         <div className="text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Posts
           </h1>
         </div>

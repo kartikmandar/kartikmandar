@@ -17,10 +17,10 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function ConsultancyPage() {
   return (
     <div className="container mx-auto px-4 py-20 min-h-[60vh]">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
 
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Consultancy
           </h1>
         </div>

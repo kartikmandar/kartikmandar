@@ -1,7 +1,6 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import { 
-  Presentation,
+import {
   Calendar,
   MapPin,
   Users,
@@ -31,8 +30,6 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
       date: "5th March, 2025",
       category: "Radio Astronomy",
       abstract: "The RRIVis 21cm Visibility Simulator is a computational tool designed to generate synthetic visibility data for radio interferometric observations of the cosmic 21cm signal during the Epoch of Reionization (EoR). This simulator addresses the need for realistic datasets to test analysis pipelines and instrumentation in the context of upcoming radio telescopes. The tool incorporates customizable parameters, including array configurations and observation frequencies, to mimic real-world observational conditions.",
-      icon: <Presentation className="w-8 h-8" />,
-      color: "from-blue-500/20 to-purple-500/20 border-blue-500/30",
       posterUrl: "https://drive.google.com/file/d/1CGS4VNEFCh-vqCNOrh8nhtb29HcaBy9V/view?usp=sharing"
     }
   ]
@@ -48,14 +45,14 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
 
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-6xl mx-auto">
-        
+      <div className="max-w-5xl mx-auto">
+
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Posters
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
             Academic posters and presentations showcasing research contributions in astrophysics, radio interferometry, and computational astronomy.
           </p>
         </div>
@@ -75,7 +72,7 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
               {categoryPosters.map((poster, index) => (
                 <div 
                   key={`${category}-${index}`} 
-                  className={`bg-gradient-to-br ${poster.color} bg-card border rounded-xl p-8 hover:scale-[1.02] transition-all duration-300 hover:shadow-lg group`}
+                  className="bg-card border border-border rounded-lg p-6 md:p-8"
                 >
                   <div className="grid lg:grid-cols-3 gap-6">
                     
@@ -150,19 +147,6 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
           </section>
         ))}
 
-        {/* Summary Stats */}
-        <section className="mt-16 pt-8 border-t border-border">
-          <div className="grid md:grid-cols-2 gap-6 text-center max-w-md mx-auto">
-            <div className="bg-card border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">{posters.length}</div>
-              <div className="text-sm text-muted-foreground">Total Posters</div>
-            </div>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">{Object.keys(groupedPosters).length}</div>
-              <div className="text-sm text-muted-foreground">Categories</div>
-            </div>
-          </div>
-        </section>
 
       </div>
     </div>

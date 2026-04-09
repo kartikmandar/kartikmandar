@@ -127,23 +127,23 @@ const timelineEvents = [
 export default function OpenSourcePage(): React.JSX.Element {
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-6xl mx-auto">
-        
+      <div className="max-w-5xl mx-auto">
+
         {/* Hero Section */}
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Open Source Contributions
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
             Building the future of technology, one commit at a time.
           </p>
         </div>
 
 
         {/* Google Summer of Code Section */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">
               Google Summer of Code
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
@@ -153,7 +153,7 @@ export default function OpenSourcePage(): React.JSX.Element {
           
           <div className="space-y-6">
             {gsocProjects.map((gsocProject, projectIndex) => (
-              <div key={projectIndex} className="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all">
+              <div key={projectIndex} className="bg-card border border-border rounded-lg p-6 md:p-8 transition-colors hover:bg-accent/50">
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                   <div className="order-2 sm:order-1">
                     <h3 className="text-xl sm:text-2xl font-bold mb-2">{gsocProject.project}</h3>
@@ -168,7 +168,7 @@ export default function OpenSourcePage(): React.JSX.Element {
                       <span className="w-full sm:w-auto">Mentor{gsocProject.mentors.length > 1 ? 's' : ''}: {gsocProject.mentors.join(', ')}</span>
                     </div>
                   </div>
-                  <div className="order-1 sm:order-2 text-3xl font-bold text-yellow-600 dark:text-yellow-400 flex-shrink-0">
+                  <div className="order-1 sm:order-2 text-3xl font-bold text-muted-foreground flex-shrink-0">
                     {gsocProject.year}
                   </div>
                 </div>
@@ -180,7 +180,7 @@ export default function OpenSourcePage(): React.JSX.Element {
                   <div className="grid md:grid-cols-2 gap-3">
                     {gsocProject.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-yellow-500 rounded-full flex-shrink-0" />
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </div>
                     ))}
@@ -213,14 +213,14 @@ export default function OpenSourcePage(): React.JSX.Element {
         </section>
 
         {/* Other Contributions */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Other Contributions</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Other Contributions</h2>
           </div>
           
           <div className="space-y-6">
             {featuredProjects.map((project, projectIndex) => (
-              <div key={projectIndex} className="bg-gradient-to-br from-blue-500/10 to-purple-500/10 border border-blue-500/30 rounded-xl p-4 sm:p-6 md:p-8 hover:shadow-xl transition-all">
+              <div key={projectIndex} className="bg-card border border-border rounded-lg p-6 md:p-8 transition-colors hover:bg-accent/50">
                 <div className="flex flex-col gap-4 mb-6">
                   <div>
                     <h3 className="text-xl sm:text-2xl font-bold mb-2">{project.name}</h3>
@@ -232,7 +232,7 @@ export default function OpenSourcePage(): React.JSX.Element {
                       <span className="hidden sm:inline">•</span>
                       <span>{project.duration}</span>
                       <span className="hidden sm:inline">•</span>
-                      <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded text-xs">
+                      <span className="px-2 py-0.5 bg-muted text-muted-foreground rounded text-xs">
                         {project.role}
                       </span>
                     </div>
@@ -253,7 +253,7 @@ export default function OpenSourcePage(): React.JSX.Element {
                   <div className="grid md:grid-cols-2 gap-3">
                     {project.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0" />
+                        <div className="w-2 h-2 bg-muted-foreground rounded-full flex-shrink-0" />
                         <span className="text-sm">{feature}</span>
                       </div>
                     ))}
@@ -286,9 +286,9 @@ export default function OpenSourcePage(): React.JSX.Element {
 
 
         {/* Timeline */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Open Source Journey</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Open Source Journey</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Key milestones in my open source contribution journey.
             </p>
@@ -298,11 +298,7 @@ export default function OpenSourcePage(): React.JSX.Element {
             {timelineEvents.map((event, index) => (
               <div key={index} className="flex gap-4 mb-8 last:mb-0">
                 <div className="relative flex flex-col items-center">
-                  <div className={`w-4 h-4 rounded-full flex-shrink-0 ${
-                    event.type === 'gsoc' ? 'bg-yellow-500' :
-                    event.type === 'achievement' ? 'bg-green-500' :
-                    'bg-primary'
-                  }`} />
+                  <div className="w-4 h-4 rounded-full flex-shrink-0 bg-primary" />
                   {index < timelineEvents.length - 1 && (
                     <div className="w-0.5 h-full bg-border absolute top-4" />
                   )}
@@ -317,29 +313,6 @@ export default function OpenSourcePage(): React.JSX.Element {
           </div>
         </section>
 
-        {/* Call to Action */}
-        <section className="text-center py-12 sm:py-16 px-4 sm:px-8 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">Let&apos;s Build Together</h2>
-          <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            I&apos;m always excited to collaborate on open source projects that make a difference to science and tech.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link 
-              href="https://github.com/kartikmandar"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              View GitHub Profile <ExternalLink className="w-4 h-4" />
-            </Link>
-            <Link 
-              href="/contact"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
-            >
-              Get in Touch
-            </Link>
-          </div>
-        </section>
 
       </div>
     </div>

@@ -115,14 +115,14 @@ export default async function CoursesPage(): Promise<React.JSX.Element> {
 
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-6xl mx-auto">
-        
+      <div className="max-w-5xl mx-auto">
+
         {/* Hero Section */}
         <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Courses and Labs
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
             Comprehensive academic coursework spanning physics, mathematics, engineering, economics, and interdisciplinary studies at IISER Bhopal.
           </p>
         </div>
@@ -142,7 +142,7 @@ export default async function CoursesPage(): Promise<React.JSX.Element> {
               {categoryData.courses.map((course, courseIndex) => (
                 <div 
                   key={`${categoryIndex}-${courseIndex}`} 
-                  className={`bg-gradient-to-br ${categoryData.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300 hover:shadow-lg group flex flex-col`}
+                  className="bg-card border border-border rounded-lg p-6 transition-colors hover:bg-accent/50 flex flex-col"
                 >
                   {/* Content */}
                   <div className="flex-1 flex flex-col">
@@ -182,27 +182,6 @@ export default async function CoursesPage(): Promise<React.JSX.Element> {
           </section>
         ))}
 
-        {/* Summary Stats */}
-        <section className="mt-16 pt-8 border-t border-border">
-          <div className="grid md:grid-cols-3 gap-6 text-center max-w-2xl mx-auto">
-            <div className="bg-card border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">
-                {courseCategories.reduce((total, cat) => total + cat.courses.length, 0)}
-              </div>
-              <div className="text-sm text-muted-foreground">Total Courses</div>
-            </div>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">{courseCategories.length}</div>
-              <div className="text-sm text-muted-foreground">Categories</div>
-            </div>
-            <div className="bg-card border rounded-lg p-6">
-              <div className="text-3xl font-bold text-primary mb-2">
-                {courseCategories.filter(cat => cat.category.includes('Lab')).reduce((total, cat) => total + cat.courses.length, 0)}
-              </div>
-              <div className="text-sm text-muted-foreground">Lab Courses</div>
-            </div>
-          </div>
-        </section>
 
       </div>
     </div>

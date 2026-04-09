@@ -31,35 +31,30 @@ export default function AcademicLifePage(): React.JSX.Element {
       duration: "3-4 years",
       focus: "Foundation building, discovering research interests",
       challenges: ["Heavy coursework", "Finding direction", "Time management"],
-      color: "from-blue-500/20 to-cyan-500/20 border-blue-500/30"
     },
     {
       stage: "Masters/Research",
       duration: "2 years",
       focus: "Specialization, first research experience",
       challenges: ["Thesis writing", "Research methodology", "Literature review"],
-      color: "from-green-500/20 to-emerald-500/20 border-green-500/30"
     },
     {
       stage: "PhD",
       duration: "4-6 years",
       focus: "Independent research, becoming an expert",
       challenges: ["Imposter syndrome", "Long timelines", "Uncertainty"],
-      color: "from-purple-500/20 to-pink-500/20 border-purple-500/30"
     },
     {
       stage: "Postdoc",
       duration: "2-4 years",
       focus: "Building research profile, job hunting",
       challenges: ["Job market", "Publication pressure", "Mobility"],
-      color: "from-orange-500/20 to-red-500/20 border-orange-500/30"
     },
     {
       stage: "Academic Career",
       duration: "Never Ends",
       focus: "Teaching, research, service",
       challenges: ["Tenure track", "Funding", "Work-life balance"],
-      color: "from-gray-500/20 to-gray-700/20 border-gray-500/30"
     }
   ]
 
@@ -68,29 +63,29 @@ export default function AcademicLifePage(): React.JSX.Element {
 
   return (
     <div className="container mx-auto px-4 py-20">
-      <div className="max-w-6xl mx-auto">
-        
+      <div className="max-w-5xl mx-auto">
+
         {/* Hero Section */}
-        <div className="text-center mb-20">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
+        <div className="text-center mb-16">
+          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
             Life of an Academia Student
           </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
+          <p className="text-lg text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
             An honest look into what life is really like for students and researchers in academia.
           </p>
           
           {/* Target Audience Note */}
-          <div className="max-w-3xl mx-auto mb-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-            <p className="text-blue-800 dark:text-blue-200 text-sm md:text-base">
+          <div className="max-w-3xl mx-auto mb-8 p-4 bg-muted border border-border rounded-lg">
+            <p className="text-foreground text-sm md:text-base">
               <strong>For High School Students:</strong> This page is specifically designed for incoming high school students who are thinking of going into research!
             </p>
           </div>
         </div>
 
         {/* Personal Stories from Blog */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Personal Stories & Experiences</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">Personal Stories & Experiences</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Real stories from the academic journey - the successes, failures, and everything in between.
             </p>
@@ -111,7 +106,7 @@ export default function AcademicLifePage(): React.JSX.Element {
                 const authorsText = authorNames.length > 0 ? authorNames.join(', ') : null
 
                 return (
-                  <article key={index} className="bg-card border rounded-xl overflow-hidden hover:shadow-lg transition-all duration-300 group">
+                  <article key={index} className="bg-card border border-border rounded-lg overflow-hidden transition-colors hover:bg-accent/50 group">
                     {/* Thumbnail */}
                     {thumbnailUrl && (
                       <div className="aspect-video overflow-hidden relative">
@@ -119,7 +114,7 @@ export default function AcademicLifePage(): React.JSX.Element {
                           src={thumbnailUrl}
                           alt={thumbnailAlt}
                           fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="object-cover"
                           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         />
                       </div>
@@ -182,17 +177,17 @@ export default function AcademicLifePage(): React.JSX.Element {
         </section>
 
         {/* Academic Journey Stages */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">The Academic Journey</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">The Academic Journey</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Each stage brings its own unique challenges, growth opportunities, and revelations.
             </p>
           </div>
           
-          <div className="flex flex-wrap justify-center gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {academicStages.map((stage, index) => (
-              <div key={index} className={`bg-gradient-to-br ${stage.color} bg-card border rounded-xl p-6 hover:scale-105 transition-all duration-300 w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] max-w-[350px]`}>
+              <div key={index} className="bg-card border border-border rounded-lg p-6">
                 <div className="mb-4">
                   <h3 className="font-bold text-foreground">{stage.stage}</h3>
                   <p className="text-sm text-muted-foreground">{stage.duration}</p>
@@ -216,9 +211,9 @@ export default function AcademicLifePage(): React.JSX.Element {
 
 
         {/* Financial Reality */}
-        <section className="mb-20">
+        <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">The Financial Reality</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">The Financial Reality</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Let&apos;s talk about money - because passion doesn&apos;t pay the bills (but it might barely cover them).
             </p>
@@ -253,28 +248,6 @@ export default function AcademicLifePage(): React.JSX.Element {
 
 
 
-        {/* Call to Action */}
-        <section className="text-center py-16 bg-gradient-to-r from-primary/10 to-secondary/10 rounded-2xl">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Join the Academic Community?</h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto mb-8">
-            Academic life isn&apos;t for everyone, but for those called to it, it can be incredibly fulfilling. 
-            The world needs curious minds pushing the boundaries of knowledge.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link 
-              href="/posts"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Read More Stories
-            </Link>
-            <Link 
-              href="/contact"
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
-            >
-              Connect & Discuss
-            </Link>
-          </div>
-        </section>
 
         {/* Comments Section */}
         <Comments
