@@ -1,10 +1,9 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
-import { 
+import {
   Users,
   ExternalLink
 } from 'lucide-react'
-import Link from 'next/link'
 
 export const dynamic = 'force-static'
 
@@ -35,7 +34,8 @@ const gsocProjects = [
       "DeepLense ML workflow integration with PyTorch DataLoader support",
       "Validating on DP0.2 mock survey data with performance metrics"
     ],
-    finalReportUrl: "#",
+    finalReportUrl: "https://github.com/kartikmandar/RIPPLe",
+    proposalUrl: "https://drive.google.com/file/d/1PsR4uNVVwPyAC_WN3On1DHrbXwdH3-Zh/view?usp=sharing",
     weeklyBlogsUrl: "https://gsoc2025.blogspot.com/",
     repositoryUrl: "https://github.com/kartikmandar/RIPPLe"
   },
@@ -53,6 +53,7 @@ const gsocProjects = [
       "Multiprocessing support",
     ],
     finalReportUrl: "/open-source/stingray-explorer",
+    proposalUrl: "https://drive.google.com/file/d/1VnP1hpKPUtQin5lKPRWXS-Ai2EW8057b/view?usp=sharing",
     weeklyBlogsUrl: "https://gsoc2024.blogspot.com/",
     repositoryUrl: "https://github.com/StingraySoftware/StingrayExplorer"
   }
@@ -95,32 +96,6 @@ const featuredProjects = [
   }
 ]
 
-const timelineEvents = [
-  {
-    date: "July 2022",
-    title: "First Time Hosting Mastodon Instance for college community",
-    description: "It was the first time I submitted a ticker to the devs describing a peculiar issue I was facing",
-    type: "milestone"
-  },
-  {
-    date: "Dec 2023",
-    title: "Started Contributing to Stingray Docs and understanding the codebase",
-    description: "Got to know the workflow of how dev setup works",
-    type: "milestone"
-  },
-  {
-    date: "May 2024",
-    title: "Selected for GSoC 2024",
-    description: "Accepted into Google Summer of Code with Open Astronomy (Stingray)",
-    type: "gsoc"
-  },
-  {
-    date: "May 2025",
-    title: "Selected for GSoC 2025",
-    description: "Accepted into Google Summer of Code with ML4Sci (DeepLense)",
-    type: "gsoc"
-  }
-]
 
 
 
@@ -188,24 +163,40 @@ export default function OpenSourcePage(): React.JSX.Element {
                 </div>
                 
                 <div className="flex flex-wrap gap-2 sm:gap-4">
-                  <Link 
+                  <a
                     href={gsocProject.finalReportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
                   >
                     Final Report <ExternalLink className="w-4 h-4" />
-                  </Link>
-                  <Link 
+                  </a>
+                  <a
                     href={gsocProject.weeklyBlogsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
                   >
                     Weekly Blogs <ExternalLink className="w-4 h-4" />
-                  </Link>
-                  <Link 
+                  </a>
+                  <a
                     href={gsocProject.repositoryUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
                   >
                     View Repository <ExternalLink className="w-4 h-4" />
-                  </Link>
+                  </a>
+                  {gsocProject.proposalUrl && (
+                    <a
+                      href={gsocProject.proposalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
+                    >
+                      Proposal <ExternalLink className="w-4 h-4" />
+                    </a>
+                  )}
                 </div>
               </div>
             ))}
@@ -265,18 +256,22 @@ export default function OpenSourcePage(): React.JSX.Element {
                     {project.impact}
                   </p>
                   <div className="flex flex-wrap gap-2 sm:gap-4 order-1 sm:order-2">
-                    <Link 
+                    <a
                       href={project.repositoryUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
                     >
                       Repository <ExternalLink className="w-4 h-4" />
-                    </Link>
-                    <Link 
+                    </a>
+                    <a
                       href={project.contributionsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
                     >
                       My Contributions <ExternalLink className="w-4 h-4" />
-                    </Link>
+                    </a>
                   </div>
                 </div>
               </div>
@@ -285,33 +280,6 @@ export default function OpenSourcePage(): React.JSX.Element {
         </section>
 
 
-        {/* Timeline */}
-        <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Open Source Journey</h2>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Key milestones in my open source contribution journey.
-            </p>
-          </div>
-          
-          <div className="max-w-3xl mx-auto">
-            {timelineEvents.map((event, index) => (
-              <div key={index} className="flex gap-4 mb-8 last:mb-0">
-                <div className="relative flex flex-col items-center">
-                  <div className="w-4 h-4 rounded-full flex-shrink-0 bg-primary" />
-                  {index < timelineEvents.length - 1 && (
-                    <div className="w-0.5 h-full bg-border absolute top-4" />
-                  )}
-                </div>
-                <div className="flex-1 pb-8">
-                  <div className="text-sm text-muted-foreground mb-1">{event.date}</div>
-                  <h3 className="font-semibold mb-1">{event.title}</h3>
-                  <p className="text-sm text-muted-foreground">{event.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
 
 
       </div>
