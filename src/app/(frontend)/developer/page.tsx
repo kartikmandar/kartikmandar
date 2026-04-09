@@ -156,14 +156,6 @@ const GITHUB_REPOS = [
     html_url: 'https://github.com/RRI-interferometry/RRIVis',
   },
   {
-    name: 'HERA',
-    owner: { login: 'RRI-interferometry' },
-    description: 'Hydrogen Epoch of Reionization Array data analysis and validation tools',
-    language: 'Jupyter Notebook',
-    updated_at: '2025-10-23T07:54:39Z',
-    html_url: 'https://github.com/RRI-interferometry/HERA',
-  },
-  {
     name: 'chrome_extension',
     owner: { login: 'LinkSpace-by-Merakinist' },
     description: 'Chrome extension for enhanced browsing and productivity features',
@@ -319,9 +311,6 @@ export default function DeveloperPage() {
             <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
               Software Developer Profile
             </h1>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              This is the page where I have discussed about most of my recent developer experience.
-            </p>
           </div>
 
           {/* Projects Showcase */}
