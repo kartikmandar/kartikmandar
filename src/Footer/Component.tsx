@@ -304,7 +304,6 @@ export function Footer() {
     { label: 'Posters', url: '/posters' },
     { label: 'Courses/Labs', url: '/courses' },
     { label: 'Journal Club', url: '/journal-club' },
-    { label: 'Common Resources', url: '/common-resources' }
   ]
 
   return (

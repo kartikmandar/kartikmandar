@@ -17,7 +17,6 @@ export const NAVIGATION_ITEMS: NavItem[] = [
   { label: 'Certificates', url: '/certificates' },
   { label: 'Journal Club', url: '/journal-club' },
   { label: 'Courses', url: '/courses' },
-  { label: 'Common Resources', url: '/common-resources' },
   { label: 'Academic Life', url: '/life-of-an-academia-student' },
   { label: 'Contact', url: '/contact' },
 ]

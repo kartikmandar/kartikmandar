@@ -20,7 +20,6 @@ const STATIC_PAGES = [
   { slug: 'posters', lastmod: '2026-03-29T00:00:00.000Z' },
   { slug: 'contact', lastmod: '2026-03-29T00:00:00.000Z' },
   { slug: 'consultancy', lastmod: '2026-03-29T00:00:00.000Z' },
-  { slug: 'common-resources', lastmod: '2026-03-29T00:00:00.000Z' },
   { slug: 'journal-club', lastmod: '2026-03-29T00:00:00.000Z' },
   { slug: 'life-of-an-academia-student', lastmod: '2026-03-29T00:00:00.000Z' },
   { slug: 'search', lastmod: '2026-03-29T00:00:00.000Z' },

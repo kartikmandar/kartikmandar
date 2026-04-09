@@ -46,7 +46,6 @@ export class FileSystemMapper {
       { path: '/publications', name: 'publications', type: 'static', hasIndex: true },
       { path: '/hobbies', name: 'hobbies', type: 'static', hasIndex: true },
       { path: '/contact', name: 'contact', type: 'static', hasIndex: true },
-      { path: '/common-resources', name: 'common-resources', type: 'static', hasIndex: true },
       { path: '/search', name: 'search', type: 'static', hasIndex: true },
       { path: '/journal-club', name: 'journal-club', type: 'static', hasIndex: true },
       { path: '/talks', name: 'talks', type: 'static', hasIndex: true },

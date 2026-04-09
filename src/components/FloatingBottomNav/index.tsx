@@ -41,7 +41,6 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
       'Certificates': <Award size={20} />,
       'Journal Club': <Users size={20} />,
       'Courses': <GraduationCap size={20} />,
-      'Common Resources': <FolderOpen size={20} />,
       'Academic Life': <User size={20} />,
       'Contact': <Phone size={20} />,
     }
@@ -65,11 +64,6 @@ export const FloatingBottomNav: React.FC<FloatingBottomNavProps> = ({ navItems }
       url: '/publications', 
       icon: <BookOpen size={20} />
     },
-    {
-      label: 'Common Resources',
-      url: '/common-resources',
-      icon: <FolderOpen size={20} />
-    }
   ]
 
   // Convert navItems prop to our format if provided, otherwise use defaults
