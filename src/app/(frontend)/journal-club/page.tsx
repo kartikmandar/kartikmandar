@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import {
   BookOpen,
   ExternalLink
@@ -11,6 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Astrophysics Journal Club | Kartik Mandar - IISER Bhopal',
     description: 'Join the Astrophysics Journal Club at IISER Bhopal for weekly discussions on recent research papers in astronomy and astrophysics. Open to all levels.',
+    alternates: { canonical: getCanonicalUrl('/journal-club') },
     openGraph: {
       title: 'Astrophysics Journal Club - IISER Bhopal',
       description: 'Weekly discussions on latest research in astronomy and astrophysics',
@@ -85,8 +88,18 @@ export default async function JournalClubPage() {
     }
   ]
 
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Journal Club', url: `${serverUrl}/journal-club` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Header */}

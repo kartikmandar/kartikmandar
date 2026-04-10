@@ -3,6 +3,8 @@ import React from 'react'
 import PageClient from '@/components/PageClient'
 import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
 import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 
 export const dynamic = 'force-static'
 
@@ -10,12 +12,23 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'My Story - Kartik Mandar',
     description: 'Journey through my cosmic story - from fascination with astrophysics to software development. Explore the universe that shaped my perspective.',
+    alternates: { canonical: getCanonicalUrl('/my-story') },
   }
 }
 
 export default function MyStoryPage() {
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'My Story', url: `${serverUrl}/my-story` },
+  ])
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PageClient />
       
       {/* Quasar background - 80% viewport height for immersive experience */}

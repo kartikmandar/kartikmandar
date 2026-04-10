@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import {
   Calendar,
   MapPin,
@@ -13,6 +15,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Posters | Kartik Mandar - Research Presentations',
     description: 'Academic posters and presentations in astrophysics, radio interferometry, and computational astronomy research.',
+    alternates: { canonical: getCanonicalUrl('/posters') },
     openGraph: {
       title: 'Posters - Kartik Mandar',
       description: 'Research posters and presentations in astrophysics and radio astronomy.',
@@ -43,8 +46,18 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
     return acc
   }, {} as Record<string, typeof posters>)
 
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Posters', url: `${serverUrl}/posters` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Hero Section */}

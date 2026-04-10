@@ -14,6 +14,8 @@ export async function GET() {
     .map((post) => ({
       loc: `${SITE_URL}/posts/${post.slug}`,
       lastmod: post.updatedAt || post.publishedAt || new Date().toISOString(),
+      changefreq: 'monthly' as const,
+      priority: 0.7,
     }))
 
   return getServerSideSitemap(sitemap)

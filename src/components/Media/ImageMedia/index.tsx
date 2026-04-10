@@ -39,7 +39,14 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
 
     width = fullWidth!
     height = fullHeight!
-    alt = altFromResource || ''
+
+    if (altFromResource) {
+      alt = altFromResource
+    } else if (url) {
+      // Derive alt from filename: strip path, extension, replace hyphens/underscores
+      const filename = url.split('/').pop()?.replace(/\.[^.]+$/, '') || ''
+      alt = filename.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    }
 
     src = url || ''
   }
@@ -63,7 +70,7 @@ export const ImageMedia: React.FC<MediaProps> = (props) => {
         placeholder="blur"
         blurDataURL={placeholderBlur}
         priority={priority}
-        quality={100}
+        quality={85}
         loading={loading}
         sizes={sizes}
         src={src}

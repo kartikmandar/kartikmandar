@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import {
   ExternalLink
 } from 'lucide-react'
@@ -10,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Certificates | Kartik Mandar - Professional Development',
     description: 'Professional certificates and achievements in machine learning, data science, web development, and academic research.',
+    alternates: { canonical: getCanonicalUrl('/certificates') },
     openGraph: {
       title: 'Certificates - Kartik Mandar',
       description: 'Professional certificates in ML, data science, web development, and research.',
@@ -205,8 +208,18 @@ export default async function CertificatesPage(): Promise<React.JSX.Element> {
     return acc
   }, {} as Record<string, typeof certificates>)
 
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Certificates', url: `${serverUrl}/certificates` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Hero Section */}

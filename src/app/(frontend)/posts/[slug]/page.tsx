@@ -7,6 +7,7 @@ import MarkdownContent from '@/components/MarkdownContent'
 import { PostHero } from '@/heros/PostHero'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getAllPostSlugs, getPostBySlug } from '@/lib/posts'
+import { generateArticleSchema, generateBreadcrumbSchema } from '@/utilities/structuredData'
 import PageClient from './page.client'
 import { Comments } from '@/components/Comments'
 import { notFound } from 'next/navigation'
@@ -29,8 +30,39 @@ export default async function PostPage({ params: paramsPromise }: Args) {
 
   if (!post) return notFound()
 
+  const serverUrl = getServerSideURL()
+  const heroImageUrl =
+    post.heroImage && typeof post.heroImage === 'object' && 'url' in post.heroImage
+      ? post.heroImage.url
+      : typeof post.heroImage === 'string'
+        ? post.heroImage
+        : undefined
+
+  const articleJsonLd = generateArticleSchema({
+    title: post.title,
+    description: post.meta?.description || post.excerpt,
+    publishedAt: post.publishedAt || undefined,
+    updatedAt: post.updatedAt || undefined,
+    heroImage: heroImageUrl || undefined,
+    slug: post.slug,
+  })
+
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Posts', url: `${serverUrl}/posts` },
+    { name: post.title, url: `${serverUrl}/posts/${post.slug}` },
+  ])
+
   return (
     <article className="pt-16 pb-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <PageClient />
 
       <PostHero post={post} />
@@ -92,13 +124,25 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     ? `${post.meta.title} | Kartik Mandar`
     : `${post.title} | Kartik Mandar`
 
+  const categories = post.categories?.map((c) =>
+    typeof c === 'object' && c !== null && 'title' in c ? c.title : String(c),
+  ).filter(Boolean)
+
   return {
     title,
     description: post.meta?.description || post.excerpt,
+    alternates: {
+      canonical: `${serverUrl}/posts/${slug}`,
+    },
     openGraph: {
+      type: 'article',
       title,
       description: post.meta?.description || post.excerpt || '',
       images: [{ url: ogImageUrl }],
+      publishedTime: post.publishedAt || undefined,
+      modifiedTime: post.updatedAt || post.publishedAt || undefined,
+      authors: ['Kartik Mandar'],
+      tags: categories,
     },
   }
 }

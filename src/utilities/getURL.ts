@@ -14,6 +14,11 @@ export const getServerSideURL = () => {
   return url
 }
 
+export const getCanonicalUrl = (path: string = '') => {
+  const base = getServerSideURL()
+  return `${base}${path.startsWith('/') ? path : `/${path}`}`
+}
+
 export const getClientSideURL = () => {
   if (canUseDOM) {
     const protocol = window.location.protocol

@@ -16,6 +16,7 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
+import { generatePersonSchema, generateWebSiteSchema } from '@/utilities/structuredData'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -39,7 +40,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning>
       <head suppressHydrationWarning>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generatePersonSchema()) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }}
+        />
         <InitTheme />
         {/* Favicon and app icons */}
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
@@ -56,7 +65,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ExternalLinkHandler />
 
           <Header />
-          {children}
+          <main>{children}</main>
           <Footer />
           <FloatingBottomNav navItems={navItems} />
           <GlobalAudioButton />
@@ -70,6 +79,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  alternates: {
+    canonical: getServerSideURL(),
+  },
   title: 'Kartik Mandar - Astrophysicist & Software Developer',
   description: 'Welcome to my digital space where I try to showcase my work and interests. Also astronomy is cool and more people should know about it. I tend to work on using my software development skills to solve problems in astrophysics and related fields.',
   keywords: ['astrophysics', 'software development', 'research', 'kartik mandar'],

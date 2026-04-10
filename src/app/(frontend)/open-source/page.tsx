@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import {
   Users,
   ExternalLink
@@ -11,6 +13,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Open Source Contributions | Kartik Mandar - Building the Future of Technology',
     description: 'Explore my open source contributions including Google Summer of Code projects, GitHub contributions, and community impact.',
+    alternates: { canonical: getCanonicalUrl('/open-source') },
     openGraph: {
       title: 'Open Source Contributions - Building the Future of Technology',
       description: 'Discover my journey in open source, GSoC projects, and contributions to the tech community.',
@@ -100,8 +103,18 @@ const featuredProjects = [
 
 
 export default function OpenSourcePage(): React.JSX.Element {
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Open Source', url: `${serverUrl}/open-source` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Hero Section */}

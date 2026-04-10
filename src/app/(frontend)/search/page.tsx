@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import { getAllPosts } from '@/lib/posts'
 import { getPublishedProjects } from '@/data/projects'
 import { getTalks } from '@/data/talks'
@@ -55,13 +57,27 @@ function buildSearchIndex(): SearchDocument[] {
 
 export default function SearchPage() {
   const searchIndex = buildSearchIndex()
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Search', url: `${serverUrl}/search` },
+  ])
 
-  return <SearchPageClient searchIndex={searchIndex} />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <SearchPageClient searchIndex={searchIndex} />
+    </>
+  )
 }
 
 export function generateMetadata(): Metadata {
   return {
     title: 'Search - Kartik Mandar',
     description: 'Search posts, projects, and talks.',
+    alternates: { canonical: getCanonicalUrl('/search') },
   }
 }

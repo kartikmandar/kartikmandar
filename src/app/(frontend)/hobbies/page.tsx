@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 
 export const dynamic = 'force-static'
 
@@ -7,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Hobbies | Kartik Mandar - Beyond Research',
     description: 'Discover the personal interests and hobbies that fuel creativity and passion - from stargazing and badminton to keyboards and cycling.',
+    alternates: { canonical: getCanonicalUrl('/hobbies') },
     openGraph: {
       title: 'Hobbies - Kartik Mandar',
       description: 'Personal interests beyond astrophysics research - astronomy, sports, and more.',
@@ -42,8 +45,18 @@ export default async function HobbiesPage() {
     }
   ]
 
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Hobbies', url: `${serverUrl}/hobbies` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         {/* Hero Section */}

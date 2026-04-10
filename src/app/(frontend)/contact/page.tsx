@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 
 export const dynamic = 'force-static'
 
@@ -7,6 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Contact | Kartik Mandar',
     description: 'Get in touch with Kartik Mandar for research collaborations, academic discussions, or consultancy.',
+    alternates: { canonical: getCanonicalUrl('/contact') },
     openGraph: {
       title: 'Contact Kartik Mandar',
       description: 'Connect for astrophysics research collaborations and academic discussions.',
@@ -15,8 +18,18 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ContactPage() {
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Contact', url: `${serverUrl}/contact` },
+  ])
+
   return (
     <div className="container mx-auto px-4 py-20 min-h-[60vh]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

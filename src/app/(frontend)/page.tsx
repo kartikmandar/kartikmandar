@@ -4,6 +4,7 @@ import PageClient from '@/components/PageClient'
 import { AboutHero } from '@/components/AboutHero'
 import { ProjectsShowcase } from '@/blocks/ProjectsShowcase/Component'
 import { getPublishedProjects } from '@/data/projects'
+import { getCanonicalUrl } from '@/utilities/getURL'
 
 export const dynamic = 'force-static'
 
@@ -11,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Kartik Mandar - Astrophysicist & Software Developer',
     description: 'Welcome to my digital space where astrophysics meets modern software development. Discover my projects, research, and expertise.',
+    alternates: { canonical: getCanonicalUrl('/') },
   }
 }
 
@@ -44,7 +46,7 @@ export default function HomePage() {
       <AboutHero />
 
       {/* Projects Showcase Component */}
-      <article className="pb-16">
+      <section className="pb-16">
         <ProjectsShowcase
           blockType="projectsShowcase"
           blockName="My Projects"
@@ -53,7 +55,7 @@ export default function HomePage() {
           maxProjects={100}
           showViewAllButton={false}
         />
-      </article>
+      </section>
 
       {/* All Projects List */}
       <section className="container pb-24">

@@ -1,5 +1,7 @@
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
+import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import { getTalks } from '@/data/talks'
 import { Media } from '@/components/Media'
 import type { Media as MediaType } from '@/data/types'
@@ -10,6 +12,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: 'Talks & Presentations | Kartik Mandar',
     description: 'Talks and presentations on astrophysics, radio interferometry, and open source software.',
+    alternates: { canonical: getCanonicalUrl('/talks') },
     openGraph: {
       title: 'Talks & Presentations - Kartik Mandar',
       description: 'Talks and presentations on astrophysics, radio interferometry, and open source software.',
@@ -32,9 +35,18 @@ function formatDate(dateString?: string | null): string {
 
 export default function TalksPage(): React.JSX.Element {
   const talks = getTalks()
+  const serverUrl = getServerSideURL()
+  const breadcrumbJsonLd = generateBreadcrumbSchema([
+    { name: 'Home', url: serverUrl },
+    { name: 'Talks', url: `${serverUrl}/talks` },
+  ])
 
   return (
     <div className="container mx-auto px-4 py-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
       <div className="max-w-5xl mx-auto">
 
         <div className="text-center mb-12">
