@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react'
 import type { ConsentPreferences, ConsentState } from '@/utilities/cookieConsent';
 import {
   getConsentFromCookies,
@@ -12,20 +12,15 @@ import {
 } from '@/utilities/cookieConsent';
 
 export function useCookieConsent() {
-  const [consentState, setConsentState] = useState<ConsentState | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showBanner, setShowBanner] = useState(false);
+  const [consentState, setConsentState] = useState<ConsentState | null>(() =>
+    typeof window !== 'undefined' ? getConsentFromCookies() : null
+  );
+  const [showBanner, setShowBanner] = useState(() =>
+    typeof window !== 'undefined' ? !hasValidConsent() : false
+  );
 
-  // Initialize consent state on mount
+  // Subscribe to consent updates from other components
   useEffect(() => {
-    const consent = getConsentFromCookies();
-    const hasConsent = hasValidConsent();
-
-    setConsentState(consent);
-    setShowBanner(!hasConsent);
-    setIsLoading(false);
-
-    // Listen for consent updates from other components
     const handleConsentUpdated = (event: CustomEvent) => {
       setConsentState(event.detail);
       setShowBanner(false);
@@ -36,16 +31,12 @@ export function useCookieConsent() {
       setShowBanner(true);
     };
 
-    if (typeof window !== 'undefined') {
-      window.addEventListener('cookieConsentUpdated', handleConsentUpdated as EventListener);
-      window.addEventListener('cookieConsentWithdrawn', handleConsentWithdrawn);
-    }
+    window.addEventListener('cookieConsentUpdated', handleConsentUpdated as EventListener);
+    window.addEventListener('cookieConsentWithdrawn', handleConsentWithdrawn);
 
     return () => {
-      if (typeof window !== 'undefined') {
-        window.removeEventListener('cookieConsentUpdated', handleConsentUpdated as EventListener);
-        window.removeEventListener('cookieConsentWithdrawn', handleConsentWithdrawn);
-      }
+      window.removeEventListener('cookieConsentUpdated', handleConsentUpdated as EventListener);
+      window.removeEventListener('cookieConsentWithdrawn', handleConsentWithdrawn);
     };
   }, []);
 
@@ -81,7 +72,7 @@ export function useCookieConsent() {
 
   return {
     consentState,
-    isLoading,
+    isLoading: false,
     showBanner,
     acceptAll,
     acceptNecessaryOnly,

@@ -28,13 +28,11 @@ const _iconMap: Record<string, React.ReactNode> = {
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const navItems = data?.navItems || []
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  // Track which pathname the menu was opened on — auto-closes when pathname changes
+  const [menuOpenedOnPath, setMenuOpenedOnPath] = useState<string | null>(null)
   const pathname = usePathname()
-
-  // Close mobile menu on route change
-  useEffect(() => {
-    setMobileMenuOpen(false)
-  }, [pathname])
+  const mobileMenuOpen = menuOpenedOnPath === pathname
+  const setMobileMenuOpen = (open: boolean) => setMenuOpenedOnPath(open ? pathname : null)
 
   // Prevent body scroll when mobile menu is open
   useEffect(() => {

@@ -106,12 +106,13 @@ export const TerminalInterface: React.FC<TerminalInterfaceProps> = ({
     }
   }, [output])
 
-  // Reset history index when input changes externally
-  useEffect(() => {
-    if (historyIndex !== -1 && currentInput !== commandHistory[commandHistory.length - 1 - historyIndex]) {
+  // Reset history when user types directly (not via history navigation or tab completion)
+  const handleUserInput = (value: string) => {
+    if (historyIndex !== -1) {
       setHistoryIndex(-1)
     }
-  }, [currentInput, commandHistory, historyIndex])
+    onInputChange(value)
+  }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     switch (e.key) {
@@ -237,7 +238,7 @@ export const TerminalInterface: React.FC<TerminalInterfaceProps> = ({
     return currentDirectory === '/' ? '~' : currentDirectory
   }
 
-  const renderOutputLine = (line: OutputLine, index: number): React.ReactNode => {
+  const renderOutputLine = (line: OutputLine, _index: number): React.ReactNode => {
     const colorClass = OUTPUT_COLORS[line.type]
 
     // Typewriter for the first welcome line (the ASCII banner)
@@ -320,7 +321,7 @@ export const TerminalInterface: React.FC<TerminalInterfaceProps> = ({
             ref={inputRef}
             type="text"
             value={currentInput}
-            onChange={(e) => onInputChange(e.target.value)}
+            onChange={(e) => handleUserInput(e.target.value)}
             onKeyDown={handleKeyDown}
             className="flex-1 bg-transparent border-none outline-none text-white text-xs sm:text-sm font-mono placeholder-white/40 caret-green-400 min-w-0"
             placeholder="Type a command..."

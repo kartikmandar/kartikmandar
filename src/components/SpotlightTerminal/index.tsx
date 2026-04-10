@@ -32,9 +32,10 @@ function createOutputLine(
 
 export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, content }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
-  const [currentDirectory, setCurrentDirectory] = useState<string>('/')
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [output, setOutput] = useState<OutputLine[]>([])
+  const [output, setOutput] = useState<OutputLine[]>(() =>
+    WELCOME_LINES.map((line, i) => createOutputLine('welcome', line, i === 0))
+  )
   const [currentInput, setCurrentInput] = useState<string>('')
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const [isInteracting, setIsInteracting] = useState<boolean>(false)
@@ -44,28 +45,13 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
   const terminalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const hasShownWelcome = useRef<boolean>(false)
 
   // Initialize file system mapper and command processor with useMemo to prevent recreation
   const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems, content), [navItems, content])
   const commandProcessor = React.useMemo(() => new CommandProcessor(fileSystemMapper, router, pathname), [fileSystemMapper, router, pathname])
 
-  // Update current directory based on pathname
-  useEffect(() => {
-    const mappedPath = fileSystemMapper.urlToPath(pathname)
-    setCurrentDirectory(mappedPath)
-  }, [pathname, fileSystemMapper])
-
-  // Show welcome message on first expand
-  useEffect(() => {
-    if (isExpanded && !hasShownWelcome.current) {
-      hasShownWelcome.current = true
-      const welcomeLines = WELCOME_LINES.map((line, i) =>
-        createOutputLine('welcome', line, i === 0)
-      )
-      setOutput(welcomeLines)
-    }
-  }, [isExpanded])
+  // Derive current directory from pathname
+  const currentDirectory = React.useMemo(() => fileSystemMapper.urlToPath(pathname), [pathname, fileSystemMapper])
 
   // Focus input when expanded
   useEffect(() => {
@@ -162,10 +148,6 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
         result.output
       )
       setOutput(prev => [...prev, commandLine, resultLine])
-    }
-
-    if (result.newDirectory) {
-      setCurrentDirectory(result.newDirectory)
     }
 
     if (result.navigate) {

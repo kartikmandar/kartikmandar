@@ -2,7 +2,8 @@ import React from 'react'
 import NextImage from 'next/image'
 import type { Project as DataProject } from '@/data/types'
 import type { Media } from '@/data/types'
-import { Github, ExternalLink } from 'lucide-react'
+import { ExternalLink } from 'lucide-react'
+import { GithubIcon as Github } from '@/components/icons/GithubIcon'
 
 interface ProjectsShowcaseProps {
   blockName?: string

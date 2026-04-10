@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { useCookieConsent } from '@/hooks/useCookieConsent';
@@ -11,17 +11,9 @@ interface ConsentAwareAnalyticsProps {
 
 export function ConsentAwareAnalytics({ _className = '' }: ConsentAwareAnalyticsProps) {
   const { analyticsConsent, isLoading } = useCookieConsent();
-  const [showAnalytics, setShowAnalytics] = useState(false);
 
-  useEffect(() => {
-    // Only show analytics after checking consent
-    if (!isLoading) {
-      setShowAnalytics(analyticsConsent);
-    }
-  }, [analyticsConsent, isLoading]);
-
-  // Don't render anything while loading or if consent is not given
-  if (isLoading || !showAnalytics) {
+  // Derived directly — no state or effect needed
+  if (isLoading || !analyticsConsent) {
     return null;
   }
 

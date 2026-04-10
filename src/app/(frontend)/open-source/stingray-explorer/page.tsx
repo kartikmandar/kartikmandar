@@ -2,7 +2,8 @@ import type { Metadata } from 'next/types'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, ExternalLink, Github, Globe, Calendar } from 'lucide-react'
+import { ArrowLeft, ExternalLink, Globe, Calendar } from 'lucide-react'
+import { GithubIcon as Github } from '@/components/icons/GithubIcon'
 
 export const dynamic = 'force-static'
 

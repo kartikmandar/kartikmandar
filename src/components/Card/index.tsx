@@ -7,66 +7,51 @@ import { ChevronRight } from 'lucide-react'
 
 import Image from 'next/image'
 import { Media } from '@/components/Media'
+import type { CardPostData } from '@/data/types'
+
+export type { CardPostData }
 
 // Helper function to extract text from Lexical content
 function extractTextFromContent(content: unknown): string {
   if (!content || typeof content !== 'object') return ''
-  
+
   const contentObj = content as { root?: { children?: unknown[] } }
   if (!contentObj.root || !contentObj.root.children) return ''
-  
+
   const extractText = (node: unknown): string => {
     if (!node || typeof node !== 'object') return ''
-    
+
     const nodeObj = node as { type?: string; text?: string; children?: unknown[] }
-    
+
     if (nodeObj.type === 'text') {
       return nodeObj.text || ''
     }
-    
+
     if (nodeObj.children && Array.isArray(nodeObj.children)) {
       return nodeObj.children.map(extractText).join(' ')
     }
-    
+
     return ''
   }
-  
+
   const fullText = contentObj.root.children.map(extractText).join(' ')
   // Return first 150 characters with word boundary
   if (fullText.length <= 150) return fullText
   return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type CardPostData = {
-  slug?: string | null
-  title?: string | null
-  categories?: any[] | null
-  meta?: {
-    title?: string | null
-    description?: string | null
-    image?: any
-  } | null
-  publishedAt?: string | null
-  populatedAuthors?: Array<{ name?: string | null }> | null
-  authors?: any[] | null
-  content?: unknown
-  /** Plain text excerpt for MDX-based posts */
-  excerpt?: string
-}
-
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
-  doc?: CardPostData
+  doc?: CardPostData & { content?: unknown }
   relationTo?: 'posts'
   showCategories?: boolean
   title?: string
 }> = (props) => {
-  const { card, link } = useClickableCard({})
+  const { cardRef, linkRef } = useClickableCard({})
   const { className, doc, relationTo, showCategories, title: titleFromProps } = props
 
-  const { slug, categories, meta, title, publishedAt, populatedAuthors, content, excerpt } = doc || {} as CardPostData
+  const { slug, categories, meta, title, publishedAt, populatedAuthors, content, excerpt } = doc || {} as CardPostData & { content?: unknown }
   const { description, image: metaImage } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
@@ -89,7 +74,7 @@ export const Card: React.FC<{
         'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer hover:shadow-lg transition-all duration-300 group',
         className,
       )}
-      ref={card.ref}
+      ref={cardRef}
     >
       <div className="relative w-full">
         {!metaImage && <div className="">No image</div>}
@@ -138,7 +123,7 @@ export const Card: React.FC<{
         <div className="mb-4">
           {titleToUse && (
             <h3 className="font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-              <Link className="not-prose" href={href} ref={link.ref}>
+              <Link className="not-prose" href={href} ref={linkRef}>
                 {titleToUse}
               </Link>
             </h3>
