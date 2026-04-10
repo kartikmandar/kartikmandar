@@ -73,35 +73,6 @@ export class CommandProcessor {
       examples: ['clear']
     })
 
-
-    commands.set('whoami', {
-      name: 'whoami',
-      description: 'Display current user information',
-      usage: 'whoami',
-      examples: ['whoami']
-    })
-
-    commands.set('refresh', {
-      name: 'refresh',
-      description: 'Refresh filesystem with latest content from CMS',
-      usage: 'refresh',
-      examples: ['refresh']
-    })
-
-    commands.set('info', {
-      name: 'info',
-      description: 'Show information about a directory or file',
-      usage: 'info [path]',
-      examples: ['info', 'info /posts', 'info ../publications']
-    })
-
-    commands.set('stats', {
-      name: 'stats',
-      description: 'Show website content statistics',
-      usage: 'stats',
-      examples: ['stats']
-    })
-
     return commands
   }
 
@@ -114,13 +85,7 @@ export class CommandProcessor {
     const [command, ...args] = this.parseCommand(trimmedCommand)
     const lowerCommand = command?.toLowerCase() || ''
 
-    // Update current path - only ensure fresh content for refresh command
     this.currentPath = this.fileSystemMapper.urlToPath(currentDirectory)
-    
-    // Only refresh content for specific commands that need it
-    if (['refresh', 'stats'].includes(lowerCommand)) {
-      await this.fileSystemMapper.ensureFreshContent()
-    }
 
     try {
       switch (lowerCommand) {
@@ -141,18 +106,6 @@ export class CommandProcessor {
         
         case 'clear':
           return this.executeClear()
-        
-        case 'whoami':
-          return this.executeWhoami()
-        
-        case 'refresh':
-          return this.executeRefresh()
-        
-        case 'info':
-          return this.executeInfo(args)
-        
-        case 'stats':
-          return this.executeStats()
         
         default:
           return {
@@ -419,116 +372,6 @@ ${examples}`,
   }
 
 
-  private executeWhoami(): CommandResult {
-    // Get available commands dynamically
-    const availableCommands = Array.from(this.commands.keys()).sort().join(', ')
-    const stats = this.fileSystemMapper.getContentStats()
-    
-    const info = [
-      'Current User: visitor',
-      'Session: website-terminal',
-      'Access Level: public',
-      'Location: website filesystem',
-      '',
-      `Content: ${stats.posts} posts, ${stats.projects} projects, ${stats.talks} talks`,
-      `Routes: ${stats.routes} discovered`,
-      '',
-      `Available commands: ${availableCommands}`,
-      'Tip: Use Cmd/Ctrl+K to toggle this terminal'
-    ]
-
-    return {
-      output: info.join('\n'),
-      error: false
-    }
-  }
-
-  private async executeRefresh(): Promise<CommandResult> {
-    try {
-      await this.fileSystemMapper.forceRefresh()
-      const stats = this.fileSystemMapper.getContentStats()
-      
-      return {
-        output: `Filesystem refreshed successfully!\nDiscovered: ${stats.posts} posts, ${stats.projects} projects, ${stats.talks} talks, ${stats.routes} routes`,
-        error: false
-      }
-    } catch (error) {
-      return {
-        output: `Failed to refresh filesystem: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        error: true
-      }
-    }
-  }
-
-  private async executeInfo(args: string[]): Promise<CommandResult> {
-    const targetPath = args.length > 0 && args[0]
-      ? this.fileSystemMapper.resolvePath(this.currentPath, args[0])
-      : this.currentPath
-
-    try {
-      const info = await this.fileSystemMapper.getDirectoryInfo(targetPath)
-      
-      if (!info.exists) {
-        return {
-          output: `info: ${targetPath}: No such file or directory`,
-          error: true
-        }
-      }
-
-      const infoLines = [
-        `Path: ${targetPath}`,
-        `Type: ${info.type}`,
-      ]
-
-      if (info.description) {
-        infoLines.push(`Description: ${info.description}`)
-      }
-
-      if (info.url) {
-        infoLines.push(`URL: ${info.url}`)
-      }
-
-      if (info.childCount !== undefined) {
-        infoLines.push(`Contents: ${info.childCount} items`)
-      }
-
-      if (info.lastUpdated) {
-        infoLines.push(`Last Updated: ${info.lastUpdated.toLocaleString()}`)
-      }
-
-      return {
-        output: infoLines.join('\n'),
-        error: false
-      }
-    } catch (error) {
-      return {
-        output: `Failed to get info: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        error: true
-      }
-    }
-  }
-
-  private executeStats(): CommandResult {
-    const stats = this.fileSystemMapper.getContentStats()
-    
-    const statsLines = [
-      'Website Content Statistics:',
-      '==========================',
-      `Blog Posts: ${stats.posts}`,
-      `Projects: ${stats.projects}`,
-      `Talks: ${stats.talks}`,
-      `App Routes: ${stats.routes}`,
-      '',
-      'Use "tree" to see the full directory structure'
-    ]
-
-    return {
-      output: statsLines.join('\n'),
-      error: false
-    }
-  }
-
-
   public getAvailableCommands(): Command[] {
     return Array.from(this.commands.values())
   }
@@ -536,6 +379,23 @@ ${examples}`,
   public getCommandCompletions(partial: string): string[] {
     const commands = Array.from(this.commands.keys())
     return commands.filter(cmd => cmd.startsWith(partial.toLowerCase()))
+  }
+
+  public static commonPrefix(strings: string[]): string {
+    if (strings.length === 0) return ''
+    if (strings.length === 1) return strings[0] || ''
+
+    let prefix = strings[0] || ''
+    for (let i = 1; i < strings.length; i++) {
+      const s = strings[i] || ''
+      let j = 0
+      while (j < prefix.length && j < s.length && prefix[j] === s[j]) {
+        j++
+      }
+      prefix = prefix.slice(0, j)
+      if (prefix === '') break
+    }
+    return prefix
   }
 
   public getPathCompletions(currentInput: string, currentDirectory: string): string[] {

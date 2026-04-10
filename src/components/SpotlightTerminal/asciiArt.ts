@@ -1,0 +1,15 @@
+export const WELCOME_BANNER = `
+ ██╗  ██╗███╗   ███╗
+ ██║ ██╔╝████╗ ████║
+ █████╔╝ ██╔████╔██║
+ ██╔═██╗ ██║╚██╔╝██║
+ ██║  ██╗██║ ╚═╝ ██║
+ ╚═╝  ╚═╝╚═╝     ╚═╝`
+
+export const WELCOME_LINES = [
+  WELCOME_BANNER,
+  '',
+  ' Terminal v2.0 | kartikmandar.com',
+  " Type 'help' to see available commands.",
+  '',
+]

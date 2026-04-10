@@ -1,0 +1,52 @@
+/* Terminal scrollbar styles */
+.terminal-output {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.terminal-output::-webkit-scrollbar {
+  width: 4px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 2px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Blinking cursor */
+@keyframes terminal-blink {
+  0%, 50% {
+    opacity: 1;
+  }
+  51%, 100% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  animation: terminal-blink 1s step-end infinite;
+}
+
+/* Typewriter animation */
+@keyframes terminal-typewriter {
+  from {
+    max-width: 0;
+  }
+  to {
+    max-width: 100%;
+  }
+}
+
+.terminal-typewriter {
+  overflow: hidden;
+  white-space: pre;
+  display: inline-block;
+}

@@ -7,27 +7,45 @@ import { useRouter, usePathname } from 'next/navigation'
 import { TerminalInterface } from './TerminalInterface'
 import { CommandProcessor } from './CommandProcessor'
 import { FileSystemMapper, type StaticContent } from './FileSystemMapper'
+import { WELCOME_LINES } from './asciiArt'
+import type { OutputLine } from './types'
 
 interface SpotlightTerminalProps {
   navItems: Array<{ link: { label: string; url: string } }>
   content: StaticContent
 }
 
+let lineIdCounter = 0
+function createOutputLine(
+  type: OutputLine['type'],
+  content: string,
+  animate?: boolean
+): OutputLine {
+  return {
+    id: `line-${++lineIdCounter}`,
+    type,
+    content,
+    timestamp: Date.now(),
+    animate,
+  }
+}
+
 export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, content }) => {
   const [isExpanded, setIsExpanded] = useState<boolean>(false)
   const [currentDirectory, setCurrentDirectory] = useState<string>('/')
   const [commandHistory, setCommandHistory] = useState<string[]>([])
-  const [output, setOutput] = useState<string[]>([])
+  const [output, setOutput] = useState<OutputLine[]>([])
   const [currentInput, setCurrentInput] = useState<string>('')
   const [isVisible, setIsVisible] = useState<boolean>(true)
   const [isInteracting, setIsInteracting] = useState<boolean>(false)
-  
+
   const router = useRouter()
   const pathname = usePathname()
   const terminalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  
+  const hasShownWelcome = useRef<boolean>(false)
+
   // Initialize file system mapper and command processor with useMemo to prevent recreation
   const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems, content), [navItems, content])
   const commandProcessor = React.useMemo(() => new CommandProcessor(fileSystemMapper, router, pathname), [fileSystemMapper, router, pathname])
@@ -37,6 +55,17 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
     const mappedPath = fileSystemMapper.urlToPath(pathname)
     setCurrentDirectory(mappedPath)
   }, [pathname, fileSystemMapper])
+
+  // Show welcome message on first expand
+  useEffect(() => {
+    if (isExpanded && !hasShownWelcome.current) {
+      hasShownWelcome.current = true
+      const welcomeLines = WELCOME_LINES.map((line, i) =>
+        createOutputLine('welcome', line, i === 0)
+      )
+      setOutput(welcomeLines)
+    }
+  }, [isExpanded])
 
   // Focus input when expanded
   useEffect(() => {
@@ -65,12 +94,10 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
   // Handle auto-hide based on scroll and interactions
   useEffect(() => {
     const startHideTimer = () => {
-      // Clear existing timeout
       if (scrollTimeoutRef.current) {
         clearTimeout(scrollTimeoutRef.current)
       }
-      
-      // Hide after 2 seconds of no scrolling (unless expanded or interacting)
+
       scrollTimeoutRef.current = setTimeout(() => {
         if (!isExpanded && !isInteracting) {
           setIsVisible(false)
@@ -79,18 +106,16 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
     }
 
     const handleScroll = () => {
-      // Show immediately on scroll
       setIsVisible(true)
       startHideTimer()
     }
 
-    // Start timer when interaction ends
     if (!isInteracting && !isExpanded) {
       startHideTimer()
     }
 
     window.addEventListener('scroll', handleScroll, { passive: true })
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll)
       if (scrollTimeoutRef.current) {
@@ -102,14 +127,12 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
   // Handle keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Cmd/Ctrl + K to open spotlight
       if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
         event.preventDefault()
-        setIsExpanded(true)
-        setIsVisible(true) // Always show when opened via keyboard
+        setIsExpanded(prev => !prev)
+        setIsVisible(true)
       }
-      
-      // Escape to close
+
       if (event.key === 'Escape' && isExpanded) {
         setIsExpanded(false)
       }
@@ -126,39 +149,39 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
   const handleCommand = async (command: string): Promise<void> => {
     if (!command.trim()) return
 
-    // Add to history
     setCommandHistory(prev => [...prev, command])
-    
-    // Process command
+
     const result = await commandProcessor.processCommand(command, currentDirectory)
-    
-    // Handle clear command specially
+
     if (result.output === '[[CLEAR]]') {
       setOutput([])
     } else {
-      // Add command and result to output
-      setOutput(prev => [...prev, `${currentDirectory} $ ${command}`, result.output])
+      const commandLine = createOutputLine('command', `${currentDirectory} $ ${command}`)
+      const resultLine = createOutputLine(
+        result.error ? 'error' : 'result',
+        result.output
+      )
+      setOutput(prev => [...prev, commandLine, resultLine])
     }
-    
-    // Update current directory if it changed
+
     if (result.newDirectory) {
       setCurrentDirectory(result.newDirectory)
     }
-    
-    // Navigate if command resulted in navigation
+
     if (result.navigate) {
-      // Small delay to show command execution, then reopen terminal
       setTimeout(() => {
         setIsExpanded(false)
-        // Reopen terminal after navigation completes
         setTimeout(() => {
           setIsExpanded(true)
         }, 500)
       }, 300)
     }
-    
-    // Clear input
+
     setCurrentInput('')
+  }
+
+  const addCompletionHint = (hint: string) => {
+    setOutput(prev => [...prev, createOutputLine('completion-hint', hint)])
   }
 
   const getCurrentPath = (): string => {
@@ -172,10 +195,10 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
         {!isExpanded && (
           <motion.div
             initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{ 
-              opacity: isVisible ? 1 : 0, 
-              scale: isVisible ? 1 : 0.8, 
-              y: isVisible ? 0 : -20 
+            animate={{
+              opacity: isVisible ? 1 : 0,
+              scale: isVisible ? 1 : 0.8,
+              y: isVisible ? 0 : -20
             }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
@@ -212,7 +235,7 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-2xl z-[9998]"
+            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-4xl z-[9998]"
           >
             <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
@@ -241,6 +264,8 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
                 onInputChange={setCurrentInput}
                 onCommand={handleCommand}
                 commandHistory={commandHistory}
+                commandProcessor={commandProcessor}
+                onCompletionHint={addCompletionHint}
                 inputRef={inputRef}
               />
             </div>

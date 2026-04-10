@@ -225,10 +225,6 @@ export class FileSystemMapper {
     })
   }
 
-  public async ensureFreshContent(): Promise<void> {
-    // No-op: all content is static
-  }
-
   public getNode(path: string): FileSystemNode | null {
     if (path === '/') return this.fileSystem
     if (path === '/home') {
@@ -280,7 +276,11 @@ export class FileSystemMapper {
     if (targetPath === '..') {
       const parts = currentPath.split('/').filter((part) => part.length > 0)
       parts.pop()
-      return parts.length === 0 ? '/' : '/' + parts.join('/')
+      // Clamp to /home — don't go above the website root
+      if (parts.length === 0 || (parts.length === 1 && parts[0] !== 'home')) {
+        return '/home'
+      }
+      return '/' + parts.join('/')
     }
 
     if (targetPath.startsWith('../')) {
@@ -297,9 +297,17 @@ export class FileSystemMapper {
       }
 
       const remainingParts = relativeParts.slice(upCount)
-      const newParts = currentParts.slice(0, -upCount).concat(remainingParts)
+      let baseParts = currentParts.slice(0, Math.max(0, currentParts.length - upCount))
+      // Clamp to /home
+      if (baseParts.length === 0 || (baseParts.length >= 1 && baseParts[0] !== 'home')) {
+        baseParts = ['home']
+      }
+      if (baseParts.length < 1) {
+        baseParts = ['home']
+      }
+      const newParts = baseParts.concat(remainingParts)
 
-      return newParts.length === 0 ? '/' : '/' + newParts.join('/')
+      return '/' + newParts.join('/')
     }
 
     const childPath =
@@ -356,10 +364,6 @@ export class FileSystemMapper {
     }
   }
 
-  public async forceRefresh(): Promise<void> {
-    // No-op: all content is static
-  }
-
   public getTreeStructure(
     path: string = '/',
     depth: number = 0,
@@ -413,30 +417,4 @@ export class FileSystemMapper {
     return lines
   }
 
-  public getFileSystem(): FileSystemNode {
-    return this.fileSystem
-  }
-
-  public async getDirectoryInfo(path: string): Promise<{
-    exists: boolean
-    type: 'directory' | 'file' | null
-    childCount?: number
-    description?: string
-    url?: string
-    lastUpdated?: Date
-  }> {
-    const node = this.getNode(path)
-    if (!node) {
-      return { exists: false, type: null }
-    }
-
-    return {
-      exists: true,
-      type: node.type,
-      childCount: node.children?.length,
-      description: node.description,
-      url: node.url,
-      lastUpdated: node.lastUpdated,
-    }
-  }
 }
