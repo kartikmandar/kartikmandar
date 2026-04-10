@@ -2,7 +2,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 import type { CosmicJourneyBlock as CosmicJourneyBlockProps } from '@/data/types'
-import type * as THREE from 'three'
+import type * as THREETypes from 'three'
 
 // Type definitions for various data structures
 type Particle = {
@@ -198,19 +198,7 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
   }, [calculateScrollProgress])
 
-  // Load Three.js dynamically
-  useEffect(() => {
-    const loadThreeJS = async () => {
-      if (typeof window !== 'undefined' && !(window as Window & { THREE?: unknown }).THREE) {
-        const script = document.createElement('script')
-        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js'
-        script.async = true
-        document.head.appendChild(script)
-      }
-    }
-    
-    loadThreeJS()
-  }, [])
+  // Three.js is loaded dynamically via import('three') inside initGravitationalLensing
 
   // Typing animation for search section
   useEffect(() => {
@@ -1594,20 +1582,15 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
 
   // Gravitational Lensing with Three.js
   const initGravitationalLensing = ({ canvas }: { canvas: HTMLCanvasElement; section: HTMLElement }) => {
-    let scene: THREE.Scene | undefined
-    let camera: THREE.OrthographicCamera | undefined
-    let renderer: THREE.WebGLRenderer | undefined
-    let material: THREE.ShaderMaterial | undefined
-    let mesh: THREE.Mesh | undefined
+    let scene: THREETypes.Scene | undefined
+    let camera: THREETypes.OrthographicCamera | undefined
+    let renderer: THREETypes.WebGLRenderer | undefined
+    let material: THREETypes.ShaderMaterial | undefined
+    let mesh: THREETypes.Mesh | undefined
+    let initPromise: Promise<void> | undefined
 
-    function init() {
-      if (!(window as unknown as { THREE?: typeof import('three') }).THREE) {
-        // Defer initialization until Three.js is loaded
-        setTimeout(init, 100)
-        return
-      }
-
-      const THREE = (window as unknown as { THREE: typeof import('three') }).THREE
+    async function init() {
+      const THREE = await import('three')
       scene = new THREE.Scene()
       camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 10)
       camera.position.z = 1
@@ -1747,7 +1730,9 @@ export const CosmicJourney: React.FC<CosmicJourneyBlockProps> = ({
     }
     
     function update(progress: number) {
-      if (!scene) init()
+      if (!scene && !initPromise) {
+        initPromise = init()
+      }
       animate(progress)
     }
 

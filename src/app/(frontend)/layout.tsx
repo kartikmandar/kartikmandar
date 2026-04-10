@@ -38,7 +38,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const navItems = NAVIGATION_ITEMS.map(item => ({ link: item }))
 
   return (
-    <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
       <head suppressHydrationWarning>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script
