@@ -9,6 +9,7 @@ node_modules
 .env.production.local
 .next
 .vercel
+next-env.d.ts
 # Environment file backups and variations
 .env.production.backup
 .env*.backup
