@@ -37,6 +37,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   reactStrictMode: true,
+  skipTrailingSlashRedirect: true,
   async redirects() {
     const importedRedirects = await redirects()
     return [
@@ -45,6 +46,34 @@ const nextConfig = {
         source: '/gsoc-2024/stingray-explorer',
         destination: '/open-source/stingray-explorer',
         permanent: true,
+      },
+    ]
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/ingest/static/:path*',
+        destination: 'https://us-assets.i.posthog.com/static/:path*',
+      },
+      {
+        source: '/ingest/:path*',
+        destination: 'https://us.i.posthog.com/:path*',
+      },
+    ]
+  },
+  async headers() {
+    return [
+      {
+        source: '/links',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
+      },
+      {
+        source: '/links/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow, noarchive' },
+        ],
       },
     ]
   },
