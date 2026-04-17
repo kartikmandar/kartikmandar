@@ -38,7 +38,7 @@ export default function ConsultancyPage() {
           </h1>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex flex-col items-center gap-4">
           <a
             href="https://www.upwork.com/freelancers/kartikmandar?mp_source=share"
             target="_blank"
@@ -46,6 +46,14 @@ export default function ConsultancyPage() {
             className="text-lg text-foreground hover:text-primary transition-colors underline underline-offset-4"
           >
             View my Upwork profile
+          </a>
+          <a
+            href="https://merakinist.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-lg text-foreground hover:text-primary transition-colors underline underline-offset-4"
+          >
+            Visit Merakinist (Agency) Page
           </a>
         </div>
 
