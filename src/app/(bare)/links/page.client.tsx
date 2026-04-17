@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ExternalLink } from 'lucide-react'
 import { LINKS, type LinkCategory } from '@/data/links'
 import { LinkIcon } from '@/components/icons/LinkIcon'
@@ -18,7 +19,10 @@ const CATEGORY_LABEL: Record<LinkCategory, string> = {
   professional: 'Professional',
 }
 
-export function LinksView({ src }: { src: string | null }) {
+export function LinksView() {
+  const searchParams = useSearchParams()
+  const src = searchParams.get('src')
+
   useEffect(() => {
     if (!src) return
     const posthog = getPosthog()

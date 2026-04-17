@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { Suspense } from 'react'
 import { LinksView } from './page.client'
 
 export const metadata: Metadata = {
@@ -8,16 +9,10 @@ export const metadata: Metadata = {
   alternates: { canonical: null },
 }
 
-export const dynamic = 'force-static'
-
-type PageProps = {
-  searchParams: Promise<{ src?: string | string[] }>
-}
-
-export default async function LinksPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const rawSrc = params.src
-  const src = (Array.isArray(rawSrc) ? rawSrc[0] : rawSrc) ?? null
-
-  return <LinksView src={src} />
+export default function LinksPage() {
+  return (
+    <Suspense fallback={null}>
+      <LinksView />
+    </Suspense>
+  )
 }
