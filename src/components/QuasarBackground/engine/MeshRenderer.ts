@@ -74,13 +74,19 @@ export class MeshRenderer implements SceneRenderer {
   private bhGroup = new THREE.Group()
   private starMesh: THREE.Mesh | null = null
   private starMaterial: THREE.ShaderMaterial | null = null
+  private diskMesh: THREE.Mesh | null = null
   private diskMaterial: THREE.ShaderMaterial | null = null
+  private jetUp: THREE.Mesh | null = null
+  private jetDown: THREE.Mesh | null = null
   private jetMaterial: THREE.ShaderMaterial | null = null
   private shellPoints: THREE.Points | null = null
   private shellMaterial: THREE.ShaderMaterial | null = null
+  private ringSprite: THREE.Sprite | null = null
   private ringMaterial: THREE.SpriteMaterial | null = null
+  private arcMesh: THREE.Mesh | null = null
   private arcMaterial: THREE.MeshBasicMaterial | null = null
   private flashMaterial: THREE.SpriteMaterial | null = null
+  private outputPass: OutputPass | null = null
 
   init(container: HTMLElement, camera: THREE.PerspectiveCamera): void {
     this.camera = camera
@@ -116,9 +122,9 @@ export class MeshRenderer implements SceneRenderer {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     })
-    const ring = new THREE.Sprite(this.ringMaterial)
-    ring.scale.set(5.2, 5.2, 1)
-    this.scene.add(ring) // billboard: not tilted with the group
+    this.ringSprite = new THREE.Sprite(this.ringMaterial)
+    this.ringSprite.scale.set(5.2, 5.2, 1)
+    this.scene.add(this.ringSprite) // billboard: not tilted with the group
     this.disposables.push(ringTex, this.ringMaterial)
 
     // Lensing over-arc hint (upper half-torus in the group's vertical plane)
@@ -130,7 +136,8 @@ export class MeshRenderer implements SceneRenderer {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
     })
-    this.bhGroup.add(new THREE.Mesh(arcGeo, this.arcMaterial))
+    this.arcMesh = new THREE.Mesh(arcGeo, this.arcMaterial)
+    this.bhGroup.add(this.arcMesh)
     this.disposables.push(arcGeo, this.arcMaterial)
 
     // Accretion disk
@@ -151,9 +158,9 @@ export class MeshRenderer implements SceneRenderer {
         uOuter: { value: CONSTANTS.DISK_OUTER_RS },
       },
     })
-    const disk = new THREE.Mesh(diskGeo, this.diskMaterial)
-    disk.rotation.x = -Math.PI / 2 // lie flat in the group's XZ plane
-    this.bhGroup.add(disk)
+    this.diskMesh = new THREE.Mesh(diskGeo, this.diskMaterial)
+    this.diskMesh.rotation.x = -Math.PI / 2 // lie flat in the group's XZ plane
+    this.bhGroup.add(this.diskMesh)
     this.disposables.push(diskGeo, this.diskMaterial)
 
     // Jets (two open cones along the group's Y axis)
@@ -170,12 +177,12 @@ export class MeshRenderer implements SceneRenderer {
       side: THREE.DoubleSide,
       uniforms: { uTime: { value: 0 }, uIgnition: { value: 0 } },
     })
-    const jetUp = new THREE.Mesh(jetGeo, this.jetMaterial)
-    jetUp.position.y = CONSTANTS.JET_LENGTH_RS / 2
-    jetUp.rotation.x = Math.PI // tip at origin, opening upward
-    const jetDown = new THREE.Mesh(jetGeo, this.jetMaterial)
-    jetDown.position.y = -CONSTANTS.JET_LENGTH_RS / 2
-    this.bhGroup.add(jetUp, jetDown)
+    this.jetUp = new THREE.Mesh(jetGeo, this.jetMaterial)
+    this.jetUp.position.y = CONSTANTS.JET_LENGTH_RS / 2
+    this.jetUp.rotation.x = Math.PI // tip at origin, opening upward
+    this.jetDown = new THREE.Mesh(jetGeo, this.jetMaterial)
+    this.jetDown.position.y = -CONSTANTS.JET_LENGTH_RS / 2
+    this.bhGroup.add(this.jetUp, this.jetDown)
     this.disposables.push(jetGeo, this.jetMaterial)
 
     // Progenitor star
@@ -244,7 +251,8 @@ export class MeshRenderer implements SceneRenderer {
       CONSTANTS.BLOOM_THRESHOLD,
     )
     composer.addPass(this.bloomPass)
-    composer.addPass(new OutputPass())
+    this.outputPass = new OutputPass()
+    composer.addPass(this.outputPass)
     this.composer = composer
 
     this.resize(container.clientWidth, container.clientHeight)
@@ -266,6 +274,16 @@ export class MeshRenderer implements SceneRenderer {
       this.shellMaterial.uniforms.uFade!.value =
         state.phase === Phase.BIRTH ? 1 - state.progress : 1
     }
+    // Visibility is the gate; opacity/uniforms stay the dimmer. DISK_FRAG's lit
+    // term never fully zeroes the inner annulus at uIgnition=0, so the meshes
+    // must be hidden outright before BIRTH (matches the raymarched tier, which
+    // never samples the disk pre-BIRTH).
+    const ignited = d.ignition > 0.001
+    if (this.diskMesh) this.diskMesh.visible = ignited
+    if (this.jetUp) this.jetUp.visible = ignited
+    if (this.jetDown) this.jetDown.visible = ignited
+    if (this.ringSprite) this.ringSprite.visible = ignited
+    if (this.arcMesh) this.arcMesh.visible = ignited
     if (this.diskMaterial) this.diskMaterial.uniforms.uIgnition!.value = d.ignition
     if (this.jetMaterial) this.jetMaterial.uniforms.uIgnition!.value = d.ignition
     if (this.ringMaterial) this.ringMaterial.opacity = d.ignition
@@ -293,6 +311,9 @@ export class MeshRenderer implements SceneRenderer {
     this.disposables.forEach((d) => d.dispose())
     this.composer?.dispose()
     this.bloomPass?.dispose()
+    this.bloomPass = null
+    this.outputPass?.dispose()
+    this.outputPass = null
     if (this.renderer) {
       this.renderer.domElement.remove()
       this.renderer.dispose()

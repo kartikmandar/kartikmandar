@@ -35,6 +35,8 @@ void main() {
   float radial = pow(uInner / r, 1.6);
   float edges = smoothstep(uInner, uInner + 0.35, r)
               * (1.0 - smoothstep(uOuter - 2.5, uOuter, r));
+  // NOTE: lit dims the ignition front but does not fully zero the inner annulus;
+  // MeshRenderer gates the mesh's .visible on ignition for pre-BIRTH phases.
   float front = mix(uInner, uOuter + 2.0, uIgnition);
   float lit = smoothstep(front + 1.0, front - 1.0, r);
 
