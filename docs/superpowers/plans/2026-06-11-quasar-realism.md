@@ -769,6 +769,7 @@ export function addBackgroundStars(
 
 /** Procedural wispy spiral-galaxy sprite texture (extracted from legacy). */
 function createGalaxyTexture(size = 256, color1 = '#fff', color2 = '#ffd080'): THREE.CanvasTexture | null {
+  if (typeof document === 'undefined') return null // SSR/test safety (added in review)
   const canvas = document.createElement('canvas')
   canvas.width = canvas.height = size
   const ctx = canvas.getContext('2d')
@@ -856,11 +857,17 @@ export function addBackgroundGalaxies(
   }
 }
 
+export interface BakedCubemap {
+  texture: THREE.CubeTexture
+  /** Frees the GPU render target (6 FBOs + texture). Disposing only `texture` leaks the FBOs. */
+  dispose(): void
+}
+
 /**
  * Bake stars + galaxies into a cubemap once at init.
  * Escaped rays in the raymarcher sample this, so the background lenses for free.
  */
-export function bakeBackgroundCubemap(renderer: THREE.WebGLRenderer): THREE.CubeTexture {
+export function bakeBackgroundCubemap(renderer: THREE.WebGLRenderer): BakedCubemap {
   const scene = new THREE.Scene()
   scene.background = new THREE.Color(0x000000)
   const stars = addBackgroundStars(scene)
@@ -876,7 +883,12 @@ export function bakeBackgroundCubemap(renderer: THREE.WebGLRenderer): THREE.Cube
 
   stars.dispose()
   galaxies.dispose()
-  return target.texture
+  return {
+    texture: target.texture,
+    dispose() {
+      target.dispose()
+    },
+  }
 }
 ```
 
