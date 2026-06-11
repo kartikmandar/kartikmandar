@@ -90,6 +90,20 @@ describe('PhaseMachine', () => {
     expect(m.state.progress).toBeCloseTo(0.1 / 0.4, 5)
   })
 
+  it('reports seconds remaining until idle auto-play', () => {
+    const m = new PhaseMachine()
+    expect(m.idleRemainingSeconds).toBe(CONSTANTS.IDLE_AUTOPLAY_SECONDS)
+    for (let i = 0; i < 50; i++) m.update(idle(0.1)) // 5s idle
+    expect(m.idleRemainingSeconds).toBeCloseTo(CONSTANTS.IDLE_AUTOPLAY_SECONDS - 5, 5)
+  })
+
+  it('idle countdown resets on interaction', () => {
+    const m = new PhaseMachine()
+    for (let i = 0; i < 50; i++) m.update(idle(0.1)) // 5s idle
+    m.update({ ...idle(0.1), userInteracted: true })
+    expect(m.idleRemainingSeconds).toBe(CONSTANTS.IDLE_AUTOPLAY_SECONDS)
+  })
+
   it('a huge dt lands in QUASAR with progress 1, and stays there', () => {
     const m = new PhaseMachine()
     m.update({ ...idle(0.016), cameraDistance: 10 })

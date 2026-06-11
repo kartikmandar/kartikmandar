@@ -16,6 +16,11 @@ export class PhaseMachine {
   private elapsed = 0
   private idleSeconds = 0
 
+  /** Seconds until idle auto-play would fire (full window when idle resets). */
+  get idleRemainingSeconds(): number {
+    return Math.max(0, CONSTANTS.IDLE_AUTOPLAY_SECONDS - this.idleSeconds)
+  }
+
   get state(): PhaseState {
     const phase = PHASE_ORDER[this.phaseIndex] ?? Phase.QUASAR
     const duration = PHASE_DURATIONS[phase]

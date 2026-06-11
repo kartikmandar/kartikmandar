@@ -15,7 +15,7 @@ type ShellState = Tier | 'failed'
 /** Overlay copy per phase (spec §Narrative). Edit the story here. */
 const OVERLAY_TEXT: Partial<Record<Phase, string>> = {
   [Phase.STAR]: 'Every story begins with a massive star.',
-  [Phase.SHELL]: 'It dies in a supernova — outshining its entire galaxy.',
+  [Phase.SHELL]: 'It dies in a supernova, outshining its entire galaxy.',
   [Phase.BIRTH]: 'What remains collapses into a black hole. Matter spirals in, and the disk ignites.',
   [Phase.QUASAR]: 'But this is just the surface of what really is happening!!',
 }
@@ -61,6 +61,8 @@ export default function QuasarBackground() {
   const [shellState, setShellState] = useState<ShellState>('raymarched')
   const [phase, setPhase] = useState<Phase>(Phase.STAR)
   const [isTouch, setIsTouch] = useState(false)
+  /** Whole seconds until idle auto-play; null when it will not fire (reduced motion). */
+  const [autoPlayIn, setAutoPlayIn] = useState<number | null>(null)
   const debugEnabled =
     typeof window !== 'undefined' &&
     new URLSearchParams(window.location.search).get('debug') === 'fps'
@@ -208,6 +210,11 @@ export default function QuasarBackground() {
       }
 
       setPhase((prev) => (prev === state.phase ? prev : state.phase))
+      const countdown =
+        state.phase === Phase.STAR && !env.reducedMotion
+          ? Math.ceil(machine.idleRemainingSeconds)
+          : null
+      setAutoPlayIn((prev) => (prev === countdown ? prev : countdown))
       renderer?.setPhase(state)
       renderer?.update(dt)
 
@@ -274,6 +281,9 @@ export default function QuasarBackground() {
         >
           <div style={hintPillStyle}>
             {isTouch ? 'Pinch in to witness its end' : 'Zoom in to witness its end'}
+            {autoPlayIn !== null && autoPlayIn > 0 && (
+              <span style={{ opacity: 0.7 }}> · auto-plays in {autoPlayIn}s</span>
+            )}
           </div>
         </div>
       )}
