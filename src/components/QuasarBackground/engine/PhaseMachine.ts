@@ -29,7 +29,7 @@ export class PhaseMachine {
     const phase = PHASE_ORDER[this.phaseIndex] ?? Phase.QUASAR
 
     if (phase === Phase.STAR) {
-      if (inputs.userInteracted) this.idleSeconds = 0
+      if (inputs.userInteracted || inputs.reducedMotion) this.idleSeconds = 0
       else this.idleSeconds += inputs.dt
 
       const zoomTriggered = inputs.cameraDistance < CONSTANTS.COLLAPSE_TRIGGER_DISTANCE
@@ -54,6 +54,7 @@ export class PhaseMachine {
       this.phaseIndex += 1
       this.elapsed = carrySeconds
     } else {
+      // Unreachable via update(): QUASAR has no duration, so the while loop never advances past it. Kept as a defensive guard.
       this.elapsed = 0
     }
   }

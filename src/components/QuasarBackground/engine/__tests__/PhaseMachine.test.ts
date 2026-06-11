@@ -36,6 +36,15 @@ describe('PhaseMachine', () => {
     expect(m.state.phase).toBe(Phase.STAR)
   })
 
+  it('does not silently accumulate idle time while reducedMotion is true', () => {
+    const m = new PhaseMachine()
+    for (let i = 0; i < 200; i++) m.update({ ...idle(0.1), reducedMotion: true }) // 20s
+    expect(m.state.phase).toBe(Phase.STAR)
+    // Toggling reduced motion off must NOT fire the idle trigger immediately
+    m.update({ ...idle(0.016), reducedMotion: false })
+    expect(m.state.phase).toBe(Phase.STAR)
+  })
+
   it('zoom trigger still works under reduced motion', () => {
     const m = new PhaseMachine()
     const s = m.update({ ...idle(0.016), reducedMotion: true, cameraDistance: 10 })
