@@ -22,6 +22,7 @@ export class RaymarchedRenderer implements SceneRenderer {
   private material: THREE.ShaderMaterial | null = null
   private quadGeometry: THREE.PlaneGeometry | null = null
   private bloomPass: UnrealBloomPass | null = null
+  private outputPass: OutputPass | null = null
   private background: BakedCubemap | null = null
   private camera: THREE.PerspectiveCamera | null = null
 
@@ -81,6 +82,7 @@ export class RaymarchedRenderer implements SceneRenderer {
     scene.add(new THREE.Mesh(this.quadGeometry, this.material))
     const orthoCamera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
+    // setPixelRatio must precede EffectComposer construction — the composer snapshots the renderer's pixel ratio.
     const composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(scene, orthoCamera))
     this.bloomPass = new UnrealBloomPass(
@@ -90,7 +92,8 @@ export class RaymarchedRenderer implements SceneRenderer {
       CONSTANTS.BLOOM_THRESHOLD,
     )
     composer.addPass(this.bloomPass)
-    composer.addPass(new OutputPass())
+    this.outputPass = new OutputPass()
+    composer.addPass(this.outputPass)
     this.composer = composer
 
     this.resize(container.clientWidth, container.clientHeight)
@@ -113,7 +116,6 @@ export class RaymarchedRenderer implements SceneRenderer {
     const { renderer, composer, material, camera } = this
     if (!renderer || !composer || !material || !camera) return
 
-    const started = performance.now()
     this.time += dt
     material.uniforms.uTime!.value = this.time
 
@@ -123,15 +125,16 @@ export class RaymarchedRenderer implements SceneRenderer {
     this.invProjView.copy(camera.projectionMatrixInverse).premultiply(camera.matrixWorld)
 
     composer.render()
-    this.governor(performance.now() - started, dt)
+    this.governor(dt)
   }
 
   /**
-   * Resolution governor + watchdog (spec §Desktop tier). Renders internally at
-   * size * resolutionScale; CSS stretches the canvas to full size.
+   * Resolution governor + watchdog (spec §Desktop tier), driven by rAF cadence
+   * (dt) — render-call CPU time would miss GPU-bound slowdowns since WebGL is
+   * asynchronous. Healthy 60 Hz dt ≈ 16.7 ms; >20 ms avg means real slowdown.
    */
-  private governor(frameMs: number, dt: number): void {
-    this.frameTimes.push(frameMs)
+  private governor(dt: number): void {
+    this.frameTimes.push(dt * 1000)
     if (this.frameTimes.length < 30) return
     const avg = this.frameTimes.reduce((a, b) => a + b, 0) / this.frameTimes.length
     this.frameTimes.length = 0
@@ -139,13 +142,15 @@ export class RaymarchedRenderer implements SceneRenderer {
     if (avg > 1000 / 50 && this.resolutionScale > CONSTANTS.RESOLUTION_SCALE_MIN) {
       this.resolutionScale = Math.max(CONSTANTS.RESOLUTION_SCALE_MIN, this.resolutionScale - 0.1)
       this.applySize()
-    } else if (avg < 1000 / 80 && this.resolutionScale < 1) {
+    } else if (avg < 1000 / 58 && this.resolutionScale < 1) {
+      // 58 fps, not 80: with vsync at 60 Hz a healthy dt avg is ~16.7 ms, which
+      // must qualify for upscaling or the scale could never recover.
       this.resolutionScale = Math.min(1, this.resolutionScale + 0.1)
       this.applySize()
     }
 
     if (avg > 1000 / CONSTANTS.WATCHDOG_FPS && this.resolutionScale <= CONSTANTS.RESOLUTION_SCALE_MIN) {
-      this.slowSeconds += dt * 30 // 30 frames worth of dt since we batch
+      this.slowSeconds += (avg / 1000) * 30 // actual elapsed time of this batch
       if (this.slowSeconds >= CONSTANTS.WATCHDOG_SECONDS && !this.demoted) {
         this.demoted = true
         this.onDemote?.()
@@ -175,6 +180,11 @@ export class RaymarchedRenderer implements SceneRenderer {
       CONSTANTS.BENCHMARK_SIZE,
       CONSTANTS.BENCHMARK_SIZE,
     )
+
+    // Warm-up render outside the timed window: the first frame carries shader
+    // compile + program link cost, which would bias the average.
+    composer.render()
+    renderer.getContext().finish()
 
     const started = performance.now()
     for (let i = 0; i < CONSTANTS.BENCHMARK_FRAMES; i++) composer.render()
@@ -207,6 +217,7 @@ export class RaymarchedRenderer implements SceneRenderer {
   dispose(): void {
     this.composer?.dispose()
     this.bloomPass?.dispose()
+    this.outputPass?.dispose()
     this.material?.dispose()
     this.quadGeometry?.dispose()
     this.background?.dispose() // frees the cubemap render target (6 FBOs + texture)
@@ -216,7 +227,11 @@ export class RaymarchedRenderer implements SceneRenderer {
     }
     this.renderer = null
     this.composer = null
+    this.bloomPass = null
+    this.outputPass = null
     this.material = null
+    this.quadGeometry = null
+    this.background = null
     this.camera = null
   }
 }
