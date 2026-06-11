@@ -880,7 +880,7 @@ export function bakeBackgroundCubemap(renderer: THREE.WebGLRenderer): THREE.Cube
 }
 ```
 
-Note: the returned `CubeTexture`'s render target is intentionally kept alive (the texture references it); `RaymarchedRenderer.dispose()` disposes the texture (Task 8).
+Note (amended during code review): `bakeBackgroundCubemap` returns a `BakedCubemap { texture, dispose() }` handle whose `dispose()` calls `target.dispose()` — disposing only the CubeTexture would leak the render target's 6 FBOs (three@0.183 frees framebuffers only via RenderTarget.dispose). `RaymarchedRenderer.dispose()` calls the handle's `dispose()` (Task 8).
 
 - [ ] **Step 2: Typecheck + lint**
 
@@ -1265,7 +1265,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
-import { bakeBackgroundCubemap } from './background'
+import { bakeBackgroundCubemap, type BakedCubemap } from './background'
 import { derivePhaseUniforms } from './phaseUniforms'
 import { BLACKHOLE_FRAG, FULLSCREEN_VERT } from './shaders/blackhole.frag'
 import { CONSTANTS, Phase, type PhaseState, type SceneRenderer } from './types'
@@ -1284,7 +1284,7 @@ export class RaymarchedRenderer implements SceneRenderer {
   private material: THREE.ShaderMaterial | null = null
   private quadGeometry: THREE.PlaneGeometry | null = null
   private bloomPass: UnrealBloomPass | null = null
-  private cubeTexture: THREE.CubeTexture | null = null
+  private background: BakedCubemap | null = null
   private camera: THREE.PerspectiveCamera | null = null
 
   private size = { width: 1, height: 1 }
@@ -1308,7 +1308,7 @@ export class RaymarchedRenderer implements SceneRenderer {
     container.appendChild(renderer.domElement)
     this.renderer = renderer
 
-    this.cubeTexture = bakeBackgroundCubemap(renderer)
+    this.background = bakeBackgroundCubemap(renderer)
 
     // Disk tilt: reuse the legacy scene's tilt so the composition reads the same.
     const tilt = new THREE.Matrix4()
@@ -1327,7 +1327,7 @@ export class RaymarchedRenderer implements SceneRenderer {
         uCamPos: { value: new THREE.Vector3() },
         uInvProjView: { value: this.invProjView },
         uWorldToDisk: { value: this.worldToDisk },
-        uBackground: { value: this.cubeTexture },
+        uBackground: { value: this.background.texture },
         uPhase: { value: Phase.STAR },
         uProgress: { value: 0 },
         uStarRadius: { value: CONSTANTS.STAR_RADIUS },
@@ -1471,7 +1471,7 @@ export class RaymarchedRenderer implements SceneRenderer {
     this.bloomPass?.dispose()
     this.material?.dispose()
     this.quadGeometry?.dispose()
-    this.cubeTexture?.dispose()
+    this.background?.dispose() // frees the cubemap render target (6 FBOs + texture)
     if (this.renderer) {
       this.renderer.domElement.remove()
       this.renderer.dispose()
