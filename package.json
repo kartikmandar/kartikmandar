@@ -12,7 +12,8 @@
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && pnpm build && pnpm start",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start"
+    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "test": "vitest run"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -71,7 +72,8 @@
     "prettier": "^3.8.1",
     "tailwindcss": "^4.2.2",
     "typescript": "6.0.2",
-    "typescript-eslint": "^8.58.1"
+    "typescript-eslint": "^8.58.1",
+    "vitest": "^4.1.8"
   },
   "packageManager": "pnpm@10.33.0",
   "engines": {
