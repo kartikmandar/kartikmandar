@@ -293,3 +293,8 @@ html[data-theme='light'] {
 .readme-content hr {
   @apply border-border my-6;
 }
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
