@@ -54,4 +54,24 @@ describe('derivePhaseUniforms', () => {
       ignition: 1,
     })
   })
+
+  it('is continuous across STAR -> COLLAPSE', () => {
+    const end = derivePhaseUniforms({ phase: Phase.STAR, progress: 0 })
+    const start = derivePhaseUniforms({ phase: Phase.COLLAPSE, progress: 0 })
+    expect(start).toEqual(end)
+  })
+
+  it('is continuous across SHELL -> BIRTH (shell radius)', () => {
+    const end = derivePhaseUniforms({ phase: Phase.SHELL, progress: 1 })
+    const start = derivePhaseUniforms({ phase: Phase.BIRTH, progress: 0 })
+    expect(start.shellRadius).toBeCloseTo(end.shellRadius, 5)
+  })
+
+  it('is continuous across BIRTH -> QUASAR for lensing/ignition (shellRadius intentionally resets)', () => {
+    const end = derivePhaseUniforms({ phase: Phase.BIRTH, progress: 1 })
+    const start = derivePhaseUniforms({ phase: Phase.QUASAR, progress: 1 })
+    expect(start.lensing).toBeCloseTo(end.lensing, 5)
+    expect(start.ignition).toBeCloseTo(end.ignition, 5)
+    // shellRadius jumps 40 -> 0 by design; shader alpha is 0 by end of BIRTH.
+  })
 })

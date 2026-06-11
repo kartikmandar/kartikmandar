@@ -14,8 +14,12 @@ export interface PhaseUniforms {
 }
 
 const COLLAPSED_RADIUS = 1.2
-const SHELL_START = COLLAPSED_RADIUS + 2 * 0.9 // matches FLASH end below
+/** Shock front travel in r_s during the FLASH phase (0.4 s). */
+const FLASH_SHOCK_REACH = 2 * 0.9
+const SHELL_START = COLLAPSED_RADIUS + FLASH_SHOCK_REACH
 const SHELL_END = 30
+/** Additional remnant drift in r_s during BIRTH. */
+const BIRTH_SHELL_DRIFT = 10
 
 export function derivePhaseUniforms({ phase, progress }: PhaseState): PhaseUniforms {
   const u: PhaseUniforms = { starRadius: 0, shellRadius: 0, flash: 0, lensing: 0, ignition: 0 }
@@ -33,14 +37,17 @@ export function derivePhaseUniforms({ phase, progress }: PhaseState): PhaseUnifo
       // star winks out, core flash, shock front launches
       u.starRadius = COLLAPSED_RADIUS * (1 - progress)
       u.flash = 4 * Math.pow(1 - progress, 1.5)
-      u.shellRadius = COLLAPSED_RADIUS + 2 * 0.9 * progress
+      u.shellRadius = COLLAPSED_RADIUS + FLASH_SHOCK_REACH * progress
       break
     case Phase.SHELL:
       // Sedov-like deceleration: R grows fast then slows
       u.shellRadius = SHELL_START + (SHELL_END - SHELL_START) * Math.pow(progress, 0.4)
       break
     case Phase.BIRTH:
-      u.shellRadius = SHELL_END + 10 * progress // remnant keeps drifting out while fading
+      // Shell drifts outward and fades. At p=1 shellRadius=SHELL_END+BIRTH_SHELL_DRIFT;
+      // QUASAR resets it to 0. The jump is safe: the shaders fade shell alpha to 0
+      // during BIRTH (fade = 1 - progress), so it is invisible before the reset.
+      u.shellRadius = SHELL_END + BIRTH_SHELL_DRIFT * progress
       u.lensing = progress
       u.ignition = progress
       break
