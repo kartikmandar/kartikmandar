@@ -16,8 +16,8 @@ export interface TierEnvironment {
 /**
  * Pure tier decision (spec §Tier selection). Order matters:
  * query override > hard requirements > reduced motion > heuristics > benchmark.
- * Note: ?quality=high overrides even missing WebGL2 — the runtime failure
- * ladder (shader compile failure -> mesh) is the safety net for that case.
+ * Note: ?quality=high overrides even missing WebGL2 — the renderer-constructor
+ * try/catch demotes to mesh first; shader compile failure is the secondary net.
  */
 export function selectTier(env: TierEnvironment): TierDecision {
   if (env.queryQuality === 'high') return 'raymarched'
@@ -53,12 +53,15 @@ export function readTierEnvironment(): TierEnvironment {
   }
 
   const nav = navigator as Navigator & { deviceMemory?: number }
+  const canMatchMedia = typeof window.matchMedia === 'function'
   return {
     queryQuality: q === 'high' || q === 'low' ? q : null,
     webgl2,
     floatColorBuffer,
-    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
-    coarsePointer: window.matchMedia('(pointer: coarse)').matches,
+    reducedMotion: canMatchMedia
+      ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      : false,
+    coarsePointer: canMatchMedia ? window.matchMedia('(pointer: coarse)').matches : false,
     smallScreen: Math.min(window.screen.width, window.screen.height) < 768,
     deviceMemoryGb: typeof nav.deviceMemory === 'number' ? nav.deviceMemory : null,
   }

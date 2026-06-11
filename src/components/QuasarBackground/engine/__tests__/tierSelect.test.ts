@@ -53,6 +53,14 @@ describe('selectTier', () => {
   it('ambiguous capable hardware goes to benchmark', () => {
     expect(selectTier(capable)).toBe('benchmark')
   })
+
+  it('small screen alone (no coarse pointer) does NOT force mesh', () => {
+    expect(selectTier({ ...capable, smallScreen: true })).toBe('benchmark')
+  })
+
+  it('?quality=high beats reducedMotion', () => {
+    expect(selectTier({ ...capable, queryQuality: 'high', reducedMotion: true })).toBe('raymarched')
+  })
 })
 
 describe('tierFromBenchmark', () => {
@@ -61,5 +69,9 @@ describe('tierFromBenchmark', () => {
   })
   it('slow frames pick mesh', () => {
     expect(tierFromBenchmark(CONSTANTS.BENCHMARK_FRAME_MS + 1)).toBe('mesh')
+  })
+
+  it('exact threshold frame time picks mesh (not raymarched)', () => {
+    expect(tierFromBenchmark(CONSTANTS.BENCHMARK_FRAME_MS)).toBe('mesh')
   })
 })
