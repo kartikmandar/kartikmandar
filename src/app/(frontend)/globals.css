@@ -294,7 +294,7 @@ html[data-theme='light'] {
   @apply border-border my-6;
 }
 
-@keyframes bounce {
+@keyframes quasar-hint-bounce {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
 }

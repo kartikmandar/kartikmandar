@@ -124,6 +124,8 @@ export default function QuasarBackground() {
     const fail = () => {
       renderer?.dispose()
       renderer = null
+      disposed = true // stop the rAF loop; nothing renders in the failed state
+      cancelAnimationFrame(raf)
       setShellState('failed')
     }
 
@@ -303,7 +305,7 @@ export default function QuasarBackground() {
               borderLeft: '8px solid transparent',
               borderRight: '8px solid transparent',
               borderTop: '12px solid rgba(255,255,255,0.8)',
-              animation: 'bounce 2s infinite',
+              animation: 'quasar-hint-bounce 2s infinite',
             }}
           />
         </div>
