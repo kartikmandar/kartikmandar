@@ -170,8 +170,8 @@ vec3 marchBlackHole(vec3 ro, vec3 rd) {
       float cr = length(cp.xz);
       if (cr > DISK_INNER && cr < DISK_OUTER) {
         col += diskSample(cp, cr, normalize(pos - prevPos));
+        crossings++;
       }
-      crossings++;
     }
 
     if (uIgnition > 0.001) col += jetSample(pos) * length(pos - prevPos);
@@ -185,6 +185,7 @@ vec3 marchBlackHole(vec3 ro, vec3 rd) {
   col += vec3(1.0, 0.9, 0.75) * ring * 0.6 * uLensing * uIgnition;
 
   if (escaped) {
+    // pos can be one step stale when the u <= 0 break fired; the error is a tiny limb-angle offset.
     vec3 outDir = rd;
     if (length(pos - prevPos) > 1e-6) outDir = normalize(pos - prevPos);
     col += sampleBackground(outDir);
