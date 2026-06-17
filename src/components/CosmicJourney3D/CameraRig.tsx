@@ -9,6 +9,7 @@ import { cumulativeRanges } from './scrollMath'
 import { easedCurveU } from './cameraPath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
+import { splitProgress } from './prologueScroll'
 
 export function CameraRig() {
   const camera = useThree((s) => s.camera)
@@ -36,7 +37,7 @@ export function CameraRig() {
   const tmp = useRef(new THREE.Vector3())
 
   useFrame(() => {
-    const u = easedCurveU(progressRef.current, ranges)
+    const u = easedCurveU(splitProgress(progressRef.current).flightProgress, ranges)
     // light smoothing so wheel deltas read as inertia, not steps
     lastU.current += (u - lastU.current) * 0.12
     const cu = Math.max(0, Math.min(1, lastU.current))

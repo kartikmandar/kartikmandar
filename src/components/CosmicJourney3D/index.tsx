@@ -16,6 +16,8 @@ import { readJourneyEnv, selectQuality } from './tiers'
 import { fallbackMode } from './fallbackPlan'
 import { cumulativeRanges, locate } from './scrollMath'
 import type { QualityTier } from './types'
+import { HeroPrologue } from './HeroPrologue'
+import { splitProgress, PROLOGUE_FRACTION } from './prologueScroll'
 
 // Drives clock + localProgress into the active (and origin) scenes; one shared time base.
 function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
@@ -54,6 +56,25 @@ function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMo
   )
 }
 
+// Mounts the prologue WebGL layer and drives the crossfade. Unmounts once fully
+// faded out to release the second WebGL context.
+function PrologueLayer() {
+  const progressRef = useScrollProgressRef()
+  const [xfade, setXfade] = useState(0)
+  useEffect(() => {
+    let raf = 0
+    const tick = () => {
+      const c = Math.round(splitProgress(progressRef.current).crossfade * 50) / 50
+      setXfade((p) => (p === c ? p : c))
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [progressRef])
+  if (xfade >= 1) return null // prologue fully gone -> dispose 2nd context
+  return <HeroPrologue opacity={1 - xfade} />
+}
+
 export default function CosmicJourney3D() {
   const [ready, setReady] = useState(false)
   const [quality, setQuality] = useState<QualityTier>('high')
@@ -76,7 +97,8 @@ export default function CosmicJourney3D() {
   if (mode === 'static') return <Fallback />
 
   return (
-    <ScrollRig totalScrollVh={TOTAL_SCROLL_VH}>
+    <ScrollRig totalScrollVh={TOTAL_SCROLL_VH / (1 - PROLOGUE_FRACTION)}>
+      <PrologueLayer />
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }} aria-hidden>
         <Canvas camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }} dpr={quality === 'high' ? [1, 2] : [1, 1.5]}>
           <Environment quality={quality} />

@@ -5,22 +5,60 @@ import { useEffect, useState } from 'react'
 import { useScrollProgressRef } from './ScrollRig'
 import { cumulativeRanges, locate } from './scrollMath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
+import { splitProgress } from './prologueScroll'
+import { phaseStateFromProgress } from './prologuePhase'
+import { HERO_PHASES } from './narrative'
+import { Phase } from '@/components/QuasarBackground/engine/types'
+
+// Map Phase -> hero copy line (COLLAPSE and FLASH reuse the prior STAR line)
+const HERO_TEXT: Partial<Record<Phase, string>> = {
+  [Phase.STAR]: HERO_PHASES[0]!.text,
+  [Phase.SHELL]: HERO_PHASES[1]!.text,
+  [Phase.BIRTH]: HERO_PHASES[2]!.text,
+  [Phase.QUASAR]: HERO_PHASES[3]!.text,
+}
 
 export function Overlay() {
   const progressRef = useScrollProgressRef()
   const [index, setIndex] = useState(0)
+  const [heroText, setHeroText] = useState<string | null>(null)
 
   useEffect(() => {
     const ranges = cumulativeRanges(SCROLL_LENGTHS)
     let raf = 0
     const tick = () => {
-      const { index: i } = locate(progressRef.current, ranges)
-      setIndex((prev) => (prev === i ? prev : i)) // re-render only on beat change
+      const sp = splitProgress(progressRef.current)
+      if (sp.inPrologue) {
+        const ph = phaseStateFromProgress(sp.prologueProgress).phase
+        const t = HERO_TEXT[ph] ?? null
+        setHeroText((prev) => (prev === t ? prev : t))
+      } else {
+        setHeroText((prev) => (prev === null ? prev : null))
+        const { index: i } = locate(sp.flightProgress, ranges)
+        setIndex((prev) => (prev === i ? prev : i)) // re-render only on beat change
+      }
       raf = requestAnimationFrame(tick)
     }
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
   }, [progressRef])
+
+  if (heroText !== null) {
+    return (
+      <div
+        aria-live="polite"
+        style={{
+          position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+          pointerEvents: 'none', padding: '0 6vw', color: '#fff', zIndex: 2,
+        }}
+      >
+        <h2 style={{ fontSize: 'clamp(24px, 4vw, 44px)', fontWeight: 800, margin: '8px 0', textShadow: '0 2px 24px rgba(0,0,0,0.9)' }}>
+          {heroText}
+        </h2>
+      </div>
+    )
+  }
 
   const beat = BEATS[index]
   if (!beat) return null

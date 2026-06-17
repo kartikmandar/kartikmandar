@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { useScrollProgressRef } from './ScrollRig'
 import { cumulativeRanges, chapterOffset, locate } from './scrollMath'
 import { SCROLL_LENGTHS, BEATS, TOTAL_SCROLL_VH } from './registry'
+import { splitProgress } from './prologueScroll'
 
 export function ChapterRail() {
   const progressRef = useScrollProgressRef()
@@ -14,7 +15,7 @@ export function ChapterRail() {
     const ranges = cumulativeRanges(SCROLL_LENGTHS)
     let raf = 0
     const tick = () => {
-      const { index } = locate(progressRef.current, ranges)
+      const { index } = locate(splitProgress(progressRef.current).flightProgress, ranges)
       setActive((p) => (p === index ? p : index))
       raf = requestAnimationFrame(tick)
     }

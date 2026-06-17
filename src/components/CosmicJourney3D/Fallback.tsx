@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { fallbackEntries } from './fallbackPlan'
-import { PAGE_TITLE, PAGE_SUBTITLE } from './narrative'
+import { PAGE_TITLE, PAGE_SUBTITLE, HERO_PHASES } from './narrative'
 
 // Static, fully-readable experience for reduced-motion / no-WebGL users.
 // Posters may not exist yet (generated in a later phase); alt text + copy carry meaning.
@@ -14,6 +14,11 @@ export default function Fallback() {
         <h1>{PAGE_TITLE}</h1>
         <p style={{ opacity: 0.7 }}>{PAGE_SUBTITLE}</p>
       </header>
+      {HERO_PHASES.map((hp) => (
+        <article key={hp.phase} style={{ maxWidth: 720, margin: '0 auto', padding: '4vh 1.25rem' }}>
+          <h2>{hp.text}</h2>
+        </article>
+      ))}
       {entries.map((e) => (
         <article key={e.id} style={{ maxWidth: 720, margin: '0 auto', padding: '4vh 1.25rem' }}>
           {e.eyebrow && (
