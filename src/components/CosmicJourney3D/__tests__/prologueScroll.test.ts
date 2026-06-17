@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitProgress, PROLOGUE_FRACTION, CROSSFADE_BAND } from '../prologueScroll'
+import { splitProgress, PROLOGUE_FRACTION, CROSSFADE_BAND, flightFractionToGlobal, pageScrollVh } from '../prologueScroll'
 
 describe('splitProgress', () => {
   const PF = 0.25
@@ -34,5 +34,38 @@ describe('splitProgress', () => {
     expect(PROLOGUE_FRACTION).toBeGreaterThan(0)
     expect(PROLOGUE_FRACTION).toBeLessThan(0.5)
     expect(CROSSFADE_BAND).toBeGreaterThan(0)
+  })
+})
+
+describe('flightFractionToGlobal', () => {
+  it('maps 0 to PROLOGUE_FRACTION', () => {
+    expect(flightFractionToGlobal(0)).toBeCloseTo(PROLOGUE_FRACTION, 6)
+  })
+
+  it('maps 1 to 1', () => {
+    expect(flightFractionToGlobal(1)).toBeCloseTo(1, 6)
+  })
+
+  it('maps midpoint correctly', () => {
+    const expected = PROLOGUE_FRACTION + (1 - PROLOGUE_FRACTION) * 0.5
+    expect(flightFractionToGlobal(0.5)).toBeCloseTo(expected, 6)
+  })
+
+  it('clamps values below 0', () => {
+    expect(flightFractionToGlobal(-0.5)).toBeCloseTo(PROLOGUE_FRACTION, 6)
+  })
+
+  it('clamps values above 1', () => {
+    expect(flightFractionToGlobal(1.5)).toBeCloseTo(1, 6)
+  })
+})
+
+describe('pageScrollVh', () => {
+  it('returns totalFlightVh / (1 - PROLOGUE_FRACTION)', () => {
+    expect(pageScrollVh(100)).toBeCloseTo(100 / (1 - PROLOGUE_FRACTION), 6)
+  })
+
+  it('accepts a custom prologueFraction', () => {
+    expect(pageScrollVh(100, 0.25)).toBeCloseTo(100 / 0.75, 6)
   })
 })

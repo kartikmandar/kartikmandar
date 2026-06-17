@@ -11,8 +11,10 @@ import { HERO_PHASES } from './narrative'
 import { Phase } from '@/components/QuasarBackground/engine/types'
 
 // Map Phase -> hero copy line (COLLAPSE and FLASH reuse the prior STAR line)
-const HERO_TEXT: Partial<Record<Phase, string>> = {
+const HERO_TEXT: Record<Phase, string> = {
   [Phase.STAR]: HERO_PHASES[0]!.text,
+  [Phase.COLLAPSE]: HERO_PHASES[0]!.text,
+  [Phase.FLASH]: HERO_PHASES[0]!.text,
   [Phase.SHELL]: HERO_PHASES[1]!.text,
   [Phase.BIRTH]: HERO_PHASES[2]!.text,
   [Phase.QUASAR]: HERO_PHASES[3]!.text,
@@ -33,9 +35,7 @@ export function Overlay() {
       if (sp.inPrologue) {
         const ph = phaseStateFromProgress(sp.prologueProgress).phase
         const t = HERO_TEXT[ph]
-        // COLLAPSE/FLASH have no line of their own — retain the prior phase's
-        // line rather than clearing it (which would leak beat copy mid-prologue).
-        if (t !== undefined) setHeroText((prev) => (prev === t ? prev : t))
+        setHeroText((prev) => (prev === t ? prev : t))
       } else {
         setHeroText((prev) => (prev === null ? prev : null))
         const { index: i } = locate(sp.flightProgress, ranges)

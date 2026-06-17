@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { useScrollProgressRef } from './ScrollRig'
 import { cumulativeRanges, chapterOffset, locate } from './scrollMath'
 import { SCROLL_LENGTHS, BEATS, TOTAL_SCROLL_VH } from './registry'
-import { splitProgress } from './prologueScroll'
+import { splitProgress, flightFractionToGlobal, pageScrollVh } from './prologueScroll'
 
 export function ChapterRail() {
   const progressRef = useScrollProgressRef()
@@ -24,8 +24,8 @@ export function ChapterRail() {
   }, [progressRef])
 
   const jumpTo = (fraction: number) => {
-    const total = (TOTAL_SCROLL_VH / 100) * window.innerHeight
-    window.scrollTo({ top: fraction * total, behavior: 'smooth' })
+    const total = (pageScrollVh(TOTAL_SCROLL_VH) / 100) * window.innerHeight
+    window.scrollTo({ top: flightFractionToGlobal(fraction) * total, behavior: 'smooth' })
   }
 
   const ranges = cumulativeRanges(SCROLL_LENGTHS)

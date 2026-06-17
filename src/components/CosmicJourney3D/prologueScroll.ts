@@ -1,6 +1,17 @@
 export const PROLOGUE_FRACTION = 0.22
 export const CROSSFADE_BAND = 0.04
 
+// global scroll fraction (0..1 over the whole page) for a flight-space fraction (0..1 over the 21 beats)
+export function flightFractionToGlobal(fraction: number, prologueFraction: number = PROLOGUE_FRACTION): number {
+  const f = Math.max(0, Math.min(1, fraction))
+  return prologueFraction + (1 - prologueFraction) * f
+}
+
+// total page scroll height (vh) given the flight's vh, after reserving the prologue fraction
+export function pageScrollVh(totalFlightVh: number, prologueFraction: number = PROLOGUE_FRACTION): number {
+  return totalFlightVh / (1 - prologueFraction)
+}
+
 export interface Split {
   inPrologue: boolean
   prologueProgress: number
