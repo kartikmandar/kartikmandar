@@ -31,6 +31,7 @@ JOURNAL.md
 
 # Claude configuration
 .claude/
+.superpowers/
 tsconfig.tsbuildinfo
 
 local_db_backup.sql
