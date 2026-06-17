@@ -21,7 +21,9 @@ const HERO_TEXT: Partial<Record<Phase, string>> = {
 export function Overlay() {
   const progressRef = useScrollProgressRef()
   const [index, setIndex] = useState(0)
-  const [heroText, setHeroText] = useState<string | null>(null)
+  // Page loads at scroll 0 = prologue STAR, so seed the STAR line to avoid a
+  // first-frame flash of beat copy before the rAF loop runs.
+  const [heroText, setHeroText] = useState<string | null>(HERO_PHASES[0]!.text)
 
   useEffect(() => {
     const ranges = cumulativeRanges(SCROLL_LENGTHS)
@@ -30,8 +32,10 @@ export function Overlay() {
       const sp = splitProgress(progressRef.current)
       if (sp.inPrologue) {
         const ph = phaseStateFromProgress(sp.prologueProgress).phase
-        const t = HERO_TEXT[ph] ?? null
-        setHeroText((prev) => (prev === t ? prev : t))
+        const t = HERO_TEXT[ph]
+        // COLLAPSE/FLASH have no line of their own — retain the prior phase's
+        // line rather than clearing it (which would leak beat copy mid-prologue).
+        if (t !== undefined) setHeroText((prev) => (prev === t ? prev : t))
       } else {
         setHeroText((prev) => (prev === null ? prev : null))
         const { index: i } = locate(sp.flightProgress, ranges)
