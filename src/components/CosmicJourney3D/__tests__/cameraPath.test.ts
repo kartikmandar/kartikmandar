@@ -19,6 +19,13 @@ describe('easedCurveU', () => {
     expect(easedCurveU(1, ranges)).toBeCloseTo(1, 6)
   })
 
+  it('n <= 1 branch: single-range array delegates to smootherstep', () => {
+    const single = cumulativeRanges([100])
+    expect(easedCurveU(0, single)).toBeCloseTo(smootherstep(0), 6)  // 0
+    expect(easedCurveU(1, single)).toBeCloseTo(smootherstep(1), 6)  // 1
+    expect(easedCurveU(0.5, single)).toBeCloseTo(smootherstep(0.5), 6)
+  })
+
   it('maps each beat center to its station parameter on the curve', () => {
     // station i sits at curve param i/(N-1); beat-i center progress eases to it
     const centers = ranges.map((r) => (r.start + r.end) / 2)

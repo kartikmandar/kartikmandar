@@ -40,4 +40,14 @@ describe('chapterOffset', () => {
     expect(chapterOffset(1, ranges)).toBeCloseTo(0.25, 5)
     expect(chapterOffset(2, ranges)).toBeCloseTo(0.5, 5)
   })
+
+  it('returns the first beat start (0) for index 0', () => {
+    const ranges = cumulativeRanges([100, 100, 200])
+    expect(chapterOffset(0, ranges)).toBeCloseTo(0, 5)
+  })
+
+  it('returns 0 sentinel for an out-of-range index', () => {
+    const ranges = cumulativeRanges([100, 100, 200])
+    expect(chapterOffset(999, ranges)).toBe(0)
+  })
 })

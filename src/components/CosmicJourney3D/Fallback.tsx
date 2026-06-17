@@ -22,7 +22,7 @@ export default function Fallback() {
           <h2>{e.headline}</h2>
           {e.body && <p style={{ opacity: 0.85, lineHeight: 1.6 }}>{e.body}</p>}
           <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', marginTop: 12, borderRadius: 10, overflow: 'hidden', background: '#0b0e1c' }}>
-            <Image src={e.posterSrc} alt={e.headline} fill style={{ objectFit: 'cover' }} unoptimized />
+            <Image src={e.posterSrc} alt="" fill style={{ objectFit: 'cover' }} unoptimized />
           </div>
         </article>
       ))}
