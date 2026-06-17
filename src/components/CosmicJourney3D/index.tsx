@@ -30,7 +30,9 @@ function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMo
   useFrame((_s, dt) => {
     const d = Math.min(dt, 1 / 30) // clamp; protects the phase machine on tab-return
     setClock((c) => c + d)
-    const { index, local } = locate(progressRef.current, ranges)
+    // Use flightProgress (not raw) so the visible scene stays in lockstep with
+    // the camera and overlay, which also remap through the prologue.
+    const { index, local } = locate(splitProgress(progressRef.current).flightProgress, ranges)
     localRef.current = local
     setActive((p) => (p === index ? p : index))
   })
