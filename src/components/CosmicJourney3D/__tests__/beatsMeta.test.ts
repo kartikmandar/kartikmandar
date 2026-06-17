@@ -12,7 +12,7 @@ describe('beatsMeta', () => {
 
   it('every beat has a positive scroll length, an anchor position, a poster, and acceptance notes', () => {
     for (const b of NARRATIVE) {
-      const m = BEATS_META[b.id]
+      const m = BEATS_META[b.id]!
       expect(m.scrollLength).toBeGreaterThan(0)
       expect(m.anchor.position).toHaveLength(3)
       expect(m.posterSrc).toMatch(/^\/media\/.+\.(jpg|png|webp)$/)

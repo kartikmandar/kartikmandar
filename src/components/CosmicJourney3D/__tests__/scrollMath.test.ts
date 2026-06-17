@@ -28,9 +28,9 @@ describe('locate', () => {
 
   it('a short beat still traverses local 0..1 (edge-case the old build broke)', () => {
     const r2 = cumulativeRanges([120, 100, 100, 100]) // first beat short relative to a tall finale
-    expect(locate(r2[0].start, r2)).toEqual({ index: 0, local: 0 })
-    expect(locate((r2[0].start + r2[0].end) / 2, r2).local).toBeCloseTo(0.5, 5)
-    expect(locate(r2[0].end - 1e-9, r2).index).toBe(0)
+    expect(locate(r2[0]!.start, r2)).toEqual({ index: 0, local: 0 })
+    expect(locate((r2[0]!.start + r2[0]!.end) / 2, r2).local).toBeCloseTo(0.5, 5)
+    expect(locate(r2[0]!.end - 1e-9, r2).index).toBe(0)
   })
 })
 

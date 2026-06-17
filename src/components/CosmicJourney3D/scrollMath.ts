@@ -12,17 +12,20 @@ export function cumulativeRanges(lengths: number[]): Range[] {
     ranges.push({ start, end: acc / total })
   }
   // guard the last end against floating drift
-  if (ranges.length) ranges[ranges.length - 1].end = 1
+  // index is provably in-bounds: ranges.length - 1 < ranges.length
+  const last = ranges[ranges.length - 1]
+  if (last) last.end = 1
   return ranges
 }
 
 export function locate(progress: number, ranges: Range[]): { index: number; local: number } {
   const p = clamp01(progress)
   for (let i = 0; i < ranges.length; i++) {
-    const { start, end } = ranges[i]
-    if (p < end || i === ranges.length - 1) {
-      const span = end - start || 1
-      return { index: i, local: clamp01((p - start) / span) }
+    // i is provably in-bounds: loop condition i < ranges.length
+    const r = ranges[i]!
+    if (p < r.end || i === ranges.length - 1) {
+      const span = r.end - r.start || 1
+      return { index: i, local: clamp01((p - r.start) / span) }
     }
   }
   return { index: 0, local: 0 }

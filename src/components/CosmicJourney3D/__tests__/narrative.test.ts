@@ -15,24 +15,24 @@ describe('narrative copy (preservation guard)', () => {
   })
 
   it('preserves headline + eyebrow + body verbatim for sampled beats', () => {
-    const nao = NARRATIVE[0]
+    const nao = NARRATIVE[0]!
     expect(nao.eyebrow).toBe('4th Standard')
     expect(nao.headline).toBe('The Spark: NAO')
     expect(nao.body).toBe(
       'Cleared the regional round of the National Astronomy Olympiad. Reading their textbooks sparked a fascination that led me to participating each year, fueling a deep interest in the cosmos.',
     )
-    const comet = NARRATIVE[1]
+    const comet = NARRATIVE[1]!
     expect(comet.body).toContain('It was fascinaing.') // typo preserved on purpose
-    const decision = NARRATIVE[2]
+    const decision = NARRATIVE[2]!
     expect(decision.body).toContain('I  solidified my resolve') // double space preserved
-    const finale = NARRATIVE[20]
+    const finale = NARRATIVE[20]!
     expect(finale.headline).toBe('The Journey Continues...')
     expect(finale.body).toBe("...in search of a Master's in Astrophysics.")
     expect(finale.eyebrow).toBeUndefined()
   })
 
   it('keeps the search beat as typed phrases with no body', () => {
-    const search = NARRATIVE[4]
+    const search = NARRATIVE[4]!
     expect(search.body).toBeUndefined()
     expect(search.typedPhrases).toEqual(['DU > Hansraj College...', 'IISERs...', 'IISER Bhopal'])
   })

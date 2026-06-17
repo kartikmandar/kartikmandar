@@ -13,10 +13,12 @@ export function easedCurveU(progress: number, ranges: Range[]): number {
   if (n <= 1) return smootherstep(progress)
   const p = Math.max(0, Math.min(1, progress))
   const centers = ranges.map((r) => (r.start + r.end) / 2)
-  if (p <= centers[0]) return 0
-  if (p >= centers[n - 1]) return 1
+  // centers[0] and centers[n-1] are in-bounds: n >= 2 (guarded above)
+  if (p <= centers[0]!) return 0
+  if (p >= centers[n - 1]!) return 1
   let i = 0
-  while (i < n - 1 && !(p >= centers[i] && p <= centers[i + 1])) i++
-  const t = (p - centers[i]) / (centers[i + 1] - centers[i] || 1)
+  // centers[i] and centers[i+1] are in-bounds: loop only runs while i < n-1
+  while (i < n - 1 && !(p >= centers[i]! && p <= centers[i + 1]!)) i++
+  const t = (p - centers[i]!) / (centers[i + 1]! - centers[i]! || 1)
   return (i + smootherstep(t)) / (n - 1)
 }
