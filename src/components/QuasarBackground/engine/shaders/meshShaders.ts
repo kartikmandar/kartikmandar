@@ -1,4 +1,12 @@
-import { GLSL_BLACKBODY, GLSL_NOISE, GLSL_SHELL_COLOR, GLSL_STAR_SURFACE } from './chunks'
+import {
+  GLSL_BLACKBODY,
+  GLSL_DISK_EXPOSURE,
+  GLSL_NOISE,
+  GLSL_RADIANCE_CAP,
+  GLSL_SHELL_COLOR,
+  GLSL_STAR_SURFACE,
+} from './chunks'
+import { CONSTANTS } from '../types'
 
 /** Disk: RingGeometry lies in object XY; the mesh is rotated flat by MeshRenderer. */
 export const DISK_VERT = /* glsl */ `
@@ -18,6 +26,8 @@ uniform float uOuter;
 varying vec2 vPos;
 ${GLSL_NOISE}
 ${GLSL_BLACKBODY}
+${GLSL_RADIANCE_CAP}
+${GLSL_DISK_EXPOSURE}
 void main() {
   float r = length(vPos);
   float azimuth = atan(vPos.y, vPos.x);
@@ -40,7 +50,10 @@ void main() {
   float front = mix(uInner, uOuter + 2.0, uIgnition);
   float lit = smoothstep(front + 1.0, front - 1.0, r);
 
-  gl_FragColor = vec4(bb * turb * beam * radial * edges * lit * 2.0, 1.0);
+  vec3 c = capRadiance(
+    bb * turb * beam * radial * edges * lit * 2.0,
+    ${CONSTANTS.DISK_RADIANCE_CAP.toFixed(1)});
+  gl_FragColor = vec4(c * diskExposure(length(cameraPosition)), 1.0);
 }
 `
 

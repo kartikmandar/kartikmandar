@@ -38,7 +38,16 @@ export class RaymarchedRenderer implements SceneRenderer {
   init(container: HTMLElement, camera: THREE.PerspectiveCamera): void {
     this.camera = camera
 
-    const renderer = new THREE.WebGLRenderer({ antialias: false })
+    // preserveDrawingBuffer: under GPU contention (many tabs/windows) Chrome's
+    // compositor can sample the canvas between clear and redraw, flashing a
+    // blank frame every few seconds. Preserving means the buffer always holds
+    // the last completed frame; cheap here since every pixel is overwritten
+    // each frame anyway.
+    const renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance',
+    })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONSTANTS.DPR_CAP))
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.domElement.style.width = '100%'
@@ -47,7 +56,7 @@ export class RaymarchedRenderer implements SceneRenderer {
     container.appendChild(renderer.domElement)
     this.renderer = renderer
 
-    this.background = bakeBackgroundCubemap(renderer)
+    this.background = bakeBackgroundCubemap(renderer, { hdr: true })
 
     // Disk tilt: reuse the legacy scene's tilt so the composition reads the same.
     const tilt = new THREE.Matrix4()
@@ -149,7 +158,10 @@ export class RaymarchedRenderer implements SceneRenderer {
       this.applySize()
     }
 
-    if (avg > 1000 / CONSTANTS.WATCHDOG_FPS && this.resolutionScale <= CONSTANTS.RESOLUTION_SCALE_MIN) {
+    if (
+      avg > 1000 / CONSTANTS.WATCHDOG_FPS &&
+      this.resolutionScale <= CONSTANTS.RESOLUTION_SCALE_MIN
+    ) {
       this.slowSeconds += (avg / 1000) * 30 // actual elapsed time of this batch
       if (this.slowSeconds >= CONSTANTS.WATCHDOG_SECONDS && !this.demoted) {
         this.demoted = true

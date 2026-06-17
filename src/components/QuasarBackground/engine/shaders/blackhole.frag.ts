@@ -1,6 +1,8 @@
 import {
   GLSL_BLACKBODY,
+  GLSL_DISK_EXPOSURE,
   GLSL_NOISE,
+  GLSL_RADIANCE_CAP,
   GLSL_SHELL_COLOR,
   GLSL_SPHERE_INTERVAL,
   GLSL_STAR_SURFACE,
@@ -37,11 +39,14 @@ uniform float uIgnition;
 #define ESCAPE_R ${CONSTANTS.ESCAPE_RADIUS_RS.toFixed(1)}
 #define JET_LEN ${CONSTANTS.JET_LENGTH_RS.toFixed(1)}
 #define JET_TAN ${JET_TAN}
+#define DISK_CAP ${CONSTANTS.DISK_RADIANCE_CAP.toFixed(1)}
 #define MAX_STEPS 128
 #define SHELL_SAMPLES 10
 
 ${GLSL_NOISE}
 ${GLSL_BLACKBODY}
+${GLSL_RADIANCE_CAP}
+${GLSL_DISK_EXPOSURE}
 ${GLSL_SHELL_COLOR}
 ${GLSL_STAR_SURFACE}
 ${GLSL_SPHERE_INTERVAL}
@@ -102,7 +107,8 @@ vec3 diskSample(vec3 cp, float cr, vec3 stepDir) {
   float front = mix(DISK_INNER, DISK_OUTER + 2.0, uIgnition);
   float lit = smoothstep(front + 1.0, front - 1.0, cr); // ignites inner-out (BIRTH)
 
-  return bb * turb * beam * g * radial * edges * lit * 2.4;
+  vec3 c = bb * turb * beam * g * radial * edges * lit * 2.4;
+  return capRadiance(c, DISK_CAP) * diskExposure(length(uCamPos));
 }
 
 // Bipolar jets, sampled volumetrically along the march.

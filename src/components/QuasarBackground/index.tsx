@@ -16,7 +16,8 @@ type ShellState = Tier | 'failed'
 const OVERLAY_TEXT: Partial<Record<Phase, string>> = {
   [Phase.STAR]: 'Every story begins with a massive star.',
   [Phase.SHELL]: 'It dies in a supernova, outshining its entire galaxy.',
-  [Phase.BIRTH]: 'What remains collapses into a black hole. Matter spirals in, and the disk ignites.',
+  [Phase.BIRTH]:
+    'What remains collapses into a black hole. Matter spirals in, and the disk ignites.',
   [Phase.QUASAR]: 'But this is just the surface of what really is happening!!',
 }
 
@@ -253,7 +254,18 @@ export default function QuasarBackground() {
   const overlayText = OVERLAY_TEXT[phase]
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
+    // background #000: when a GPU frame overruns vsync, Chrome composites the
+    // canvas blank for that frame and the element behind it shows through —
+    // black hides the miss; the page's white body reads as a white blink.
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        background: '#000',
+      }}
+    >
       {shellState === 'failed' ? (
         <Image
           src="/media/quasar-poster.jpg"

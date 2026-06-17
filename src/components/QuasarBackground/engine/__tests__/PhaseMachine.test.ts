@@ -54,7 +54,7 @@ describe('PhaseMachine', () => {
   it('interaction resets the idle timer', () => {
     const m = new PhaseMachine()
     for (let t = 0; t < 10; t += 0.1) m.update(idle(0.1)) // 10s idle
-    m.update({ ...idle(0.1), userInteracted: true })      // reset
+    m.update({ ...idle(0.1), userInteracted: true }) // reset
     for (let t = 0; t < 10; t += 0.1) m.update(idle(0.1)) // 10s more (< 12 again)
     expect(m.state.phase).toBe(Phase.STAR)
   })

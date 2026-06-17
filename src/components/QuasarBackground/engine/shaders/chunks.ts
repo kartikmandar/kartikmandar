@@ -1,4 +1,5 @@
 /** Shared GLSL chunks (GLSL ES 1.0, used by both tiers). */
+import { CONSTANTS } from '../types'
 
 export const GLSL_NOISE = /* glsl */ `
 float hash13(vec3 p) {
@@ -71,6 +72,28 @@ vec3 starSurface(vec3 nrm, vec3 rd, float time, float collapse) {
   float limb = pow(max(dot(nrm, -rd), 0.0), 0.55);
   float brighten = 1.0 + 7.0 * collapse * collapse;
   return base * limb * brighten * 1.6;
+}
+`
+
+export const GLSL_RADIANCE_CAP = /* glsl */ `
+// Luminance ceiling: identity below cap, hard ceiling above. Bounds what
+// bloom can integrate without touching the typical (sub-cap) appearance.
+vec3 capRadiance(vec3 c, float cap) {
+  float lum = dot(c, vec3(0.2126, 0.7152, 0.0722));
+  return c * min(1.0, cap / max(lum, 1e-3));
+}
+`
+
+export const GLSL_DISK_EXPOSURE = /* glsl */ `
+// Proximity auto-exposure for disk emission (see CONSTANTS.DISK_EXPOSURE_*).
+float diskExposure(float camDist) {
+  return mix(
+    ${CONSTANTS.DISK_EXPOSURE_MIN.toFixed(3)},
+    1.0,
+    smoothstep(
+      ${CONSTANTS.DISK_EXPOSURE_NEAR_RS.toFixed(1)},
+      ${CONSTANTS.DISK_EXPOSURE_FAR_RS.toFixed(1)},
+      camDist));
 }
 `
 

@@ -3,7 +3,7 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js'
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js'
-import { addBackgroundGalaxies, addBackgroundStars, type BackgroundHandle } from './background'
+import { bakeBackgroundCubemap, type BakedCubemap } from './background'
 import { derivePhaseUniforms } from './phaseUniforms'
 import {
   DISK_FRAG,
@@ -69,7 +69,7 @@ export class MeshRenderer implements SceneRenderer {
   private camera: THREE.PerspectiveCamera | null = null
   private time = 0
   private disposables: Array<{ dispose(): void }> = []
-  private backgrounds: BackgroundHandle[] = []
+  private background: BakedCubemap | null = null
 
   private bhGroup = new THREE.Group()
   private starMesh: THREE.Mesh | null = null
@@ -90,7 +90,13 @@ export class MeshRenderer implements SceneRenderer {
 
   init(container: HTMLElement, camera: THREE.PerspectiveCamera): void {
     this.camera = camera
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    // preserveDrawingBuffer/powerPreference: same anti-blank-frame rationale
+    // as the raymarched tier (see RaymarchedRenderer.init).
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      preserveDrawingBuffer: true,
+      powerPreference: 'high-performance',
+    })
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, CONSTANTS.DPR_CAP))
     renderer.toneMapping = THREE.ACESFilmicToneMapping
     renderer.domElement.style.width = '100%'
@@ -99,8 +105,9 @@ export class MeshRenderer implements SceneRenderer {
     container.appendChild(renderer.domElement)
     this.renderer = renderer
 
-    this.scene.background = new THREE.Color(0x000000)
-    this.backgrounds.push(addBackgroundStars(this.scene), addBackgroundGalaxies(this.scene))
+    // Same baked sky as the raymarched tier (byte target: HDR is bloom-only there).
+    this.background = bakeBackgroundCubemap(renderer, { hdr: false })
+    this.scene.background = this.background.texture
 
     // Same tilt as the raymarched tier / legacy scene.
     this.bhGroup.rotation.x = 0.749
@@ -141,12 +148,7 @@ export class MeshRenderer implements SceneRenderer {
     this.disposables.push(arcGeo, this.arcMaterial)
 
     // Accretion disk
-    const diskGeo = new THREE.RingGeometry(
-      CONSTANTS.DISK_INNER_RS,
-      CONSTANTS.DISK_OUTER_RS,
-      128,
-      8,
-    )
+    const diskGeo = new THREE.RingGeometry(CONSTANTS.DISK_INNER_RS, CONSTANTS.DISK_OUTER_RS, 128, 8)
     this.diskMaterial = additive({
       vertexShader: DISK_VERT,
       fragmentShader: DISK_FRAG,
@@ -209,7 +211,10 @@ export class MeshRenderer implements SceneRenderer {
     }
     const shellGeo = new THREE.BufferGeometry()
     // Position attribute is required by Three even though the vertex shader ignores it.
-    shellGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(SHELL_POINTS * 3), 3))
+    shellGeo.setAttribute(
+      'position',
+      new THREE.BufferAttribute(new Float32Array(SHELL_POINTS * 3), 3),
+    )
     shellGeo.setAttribute('dir', new THREE.BufferAttribute(dirs, 3))
     shellGeo.setAttribute('seed', new THREE.BufferAttribute(seeds, 1))
     shellGeo.boundingSphere = new THREE.Sphere(new THREE.Vector3(), 100) // skip culling math
@@ -245,7 +250,10 @@ export class MeshRenderer implements SceneRenderer {
     const composer = new EffectComposer(renderer)
     composer.addPass(new RenderPass(this.scene, camera))
     this.bloomPass = new UnrealBloomPass(
-      new THREE.Vector2(Math.max(container.clientWidth / 4, 64), Math.max(container.clientHeight / 4, 64)),
+      new THREE.Vector2(
+        Math.max(container.clientWidth / 4, 64),
+        Math.max(container.clientHeight / 4, 64),
+      ),
       CONSTANTS.BLOOM_STRENGTH,
       CONSTANTS.BLOOM_RADIUS,
       CONSTANTS.BLOOM_THRESHOLD,
@@ -307,7 +315,8 @@ export class MeshRenderer implements SceneRenderer {
   }
 
   dispose(): void {
-    this.backgrounds.forEach((b) => b.dispose())
+    this.background?.dispose() // frees the cubemap render target (6 FBOs + texture)
+    this.background = null
     this.disposables.forEach((d) => d.dispose())
     this.composer?.dispose()
     this.bloomPass?.dispose()

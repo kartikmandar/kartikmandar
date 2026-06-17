@@ -66,6 +66,22 @@ export const CONSTANTS = {
   // disk / jets (r_s units)
   DISK_INNER_RS: 3,
   DISK_OUTER_RS: 14,
+  /**
+   * HDR luminance ceiling for disk emission. Identity for the typical disk
+   * (1-6); clips the rare turbulence x beaming peaks (~100) that otherwise
+   * drive UnrealBloom into periodic full-frame white-outs up close.
+   */
+  DISK_RADIANCE_CAP: 8,
+  /**
+   * Proximity auto-exposure: ACES saturates to white near luminance ~3, and
+   * the collapse trigger (15 r_s) parks the camera at the disk's outer edge,
+   * so direct emission whites out the frame in pulses as the turbulence
+   * rotates. Dim the disk toward EXPOSURE_MIN as camera distance falls from
+   * FAR to NEAR (r_s); full tuned look is restored by the 40 r_s start.
+   */
+  DISK_EXPOSURE_MIN: 0.12,
+  DISK_EXPOSURE_NEAR_RS: 10,
+  DISK_EXPOSURE_FAR_RS: 28,
   ESCAPE_RADIUS_RS: 60,
   JET_LENGTH_RS: 50,
   JET_HALF_ANGLE_DEG: 4,
@@ -77,6 +93,8 @@ export const CONSTANTS = {
   WATCHDOG_SECONDS: 5,
   RESOLUTION_SCALE_MIN: 0.5,
   MESH_TIER_MAX_POLAR_DEG: 35,
+  // background sky
+  SKY_CUBEMAP_SIZE: 1024,
   // bloom
   BLOOM_STRENGTH: 1.2,
   BLOOM_RADIUS: 0.6,
