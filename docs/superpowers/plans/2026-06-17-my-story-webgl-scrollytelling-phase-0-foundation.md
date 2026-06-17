@@ -160,7 +160,7 @@ describe('narrative copy (preservation guard)', () => {
     expect(decision.body).toContain('I  solidified my resolve') // double space preserved
     const finale = NARRATIVE[20]
     expect(finale.headline).toBe('The Journey Continues...')
-    expect(finale.body).toBe('...in search of a Master’s in Astrophysics.')
+    expect(finale.body).toBe('...in search of a Master's in Astrophysics.')
     expect(finale.eyebrow).toBeUndefined()
   })
 
@@ -190,7 +190,7 @@ Expected: FAIL — cannot resolve `../narrative`.
 
 - [ ] **Step 3: Implement `narrative.ts`**
 
-Transcribe all copy verbatim from spec §7. (Body strings reproduced exactly; the apostrophe in the finale is the curly `’` as in the original.)
+Transcribe all copy verbatim from the live source `src/blocks/CosmicJourney/Component.tsx`, **decoding HTML entities to their characters**: `&apos;`→`'` (straight), `&quot;`→`"` (straight), `&amp;`→`&`. The source contains only straight quotes (verified: zero curly apostrophes); the deliberate typos ("fascinaing") and the double space ("I  solidified") are preserved exactly.
 
 ```ts
 // src/components/CosmicJourney3D/narrative.ts
@@ -216,7 +216,7 @@ export const NARRATIVE: readonly NarrativeBeat[] = [
   { id: 'nao-section', eyebrow: '4th Standard', headline: 'The Spark: NAO',
     body: 'Cleared the regional round of the National Astronomy Olympiad. Reading their textbooks sparked a fascination that led me to participating each year, fueling a deep interest in the cosmos.' },
   { id: 'comet-section', eyebrow: '6th - 8th Standard', headline: 'Hands-On Exploration',
-    body: 'Joined SPACE-India astronomy club at school. It was fascinaing. Solar observations, making dry-ice comets, finding asteroids, calculating Earth’s circumference and overnight observation camps at Sariska somehow made the universe tangible.' },
+    body: 'Joined SPACE-India astronomy club at school. It was fascinaing. Solar observations, making dry-ice comets, finding asteroids, calculating Earth's circumference and overnight observation camps at Sariska somehow made the universe tangible.' },
   { id: 'decision-section', eyebrow: '9th - 10th Standard', headline: 'A Future Decided',
     body: 'With a clear vision, I decided my future lay among the cosmos. It seemed like a pipe dream but I  solidified my resolve to become an astronomer.' },
   { id: 'constellation-section', eyebrow: '11th - 12th Standard', headline: 'Forging My Own Path',
@@ -254,11 +254,11 @@ export const NARRATIVE: readonly NarrativeBeat[] = [
   { id: 'analysis-section', eyebrow: 'Current Endeavors', headline: 'What I am working on?',
     body: 'Currently working across different projects: spectral analysis of Cygnus X-1, RRIVis version 2 with polarization and antenna beam support, contributing to RIPPLe, DAVE and Stingray, and maintaining fftvis.' },
   { id: 'journey-continues-section', headline: 'The Journey Continues...',
-    body: '...in search of a Master’s in Astrophysics.' },
+    body: '...in search of a Master's in Astrophysics.' },
 ]
 ```
 
-> Note on quotes: the original constellation copy uses straight `"Brittle Stars"`; the comet/finale apostrophes are curly `’` as in the source. Keep them exactly; the test asserts the finale form.
+> Note on quotes: in source these are HTML entities — `&quot;Brittle Stars&quot;`, `Earth&apos;s`, `Master&apos;s` — which render to **straight** `"` and `'`. `narrative.ts` stores the decoded straight characters (React renders them as text). The test asserts the straight finale form.
 
 - [ ] **Step 4: Run the test to verify it passes**
 
