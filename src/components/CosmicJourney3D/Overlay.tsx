@@ -72,8 +72,8 @@ export function Overlay() {
       aria-live="polite"
       style={{
         position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column',
-        alignItems: 'center', justifyContent: 'center', textAlign: 'center',
-        pointerEvents: 'none', padding: '0 6vw', color: '#fff', zIndex: 2,
+        alignItems: 'center', justifyContent: 'flex-end', textAlign: 'center',
+        pointerEvents: 'none', padding: '0 6vw 9vh', color: '#fff', zIndex: 2,
       }}
     >
       {beat.eyebrow && (
