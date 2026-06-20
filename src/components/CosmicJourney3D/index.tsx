@@ -85,6 +85,7 @@ export default function CosmicJourney3D() {
   const [ready, setReady] = useState(false)
   const [quality, setQuality] = useState<QualityTier>('high')
   const [mode, setMode] = useState<'none' | 'static'>('none')
+  const [frameloop, setFrameloop] = useState<'always' | 'never'>('always')
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init: reads browser APIs (matchMedia, webgl2 probe) only available client-side; batched by React 18 */
   useEffect(() => {
@@ -95,7 +96,14 @@ export default function CosmicJourney3D() {
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
     const onChange = () => setMode(fallbackMode(mq.matches, env.webgl2))
     mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
+    // Pause the WebGL render loop when the tab is backgrounded (battery/CPU).
+    const onVis = () => setFrameloop(document.hidden ? 'never' : 'always')
+    document.addEventListener('visibilitychange', onVis)
+    onVis()
+    return () => {
+      mq.removeEventListener('change', onChange)
+      document.removeEventListener('visibilitychange', onVis)
+    }
   // eslint-enable react-hooks/set-state-in-effect
   }, [])
 
@@ -104,9 +112,9 @@ export default function CosmicJourney3D() {
 
   return (
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>
-      <PrologueLayer />
+      {quality !== 'mobile' && <PrologueLayer />}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }} aria-hidden>
-        <Canvas camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }} dpr={quality === 'high' ? [1, 2] : [1, 1.5]}>
+        <Canvas frameloop={frameloop} camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }} dpr={quality === 'high' ? [1, 2] : [1, 1.5]}>
           <Environment quality={quality} />
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} />

@@ -44,6 +44,7 @@ export function HeroPrologue({ opacity }: { opacity: number }) {
       const now = performance.now()
       const dt = Math.min((now - last) / 1000, 1 / 30)
       last = now
+      if (document.hidden) return // skip the heavy raymarch while backgrounded
       const { prologueProgress } = splitProgress(progressRef.current)
       // gentle dolly inward across the prologue (40 -> 22 r_s), then hold
       frame(CONSTANTS.CAMERA_START_DISTANCE - 18 * prologueProgress)

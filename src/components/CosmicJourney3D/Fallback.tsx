@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import { fallbackEntries } from './fallbackPlan'
 import { PAGE_TITLE, PAGE_SUBTITLE, HERO_PHASES } from './narrative'
 
@@ -26,9 +25,16 @@ export default function Fallback() {
           )}
           <h2>{e.headline}</h2>
           {e.body && <p style={{ opacity: 0.85, lineHeight: 1.6 }}>{e.body}</p>}
-          <div style={{ position: 'relative', width: '100%', aspectRatio: '16 / 9', marginTop: 12, borderRadius: 10, overflow: 'hidden', background: '#0b0e1c' }}>
-            <Image src={e.posterSrc} alt="" fill style={{ objectFit: 'cover' }} unoptimized />
-          </div>
+          {/* Cosmic-gradient placeholder until real GPU-captured poster stills exist
+              (headless software-WebGL can't render faithful frames). */}
+          <div
+            aria-hidden
+            style={{
+              width: '100%', aspectRatio: '16 / 9', marginTop: 12, borderRadius: 10,
+              background: 'radial-gradient(120% 100% at 50% 0%, #1a1438 0%, #0b0e1c 60%, #05060d 100%)',
+              boxShadow: 'inset 0 0 60px rgba(99,102,241,0.18)',
+            }}
+          />
         </article>
       ))}
     </section>
