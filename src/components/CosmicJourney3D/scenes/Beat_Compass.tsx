@@ -12,13 +12,11 @@ import type { SceneProps } from '../types'
 // Mirrors drawUnwaveringCompass: rose at 2D (0.4,0.5), star at (0.85,0.5),
 // needle North -> star, swing done by progress 0.5, tremble ~sin(t)*0.02*progress.
 
-// Map the original 2D [0..1] layout into the XY plane (10 x 7, centered, z~0).
-const toPos = (p: readonly [number, number]) =>
-  new THREE.Vector3((p[0] - 0.5) * 10, (0.5 - p[1]) * 7, 0)
-
-const COMPASS = toPos([0.4, 0.5]) // rose center
-const STAR = toPos([0.85, 0.5]) // Physics star
-const ROSE_R = 1.4 // compass radius in local units
+// Place the rose and star straddling the origin so the subject fills the frame
+// (rose on the left, star on the right), both on the horizontal midline (z~0).
+const COMPASS = new THREE.Vector3(-3.1, 0.4, 0) // rose center
+const STAR = new THREE.Vector3(3.4, 0.4, 0) // Physics star
+const ROSE_R = 1.85 // compass radius in local units
 const NEEDLE_LEN = ROSE_R * 0.85
 
 // North in this frame is +Y (up). Target points from rose toward the star.
@@ -76,7 +74,7 @@ export default function Beat_Compass({ localProgress, clock, reducedMotion }: Sc
           </bufferGeometry>
           <lineBasicMaterial color="#ffffff" transparent opacity={0.4} toneMapped={false} />
         </lineSegments>
-        <Text position={[0, ROSE_R + 0.6, 0]} fontSize={0.42} color="#ffffff" anchorX="center" anchorY="middle">
+        <Text position={[0, ROSE_R + 0.55, 0]} fontSize={0.4} color="#e2e8f0" anchorX="center" anchorY="bottom">
           Economic Sciences
         </Text>
       </group>
@@ -102,20 +100,22 @@ export default function Beat_Compass({ localProgress, clock, reducedMotion }: Sc
 
       {/* Physics star on the right: indigo halo + white core, grows in */}
       {starAlpha > 0.001 && (
-        <group position={STAR} scale={starScale}>
-          <mesh>
-            <sphereGeometry args={[0.9, 24, 24]} />
-            <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.35} toneMapped={false} />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[0.5, 24, 24]} />
-            <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.7} toneMapped={false} />
-          </mesh>
-          <mesh>
-            <sphereGeometry args={[0.28, 20, 20]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={starAlpha} toneMapped={false} />
-          </mesh>
-          <Text position={[0, -1.3, 0]} fontSize={0.5} color="#ffffff" anchorX="center" anchorY="middle" fillOpacity={starAlpha}>
+        <group position={STAR}>
+          <group scale={starScale}>
+            <mesh>
+              <sphereGeometry args={[0.9, 24, 24]} />
+              <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.35} toneMapped={false} />
+            </mesh>
+            <mesh>
+              <sphereGeometry args={[0.5, 24, 24]} />
+              <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.7} toneMapped={false} />
+            </mesh>
+            <mesh>
+              <sphereGeometry args={[0.28, 20, 20]} />
+              <meshBasicMaterial color="#ffffff" transparent opacity={starAlpha} toneMapped={false} />
+            </mesh>
+          </group>
+          <Text position={[0, 1.5, 0]} fontSize={0.45} color="#c7d2fe" anchorX="center" anchorY="bottom" fillOpacity={starAlpha} outlineWidth={0.012} outlineColor="#1e1b4b">
             Physics
           </Text>
         </group>

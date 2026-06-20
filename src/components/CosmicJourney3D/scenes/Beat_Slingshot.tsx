@@ -11,13 +11,18 @@ import type { SceneProps } from '../types'
 // orbit guides fade out / fade in (mirrors drawSlingshot).
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
+// Widen the X span and lift slightly so the two suns and transfer arc fill the
+// ~9-wide x 6-tall framing without the subject reading small or low.
+const SPAN_X = 11
+const SPAN_Y = 7
+const Y_LIFT = 0.55 // nudge composition up so content centers above the overlay band
 const toPos = (nx: number, ny: number) =>
-  new THREE.Vector3((nx - 0.5) * 10, (0.5 - ny) * 7, 0)
+  new THREE.Vector3((nx - 0.5) * SPAN_X, (0.5 - ny) * SPAN_Y + Y_LIFT, 0)
 
 const SUN1 = toPos(0.25, 0.5) // small yellow sun (left)
 const SUN2 = toPos(0.75, 0.5) // larger blue-indigo sun (right)
-const ORBIT1 = 7 * 0.12 // tight starting orbit (radius in local units)
-const ORBIT2 = 7 * 0.22 // wider destination orbit
+const ORBIT1 = SPAN_Y * 0.14 // tight starting orbit (radius in local units)
+const ORBIT2 = SPAN_Y * 0.24 // wider destination orbit
 // Quadratic transfer path control points (canvas y flips to 3D up).
 const T_START = new THREE.Vector3(SUN1.x - ORBIT1, SUN1.y, 0)
 const T_CTRL = toPos(0.5, 0.2)
@@ -150,7 +155,7 @@ export default function Beat_Slingshot({ localProgress, clock, reducedMotion }: 
         </mesh>
       </group>
 
-      <Text position={[0, -3.1, 0]} fontSize={0.42} color="#a5b4fc" anchorX="center" anchorY="middle">
+      <Text position={[0, -1.25, 0]} fontSize={0.42} color="#a5b4fc" anchorX="center" anchorY="middle">
         gravitational slingshot
       </Text>
     </group>

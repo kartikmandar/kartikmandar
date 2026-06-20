@@ -9,20 +9,22 @@ import type { SceneProps } from '../types'
 //  1) Cygnus X-1 black hole with 5 expanding red/blue accretion rings,
 //  2) an indigo RRIViz/EM-solver grid, and
 //  3) a glowing crystal (lower-right) that drags floating LaTeX glyphs in to be absorbed.
-const EXT_X = 10
-const EXT_Y = 7
-// Crystal sits at the original's (w*0.8, h*0.75) anchor, mapped into local space.
-const CRYSTAL = [(0.8 - 0.5) * EXT_X, (0.5 - 0.75) * EXT_Y] as const
+// Grid framed to the composition bounds (9 wide x ~5 tall, top edge above Y=4).
+const EXT_X = 9
+const GRID_TOP = 3.7
+const GRID_BOTTOM = -1.4 // keep the solver grid above the overlay copy band
+// Crystal moved up and in so it (and its glyph swarm) stay within frame.
+const CRYSTAL = [2.4, 1.0] as const
 const GLYPHS = ['∫', 'Σ', 'a/b', 'α', '∇'] as const
 const GRID_LINES = 11 // half-resolution of the original 20 for a clean 3D grid
 
-// 15 glyphs scattered across the field, each drifting toward the crystal.
+// 15 glyphs scattered around the crystal, each drifting in to be absorbed.
 const PARTICLES = Array.from({ length: 15 }, (_, i) => {
   const a = (i / 15) * Math.PI * 2
-  const r = 3.2 + (i % 4) * 0.9
+  const r = 1.4 + (i % 4) * 0.45
   return {
-    x: Math.cos(a) * r * 0.9,
-    y: Math.sin(a) * r * 0.6,
+    x: Math.cos(a) * r,
+    y: Math.sin(a) * r * 0.8,
     text: GLYPHS[i % GLYPHS.length] ?? 'α',
   }
 })
@@ -34,13 +36,14 @@ export default function Beat_Workbench({ localProgress, clock, reducedMotion }: 
   const latex = Math.max(0, (localProgress - 0.5) / 0.5)
   const spin = reducedMotion ? 0 : clock * 0.15
 
-  // Indigo solver grid: vertical + horizontal segments across the full extent.
+  // Indigo solver grid: vertical + horizontal segments across the framed extent.
   const gridPositions = useMemo(() => {
     const arr: number[] = []
     for (let i = 0; i < GRID_LINES; i++) {
-      const fx = (i / (GRID_LINES - 1) - 0.5) * EXT_X
-      const fy = (i / (GRID_LINES - 1) - 0.5) * EXT_Y
-      arr.push(fx, -EXT_Y / 2, 0, fx, EXT_Y / 2, 0)
+      const t = i / (GRID_LINES - 1)
+      const fx = (t - 0.5) * EXT_X
+      const fy = GRID_BOTTOM + t * (GRID_TOP - GRID_BOTTOM)
+      arr.push(fx, GRID_BOTTOM, 0, fx, GRID_TOP, 0)
       arr.push(-EXT_X / 2, fy, 0, EXT_X / 2, fy, 0)
     }
     return new Float32Array(arr)
@@ -60,7 +63,7 @@ export default function Beat_Workbench({ localProgress, clock, reducedMotion }: 
 
       {/* Phase 1 — Cygnus X-1: event-horizon sphere + 5 expanding accretion rings. */}
       {cygnus > 0 && (
-        <group rotation={[0, 0, Math.PI * 0.1 + spin * 0.3]}>
+        <group position={[-1.6, 1.2, 0]} rotation={[0, 0, Math.PI * 0.1 + spin * 0.3]} scale={1.15}>
           <mesh>
             <sphereGeometry args={[0.55 * cygnus, 32, 32]} />
             <meshBasicMaterial color="#000000" toneMapped={false} />
@@ -107,7 +110,7 @@ export default function Beat_Workbench({ localProgress, clock, reducedMotion }: 
               <Text
                 key={`g${i}`}
                 position={[gx, gy, 0.1]}
-                fontSize={0.55}
+                fontSize={0.42}
                 color="#fde047"
                 anchorX="center"
                 anchorY="middle"

@@ -19,8 +19,11 @@ const MILESTONES = [
 ] as const
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
+// X spans ~8.8 to fill the frame width; Y is amplified and lifted so the gentle
+// milestone undulation reads vertically while staying above the overlay (y > -1.5)
+// and below the top (y < 4).
 const toPos = (x: number, y: number) =>
-  new THREE.Vector3((x - 0.5) * 10, y * 7, 0)
+  new THREE.Vector3((x - 0.5) * 11, y * 20 + 0.9, 0)
 
 // Quadratic-bezier sample between two milestones with a gentle upward control bow,
 // matching the canvas quadraticCurveTo(cpx, cpy - 30, ...) undulation.
@@ -91,16 +94,16 @@ export default function Beat_Milestones({ localProgress, clock, reducedMotion }:
         return (
           <group key={m.label} position={[p.x, p.y + bob, 0]}>
             <mesh>
-              <sphereGeometry args={[0.22, 20, 20]} />
+              <sphereGeometry args={[0.28, 20, 20]} />
               <meshBasicMaterial color={m.color} transparent opacity={0.85 * a} toneMapped={false} />
             </mesh>
             <mesh>
-              <sphereGeometry args={[0.34, 20, 20]} />
+              <sphereGeometry args={[0.44, 20, 20]} />
               <meshBasicMaterial color={m.color} transparent opacity={0.18 * a} toneMapped={false} />
             </mesh>
             <Text
-              position={[0, 0.62, 0]}
-              fontSize={0.34}
+              position={[0, 0.74, 0]}
+              fontSize={0.4}
               color="#ffffff"
               anchorX="center"
               anchorY="bottom"

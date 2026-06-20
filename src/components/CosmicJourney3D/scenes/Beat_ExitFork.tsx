@@ -12,13 +12,16 @@ import type { SceneProps } from '../types'
 // up and takes the new branch.
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
+// Vertical span compressed and lifted so the whole fork sits above the overlay
+// reserved zone (local Y >= -1.5) while still filling a ~9x6 frame; horizontal
+// span widened so the diverging branches read clearly.
 const toPos = (px: number, py: number) =>
-  new THREE.Vector3((px - 0.5) * 10, (0.5 - py) * 7, 0)
+  new THREE.Vector3((px - 0.5) * 9, 0.75 + (0.5 - py) * 5, 0)
 
 const BOTTOM = toPos(0.5, 1.0) // path origin
 const FORK = toPos(0.5, 0.5) // the fork point
 const GHOST_TOP = toPos(0.5, 0.0) // faded straight-up continuation
-const BRANCH_END = toPos(0.8, 0.1) // new yellow path veering upper-right
+const BRANCH_END = toPos(0.85, 0.05) // new yellow path veering upper-right
 
 const INDIGO = '#a5b4fc'
 const YELLOW = '#fde047'
@@ -113,22 +116,28 @@ export default function Beat_ExitFork({ localProgress, clock, reducedMotion }: S
       {/* Labels fade in near the fork once the choice is underway. */}
       {labelAlpha > 0.01 && (
         <>
+          {/* "BS Exit" beside the faded straight-up ghost continuation. */}
           <Text
-            position={[FORK.x - 0.6, FORK.y + 0.1, 0]}
+            position={[GHOST_TOP.x - 0.45, GHOST_TOP.y - 0.6, 0]}
             anchorX="right"
             anchorY="middle"
-            fontSize={0.45}
-            color="#ffffff"
+            fontSize={0.4}
+            color="#cbd5f5"
+            outlineWidth={0.012}
+            outlineColor="#000000"
             fillOpacity={labelAlpha}
           >
             BS Exit
           </Text>
+          {/* "BS-MS" beside the new glowing yellow branch. */}
           <Text
-            position={[FORK.x + 0.6, FORK.y - 0.9, 0]}
+            position={[BRANCH_END.x + 0.4, BRANCH_END.y, 0]}
             anchorX="left"
             anchorY="middle"
             fontSize={0.45}
             color={YELLOW}
+            outlineWidth={0.012}
+            outlineColor="#000000"
             fillOpacity={labelAlpha}
           >
             BS-MS

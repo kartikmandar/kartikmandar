@@ -10,11 +10,14 @@ import type { SceneProps } from '../types'
 // bars, phase-lag scatter). Mirrors drawBuildingDashboard's metaphor in 3D.
 
 // Original 2D layout: dash at [0.15,0.15] sized [0.7,0.7] in a [0..1] box.
-// Map normalized x -> (x-0.5)*10, normalized y (down) -> (0.5-y)*7.
-const SX = 10
-const SY = 7
+// Scaled to fill ~9w x 5.3h and lifted so the dashboard's lower edge stays
+// above the overlay copy band (local Y > -1.5). The 0.7-wide dash spans
+// X in [-4.5, 4.5]; OFFSET_Y raises the whole frame so its bottom lands ~-1.3.
+const SX = 12.857
+const SY = 7.571
+const OFFSET_Y = 1.35
 const mapX = (x: number) => (x - 0.5) * SX
-const mapY = (y: number) => (0.5 - y) * SY
+const mapY = (y: number) => (0.5 - y) * SY + OFFSET_Y
 
 const DASH_X = 0.15
 const DASH_Y = 0.15
@@ -123,17 +126,17 @@ export default function Beat_Dashboard({ localProgress, clock, reducedMotion }: 
       {/* Phase 3: content labels */}
       {content > 0 && (
         <group>
-          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.05), 0.03]} anchorX="left" fontSize={0.32} color="#e0e0e0" fillOpacity={content}>Stingray QL</Text>
-          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.13), 0.03]} anchorX="left" fontSize={0.2} color="#a5b4fc" fillOpacity={content}>Obs ID: 4040130102</Text>
-          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.18), 0.03]} anchorX="left" fontSize={0.2} color="#a5b4fc" fillOpacity={content}>Target: Cygnus X-1</Text>
-          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.02), mapY(DASH_Y + HEADER_H / 2), 0.03]} anchorX="left" fontSize={0.22} color="#e0e0e0" fillOpacity={content}>Quicklook Dashboard - X-Ray Time Series</Text>
+          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.38} color="#e0e0e0" fillOpacity={content}>Stingray QL</Text>
+          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.13), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#a5b4fc" fillOpacity={content}>Obs ID: 4040130102</Text>
+          <Text position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.2), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#a5b4fc" fillOpacity={content}>Target: Cygnus X-1</Text>
+          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.02), mapY(DASH_Y + HEADER_H / 2), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={content}>Quicklook Dashboard - X-Ray Time Series</Text>
         </group>
       )}
 
       {/* Phase 3: light curve */}
       {plots > 0 && (
         <group>
-          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + HEADER_H + 0.05), 0.03]} anchorX="left" fontSize={0.2} color="#e0e0e0" fillOpacity={plots}>Light Curve</Text>
+          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + HEADER_H + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={plots}>Light Curve</Text>
           <line>
             <bufferGeometry>
               <bufferAttribute attach="attributes-position" args={[curve, 3]} />
@@ -142,7 +145,7 @@ export default function Beat_Dashboard({ localProgress, clock, reducedMotion }: 
           </line>
 
           {/* Power spectrum bars */}
-          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" fontSize={0.2} color="#e0e0e0" fillOpacity={plots}>Power Spectrum</Text>
+          <Text position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={plots}>Power Spectrum</Text>
           {bars.map((b, i) => {
             const pw = DASH_W * 0.37 - 0.04
             const slot = pw / bars.length
@@ -159,7 +162,7 @@ export default function Beat_Dashboard({ localProgress, clock, reducedMotion }: 
           })}
 
           {/* Phase-lag scatter */}
-          <Text position={[mapX(DASH_X + DASH_W * 0.62 + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" fontSize={0.2} color="#e0e0e0" fillOpacity={plots}>Phase Lag</Text>
+          <Text position={[mapX(DASH_X + DASH_W * 0.62 + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={plots}>Phase Lag</Text>
           <points>
             <bufferGeometry>
               <bufferAttribute attach="attributes-position" args={[scatter.slice(0, Math.max(0, Math.floor(scatter.length / 3 * plots)) * 3), 3]} />

@@ -16,8 +16,11 @@ const ORBS = [
 ] as const
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
+// Widen the horizontal spread to fill the frame and lift the row so halos/labels
+// stay clear of the lower overlay band (local Y = -1.5).
+const ROW_Y = 0.7
 const toPos = (p: readonly [number, number]) =>
-  new THREE.Vector3((p[0] - 0.5) * 10, (0.5 - p[1]) * 7, 0)
+  new THREE.Vector3((p[0] - 0.5) * 11, (0.5 - p[1]) * 7 + ROW_Y, 0)
 
 export default function Beat_MajorLens({ localProgress, clock, reducedMotion }: SceneProps) {
   const orbPts = useMemo(() => ORBS.map((o) => toPos(o.pos)), [])
@@ -63,10 +66,10 @@ export default function Beat_MajorLens({ localProgress, clock, reducedMotion }: 
                 toneMapped={false}
               />
             </mesh>
-            {/* Label floats above the orb (original drew text at y - 50). */}
+            {/* Label floats just above the orb, beside its element. */}
             <Text
-              position={[0, 1.9, 0.1]}
-              fontSize={0.62}
+              position={[0, 1.5, 0.1]}
+              fontSize={0.42}
               color="#ffffff"
               anchorX="center"
               anchorY="middle"
@@ -80,9 +83,9 @@ export default function Beat_MajorLens({ localProgress, clock, reducedMotion }: 
         )
       })}
 
-      {/* Expanding focus ring at composition center. */}
+      {/* Expanding focus ring centered on the orb row. */}
       {ringRadius > 0.001 && (
-        <mesh position={[0, 0, 0.05]} rotation={[0, 0, reducedMotion ? 0 : clock * 0.25]}>
+        <mesh position={[0, ROW_Y, 0.05]} rotation={[0, 0, reducedMotion ? 0 : clock * 0.25]}>
           <ringGeometry args={[Math.max(0.001, ringRadius - 0.06), ringRadius, 64]} />
           <meshBasicMaterial
             color="#ffffff"

@@ -12,9 +12,12 @@ import type { SceneProps } from '../types'
 // final phrase types and stays, settling the trajectory with a green caret.
 const PHRASES = ['DU > Hansraj College...', 'IISERs...', 'IISER Bhopal'] as const
 
-// Panel geometry in this beat's local XY plane.
+// Panel geometry in this beat's local XY plane. The panel is lifted to PANEL_Y
+// so the terminal sits in the upper-center of the frame, clear of the overlay
+// copy reserved below local Y = -1.5, and fills more of the ~9x6 stage.
 const PANEL_W = 9
-const PANEL_H = 2.2
+const PANEL_H = 2.6
+const PANEL_Y = 1.0
 const FONT_SIZE = 0.5
 // Approximate per-character advance for the default drei font at FONT_SIZE,
 // used to deterministically place the block caret after the typed text.
@@ -91,7 +94,7 @@ export default function Beat_Search({ localProgress, clock, reducedMotion }: Sce
   const caretX = TEXT_X + text.length * CHAR_ADVANCE
 
   return (
-    <group>
+    <group position={[0, PANEL_Y, 0]}>
       {/* Faint glow plane behind the panel for the "glowing terminal" feel. */}
       <mesh position={[0, 0, -0.02]}>
         <planeGeometry args={[PANEL_W + 0.6, PANEL_H + 0.6]} />

@@ -102,7 +102,7 @@ export default function Beat_Lensing({ localProgress, clock, reducedMotion }: Sc
     return new THREE.ShaderMaterial({
       uniforms: {
         time: { value: 0 },
-        resolution: { value: new THREE.Vector2(14, 9) },
+        resolution: { value: new THREE.Vector2(13, 8) },
         u_texture: { value: texture },
         lens_pos: { value: new THREE.Vector2(0.5, 0.5) },
         lens_mass: { value: 0 },
@@ -148,8 +148,8 @@ export default function Beat_Lensing({ localProgress, clock, reducedMotion }: Sc
   })
 
   return (
-    <mesh>
-      <planeGeometry args={[14, 9]} />
+    <mesh position={[0, 0, 0]}>
+      <planeGeometry args={[13, 8]} />
       <primitive object={material} ref={materialRef} attach="material" />
     </mesh>
   )

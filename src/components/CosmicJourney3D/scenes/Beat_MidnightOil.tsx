@@ -34,15 +34,16 @@ export default function Beat_MidnightOil({ localProgress, clock, reducedMotion }
   const skyColor = useMemo(() => NIGHT.clone().lerp(DAY, dayAmount), [dayAmount])
 
   // Sun sets / moon rises: both arc left->right across the upper sky with progress.
-  const travelX = X(p)
-  const arcY = Y(0.15) - Math.sin(p * Math.PI) * 0.6 // gentle setting/rising arc
+  // Keep the arc within the framed X bounds and high enough to clear the bars.
+  const travelX = THREE.MathUtils.lerp(-4.2, 4.2, p)
+  const arcY = 3.0 + Math.sin(p * Math.PI) * 0.7 // gentle setting/rising arc near the top
   const sunMoonPos = new THREE.Vector3(travelX, arcY, 0)
 
-  // Bar geometry (centered, two stacked tracks near mid-screen).
-  const barW = 6.0
-  const barH = 0.7
-  const collegeY = Y(0.49)
-  const rriY = Y(0.42)
+  // Bar geometry (centered on the origin, two stacked tracks filling the frame).
+  const barW = 8.0
+  const barH = 0.9
+  const collegeY = 0.85
+  const rriY = -0.35
 
   const collegeAlpha = p > 0.4 ? Math.max(0, 1 - (p - 0.4) * 2) : 1
   const collegeFill = barW * 0.6
@@ -120,7 +121,7 @@ export default function Beat_MidnightOil({ localProgress, clock, reducedMotion }
           <planeGeometry args={[collegeFill, barH]} />
           <meshBasicMaterial color="#fde047" transparent opacity={collegeAlpha} toneMapped={false} />
         </mesh>
-        <Text position={[0, 0, 0.02]} fontSize={0.32} color="#ffffff" anchorX="center" anchorY="middle" fillOpacity={collegeAlpha}>
+        <Text position={[-barW / 2 + 0.25, 0, 0.02]} fontSize={0.4} color="#0b1220" anchorX="left" anchorY="middle" fillOpacity={collegeAlpha}>
           College
         </Text>
       </group>
@@ -141,7 +142,7 @@ export default function Beat_MidnightOil({ localProgress, clock, reducedMotion }
           <planeGeometry args={[barW, barH]} />
           <meshBasicMaterial color="#4ade80" toneMapped={false} />
         </mesh>
-        <Text position={[0, 0, 0.02]} fontSize={0.32} color="#03200f" anchorX="center" anchorY="middle">
+        <Text position={[-barW / 2 + 0.25, 0, 0.02]} fontSize={0.4} color="#03200f" anchorX="left" anchorY="middle">
           RRIViz
         </Text>
       </group>

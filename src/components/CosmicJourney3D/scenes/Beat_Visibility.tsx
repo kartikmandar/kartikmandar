@@ -10,11 +10,14 @@ import type { SceneProps } from '../types'
 // "Visibility Amplitude"; a green visibility curve oscillates and draws in
 // left-to-right with localProgress (mirrors drawRadioInterferometry).
 
-// Plot extent in local space: 10 (x) by 7 (y), centered at origin, z ~ 0.
-const PLOT_W = 10
-const PLOT_H = 7
+// Plot extent in local space: 9 (x) by 5.2 (y). Centered on x, lifted on y so
+// the whole plot (and its labels) sits above the overlay zone (y > -1.5) and
+// fills a ~9x6 frame head-on.
+const PLOT_W = 9
+const PLOT_H = 4.9
+const PLOT_CY = 1.3 // vertical center of the plot in local space
 const X0 = -PLOT_W / 2 // left axis x
-const Y0 = -PLOT_H / 2 // bottom axis y
+const Y0 = PLOT_CY - PLOT_H / 2 // bottom axis y (~ -1.4)
 
 // Map normalized [0..1] plot coords (origin bottom-left) into local space.
 const toPlot = (nx: number, ny: number) =>
@@ -92,8 +95,8 @@ export default function Beat_Visibility({ localProgress, clock, reducedMotion }:
   return (
     <group position={[0, driftY, 0]}>
       {/* Faint backing panel for the plot area */}
-      <mesh position={[0, 0, -0.05]}>
-        <planeGeometry args={[PLOT_W + 1.2, PLOT_H + 1.6]} />
+      <mesh position={[0, PLOT_CY, -0.05]}>
+        <planeGeometry args={[PLOT_W + 1.1, PLOT_H + 0.5]} />
         <meshBasicMaterial color="#0a1018" transparent opacity={0.55} toneMapped={false} />
       </mesh>
 
@@ -131,25 +134,25 @@ export default function Beat_Visibility({ localProgress, clock, reducedMotion }:
         </mesh>
       )}
 
-      {/* Axis labels */}
+      {/* Axis labels — kept inside the plot bounds and above the overlay zone */}
       <Text
-        position={[0, Y0 - 0.7, 0]}
-        fontSize={0.42}
+        position={[X0 + PLOT_W * 0.5, Y0 + 0.32, 0]}
+        fontSize={0.36}
         color="#ffffff"
         anchorX="center"
-        anchorY="middle"
-        fillOpacity={0.75}
+        anchorY="bottom"
+        fillOpacity={0.8}
       >
         LST (Time)
       </Text>
       <Text
-        position={[X0 - 0.7, 0, 0]}
+        position={[X0 + 0.34, PLOT_CY, 0]}
         rotation={[0, 0, Math.PI / 2]}
-        fontSize={0.42}
+        fontSize={0.36}
         color="#ffffff"
         anchorX="center"
-        anchorY="middle"
-        fillOpacity={0.75}
+        anchorY="top"
+        fillOpacity={0.8}
       >
         Visibility Amplitude
       </Text>

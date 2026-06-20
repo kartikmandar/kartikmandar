@@ -13,14 +13,17 @@ import type { SceneProps } from '../types'
 // planet normalized coords are relative to that inner box.
 
 // Inner-page extent (the original draws planets inside the 0.1..0.9 page box).
-const PAGE_W = 10 * 0.8
-const PAGE_H = 7 * 0.8
+// Sized to fill ~9x6 of the head-on frame; the whole group is raised by
+// PAGE_Y_OFFSET so the page bottom clears the overlay floor at local Y = -1.5.
+const PAGE_W = 9.2
+const PAGE_H = 5.2
+const PAGE_Y_OFFSET = 1.2
 
-// id, normalized [x, y] inside the page box, world radius, color.
+// id, normalized [x, y] inside the page box, world radius, color, label.
 const PLANETS = [
-  { id: 'saturn', x: 0.25, y: 0.4, r: 0.5, color: '#e3dccb', ring: true },
-  { id: 'jupiter', x: 0.7, y: 0.6, r: 0.8, color: '#d8bba2', ring: false },
-  { id: 'mars', x: 0.8, y: 0.25, r: 0.36, color: '#d66a3e', ring: false },
+  { id: 'saturn', x: 0.24, y: 0.42, r: 0.62, color: '#e3dccb', ring: true, label: 'Saturn' },
+  { id: 'jupiter', x: 0.7, y: 0.58, r: 0.95, color: '#d8bba2', ring: false, label: 'Jupiter' },
+  { id: 'mars', x: 0.82, y: 0.26, r: 0.42, color: '#d66a3e', ring: false, label: 'Mars' },
 ] as const
 
 // Map a normalized page coord [0..1] into local XY (page box centered at origin).
@@ -62,7 +65,7 @@ export default function Beat_Textbook({ localProgress, clock, reducedMotion }: S
   )
 
   return (
-    <group>
+    <group position={[0, PAGE_Y_OFFSET, 0]}>
       {/* Fading textbook page */}
       {pageFade > 0 && (
         <group position={[0, 0, -0.5]}>
@@ -87,7 +90,14 @@ export default function Beat_Textbook({ localProgress, clock, reducedMotion }: S
             </bufferGeometry>
             <lineBasicMaterial color="#c8c8c8" transparent opacity={pageFade} toneMapped={false} />
           </lineSegments>
-          <Text position={[0, PAGE_H / 2 - 0.5, 0.01]} fontSize={0.35} color="#666" anchorX="center" fillOpacity={pageFade}>
+          <Text
+            position={[0, PAGE_H / 2 - 0.55, 0.01]}
+            fontSize={0.5}
+            color="#555"
+            anchorX="center"
+            anchorY="middle"
+            fillOpacity={pageFade}
+          >
             The Solar System
           </Text>
         </group>
@@ -149,6 +159,22 @@ export default function Beat_Textbook({ localProgress, clock, reducedMotion }: S
                   toneMapped={false}
                 />
               </mesh>
+            )}
+
+            {/* Name label beside each planet, fading in with the 3D body. */}
+            {become3D > 0 && (
+              <Text
+                position={[p.r + 0.25, p.r + 0.18, 0.1]}
+                fontSize={0.34}
+                color="#cfd6e6"
+                anchorX="left"
+                anchorY="middle"
+                fillOpacity={become3D}
+                outlineWidth={0.012}
+                outlineColor="#05070f"
+              >
+                {p.label}
+              </Text>
             )}
           </group>
         )

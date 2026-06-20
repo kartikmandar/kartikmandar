@@ -12,8 +12,10 @@ import type { SceneProps } from '../types'
 // resolves into a clean green sine (RRIViz).
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
-const toX = (u: number) => (u - 0.5) * 10
-const toY = (v: number) => (0.5 - v) * 7
+// Subject is lifted into Y ∈ [-1.5, 4] so the dish array reads in the upper-middle
+// band and the bottom plot stays clear of the lower overlay copy.
+const toX = (u: number) => (u - 0.5) * 9
+const toY = (v: number) => 2.45 - v * 3.6
 
 // Fixed dish layout (x, y) sampled from the original's generateAntennaPositions range.
 const DISHES = [
@@ -39,11 +41,11 @@ export default function Beat_SignalToSim({ localProgress, clock, reducedMotion }
   const wavePositions = useMemo(() => {
     const N = 120
     const arr = new Float32Array(N * 3)
-    const noiseAmp = (1 - signal) * 0.9
+    const noiseAmp = (1 - signal) * 0.55
     for (let i = 0; i < N; i++) {
       const u = i / (N - 1)
       const x = toX(u)
-      const y = 2.7 + Math.sin(u * 22 + t * 2) * 0.18 + noise(i + 1) * noiseAmp
+      const y = 3.25 + Math.sin(u * 22 + t * 2) * 0.18 + noise(i + 1) * noiseAmp
       arr[i * 3] = x
       arr[i * 3 + 1] = y
       arr[i * 3 + 2] = 0
@@ -72,9 +74,10 @@ export default function Beat_SignalToSim({ localProgress, clock, reducedMotion }
   }, [baseline, dishPts])
 
   // Bottom plot: a noisy white curve resolving into a clean green sine.
-  const PLOT_W = 6
+  // Raised so its full extent (and label) clears the lower overlay zone (Y > -1.5).
+  const PLOT_W = 7
   const PLOT_X = -PLOT_W / 2
-  const PLOT_Y = -2.6
+  const PLOT_Y = -0.6
   const noisyCurve = useMemo(() => {
     const N = 100
     const arr = new Float32Array(N * 3)

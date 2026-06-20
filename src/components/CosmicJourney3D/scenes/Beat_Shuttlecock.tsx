@@ -12,10 +12,11 @@ import type { SceneProps } from '../types'
 // shatterPhase (0.6..1.0). 2D [0..1] layout mapped to a 10 (x) x 7 (y) extent at z~0.
 const SHARD_COUNT = 25
 
-// 2D layout: startY = h*0.9 (bottom), impactY = h*0.2 (peak). In our y-up local
-// space (0.5 - p) * 7, that is start y = -2.8, peak y = +2.1.
-const START_Y = (0.5 - 0.9) * 7
-const PEAK_Y = (0.5 - 0.2) * 7
+// 2D layout: startY = h*0.9 (bottom), impactY = h*0.2 (peak). Remapped into the
+// head-on frame so the whole rise stays above the overlay band (local Y >= -1.5):
+// start low but clear of the copy, peak high in the upper frame.
+const START_Y = -1.2
+const PEAK_Y = 2.3
 
 interface Shard {
   origin: THREE.Vector3
@@ -104,8 +105,9 @@ export default function Beat_Shuttlecock({ localProgress, clock, reducedMotion }
       ) : (
         // Shatter: shards scatter outward and fall under gravity, fading out.
         shards.map((s, i) => {
-          const px = s.origin.x + s.vel.x * travel
-          const py = s.origin.y + s.vel.y * travel - travel * travel * 6
+          const px = THREE.MathUtils.clamp(s.origin.x + s.vel.x * travel, -5.2, 5.2)
+          // Keep falling shards clear of the overlay copy band (Y >= -1.4).
+          const py = Math.max(-1.4, s.origin.y + s.vel.y * travel - travel * travel * 6)
           const pz = s.origin.z + s.vel.z * travel
           const drift = reducedMotion ? 0 : Math.sin(clock + i) * 0.05
           return (

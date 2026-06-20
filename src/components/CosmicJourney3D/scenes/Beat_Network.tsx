@@ -15,8 +15,11 @@ const NODE_COUNT = 8
 type NetNode = { pos: THREE.Vector3; academic: boolean; icon: string; color: string }
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
+// Widen the spread so the hub-and-spokes fill ~9x6, and lift the whole graph up
+// ~0.9 units so the lowest node clears the overlay's reserved bottom band.
+const Y_LIFT = 1.2
 const toPos = (x: number, y: number) =>
-  new THREE.Vector3((x - 0.5) * 10, (0.5 - y) * 7, 0)
+  new THREE.Vector3((x - 0.5) * 14, (0.5 - y) * 9 + Y_LIFT, 0)
 
 const CENTER = toPos(0.5, 0.5)
 const INDIGO = '#a5b4fc'
@@ -80,11 +83,11 @@ export default function Beat_Network({ localProgress, clock, reducedMotion }: Sc
     <group rotation={[0, 0, spin]}>
       {/* Central indigo hub */}
       <mesh position={CENTER}>
-        <sphereGeometry args={[0.34, 24, 24]} />
+        <sphereGeometry args={[0.46, 24, 24]} />
         <meshBasicMaterial color={INDIGO} toneMapped={false} />
       </mesh>
       <mesh position={CENTER}>
-        <sphereGeometry args={[0.55, 20, 20]} />
+        <sphereGeometry args={[0.74, 20, 20]} />
         <meshBasicMaterial color={INDIGO} transparent opacity={0.18} toneMapped={false} />
       </mesh>
 
@@ -95,16 +98,16 @@ export default function Beat_Network({ localProgress, clock, reducedMotion }: Sc
         return (
           <group key={`n${i}`} position={node.pos}>
             <mesh>
-              <sphereGeometry args={[0.22, 16, 16]} />
+              <sphereGeometry args={[0.28, 16, 16]} />
               <meshBasicMaterial color={node.color} transparent opacity={appear} toneMapped={false} />
             </mesh>
             <mesh>
-              <sphereGeometry args={[0.38, 14, 14]} />
+              <sphereGeometry args={[0.46, 14, 14]} />
               <meshBasicMaterial color={node.color} transparent opacity={0.15 * appear} toneMapped={false} />
             </mesh>
             <Text
-              position={[0, 0.55, 0]}
-              fontSize={0.42}
+              position={[0, 0.5, 0]}
+              fontSize={0.4}
               color={node.color}
               anchorX="center"
               anchorY="middle"
@@ -122,7 +125,7 @@ export default function Beat_Network({ localProgress, clock, reducedMotion }: Sc
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
           </bufferGeometry>
-          <lineBasicMaterial color={INDIGO} transparent opacity={0.45} toneMapped={false} />
+          <lineBasicMaterial color={INDIGO} transparent opacity={0.6} toneMapped={false} />
         </lineSegments>
       )}
 

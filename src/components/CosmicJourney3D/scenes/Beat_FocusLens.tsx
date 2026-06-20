@@ -11,9 +11,14 @@ import type { SceneProps } from '../types'
 // telescope past the half-way mark, lens vignette tightens with progress.
 
 // Stick figure in the original's local pixel frame (centered, y-down).
-// Re-centered to the scene origin and scaled into the ~10x7 local space.
-const FIG_SCALE = 0.06
+// Re-centered to the scene origin and scaled into the ~9x6 local space.
+const FIG_SCALE = 0.055
 const fp = (x: number, y: number): [number, number, number] => [x * FIG_SCALE, -y * FIG_SCALE, 0]
+// Lift applied post-scale (as a group position) so feet clear the reserved
+// overlay band (y > -1.5) while the raised arm reaches up toward the stars.
+// Figure spans ~pixel y [-52..+40] -> world height ~5.1 at FIG_SCALE; this
+// offset re-centers it so the body fills Y in [-1.5, 4] across the scale ramp.
+const FIG_Y_OFFSET = 1.0
 
 // Body/arms/legs as line segment pairs (arm up-left toward the stars).
 const FIGURE: ReadonlyArray<readonly [[number, number], [number, number]]> = [
@@ -44,7 +49,8 @@ const seg = (pairs: ReadonlyArray<readonly [[number, number], [number, number]]>
 export default function Beat_FocusLens({ localProgress, clock, reducedMotion }: SceneProps) {
   // Astronomer comes into focus after 40%, identical to the 2D metaphor.
   const sharpness = Math.max(0, (localProgress - 0.4) / 0.6)
-  const scale = 1 + sharpness * 3
+  // Gentle settle-in so the figure fills ~6 tall without bursting the frame.
+  const scale = 0.78 + sharpness * 0.22
   const showScope = localProgress > 0.5
 
   const bodyPos = useMemo(() => seg(FIGURE), [])
@@ -58,14 +64,14 @@ export default function Beat_FocusLens({ localProgress, clock, reducedMotion }: 
   return (
     <group>
       {/* Sky-blue focus glow behind the astronomer (filled disc via ring 0..r) */}
-      <mesh position={[0, 0, -0.5]} scale={scale}>
-        <ringGeometry args={[0, 3.6, 48]} />
+      <mesh position={[0, FIG_Y_OFFSET, -0.5]} scale={scale}>
+        <ringGeometry args={[0, 3.2, 48]} />
         <meshBasicMaterial color="#87ceeb" transparent opacity={sharpness * 0.3} toneMapped={false} />
       </mesh>
 
       {/* Astronomer, scaling and brightening into focus */}
       {sharpness > 0 && (
-        <group scale={[scale, scale, scale]} rotation={[0, 0, sway]}>
+        <group position={[0, FIG_Y_OFFSET, 0]} scale={[scale, scale, scale]} rotation={[0, 0, sway]}>
           {/* Head */}
           <mesh position={fp(0, -40)}>
             <torusGeometry args={[12 * FIG_SCALE, 1.4 * FIG_SCALE, 8, 24]} />
@@ -98,7 +104,7 @@ export default function Beat_FocusLens({ localProgress, clock, reducedMotion }: 
         const inner = outer - 0.55
         if (inner <= 0) return null
         return (
-          <mesh key={`v${i}`} position={[0, 0, 0.4 + i * 0.02]}>
+          <mesh key={`v${i}`} position={[0, FIG_Y_OFFSET, 0.4 + i * 0.02]}>
             <ringGeometry args={[inner, outer, 64]} />
             <meshBasicMaterial
               color="#000000"

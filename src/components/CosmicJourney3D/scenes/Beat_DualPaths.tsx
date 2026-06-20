@@ -11,13 +11,18 @@ import type { SceneProps } from '../types'
 // double-helix (iGEM); a faint connecting arc appears later. Mirrors
 // drawInternshipPathways: branch at center-bottom, tech up-left, bio up-right.
 
-// Map the original 2D [0..1] layout into this beat's local XY space (10 x 7).
+// Map the original 2D [0..1] layout into this beat's local XY space, sized to
+// fill the head-on ~9x6 frame and lifted so the branch clears the overlay zone
+// (everything stays above local Y = -1.5).
+const X_SPAN = 13 // wider V so the two endpoints fill the horizontal frame
+const Y_SPAN = 6.4
+const Y_OFFSET = 1.0 // lift the whole layout up out of the reserved bottom band
 const toPos = (px: number, py: number) =>
-  new THREE.Vector3((px - 0.5) * 10, (0.5 - py) * 7, 0)
+  new THREE.Vector3((px - 0.5) * X_SPAN, (0.5 - py) * Y_SPAN + Y_OFFSET, 0)
 
-const BRANCH = toPos(0.5, 0.8) // (0, -2.1, 0)
-const TECH_END = toPos(0.2, 0.3) // up-left  (-3, 1.4, 0)
-const BIO_END = toPos(0.8, 0.3) // up-right (3, 1.4, 0)
+const BRANCH = toPos(0.5, 0.8) // (0, -0.92, 0) — above the overlay floor
+const TECH_END = toPos(0.2, 0.3) // up-left  (-3.9, 2.28, 0)
+const BIO_END = toPos(0.8, 0.3) // up-right (3.9, 2.28, 0)
 
 const TECH_BLUE = '#3b82f6'
 const BIO_GREEN = '#22c55e'
@@ -55,8 +60,8 @@ export default function Beat_DualPaths({ localProgress, clock, reducedMotion }: 
   // DNA double helix: two phase-shifted sine strands + cross-rungs (iGEM end).
   const helix = useMemo(() => {
     const SEG = 48
-    const H = 2.6
-    const R = 0.45
+    const H = 2.8
+    const R = 0.6
     const turns = Math.PI * 4
     const strandA: number[] = []
     const strandB: number[] = []
@@ -79,11 +84,12 @@ export default function Beat_DualPaths({ localProgress, clock, reducedMotion }: 
     }
   }, [])
 
-  // Faint dashed connecting arc above the branch point (drawn as a polyline).
+  // Faint dashed connecting arc bridging the two endpoints (drawn as a polyline).
+  // Center/radius tuned so the arc peaks below the Y=4 frame top.
   const arc = useMemo(() => {
     const SEG = 40
-    const cy = BRANCH.y + 3.4
-    const radius = 3.4
+    const cy = BRANCH.y + 1.6 // peak ~Y 3.7, well under the frame top
+    const radius = 2.2
     const pts: number[] = []
     for (let i = 0; i < SEG; i++) {
       if (i % 2 === 1) continue // dashed look: skip every other segment
@@ -131,21 +137,21 @@ export default function Beat_DualPaths({ localProgress, clock, reducedMotion }: 
       {phoneAlpha > 0 && (
         <group position={TECH_END}>
           <mesh>
-            <boxGeometry args={[0.7, 1.3, 0.12]} />
+            <boxGeometry args={[0.88, 1.62, 0.12]} />
             <meshBasicMaterial color={TECH_BLUE} transparent opacity={phoneAlpha} toneMapped={false} />
           </mesh>
-          <mesh position={[0, 0.05, 0.08]}>
-            <planeGeometry args={[0.52, 0.95]} />
+          <mesh position={[0, 0.06, 0.08]}>
+            <planeGeometry args={[0.65, 1.18]} />
             <meshBasicMaterial color="#0a0f1f" transparent opacity={phoneAlpha} toneMapped={false} />
           </mesh>
           {/* Four ascending signal bars */}
           {[0, 1, 2, 3].map((i) => (
-            <mesh key={`bar${i}`} position={[-0.18 + i * 0.12, -0.05 + i * 0.06, 0.1]}>
-              <boxGeometry args={[0.07, 0.12 + i * 0.12, 0.02]} />
+            <mesh key={`bar${i}`} position={[-0.22 + i * 0.15, -0.06 + i * 0.075, 0.1]}>
+              <boxGeometry args={[0.09, 0.15 + i * 0.15, 0.02]} />
               <meshBasicMaterial color={SIGNAL_GREEN} transparent opacity={phoneAlpha} toneMapped={false} />
             </mesh>
           ))}
-          <Text position={[0, -1.0, 0]} fontSize={0.32} color="#ffffff" anchorX="center" anchorY="top" fillOpacity={phoneAlpha}>
+          <Text position={[0, -1.18, 0]} fontSize={0.4} color="#dbeafe" anchorX="center" anchorY="top" fillOpacity={phoneAlpha}>
             EECS
           </Text>
         </group>
@@ -174,7 +180,7 @@ export default function Beat_DualPaths({ localProgress, clock, reducedMotion }: 
               <lineBasicMaterial color={BIO_GREEN} transparent opacity={0.7 * dnaAlpha} toneMapped={false} />
             </lineSegments>
           </group>
-          <Text position={[0, -1.7, 0]} fontSize={0.32} color="#ffffff" anchorX="center" anchorY="top" fillOpacity={dnaAlpha}>
+          <Text position={[0, -1.78, 0]} fontSize={0.4} color="#dcfce7" anchorX="center" anchorY="top" fillOpacity={dnaAlpha}>
             iGEM
           </Text>
         </group>
