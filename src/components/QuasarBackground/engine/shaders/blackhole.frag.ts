@@ -15,9 +15,111 @@ void main() {
 }
 `
 
+/** Impostor vertex: the bounding sphere's world position drives the per-pixel ray. */
+export const IMPOSTOR_VERT = /* glsl */ `
+varying vec3 vWorldPos;
+void main() {
+  vec4 world = modelMatrix * vec4(position, 1.0);
+  vWorldPos = world.xyz;
+  gl_Position = projectionMatrix * viewMatrix * world;
+}
+`
+
 const JET_TAN = Math.tan((CONSTANTS.JET_HALF_ANGLE_DEG * Math.PI) / 180).toFixed(5)
 
-export const BLACKHOLE_FRAG = /* glsl */ `
+/**
+ * Shader variants:
+ * - 'standalone': the live QuasarBackground canvas (unchanged behaviour).
+ * - 'pass': fullscreen prologue pass inside the my-story R3F canvas; adds
+ *   uOpacity/uExposure and three's tone-mapping/colour-space chunks.
+ * - 'impostor': the same black hole as a bounded world-space object (bounding
+ *   sphere mesh). Escaped rays add nothing (the flight scene's own sky shows
+ *   through); captured rays write alpha so the shadow occludes it.
+ */
+export type BlackholeVariant = 'standalone' | 'pass' | 'impostor'
+
+export interface BlackholeFragOptions {
+  variant?: BlackholeVariant
+  maxSteps?: number
+  /** Escape radius in r_s (impostor: its bounding radius). */
+  escapeRadius?: number
+}
+
+const STANDALONE_MAIN = /* glsl */ `
+void main() {
+  vec2 ndc = (gl_FragCoord.xy / uResolution) * 2.0 - 1.0;
+  vec4 pw = uInvProjView * vec4(ndc, 0.5, 1.0);
+  vec3 rdWorld = normalize(pw.xyz / pw.w - uCamPos);
+  vec3 ro = uWorldToDisk * uCamPos;
+  vec3 rd = uWorldToDisk * rdWorld;
+
+  vec3 col;
+  if (uPhase < 4) {
+    col = preBirthScene(ro, rd);
+  } else {
+    col = marchBlackHole(ro, rd);
+    if (uPhase == 4) col += shellEmission(ro, rd);   // remnant fading during BIRTH
+  }
+  col += vec3(uFlash);
+  gl_FragColor = vec4(col, 1.0);
+}
+`
+
+const PASS_MAIN = /* glsl */ `
+void main() {
+  vec2 ndc = (gl_FragCoord.xy / uResolution) * 2.0 - 1.0;
+  vec4 pw = uInvProjView * vec4(ndc, 0.5, 1.0);
+  vec3 rdWorld = normalize(pw.xyz / pw.w - uCamPos);
+  vec3 ro = uWorldToDisk * uCamPos;
+  vec3 rd = uWorldToDisk * rdWorld;
+
+  vec3 col;
+  if (uPhase < 4) {
+    col = preBirthScene(ro, rd);
+  } else {
+    col = marchBlackHole(ro, rd);
+    if (uPhase == 4) col += shellEmission(ro, rd);   // remnant fading during BIRTH
+  }
+  col += vec3(uFlash);
+  gl_FragColor = vec4(col * uExposure, uOpacity);
+  #include <tonemapping_fragment>
+  #include <colorspace_fragment>
+}
+`
+
+const IMPOSTOR_MAIN = /* glsl */ `
+void main() {
+  // Ray from the real camera, in the black hole's local r_s units.
+  vec3 rdWorld = normalize(vWorldPos - cameraPosition);
+  vec3 roLocal = (cameraPosition - uCenter) / uScale;
+  // Start at the bounding sphere when the camera is outside it.
+  float b = dot(roLocal, rdWorld);
+  float c = dot(roLocal, roLocal) - ESCAPE_R * ESCAPE_R;
+  if (c > 0.0) {
+    float disc = b * b - c;
+    if (disc < 0.0 || b > 0.0) discard;
+    roLocal += rdWorld * (-b - sqrt(disc)) * 0.999;
+  }
+  vec3 ro = uWorldToDisk * roLocal;
+  vec3 rd = uWorldToDisk * rdWorld;
+  vec3 col = marchBlackHole(ro, rd);
+  // Premultiplied: emission adds; the shadow (captured rays) occludes the sky behind.
+  gl_FragColor = vec4(col * uOpacity, gCaptured * uOpacity);
+}
+`
+
+export function buildBlackholeFrag({
+  variant = 'standalone',
+  maxSteps = 128,
+  escapeRadius = CONSTANTS.ESCAPE_RADIUS_RS,
+}: BlackholeFragOptions = {}): string {
+  const variantUniforms =
+    variant === 'pass'
+      ? 'uniform float uOpacity;\nuniform float uExposure;'
+      : variant === 'impostor'
+        ? 'uniform vec3 uCenter;\nuniform float uScale;\nuniform float uOpacity;\nvarying vec3 vWorldPos;'
+        : ''
+  return /* glsl */ `
 precision highp float;
 
 uniform vec2 uResolution;
@@ -33,14 +135,15 @@ uniform float uShellRadius;
 uniform float uFlash;
 uniform float uLensing;
 uniform float uIgnition;
+${variantUniforms}
 
 #define DISK_INNER ${CONSTANTS.DISK_INNER_RS.toFixed(1)}
 #define DISK_OUTER ${CONSTANTS.DISK_OUTER_RS.toFixed(1)}
-#define ESCAPE_R ${CONSTANTS.ESCAPE_RADIUS_RS.toFixed(1)}
+#define ESCAPE_R ${escapeRadius.toFixed(1)}
 #define JET_LEN ${CONSTANTS.JET_LENGTH_RS.toFixed(1)}
 #define JET_TAN ${JET_TAN}
 #define DISK_CAP ${CONSTANTS.DISK_RADIANCE_CAP.toFixed(1)}
-#define MAX_STEPS 128
+#define MAX_STEPS ${maxSteps}
 #define SHELL_SAMPLES 10
 
 ${GLSL_NOISE}
@@ -52,10 +155,13 @@ ${GLSL_STAR_SURFACE}
 ${GLSL_SPHERE_INTERVAL}
 
 vec3 sampleBackground(vec3 dirDisk) {
-  // v * M == transpose(M) * v: inverse rotation for orthonormal uWorldToDisk
+${variant === 'impostor' ? '  return vec3(0.0); // the flight scene supplies its own sky' : `  // v * M == transpose(M) * v: inverse rotation for orthonormal uWorldToDisk
   vec3 worldDir = dirDisk * uWorldToDisk;
-  return textureCube(uBackground, worldDir).rgb;
+  return textureCube(uBackground, worldDir).rgb;`}
 }
+
+// Set by marchBlackHole when the ray falls into the horizon (impostor alpha).
+float gCaptured = 0.0;
 
 // Volumetric supernova shell between R-thickness and R, with fbm filaments.
 vec3 shellEmission(vec3 ro, vec3 rd) {
@@ -133,7 +239,7 @@ vec3 marchBlackHole(vec3 ro, vec3 rd) {
   float nlen = length(nvec);
   if (nlen < 1e-4) {
     // purely radial ray
-    if (dot(rd, er) < 0.0) return vec3(0.0);
+    if (dot(rd, er) < 0.0) { gCaptured = 1.0; return vec3(0.0); }
     return sampleBackground(rd);
   }
   vec3 n = nvec / nlen;
@@ -167,7 +273,7 @@ vec3 marchBlackHole(vec3 ro, vec3 rd) {
     if (u <= 0.0) { escaped = true; break; }
     float rNew = 1.0 / u;
     minR = min(minR, rNew);
-    if (rNew < 1.0) break;                  // captured by horizon
+    if (rNew < 1.0) { gCaptured = 1.0; break; } // captured by horizon
     pos = (cos(phi) * er + sin(phi) * et) * rNew;
 
     if (uIgnition > 0.001 && crossings < 3 && sign(pos.y) != sign(prevPos.y)) {
@@ -215,21 +321,8 @@ vec3 preBirthScene(vec3 ro, vec3 rd) {
   return col;
 }
 
-void main() {
-  vec2 ndc = (gl_FragCoord.xy / uResolution) * 2.0 - 1.0;
-  vec4 pw = uInvProjView * vec4(ndc, 0.5, 1.0);
-  vec3 rdWorld = normalize(pw.xyz / pw.w - uCamPos);
-  vec3 ro = uWorldToDisk * uCamPos;
-  vec3 rd = uWorldToDisk * rdWorld;
-
-  vec3 col;
-  if (uPhase < 4) {
-    col = preBirthScene(ro, rd);
-  } else {
-    col = marchBlackHole(ro, rd);
-    if (uPhase == 4) col += shellEmission(ro, rd);   // remnant fading during BIRTH
-  }
-  col += vec3(uFlash);
-  gl_FragColor = vec4(col, 1.0);
-}
+${variant === 'impostor' ? IMPOSTOR_MAIN : variant === 'pass' ? PASS_MAIN : STANDALONE_MAIN}
 `
+}
+
+export const BLACKHOLE_FRAG = buildBlackholeFrag()
