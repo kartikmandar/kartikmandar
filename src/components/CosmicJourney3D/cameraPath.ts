@@ -1,4 +1,4 @@
-import type { Range } from './scrollMath'
+import { locate, type Range } from './scrollMath'
 
 export function smootherstep(t: number): number {
   const x = Math.max(0, Math.min(1, t))
@@ -38,4 +38,35 @@ export function flightCurveT(progress: number, ranges: Range[]): number {
   if (p <= first) return smootherstep(first > 0 ? p / first : 1) / segments
   if (p >= last) return (n + smootherstep(last < 1 ? (p - last) / (1 - last) : 1)) / segments
   return (1 + easedCurveU(p, ranges) * (n - 1)) / segments
+}
+
+/** Fraction of each beat's scroll spent travelling (half arriving, half departing). The rest is a held shot. */
+export const SHOT_TRAVEL = 0.3
+
+// Shot schedule over the same [origin, ...stations, nebula] curve as flightCurveT
+// (getPoint parameter). Each beat is: arrive (first travel/2) → HOLD on its
+// station (the middle 1 - travel) → depart (last travel/2). Travel between
+// neighbours spans their shared boundary, so the camera never stops mid-air.
+// The first beat arrives from the origin; the last departs to the nebula.
+export function shotCurveT(progress: number, ranges: Range[], travel: number = SHOT_TRAVEL): number {
+  const n = ranges.length
+  if (n === 0) return smootherstep(progress)
+  const segments = n + 1
+  const { index: i, local: l } = locate(progress, ranges)
+  const half = travel / 2
+  let u: number // control-point index: 0 origin, i + 1 station i, n + 1 nebula
+  if (l < half) {
+    u = i === 0 ? smootherstep(l / half) : i + smootherstep((l + half) / travel)
+  } else if (l > 1 - half) {
+    u = i === n - 1 ? n + smootherstep((l - (1 - half)) / half) : i + 1 + smootherstep((l - (1 - half)) / travel)
+  } else {
+    u = i + 1
+  }
+  return u / segments
+}
+
+/** 0..1 progress through a beat's held shot (0 while arriving, 1 once departing). */
+export function holdProgress(local: number, travel: number = SHOT_TRAVEL): number {
+  const half = travel / 2
+  return Math.max(0, Math.min(1, (local - half) / (1 - travel)))
 }

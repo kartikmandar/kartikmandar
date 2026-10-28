@@ -1,5 +1,6 @@
 // src/components/CosmicJourney3D/beatsMeta.ts
 import type { Anchor, BeatMeta } from './types'
+import { NARRATIVE } from './narrative'
 
 export const ORIGIN_ANCHOR: Anchor = { position: [0, 0, 12], lookAt: [0, 0, 0] }
 /** The origin black hole sits where the flight's first look points: ahead of the camera as it emerges. */
@@ -24,7 +25,7 @@ const META: Array<[string, Partial<BeatMeta>]> = [
   ['comet-section', { acceptance: ['dry-ice comet vapour becomes a real comet tail', 'dark Sariska sky with a glowing tent below'] }],
   ['decision-section', { acceptance: ['trajectory line draws from Earth to a distant star and locks'] }],
   ['constellation-section', { acceptance: ['light-wire refractor on a dune aimed at the annular eclipse', 'eclipse ring rhymes with the opening photon ring'] }],
-  ['search-section-wrapper', { scrollLength: 120, acceptance: ['terminal prompt types the 3 phrases', 'candidate orbits flicker; one survives toward IISER Bhopal'] }],
+  ['search-section-wrapper', { acceptance: ['terminal prompt types the 3 phrases', 'candidate orbits flicker; one survives toward IISER Bhopal'] }],
   // Act II — Course Correction
   ['new-system-section', { acceptance: ['code streams out of a laptop and becomes orbit lines of a new system'] }],
   ['fixation-section', { acceptance: ['planet in a temporary orbit keeps its face turned to a bright Physics star'] }],
@@ -54,14 +55,28 @@ const META: Array<[string, Partial<BeatMeta>]> = [
   ['admission-section', { acceptance: ['portal of light opens after the dark stretch', '21cmFAST-style lightcone pours toward the camera'] }],
   ['arrival-section', { acceptance: ['Delhi → Sicily arc on a globe', 'Etna silhouette with an ember rim', 'small campfire circle echoes the journal club'] }],
   ['analysis-section', { pin: true, acceptance: ['foreground wedge in the (k⊥, k∥) plane', 'low-rank model peels layers to reveal a quiet EoR window'] }],
-  ['journey-continues-section', { scrollLength: 160, acceptance: ['ionized bubbles merge into the opening photon ring', 'eclipse ring aligns', 'pull back to reveal all beats as a constellation'] }],
+  ['journey-continues-section', { scrollLength: 240, acceptance: ['ionized bubbles merge into the opening photon ring', 'eclipse ring aligns', 'pull back to reveal all beats as a constellation'] }],
 ]
+
+/**
+ * Dwell scales with how much there is to read: ~2.2 vh of scroll per word on top
+ * of a base, so every beat holds long enough to be read at a comfortable pace.
+ */
+export function dwellFor(words: number): number {
+  return Math.round(Math.max(110, Math.min(240, 90 + words * 2.2)))
+}
+
+function wordsIn(id: string): number {
+  const beat = NARRATIVE.find((b) => b.id === id)
+  const text = [beat?.headline, beat?.body, ...(beat?.typedPhrases ?? [])].filter(Boolean).join(' ')
+  return text.trim().split(/\s+/).length
+}
 
 export const BEATS_META: Record<string, BeatMeta> = Object.fromEntries(
   META.map(([id, partial], i) => [
     id,
     {
-      scrollLength: partial.scrollLength ?? 100,
+      scrollLength: partial.scrollLength ?? dwellFor(wordsIn(id)),
       pin: partial.pin ?? false,
       anchor: partial.anchor ?? station(i),
       posterSrc: `/media/my-story/${id}.jpg`,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { selectQuality, type JourneyEnv } from '../tiers'
+import { adaptiveDpr, selectQuality, type JourneyEnv } from '../tiers'
 
 const desktop: JourneyEnv = { reducedMotion: false, coarsePointer: false, smallScreen: false, deviceMemoryGb: 16, webgl2: true }
 
@@ -18,5 +18,21 @@ describe('selectQuality', () => {
   })
   it('unknown memory does not downgrade a desktop', () => {
     expect(selectQuality({ ...desktop, deviceMemoryGb: null })).toBe('high')
+  })
+})
+
+describe('adaptiveDpr', () => {
+  it('spans the tier range in 0.25 steps', () => {
+    expect(adaptiveDpr('high', 0, 2)).toBe(1)
+    expect(adaptiveDpr('high', 1, 2)).toBe(2)
+    expect(adaptiveDpr('high', 0.5, 2) % 0.25).toBe(0)
+  })
+  it('never exceeds the device DPR', () => {
+    expect(adaptiveDpr('high', 1, 1)).toBe(1)
+    expect(adaptiveDpr('mobile', 1, 3)).toBe(1.5)
+  })
+  it('clamps the factor', () => {
+    expect(adaptiveDpr('low', -1, 2)).toBe(0.75)
+    expect(adaptiveDpr('low', 9, 2)).toBe(1.5)
   })
 })

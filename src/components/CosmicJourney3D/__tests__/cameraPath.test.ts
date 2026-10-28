@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cumulativeRanges } from '../scrollMath'
-import { easedCurveU, flightCurveT, smootherstep } from '../cameraPath'
+import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep } from '../cameraPath'
 
 describe('smootherstep', () => {
   it('pins endpoints and has near-zero slope at the ends', () => {
@@ -67,5 +67,43 @@ describe('flightCurveT', () => {
       if (prev >= 0) expect(t - prev).toBeLessThan(0.02)
       prev = t
     }
+  })
+})
+
+describe('shotCurveT (dwell plateaus)', () => {
+  const ranges = cumulativeRanges([100, 120, 100, 160])
+  const n = ranges.length
+  const station = (i: number) => (i + 1) / (n + 1)
+
+  it('holds the camera exactly on each station through the middle of its beat', () => {
+    ranges.forEach((r, i) => {
+      const span = r.end - r.start
+      for (const l of [0.16, 0.3, 0.5, 0.7, 0.84]) {
+        expect(shotCurveT(r.start + span * l, ranges)).toBeCloseTo(station(i), 9)
+      }
+    })
+  })
+
+  it('starts at the origin and ends at the nebula', () => {
+    expect(shotCurveT(0, ranges)).toBe(0)
+    expect(shotCurveT(1, ranges)).toBeCloseTo(1, 9)
+  })
+
+  it('is continuous across beat boundaries and monotonic overall', () => {
+    let prev = -1
+    for (let p = 0; p <= 1.000001; p += 0.001) {
+      const t = shotCurveT(p, ranges)
+      expect(t).toBeGreaterThanOrEqual(prev - 1e-9)
+      if (prev >= 0) expect(t - prev).toBeLessThan(0.02)
+      prev = t
+    }
+  })
+})
+
+describe('holdProgress', () => {
+  it('is 0 while arriving, 1 while departing, linear through the hold', () => {
+    expect(holdProgress(0.1)).toBe(0)
+    expect(holdProgress(0.5)).toBeCloseTo(0.5, 9)
+    expect(holdProgress(0.9)).toBe(1)
   })
 })

@@ -4,6 +4,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { Canvas, addEffect, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
+import { PerformanceMonitor } from '@react-three/drei'
 import { ScrollRig, useScrollProgressRef } from './ScrollRig'
 import { CameraRig } from './CameraRig'
 import { Environment } from './Environment'
@@ -13,7 +14,7 @@ import Fallback from './Fallback'
 import { BEATS, TOTAL_SCROLL_VH } from './registry'
 import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
-import { readJourneyEnv, selectQuality } from './tiers'
+import { adaptiveDpr, DPR_START_FACTOR, readJourneyEnv, selectQuality } from './tiers'
 import { fallbackMode } from './fallbackPlan'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
@@ -22,10 +23,12 @@ import { HeroPrologue } from './HeroPrologue'
 import { splitProgress, pageScrollVh } from './prologueScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
 import { diveState } from './prologueDive'
+import { getLenis } from './scrollEngine'
 import { ProloguePass } from './ProloguePass'
 import { CoverAware } from './CoverAware'
 import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
+import { JourneyNav } from './JourneyNav'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
@@ -43,6 +46,8 @@ function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
     return addEffect((timestamp) => {
       const dt = last === null ? 0 : Math.min((timestamp - last) / 1000, 1 / 30) // clamp protects tab-return
       last = timestamp
+      // Step the scroll clock first, so this frame's progress is this frame's scroll.
+      getLenis()?.raf(timestamp)
       const raw = progressRef.current
       // Use flightProgress (not raw) so scenes stay in lockstep with the camera
       // and overlay, which also remap through the prologue.
@@ -136,12 +141,15 @@ export default function CosmicJourney3D() {
   const [frameloop, setFrameloop] = useState<'always' | 'never'>('always')
   const capture = readCapture()
   const [perf, setPerf] = useState(false)
+  const [dpr, setDpr] = useState(1.5)
   const [legacyPrologue, setLegacyPrologue] = useState(false)
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init: reads browser APIs (matchMedia, webgl2 probe) only available client-side; batched by React 18 */
   useEffect(() => {
     const env = readJourneyEnv()
-    setQuality(selectQuality(env))
+    const tier = selectQuality(env)
+    setQuality(tier)
+    setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
     setMode(fallbackMode(env.reducedMotion, env.webgl2))
     const params = new URLSearchParams(window.location.search)
     setPerf(params.has('perf'))
@@ -172,7 +180,7 @@ export default function CosmicJourney3D() {
         <Canvas
           frameloop={frameloop}
           camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }}
-          dpr={capture.enabled ? capture.dpr : quality === 'high' ? [1, 2] : [1, 1.5]}
+          dpr={capture.enabled ? capture.dpr : dpr}
           // AgX everywhere: the post ToneMapping effect handles composited tiers;
           // the renderer handles the mobile tier, which has no composer.
           onCreated={({ gl }) => {
@@ -184,6 +192,16 @@ export default function CosmicJourney3D() {
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} prologuePass={!legacyPrologue} />
           <Precompile />
+          {!capture.enabled && (
+            // Adaptive resolution: sheds DPR under load (thermal throttling, slow GPUs)
+            // and recovers with headroom, in 0.25 steps; gives up flip-flopping after 4.
+            <PerformanceMonitor
+              factor={DPR_START_FACTOR}
+              flipflops={4}
+              onChange={({ factor }) => setDpr(adaptiveDpr(quality, factor, window.devicePixelRatio || 1))}
+              onFallback={() => setDpr(adaptiveDpr(quality, 0, window.devicePixelRatio || 1))}
+            />
+          )}
           {capture.enabled && <CaptureReady />}
           {perf && (
             <Suspense fallback={null}>
@@ -202,6 +220,7 @@ export default function CosmicJourney3D() {
       />
       {!capture.hideUi && <Overlay />}
       {!capture.hideUi && <ChapterRail />}
+      <JourneyNav />
       {!capture.enabled && <JourneyLoader />}
     </ScrollRig>
   )

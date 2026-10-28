@@ -1,0 +1,29 @@
+// src/components/CosmicJourney3D/overlayView.ts
+import { SHOT_TRAVEL } from './cameraPath'
+
+export interface OverlayView {
+  kind: 'hero' | 'beat'
+  /** Hero line index, or beat index. */
+  index: number
+  /** Whether the copy should be on screen (it animates in/out on change). */
+  visible: boolean
+}
+
+/** Copy enters just after the shot settles and leaves just before the camera departs. */
+export const COPY_IN = SHOT_TRAVEL / 2 + 0.01
+export const COPY_OUT = 1 - SHOT_TRAVEL / 2 - 0.01
+
+/** What the overlay shows for the current frame (pure; React commits only changes). */
+export function overlayView(input: {
+  inPrologue: boolean
+  heroIndex: number
+  activeIndex: number
+  local: number
+}): OverlayView {
+  if (input.inPrologue) return { kind: 'hero', index: input.heroIndex, visible: true }
+  return {
+    kind: 'beat',
+    index: input.activeIndex,
+    visible: input.local >= COPY_IN && input.local <= COPY_OUT,
+  }
+}

@@ -1,7 +1,7 @@
 // src/components/CosmicJourney3D/__tests__/beatsMeta.test.ts
 import { describe, it, expect } from 'vitest'
 import { NARRATIVE } from '../narrative'
-import { BEATS_META, ORIGIN_ANCHOR, NEBULA_ANCHOR } from '../beatsMeta'
+import { BEATS_META, ORIGIN_ANCHOR, NEBULA_ANCHOR, dwellFor } from '../beatsMeta'
 
 describe('beatsMeta', () => {
   it('has metadata for every narrative beat and nothing extra', () => {
@@ -29,5 +29,18 @@ describe('beatsMeta', () => {
   it('places the nebula beyond the last station so the camera never doubles back', () => {
     const lastZ = Math.min(...NARRATIVE.map((b) => BEATS_META[b.id]!.anchor.position[2]))
     expect(NEBULA_ANCHOR.position[2]).toBeLessThan(lastZ)
+  })
+})
+
+describe('dwell', () => {
+  it('gives longer copy a longer hold, within bounds', () => {
+    expect(dwellFor(10)).toBeLessThan(dwellFor(60))
+    expect(dwellFor(0)).toBe(110)
+    expect(dwellFor(500)).toBe(240)
+  })
+
+  it('makes the longest beat at least as long as the shortest', () => {
+    const lengths = NARRATIVE.map((b) => BEATS_META[b.id]!.scrollLength)
+    expect(Math.max(...lengths)).toBeGreaterThan(Math.min(...lengths))
   })
 })

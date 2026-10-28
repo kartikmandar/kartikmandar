@@ -6,15 +6,23 @@ import { createStore } from 'zustand'
 export interface LoadState {
   /** 0..1, monotonic. */
   progress: number
+  /** Everything is compiled and warmed up. */
   done: boolean
+  /** Any deep link has been applied behind the loader (it may ignite now). */
+  linked: boolean
 }
 
-export const loadStore = createStore<LoadState>(() => ({ progress: 0.05, done: false }))
+export const loadStore = createStore<LoadState>(() => ({ progress: 0.05, done: false, linked: false }))
+
+/** Called once the opening position (deep link or top) is settled behind the loader. */
+export function reportLinked(): void {
+  loadStore.setState({ linked: true })
+}
 
 /** Advances progress (never backwards). */
 export function reportLoad(progress: number, done = false): void {
   const s = loadStore.getState()
-  loadStore.setState({ progress: Math.max(s.progress, Math.min(1, progress)), done: s.done || done })
+  loadStore.setState({ progress: Math.max(s.progress, Math.min(1, progress)), done: s.done || done, linked: s.linked })
 }
 
 /** Minimum time the loader stays up on a first visit, so the ignition reads as an opening. */

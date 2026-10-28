@@ -6,6 +6,7 @@ import { useThree } from '@react-three/fiber'
 import { useStore } from 'zustand'
 import { FIRST_VISIT_MIN_MS, IGNITE_MS, loadStore, reportLoad, SEEN_KEY } from './loader'
 import { journeyFrame } from './store'
+import { getLenis } from './scrollEngine'
 import { LoaderView } from './LoaderView'
 
 /** Frames the flight's opening is drawn behind the loader so buffers, textures and glyphs upload early. */
@@ -82,28 +83,39 @@ function markSeen(): void {
  * Scrolling is locked until then. A first visit holds at least FIRST_VISIT_MIN_MS.
  */
 export function JourneyLoader() {
-  const { progress, done } = useStore(loadStore)
+  const { progress, done, linked } = useStore(loadStore)
   const [stage, setStage] = useState<'loading' | 'igniting' | 'gone'>('loading')
   const [minUntil] = useState(() => performance.now() + (readSeen() ? 0 : FIRST_VISIT_MIN_MS))
 
   useEffect(() => {
+    // Scroll stays locked while loading. Once done, the lock lifts while the
+    // loader still covers the screen, so a deep link can position the story
+    // behind it before the ignition reveals anything.
     const root = document.documentElement
     const previous = root.style.overflow
-    if (stage !== 'gone') root.style.overflow = 'hidden'
-    return () => {
-      root.style.overflow = previous
+    const lenis = getLenis()
+    const locked = stage === 'loading' && !done
+    if (locked) {
+      root.style.overflow = 'hidden'
+      lenis?.stop()
     }
-  }, [stage])
+    return () => {
+      if (locked) {
+        root.style.overflow = previous
+        lenis?.start()
+      }
+    }
+  }, [stage, done])
 
   useEffect(() => {
-    if (!done || stage !== 'loading') return
+    if (!done || !linked || stage !== 'loading') return
     const wait = Math.max(0, minUntil - performance.now())
     const ignite = window.setTimeout(() => {
       markSeen()
       setStage('igniting')
     }, wait)
     return () => window.clearTimeout(ignite)
-  }, [done, stage, minUntil])
+  }, [done, linked, stage, minUntil])
 
   useEffect(() => {
     if (stage !== 'igniting') return
