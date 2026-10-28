@@ -8,6 +8,7 @@ import { CONSTANTS } from '@/components/QuasarBackground/engine/types'
 import { useScrollProgressRef } from './ScrollRig'
 import { splitProgress } from './prologueScroll'
 import { phaseStateFromProgress } from './prologuePhase'
+import { readCapture } from './capture'
 
 export function HeroPrologue({ opacity }: { opacity: number }) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -38,12 +39,19 @@ export function HeroPrologue({ opacity }: { opacity: number }) {
     let raf = 0
     let last = performance.now()
     let disposed = false
+    // Capture mode: advance the shader clock to t once, then hold it still.
+    const capture = readCapture()
+    let captureTimePending = capture.enabled
     const loop = () => {
       if (disposed) return
       raf = requestAnimationFrame(loop)
       const now = performance.now()
-      const dt = Math.min((now - last) / 1000, 1 / 30)
+      let dt = Math.min((now - last) / 1000, 1 / 30)
       last = now
+      if (capture.enabled) {
+        dt = captureTimePending ? capture.time : 0
+        captureTimePending = false
+      }
       if (document.hidden) return // skip the heavy raymarch while backgrounded
       const { prologueProgress } = splitProgress(progressRef.current)
       // gentle dolly inward across the prologue (40 -> 22 r_s), then hold

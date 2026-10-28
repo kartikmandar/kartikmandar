@@ -10,6 +10,7 @@ import { easedCurveU } from './cameraPath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { splitProgress } from './prologueScroll'
+import { readCapture } from './capture'
 
 export function CameraRig() {
   const camera = useThree((s) => s.camera)
@@ -45,8 +46,9 @@ export function CameraRig() {
 
   useFrame(() => {
     const u = easedCurveU(splitProgress(progressRef.current).flightProgress, ranges)
-    // light smoothing so wheel deltas read as inertia, not steps
-    lastU.current += (u - lastU.current) * 0.12
+    // light smoothing so wheel deltas read as inertia, not steps; capture snaps
+    if (readCapture().enabled) lastU.current = u
+    else lastU.current += (u - lastU.current) * 0.12
     const cu = Math.max(0, Math.min(1, lastU.current))
     posCurve.getPointAt(cu, tmp.current)
     camera.position.copy(tmp.current)
