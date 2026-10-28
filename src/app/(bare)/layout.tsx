@@ -1,41 +1,26 @@
 import type { Metadata } from 'next'
-import { Montserrat, JetBrains_Mono } from 'next/font/google'
 import React from 'react'
 
-import { cn } from '@/utilities/ui'
+import { fontVariables } from '@/app/fonts'
 import { CookieConsentBanner } from '@/components/CookieConsent'
 import { ConsentAwareAnalytics } from '@/components/ConsentAwareAnalytics'
 import { PostHogProvider } from '@/components/PostHogProvider'
 import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
 import { getServerSideURL } from '@/utilities/getURL'
 
 import '../(frontend)/globals.css'
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 export default function BareLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
-      className={cn(montserrat.variable, jetbrainsMono.variable)}
+      className={`${fontVariables} dark`}
       lang="en"
+      data-theme="dark"
       suppressHydrationWarning
-      data-scroll-behavior="smooth"
     >
       <head suppressHydrationWarning>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="robots" content="noindex, nofollow, noarchive" />
-        <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />

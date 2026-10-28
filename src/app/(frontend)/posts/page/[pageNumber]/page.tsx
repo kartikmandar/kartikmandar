@@ -5,7 +5,6 @@ import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import { getAllPosts, getPaginatedPosts } from '@/lib/posts'
 import React from 'react'
-import PageClient from './page.client'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-static'
@@ -26,7 +25,6 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   return (
     <div className="pt-24 pb-24">
-      <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
           <h1>Posts</h1>

@@ -1,19 +1,16 @@
 import React from 'react'
 
 import { AudioProvider } from './Audio'
-import { HeaderThemeProvider } from './HeaderTheme'
-import { ThemeProvider } from './Theme'
+import { MotionProvider } from './Motion'
 
 export const Providers: React.FC<{
   children: React.ReactNode
 }> = ({ children }) => {
   return (
-    <ThemeProvider>
-      <HeaderThemeProvider>
-        <AudioProvider>
-          {children}
-        </AudioProvider>
-      </HeaderThemeProvider>
-    </ThemeProvider>
+    <MotionProvider>
+      <AudioProvider>
+        {children}
+      </AudioProvider>
+    </MotionProvider>
   )
 }

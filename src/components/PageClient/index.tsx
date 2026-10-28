@@ -1,16 +1,10 @@
 'use client'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
 import React, { useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import { scrollPageTo } from '@/providers/SmoothScroll'
 
 const PageClient: React.FC = () => {
-  /* Force the header to be dark mode while we have an image behind it */
-  const { setHeaderTheme } = useHeaderTheme()
   const pathname = usePathname()
-
-  useEffect(() => {
-    setHeaderTheme('light')
-  }, [setHeaderTheme])
 
   useEffect(() => {
     // Always ensure scroll restoration is enabled
@@ -25,13 +19,8 @@ const PageClient: React.FC = () => {
       if (hash) {
         // Only for hash fragments, delay to prevent CosmicJourney interference
         const timeoutId = setTimeout(() => {
-          const element = document.querySelector(hash)
-          if (element) {
-            element.scrollIntoView({
-              behavior: 'smooth',
-              block: 'start'
-            })
-          }
+          const element = document.querySelector<HTMLElement>(hash)
+          if (element) scrollPageTo(element, { offset: -88 })
         }, 1500) // Give time for CosmicJourney to fully load
 
         return () => clearTimeout(timeoutId)

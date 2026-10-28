@@ -1,6 +1,6 @@
 'use client'
 
-import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { PageHeader } from '@/components/motion'
 import React, { useEffect } from 'react'
 
 declare global {
@@ -21,11 +21,6 @@ declare global {
 }
 
 const PageClient: React.FC = () => {
-  const { setHeaderTheme } = useHeaderTheme()
-
-  useEffect(() => {
-    setHeaderTheme('light')
-  }, [setHeaderTheme])
 
   useEffect(() => {
     // Configure arXiv widget
@@ -133,14 +128,9 @@ const PageClient: React.FC = () => {
   }, [])
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
-            Publications
-          </h1>
-        </div>
+        <PageHeader eyebrow="Research" title="Publications" />
 
         {/* ArXiv Publications Feed */}
         <div 

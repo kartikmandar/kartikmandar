@@ -8,7 +8,6 @@ import { PostHero } from '@/heros/PostHero'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getAllPostSlugs, getPostBySlug } from '@/lib/posts'
 import { generateArticleSchema, generateBreadcrumbSchema } from '@/utilities/structuredData'
-import PageClient from './page.client'
 import { Comments } from '@/components/Comments'
 import { notFound } from 'next/navigation'
 
@@ -63,7 +62,6 @@ export default async function PostPage({ params: paramsPromise }: Args) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <PageClient />
 
       <PostHero post={post} />
 

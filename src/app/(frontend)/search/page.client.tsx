@@ -1,8 +1,6 @@
 'use client'
 import React, { useState, useMemo } from 'react'
 import Fuse from 'fuse.js'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
-import { useEffect } from 'react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import Link from 'next/link'
@@ -28,15 +26,10 @@ export default function SearchPageClient({
 }: {
   searchIndex: SearchDocument[]
 }) {
-  const { setHeaderTheme } = useHeaderTheme()
   const searchParams = useSearchParams()
   const router = useRouter()
   const initialQuery = searchParams.get('q') || ''
   const [query, setQuery] = useState(initialQuery)
-
-  useEffect(() => {
-    setHeaderTheme('light')
-  }, [setHeaderTheme])
 
   const fuse = useMemo(
     () =>

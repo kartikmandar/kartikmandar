@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
+import { scrollPageTo } from '@/providers/SmoothScroll'
 import { CookieConsentSettings } from '@/components/CookieConsent'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
+import './footer.css'
 
 export function Footer() {
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -19,7 +20,8 @@ export function Footer() {
       }
     };
     
-    window.addEventListener('scroll', handleScroll);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
@@ -64,180 +66,72 @@ export function Footer() {
   
   // Create shooting stars animation
   useEffect(() => {
-    if (shootingStarsRef.current) {
-      const container = shootingStarsRef.current;
-      
-      // Function to create a single shooting star
-      function createShootingStar() {
-        const shootingStar = document.createElement('div');
-        shootingStar.className = 'shooting-star';
-        
-        // Random position (mostly from top part of the container)
-        const startPosX = Math.random() * 100 + 50; // Start from right side or beyond
-        const startPosY = Math.random() * 50;  // Start from top half
-        
-        shootingStar.style.left = `${startPosX}%`;
-        shootingStar.style.top = `${startPosY}%`;
-        
-        // Random size
-        const length = Math.random() * 80 + 80;
-        shootingStar.style.width = `${length}px`;
-        
-        // Random duration between 0.8 and 1.5 seconds
-        const duration = Math.random() * 0.7 + 0.8;
-        shootingStar.style.animationDuration = `${duration}s`;
-        
-        container.appendChild(shootingStar);
-        
-        // Remove the shooting star after animation completes
-        setTimeout(() => {
-          if (shootingStar.parentNode === container) {
-            container.removeChild(shootingStar);
-          }
-        }, duration * 1000);
-      }
-      
-      // Create shooting stars at random intervals
-      function shootingStarLoop() {
-        // Create one to three shooting stars
-        const count = Math.floor(Math.random() * 3) + 2;
-        
-        for (let i = 0; i < count; i++) {
-          setTimeout(createShootingStar, i * 300);
-        }
-        
-        // Schedule next batch of shooting stars (more frequent)
-        const nextBatch = Math.random() * 2000 + 800; // Between 0.8 and 2.8 seconds
-        setTimeout(shootingStarLoop, nextBatch);
-      }
-      
-      // Start the shooting star loop
-      shootingStarLoop();
-      
-      // Clean up function
-      return () => {
-        // This will run when the component unmounts
-        // No need for explicit cleanup as the timeouts will be cleared when component unmounts
-      };
-    }
-  }, []);
-  
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  };
+    const container = shootingStarsRef.current;
+    if (!container) return;
+    // Every pending timer is tracked so unmounting stops the loop (it used to run forever).
+    const timers = new Set<ReturnType<typeof setTimeout>>();
+    const later = (fn: () => void, ms: number) => {
+      const id = setTimeout(() => {
+        timers.delete(id);
+        fn();
+      }, ms);
+      timers.add(id);
+    };
 
-  // Add the custom style for the back-to-top button and stars
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const style = document.createElement('style');
-      style.innerHTML = `
-        .back-to-top-button {
-          position: fixed;
-          bottom: 2rem;
-          left: 2rem;
-          width: 3rem;
-          height: 3rem;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 20px;
-          z-index: 50;
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          background: rgba(0, 0, 0, 0.20);
-          backdrop-filter: blur(24px);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          color: rgba(255, 255, 255, 0.9);
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-          cursor: pointer;
-        }
-        
-        .back-to-top-button:hover {
-          transform: translateY(-4px) scale(1.02);
-          background: rgba(0, 0, 0, 0.30);
-          color: rgba(255, 255, 255, 1);
-          border-color: rgba(255, 255, 255, 0.2);
-        }
-        
-        .back-to-top-button.hidden {
-          opacity: 0;
-          transform: translateY(10px);
-          pointer-events: none;
-        }
-        
-        /* Stars styling */
-        .stars-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 0;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        
-        .star {
-          position: absolute;
-          background-color: rgba(255, 255, 255, 0.8);
-          border-radius: 50%;
-          animation: twinkle var(--duration) infinite ease-in-out;
-          opacity: 0;
-        }
-        
-        @keyframes twinkle {
-          0% { opacity: 0; }
-          50% { opacity: 1; }
-          100% { opacity: 0; }
-        }
-        
-        /* Shooting stars styling */
-        .shooting-stars-container {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          z-index: 1;
-          pointer-events: none;
-          overflow: hidden;
-        }
-        
-        .shooting-star {
-          position: absolute;
-          height: 2px;
-          background: linear-gradient(90deg, rgba(255,255,255,0), #fff);
-          transform: rotate(-45deg);
-          border-radius: 999px;
-          filter: drop-shadow(0 0 6px rgba(105, 155, 255, 1));
-          animation: shooting-star-animation linear;
-          opacity: 0;
-          z-index: 1;
-        }
-        
-        @keyframes shooting-star-animation {
-          0% {
-            opacity: 0;
-            transform: translateX(0) translateY(0) rotate(-45deg);
-          }
-          10% {
-            opacity: 1;
-          }
-          100% {
-            opacity: 0;
-            transform: translateX(-200px) translateY(200px) rotate(-45deg);
-          }
-        }
-      `;
-      document.head.appendChild(style);
-      
-      return () => {
-        document.head.removeChild(style);
-      };
+    // Function to create a single shooting star
+    function createShootingStar() {
+      if (!container) return;
+      const shootingStar = document.createElement('div');
+      shootingStar.className = 'shooting-star';
+
+      // Random position (mostly from top part of the container)
+      const startPosX = Math.random() * 100 + 50; // Start from right side or beyond
+      const startPosY = Math.random() * 50;  // Start from top half
+
+      shootingStar.style.left = `${startPosX}%`;
+      shootingStar.style.top = `${startPosY}%`;
+
+      // Random size
+      const length = Math.random() * 80 + 80;
+      shootingStar.style.width = `${length}px`;
+
+      // Random duration between 0.8 and 1.5 seconds
+      const duration = Math.random() * 0.7 + 0.8;
+      shootingStar.style.animationDuration = `${duration}s`;
+
+      container.appendChild(shootingStar);
+
+      // Remove the shooting star after animation completes
+      later(() => shootingStar.remove(), duration * 1000);
     }
+
+    // Create shooting stars at random intervals
+    function shootingStarLoop() {
+      // Create two to four shooting stars
+      const count = Math.floor(Math.random() * 3) + 2;
+
+      for (let i = 0; i < count; i++) {
+        later(createShootingStar, i * 300);
+      }
+
+      // Schedule next batch of shooting stars
+      const nextBatch = Math.random() * 2000 + 800; // Between 0.8 and 2.8 seconds
+      later(shootingStarLoop, nextBatch);
+    }
+
+    // Respect reduced motion: the static starfield stays, the meteors don't fly.
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) shootingStarLoop();
+
+    return () => {
+      for (const id of timers) clearTimeout(id);
+      timers.clear();
+      container.innerHTML = '';
+    };
   }, []);
+
+  const scrollToTop = () => {
+    scrollPageTo(0);
+  };
 
   // Navigation items from shared constants
   const navItems = NAVIGATION_ITEMS
@@ -311,7 +205,8 @@ export function Footer() {
       {/* Back to Top Button */}
       <button 
         onClick={scrollToTop}
-        className={`back-to-top-button ${!showBackToTop ? 'hidden' : ''}`}
+        className={`back-to-top-button ${!showBackToTop ? 'is-hidden' : ''}`}
+        tabIndex={showBackToTop ? 0 : -1}
         aria-label="Back to top"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -319,7 +214,7 @@ export function Footer() {
         </svg>
       </button>
       
-      <footer className="mt-auto relative bg-black dark:bg-card text-white overflow-hidden">
+      <footer className="mt-auto relative bg-background-deep text-white overflow-hidden">
         {/* Stars background */}
         <div className="stars-container" ref={starsContainerRef}></div>
         
@@ -381,10 +276,6 @@ export function Footer() {
               </a>
             </div>
             
-            {/* Make sure the theme selector is visible */}
-            <div className="mb-4">
-              <ThemeSelector />
-            </div>
           </div>
           
           {/* Blogs & Technical Skills */}

@@ -1,44 +1,27 @@
 import type { Metadata } from 'next'
 
-import { cn } from '@/utilities/ui'
-import { Montserrat } from 'next/font/google'
-import { JetBrains_Mono } from 'next/font/google'
 import React from 'react'
 
 import { CookieConsentBanner } from '@/components/CookieConsent'
 import { ConsentAwareAnalytics } from '@/components/ConsentAwareAnalytics'
 import { ExternalLinkHandler } from '@/components/ExternalLinkHandler'
-import { FloatingBottomNav } from '@/components/FloatingBottomNav'
 import { GlobalAudioButton } from '@/components/GlobalAudioButton'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
+import { SmoothScroll } from '@/providers/SmoothScroll'
+import { CursorLabel } from '@/components/motion'
+import { HideInJourney, SiteGrain } from '@/components/SiteChrome/RouteGate'
+import { fontVariables } from '@/app/fonts'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { NAVIGATION_ITEMS } from '@/constants/navigation'
 import { generatePersonSchema, generateWebSiteSchema } from '@/utilities/structuredData'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
-const montserrat = Montserrat({
-  subsets: ['latin'],
-  variable: '--font-montserrat',
-  display: 'swap',
-})
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-  display: 'swap',
-})
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Navigation items for both header and floating bottom nav
-  const navItems = NAVIGATION_ITEMS.map(item => ({ link: item }))
-
   return (
-    <html className={cn(montserrat.variable, jetbrainsMono.variable)} lang="en" suppressHydrationWarning data-scroll-behavior="smooth">
+    <html className={`${fontVariables} dark`} lang="en" data-theme="dark" suppressHydrationWarning>
       <head suppressHydrationWarning>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <script
@@ -49,7 +32,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }}
         />
-        <InitTheme />
         {/* Favicon and app icons */}
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
@@ -62,15 +44,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <Providers>
+          <HideInJourney>
+            <a href="#main" className="skip-link">Skip to content</a>
+          </HideInJourney>
+          <SmoothScroll />
           <ExternalLinkHandler />
 
           <Header />
-          <main>{children}</main>
-          <Footer />
-          <FloatingBottomNav navItems={navItems} />
+          <main id="main">{children}</main>
+          <HideInJourney>
+            <Footer />
+          </HideInJourney>
           <GlobalAudioButton />
           <CookieConsentBanner />
           <ConsentAwareAnalytics />
+          <SiteGrain />
+          <CursorLabel />
         </Providers>
       </body>
     </html>

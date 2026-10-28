@@ -1,8 +1,10 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useSyncExternalStore } from 'react'
+import { scrollPageTo } from '@/providers/SmoothScroll'
+
+const subscribeNever = () => () => {}
 import Giscus from '@giscus/react'
-import { useTheme } from '@/providers/Theme'
 
 interface CommentsProps {
   /**
@@ -17,66 +19,14 @@ interface CommentsProps {
 
 export function Comments({ title: _title, className = '' }: CommentsProps): React.JSX.Element {
   const commentsRef = useRef<HTMLDivElement>(null)
-  const [giscusTheme, setGiscusTheme] = useState<string>('light')
-  const [mounted, setMounted] = useState(false)
-
-  // Get theme from useTheme hook safely
-  let theme: string = 'light'
-  try {
-    const themeContext = useTheme()
-    theme = themeContext?.theme || 'light'
-  } catch (error) {
-    console.log('Theme context not available:', error)
-    theme = 'light'
-  }
-
-  // Ensure component is mounted before rendering
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  // Update giscus theme when custom theme changes
-  useEffect(() => {
-    const currentTheme = theme === 'dark' ? 'dark' : 'light'
-    setGiscusTheme(currentTheme)
-
-    const updateGiscusTheme = () => {
-      const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
-      if (iframe && iframe.contentWindow) {
-        try {
-          iframe.contentWindow.postMessage({
-            giscus: {
-              setConfig: {
-                theme: currentTheme
-              }
-            }
-          }, 'https://giscus.app')
-        } catch (error) {
-          console.log('Giscus theme update failed:', error)
-        }
-      }
-    }
-
-    // Wait for iframe to be available
-    const waitForIframe = () => {
-      const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame')
-      if (iframe && iframe.contentWindow) {
-        updateGiscusTheme()
-      } else {
-        // Check again in 500ms
-        setTimeout(waitForIframe, 500)
-      }
-    }
-
-    // Start checking immediately
-    waitForIframe()
-  }, [theme])
+  // Client-only render (Giscus mounts an iframe); the server sends the placeholder.
+  const mounted = useSyncExternalStore(subscribeNever, () => true, () => false)
 
   useEffect(() => {
     // Scroll to comments section when component mounts
     const scrollToComments = () => {
       if (commentsRef.current && window.location.hash === '#comments') {
-        commentsRef.current.scrollIntoView({ behavior: 'smooth' })
+        scrollPageTo(commentsRef.current, { offset: -88 })
       }
     }
 
@@ -127,10 +77,9 @@ export function Comments({ title: _title, className = '' }: CommentsProps): Reac
           reactionsEnabled="1"
           emitMetadata="1"
           inputPosition="top"
-          theme={giscusTheme}
+          theme="dark"
           lang="en"
           loading="lazy"
-          key={`giscus-${giscusTheme}`} // Force complete re-render when theme changes
         />
       </div>
     </div>

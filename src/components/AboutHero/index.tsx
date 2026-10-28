@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export const AboutHero: React.FC = () => {
   return (
-    <section className="relative min-h-screen flex items-center px-4 py-8 md:py-0 overflow-hidden">
+    <section className="relative min-h-screen flex items-center px-4 pt-24 pb-8 md:pt-28 md:pb-12 overflow-hidden">
       <div className="relative max-w-5xl mx-auto w-full mt-16 md:mt-0">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column - Profile Photo */}

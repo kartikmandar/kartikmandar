@@ -180,7 +180,7 @@ const heroWrap: React.CSSProperties = {
   textAlign: 'center', pointerEvents: 'none', padding: '0 8vw', color: '#eef2ff', zIndex: 2,
 }
 const heroText: React.CSSProperties = {
-  fontSize: 'clamp(26px, 3.6vw, 52px)', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.15,
+  fontSize: 'clamp(32px, 4.4vw, 66px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.01em', lineHeight: 1.08,
   margin: 0, maxWidth: 980, textShadow: '0 2px 30px rgba(0,0,0,0.85)',
 }
 const beatWrap: React.CSSProperties = {
@@ -201,7 +201,7 @@ const eyebrow: React.CSSProperties = {
   textTransform: 'uppercase', color: '#9cc4ff', marginBottom: 14,
 }
 const headline: React.CSSProperties = {
-  fontSize: 'clamp(28px, 3.4vw, 48px)', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.1,
+  fontSize: 'clamp(34px, 4.2vw, 60px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.01em', lineHeight: 1.04,
   margin: '0 0 16px', outline: 'none',
 }
 const body: React.CSSProperties = {
@@ -231,7 +231,7 @@ const endInner: React.CSSProperties = {
   textAlign: 'center', width: 'min(820px, 90vw)', opacity: 0, visibility: 'hidden',
 }
 const endTitle: React.CSSProperties = {
-  fontSize: 'clamp(48px, 8vw, 112px)', fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 1,
+  fontSize: 'clamp(60px, 10vw, 140px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.02em', lineHeight: 0.95,
   margin: '0 0 22px', outline: 'none',
 }
 const endLinks: React.CSSProperties = {

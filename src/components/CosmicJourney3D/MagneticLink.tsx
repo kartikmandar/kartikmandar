@@ -1,7 +1,8 @@
 // src/components/CosmicJourney3D/MagneticLink.tsx
 'use client'
 
-import { useEffect, useRef, type ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
+import { useMagnetic } from '@/components/motion/useMagnetic'
 
 /**
  * A call-to-action that leans toward the pointer on desktop (pointer: fine only),
@@ -15,25 +16,7 @@ export function MagneticLink({ href, children, primary = false, external = false
 }) {
   const ref = useRef<HTMLAnchorElement>(null)
 
-  useEffect(() => {
-    const el = ref.current
-    if (!el || !window.matchMedia('(pointer: fine)').matches) return
-    const onMove = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect()
-      const dx = e.clientX - (r.left + r.width / 2)
-      const dy = e.clientY - (r.top + r.height / 2)
-      el.style.transform = `translate(${dx * 0.18}px, ${dy * 0.28}px)`
-    }
-    const onLeave = () => {
-      el.style.transform = 'translate(0px, 0px)'
-    }
-    el.addEventListener('pointermove', onMove)
-    el.addEventListener('pointerleave', onLeave)
-    return () => {
-      el.removeEventListener('pointermove', onMove)
-      el.removeEventListener('pointerleave', onLeave)
-    }
-  }, [])
+  useMagnetic(ref)
 
   return (
     <a
