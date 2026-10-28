@@ -2,8 +2,9 @@
 'use client'
 
 import { useEffect, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { useFrame, useThree } from '@react-three/fiber'
 import { StatsGl } from '@react-three/drei'
+import type * as THREE from 'three'
 
 // Loaded only under ?perf (lazy import in index.tsx). Shows stats-gl and records
 // frame times so baselines can be read from the console:
@@ -12,6 +13,12 @@ import { StatsGl } from '@react-three/drei'
 interface PerfApi {
   summary: () => { frames: number; p50: number; p95: number; p99: number; max: number; over50: number }
   reset: () => void
+  /**
+   * Draws every object in the scene once (hidden ones included) so each shader
+   * program is linked and checked: three logs any GLSL error on first use.
+   * Returns the number of linked programs. Works even when rAF is paused.
+   */
+  renderAll: () => number
 }
 
 declare global {
@@ -29,6 +36,9 @@ function percentile(sorted: number[], q: number): number {
 }
 
 export default function PerfProbe() {
+  const gl = useThree((s) => s.gl)
+  const scene = useThree((s) => s.scene)
+  const camera = useThree((s) => s.camera)
   const samples = useRef<number[]>([])
   const last = useRef<number | null>(null)
 
@@ -50,11 +60,21 @@ export default function PerfProbe() {
         samples.current = []
         last.current = null
       },
+      renderAll: () => {
+        const hidden: THREE.Object3D[] = []
+        scene.traverse((o) => {
+          if (!o.visible) hidden.push(o)
+        })
+        for (const o of hidden) o.visible = true
+        gl.render(scene, camera)
+        for (const o of hidden) o.visible = false
+        return gl.info.programs?.length ?? 0
+      },
     }
     return () => {
       delete window.__journeyPerf
     }
-  }, [])
+  }, [gl, scene, camera])
 
   // Wall-clock frame interval (R3F's clamped delta would hide long frames).
   useFrame(() => {

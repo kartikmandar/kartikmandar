@@ -1,286 +1,396 @@
 // src/components/CosmicJourney3D/scenes/Beat_Dashboard.tsx
 'use client'
 
+// Beat 13 · GSoC & Open Source (Act III, ignition).
+// Stingray's quicklook, made of light. X-ray photons rain down in arrival order and
+// pile into time bins, so a light curve (with a flare) builds left to right. The
+// curve then lifts and folds up into a floating holographic panel, and two more
+// panels hinge open beside it like a triptych: a power spectrum with a QPO peak,
+// and a dynamical-spectrum heat strip where that QPO wanders in frequency.
+
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
-import type * as THREE from 'three'
-import { Text } from '@react-three/drei'
+import * as THREE from 'three'
 import type { BeatSceneProps } from '../types'
 import { useBeat } from '../store'
+import { PALETTE, GLOW, hdr } from '../art/palette'
+import { createHoloMaterial, getGlowTexture, setUniform, useDisposable } from '../art/materials'
+import { NOISE_GLSL } from '../art/glsl'
+import { GlowSprite } from '../art/GlowSprite'
+import { LightLine, setLineOpacity, setLineReveal, type LightLineObject } from '../art/LightLine'
+import { Label } from '../art/Label'
+import { ease, pulse, seeded } from '../art/anim'
 
-// Acceptance: a software dashboard assembles in phases — wireframe rectangles ->
-// sliding panels -> content + three small plots (light curve, power-spectrum
-// bars, phase-lag scatter). Mirrors drawBuildingDashboard's metaphor in 3D.
+// Light-curve panel, in its own local frame (also the frame photons land in).
+const LC_W = 3.0
+const LC_H = 1.8
+const PLOT_X = 1.3
+const PLOT_Y = 0.68
+const BINS = 96
+// Assembly pose (photons land at this size, big and low) and the floating pose.
+const ASSEMBLY_POS = new THREE.Vector3(0, 0.9, 0.2)
+const ASSEMBLY_SCALE = 2.45
+const PANEL_POS = new THREE.Vector3(0, 1.6, -1.4)
+// Side panels hinge on the centre panel's edges.
+const SIDE_W = 2.4
+const SIDE_H = 1.6
+const SIDE_OPEN = 0.38
+const SIDE_CLOSED = Math.PI * 0.94
+const RAIN_TOP = 4.6
 
-// Original 2D layout: dash at [0.15,0.15] sized [0.7,0.7] in a [0..1] box.
-// Scaled to fill ~9w x 5.3h and lifted so the dashboard's lower edge stays
-// above the overlay copy band (local Y > -1.5). The 0.7-wide dash spans
-// X in [-4.5, 4.5]; OFFSET_Y raises the whole frame so its bottom lands ~-1.3.
-const SX = 12.857
-const SY = 7.571
-const OFFSET_Y = 1.35
-const mapX = (x: number) => (x - 0.5) * SX
-const mapY = (y: number) => (0.5 - y) * SY + OFFSET_Y
+// Deterministic count rate: a weak QPO-like wobble, a fast-rise slow-decay flare
+// and Poisson-ish scatter. Returns 0..1 per bin.
+function lightCurveRates(): Float32Array {
+  const rates = new Float32Array(BINS)
+  let max = 0
+  for (let i = 0; i < BINS; i++) {
+    const u = (i + 0.5) / BINS
+    const flare = u < 0.6 ? Math.exp(-(((u - 0.6) / 0.03) ** 2)) : Math.exp(-(u - 0.6) / 0.11)
+    const r = 0.36 + 0.1 * Math.sin(u * Math.PI * 2 * 7.5 + 0.6) + 0.5 * flare + 0.08 * (seeded(i, 31) - 0.5)
+    rates[i] = r
+    if (r > max) max = r
+  }
+  for (let i = 0; i < BINS; i++) rates[i] = rates[i]! / max
+  return rates
+}
 
-const DASH_X = 0.15
-const DASH_Y = 0.15
-const DASH_W = 0.7
-const DASH_H = 0.7
-const SIDEBAR_W = DASH_W * 0.25
-const HEADER_H = DASH_H * 0.1
+const binX = (i: number) => -PLOT_X + ((i + 0.5) / BINS) * PLOT_X * 2
+const rateY = (r: number) => -PLOT_Y + 0.08 + r * (PLOT_Y * 2 - 0.2)
 
-// Outlined rectangle as line loop in normalized space, mapped to local XY at z.
-function rectPositions(nx: number, ny: number, nw: number, nh: number, z = 0): Float32Array {
-  const x0 = mapX(nx)
-  const x1 = mapX(nx + nw)
-  const y0 = mapY(ny)
-  const y1 = mapY(ny + nh)
-  return new Float32Array([
-    x0, y0, z, x1, y0, z, x1, y0, z, x1, y1, z,
-    x1, y1, z, x0, y1, z, x0, y1, z, x0, y0, z,
-  ])
+function axesPoints(w: number, h: number): THREE.Vector3[] {
+  return [
+    new THREE.Vector3(-w, -h, 0), new THREE.Vector3(w, -h, 0),
+    new THREE.Vector3(-w, -h, 0), new THREE.Vector3(-w, h, 0),
+    // a few ticks on each axis
+    ...[-0.5, 0, 0.5].flatMap((f) => [new THREE.Vector3(w * f, -h, 0), new THREE.Vector3(w * f, -h - 0.04, 0)]),
+    ...[-0.4, 0.2, 0.8].flatMap((f) => [new THREE.Vector3(-w, h * f, 0), new THREE.Vector3(-w - 0.04, h * f, 0)]),
+  ]
+}
+
+// Power spectrum on log-log axes: red noise, a QPO Lorentzian, a white-noise floor.
+const PSD_X = 0.98
+const PSD_Y = 0.6
+const QPO_F = 0.58
+function powerSpectrum(): { points: THREE.Vector3[]; peak: THREE.Vector3 } {
+  const n = 120
+  const pts: THREE.Vector3[] = []
+  let peak = new THREE.Vector3()
+  let best = -Infinity
+  for (let i = 0; i <= n; i++) {
+    const u = i / n
+    const red = 1.05 * Math.pow(1 - u, 1.3)
+    const qpo = 0.42 / (1 + ((u - QPO_F) / 0.035) ** 2)
+    const floor = 0.08
+    const scatter = 0.06 * (seeded(i, 41) - 0.5) * (0.4 + u)
+    const y = -PSD_Y + (PSD_Y * 2) * Math.min(1, Math.max(0, red * 0.75 + qpo + floor + scatter))
+    const v = new THREE.Vector3(-PSD_X + u * PSD_X * 2, y, 0.004)
+    pts.push(v)
+    if (u > 0.45 && u < 0.7 && y > best) {
+      best = y
+      peak = v
+    }
+  }
+  return { points: pts, peak: peak.clone() }
+}
+
+const PLANE_VERT = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`
+
+// Photons: each falls from above its time bin, in arrival order, and lands on the
+// light curve with a brief flash. Positions computed on the GPU in the panel frame.
+const PHOTON_VERT = /* glsl */ `
+  attribute vec3 aTarget;
+  attribute float aStartY;
+  attribute float aDelay;
+  attribute float aSeed;
+  uniform float uFall;
+  uniform float uSize;
+  varying float vFalling;
+  varying float vFlash;
+  varying float vLanded;
+  void main() {
+    float q = clamp((uFall - aDelay) / 0.16, 0.0, 1.0);
+    float landed = clamp((uFall - aDelay - 0.16) / 0.06, 0.0, 1.0);
+    vec3 p = aTarget;
+    p.y = mix(aStartY, aTarget.y, q * q);
+    p.x += (1.0 - q) * (aSeed - 0.5) * 0.12;
+    vFalling = step(0.0001, q) * (1.0 - step(1.0, q));
+    vLanded = step(1.0, q);
+    vFlash = vLanded * (1.0 - landed);
+    vec4 mv = modelViewMatrix * vec4(p, 1.0);
+    gl_PointSize = uSize * (0.7 + 0.6 * aSeed) * (1.0 + 1.6 * vFlash) / -mv.z;
+    gl_Position = projectionMatrix * mv;
+  }
+`
+
+const PHOTON_FRAG = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform vec3 uFallColor;
+  uniform vec3 uLandColor;
+  uniform vec3 uFlashColor;
+  uniform float uOpacity;
+  varying float vFalling;
+  varying float vFlash;
+  varying float vLanded;
+  void main() {
+    float a = texture2D(uMap, gl_PointCoord).a;
+    vec3 col = uFallColor * vFalling + uLandColor * vLanded * (1.0 - vFlash) + uFlashColor * vFlash;
+    gl_FragColor = vec4(col * a * uOpacity, 1.0);
+  }
+`
+
+// Dynamical power spectrum: time along x, frequency along y. A QPO track wanders
+// in frequency over a red-noise floor; colours climb void, blue, cyan, gold, white.
+const HEAT_FRAG = /* glsl */ `
+  ${NOISE_GLSL}
+  uniform float uTime;
+  uniform float uReveal;
+  uniform float uOpacity;
+  uniform vec3 uLow;
+  uniform vec3 uMid;
+  uniform vec3 uHigh;
+  uniform vec3 uHot;
+  varying vec2 vUv;
+  void main() {
+    float cols = floor(vUv.x * 48.0) / 48.0;
+    float rows = floor(vUv.y * 20.0) / 20.0;
+    float txs = cols * 6.0 + uTime * 0.25;
+    float track = 0.55 + 0.12 * sin(txs * 0.9) + 0.06 * sin(txs * 2.3 + 1.0);
+    float qpo = exp(-pow((rows - track) / 0.07, 2.0)) * (0.65 + 0.5 * vnoise(vec3(txs * 1.7, 0.0, 3.0)));
+    float red = 0.55 * exp(-rows * 4.5);
+    float speckle = 0.22 * hash13(vec3(floor(vUv.x * 48.0) + floor(uTime * 0.25 * 8.0), floor(vUv.y * 20.0), 7.0));
+    float v = clamp(qpo + red + speckle, 0.0, 1.4);
+    vec3 col = mix(uLow * 0.0, uLow, smoothstep(0.05, 0.35, v));
+    col = mix(col, uMid, smoothstep(0.3, 0.65, v));
+    col = mix(col, uHigh, smoothstep(0.6, 0.95, v));
+    col = mix(col, uHot, smoothstep(0.95, 1.3, v));
+    // thin dark gaps between cells keep it a strip of light, not a flat fill
+    vec2 cell = fract(vUv * vec2(48.0, 20.0));
+    float gap = smoothstep(0.0, 0.12, cell.x) * smoothstep(0.0, 0.12, cell.y);
+    float shown = 1.0 - smoothstep(uReveal - 0.02, uReveal, vUv.x);
+    gl_FragColor = vec4(col * gap * shown * uOpacity, 1.0);
+  }
+`
+
+function photonGeometry(count: number, rates: Float32Array): THREE.BufferGeometry {
+  // Sample bins in proportion to their count rate (deterministic inverse CDF).
+  const cdf = new Float32Array(BINS)
+  let sum = 0
+  for (let i = 0; i < BINS; i++) {
+    sum += rates[i]!
+    cdf[i] = sum
+  }
+  const target = new Float32Array(count * 3)
+  const startY = new Float32Array(count)
+  const delay = new Float32Array(count)
+  const seed = new Float32Array(count)
+  for (let i = 0; i < count; i++) {
+    const pick = ((i + seeded(i, 51)) / count) * sum
+    let b = 0
+    while (b < BINS - 1 && cdf[b]! < pick) b++
+    const u = (b + 0.5) / BINS
+    const x = binX(b) + (seeded(i, 52) - 0.5) * ((PLOT_X * 2) / BINS)
+    const y = rateY(rates[b]!) - 0.05 * seeded(i, 53) * seeded(i, 54)
+    target[i * 3] = x
+    target[i * 3 + 1] = y
+    target[i * 3 + 2] = (seeded(i, 55) - 0.5) * 0.04
+    // the rain starts above the frame, in the panel's (assembly-scaled) frame
+    startY[i] = (RAIN_TOP + seeded(i, 56) * 1.4 - ASSEMBLY_POS.y) / ASSEMBLY_SCALE
+    delay[i] = u * 0.72 + seeded(i, 57) * 0.1
+    seed[i] = seeded(i, 58)
+  }
+  const g = new THREE.BufferGeometry()
+  g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(count * 3), 3))
+  g.setAttribute('aTarget', new THREE.BufferAttribute(target, 3))
+  g.setAttribute('aStartY', new THREE.BufferAttribute(startY, 1))
+  g.setAttribute('aDelay', new THREE.BufferAttribute(delay, 1))
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1))
+  return g
 }
 
 type TextMesh = THREE.Mesh & { fillOpacity: number }
 
-// Panel geometry in normalized space. Sliding panels (sidebar, header) grow in width with `slide`.
-const SIDEBAR_CENTER_Y = mapY(DASH_Y + DASH_H / 2)
-const HEADER_CENTER_Y = mapY(DASH_Y + HEADER_H / 2)
-const MAIN_PANEL = { nx: DASH_X + SIDEBAR_W, ny: DASH_Y + HEADER_H, nw: DASH_W - SIDEBAR_W, nh: DASH_H * 0.5 }
-const BOTTOM_LEFT_PANEL = { nx: DASH_X + SIDEBAR_W, ny: DASH_Y + DASH_H * 0.6, nw: DASH_W * 0.37, nh: DASH_H * 0.4 }
-const BOTTOM_RIGHT_PANEL = { nx: DASH_X + DASH_W * 0.62, ny: DASH_Y + DASH_H * 0.6, nw: DASH_W * 0.38, nh: DASH_H * 0.4 }
-
-const BAR_COUNT = 10
-const BAR_PANEL_W = DASH_W * 0.37 - 0.04
-const BAR_SLOT = BAR_PANEL_W / BAR_COUNT
-const BAR_BASE_Y = DASH_Y + DASH_H * 0.6 + DASH_H * 0.4 - 0.04
-const SCATTER_COUNT = 50
-
-const WIRE_COUNT = 6
-
-// Unit plane scaled/placed per frame (the original rebuilt a plane of the exact size).
-function FixedPanel({ spec, z, color, setRef }: {
-  spec: { nx: number; ny: number; nw: number; nh: number }
-  z: number
-  color: string
-  setRef: (mesh: THREE.Mesh | null) => void
-}) {
-  return (
-    <mesh
-      ref={setRef}
-      position={[mapX(spec.nx + spec.nw / 2), mapY(spec.ny + spec.nh / 2), z]}
-      scale={[spec.nw * SX, spec.nh * SY, 1]}
-      visible={false}
-    >
-      <planeGeometry args={[1, 1]} />
-      <meshBasicMaterial color={color} transparent opacity={0} toneMapped={false} />
-    </mesh>
-  )
-}
-
-export default function Beat_Dashboard({ index, reducedMotion }: BeatSceneProps) {
+export default function Beat_Dashboard({ index, quality, reducedMotion }: BeatSceneProps) {
   const beat = useBeat(index)
+  const lcGroupRef = useRef<THREE.Group>(null)
+  const photonsRef = useRef<THREE.Points>(null)
+  const curveRef = useRef<LightLineObject>(null)
+  const lcAxesRef = useRef<LightLineObject>(null)
+  const lcPanelRef = useRef<THREE.Mesh>(null)
+  const flareRef = useRef<THREE.Sprite>(null)
+  const leftHingeRef = useRef<THREE.Group>(null)
+  const rightHingeRef = useRef<THREE.Group>(null)
+  const leftPanelRef = useRef<THREE.Mesh>(null)
+  const rightPanelRef = useRef<THREE.Mesh>(null)
+  const psdRef = useRef<LightLineObject>(null)
+  const psdAxesRef = useRef<LightLineObject>(null)
+  const qpoRef = useRef<THREE.Sprite>(null)
+  const heatRef = useRef<THREE.Mesh>(null)
+  const heatAxesRef = useRef<LightLineObject>(null)
+  const lcLabelRef = useRef<TextMesh>(null)
+  const psdLabelRef = useRef<TextMesh>(null)
+  const heatLabelRef = useRef<TextMesh>(null)
 
-  const rootRef = useRef<THREE.Group>(null)
-  const wireRefs = useRef<Array<THREE.LineSegments | null>>([])
-  const sidebarRef = useRef<THREE.Mesh>(null)
-  const headerRef = useRef<THREE.Mesh>(null)
-  const panelRefs = useRef<Array<THREE.Mesh | null>>([])
-  const contentRef = useRef<THREE.Group>(null)
-  const contentTextRefs = useRef<Array<TextMesh | null>>([])
-  const plotsRef = useRef<THREE.Group>(null)
-  const plotTextRefs = useRef<Array<TextMesh | null>>([])
-  const curveGroupRef = useRef<THREE.Group>(null)
-  const barRefs = useRef<Array<THREE.Mesh | null>>([])
-  const scatterRef = useRef<THREE.Points>(null)
+  const rates = useMemo(() => lightCurveRates(), [])
+  const curve = useMemo(() => Array.from({ length: BINS }, (_, i) => new THREE.Vector3(binX(i), rateY(rates[i]!), 0.01)), [rates])
+  const flarePeak = useMemo(() => {
+    let best = 0
+    for (let i = 1; i < BINS; i++) if (rates[i]! > rates[best]!) best = i
+    return [binX(best), rateY(rates[best]!), 0.02] as [number, number, number]
+  }, [rates])
+  const lcAxes = useMemo(() => axesPoints(PLOT_X + 0.02, PLOT_Y + 0.02), [])
+  const psd = useMemo(() => powerSpectrum(), [])
+  const psdAxes = useMemo(() => axesPoints(PSD_X + 0.02, PSD_Y + 0.02), [])
+  const heatAxes = useMemo(() => axesPoints(1.0, 0.52), [])
 
-  // Wireframe rectangles (Phase 1): outer, sidebar, header, main, two bottom.
-  const wires = useMemo(() => [
-    rectPositions(DASH_X, DASH_Y, DASH_W, DASH_H, -0.02),
-    rectPositions(DASH_X, DASH_Y, DASH_W * 0.25, DASH_H, -0.02),
-    rectPositions(DASH_X + DASH_W * 0.25, DASH_Y, DASH_W * 0.75, DASH_H * 0.1, -0.02),
-    rectPositions(DASH_X + DASH_W * 0.25, DASH_Y + DASH_H * 0.1, DASH_W * 0.75, DASH_H * 0.5, -0.02),
-    rectPositions(DASH_X + DASH_W * 0.25, DASH_Y + DASH_H * 0.6, DASH_W * 0.37, DASH_H * 0.4, -0.02),
-    rectPositions(DASH_X + DASH_W * 0.62, DASH_Y + DASH_H * 0.6, DASH_W * 0.38, DASH_H * 0.4, -0.02),
-  ], [])
-
-  // Light-curve polyline (Phase 3): sine sweep across the main panel.
-  const curve = useMemo(() => {
-    const px = DASH_X + SIDEBAR_W
-    const pw = DASH_W - SIDEBAR_W
-    const py = DASH_Y + HEADER_H + DASH_H * 0.5 * 0.35
-    const pts: number[] = []
-    const N = 80
-    for (let i = 0; i < N; i++) {
-      const t = i / (N - 1)
-      pts.push(mapX(px + 0.04 + (pw - 0.08) * t), mapY(py + Math.sin(t * 18) * DASH_H * 0.13), 0.02)
-    }
-    return new Float32Array(pts)
-  }, [])
-
-  // Phase-lag scatter (Phase 3): deterministic pseudo-random points in panel 3.
-  const scatter = useMemo(() => {
-    const px = DASH_X + DASH_W * 0.62 + 0.02
-    const pw = DASH_W * 0.38 - 0.04
-    const py = DASH_Y + DASH_H * 0.6 + 0.04
-    const ph = DASH_H * 0.4 - 0.06
-    const pts: number[] = []
-    for (let i = 0; i < 50; i++) {
-      const rx = (Math.sin(i * 12.9898) * 43758.5453) % 1
-      const ry = (Math.sin(i * 78.233) * 12543.123) % 1
-      pts.push(mapX(px + Math.abs(rx) * pw), mapY(py + Math.abs(ry) * ph), 0.02)
-    }
-    return new Float32Array(pts)
-  }, [])
-
-  // Power-spectrum bars (Phase 3): heights animate with `plots`.
-  const bars = useMemo(() => Array.from({ length: BAR_COUNT }, (_, i) => Math.sin(i * 1.5) * 0.5 + 0.5), [])
+  const photonCount = quality === 'mobile' ? 100 : quality === 'low' ? 200 : 400
+  const photonGeo = useDisposable(() => photonGeometry(photonCount, rates), [photonCount, rates])
+  const photonMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: getGlowTexture() },
+      uFall: { value: 0 },
+      uSize: { value: 40 },
+      uOpacity: { value: 1 },
+      uFallColor: { value: hdr(PALETTE.nearWhite, 1.3) },
+      uLandColor: { value: hdr(PALETTE.signal, GLOW.base) },
+      uFlashColor: { value: hdr(PALETTE.nearWhite, GLOW.hero) },
+    },
+    vertexShader: PHOTON_VERT,
+    fragmentShader: PHOTON_FRAG,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  }))
+  const lcPanelMat = useDisposable(() => createHoloMaterial(hdr(PALETTE.signal, 0.9)))
+  const leftPanelMat = useDisposable(() => createHoloMaterial(hdr(PALETTE.signal, 0.8)))
+  const rightPanelMat = useDisposable(() => createHoloMaterial(hdr(PALETTE.signal, 0.8)))
+  const heatMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uTime: { value: 0 },
+      uReveal: { value: 0 },
+      uOpacity: { value: 0 },
+      uLow: { value: hdr(PALETTE.stellarBlue, 0.3) },
+      uMid: { value: hdr(PALETTE.signal, 0.8) },
+      uHigh: { value: hdr(PALETTE.starGold, 1.3) },
+      uHot: { value: hdr(PALETTE.nearWhite, GLOW.hero) },
+    },
+    vertexShader: PLANE_VERT,
+    fragmentShader: HEAT_FRAG,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+  }))
 
   useFrame(() => {
     if (!beat.near) return
-    const lp = beat.local
-    const t = beat.clock
+    const p = beat.local
+    const t = reducedMotion ? 0 : beat.clock
 
-    // Phase windows mirror the original draw function.
-    const frame = Math.min(1, lp / 0.15)
-    const slide = Math.min(1, Math.max(0, (lp - 0.15) / 0.3))
-    const panelFade = Math.min(1, Math.max(0, (lp - 0.3) / 0.2))
-    const content = Math.min(1, Math.max(0, (lp - 0.5) / 0.5))
-    const plots = Math.min(1, Math.max(0, (lp - 0.6) / 0.4))
-
-    const root = rootRef.current
-    if (root) root.rotation.y = reducedMotion ? 0 : Math.sin(t * 0.4) * 0.04
-
-    // Phase 1: wireframes
-    for (let i = 0; i < WIRE_COUNT; i++) {
-      const wire = wireRefs.current[i]
-      if (wire) (wire.material as THREE.LineBasicMaterial).opacity = 0.35 * frame
+    // 1 · photon rain builds the light curve in arrival order (0.06 - 0.46)
+    const fall = ease(p, 0.06, 0.46) * 1.02
+    setUniform(photonsRef.current, 'uFall', fall)
+    setLineReveal(curveRef.current, ease(p, 0.18, 0.47))
+    setLineOpacity(lcAxesRef.current, ease(p, 0.1, 0.24) * 0.8)
+    const flare = flareRef.current
+    if (flare) {
+      // the flare peak catches when the curve reaches it, then rests at a glow
+      const hit = ease(p, 0.34, 0.4)
+      ;(flare.material as THREE.SpriteMaterial).opacity = hit * (0.35 + 0.65 * pulse(p, 0.34, 0.5))
     }
 
-    // Phase 2: sliding sidebar + header
-    const sidebar = sidebarRef.current
-    if (sidebar) {
-      const width = SIDEBAR_W * slide
-      sidebar.visible = slide > 0
-      sidebar.scale.set(width * SX, DASH_H * SY, 1)
-      sidebar.position.set(mapX(DASH_X + width / 2), SIDEBAR_CENTER_Y, -0.01)
-      ;(sidebar.material as THREE.MeshBasicMaterial).opacity = slide
+    // 2 · the curve lifts and folds up into the centre panel (0.44 - 0.66)
+    const fold = ease(p, 0.44, 0.66)
+    const bob = Math.sin(t * 0.45) * 0.04 * fold
+    const lc = lcGroupRef.current
+    if (lc) {
+      lc.position.lerpVectors(ASSEMBLY_POS, PANEL_POS, fold)
+      lc.position.y += bob
+      const s = ASSEMBLY_SCALE + (1 - ASSEMBLY_SCALE) * fold
+      lc.scale.set(s, s, s)
+      lc.rotation.x = -0.55 * pulse(fold, 0, 1)
     }
-    const header = headerRef.current
-    if (header) {
-      const width = (DASH_W - SIDEBAR_W) * slide
-      header.visible = slide > 0
-      header.scale.set(width * SX, HEADER_H * SY, 1)
-      header.position.set(mapX(DASH_X + SIDEBAR_W + width / 2), HEADER_CENTER_Y, -0.01)
-      ;(header.material as THREE.MeshBasicMaterial).opacity = slide
-    }
-    for (let i = 0; i < 3; i++) {
-      const panel = panelRefs.current[i]
-      if (!panel) continue
-      panel.visible = panelFade > 0
-      ;(panel.material as THREE.MeshBasicMaterial).opacity = panelFade
-    }
+    setUniform(photonsRef.current, 'uSize', 40 * (0.6 + 0.4 * (1 - fold)))
+    setUniform(photonsRef.current, 'uOpacity', 1 - 0.7 * fold)
+    setUniform(lcPanelRef.current, 'uOpacity', fold)
+    setUniform(lcPanelRef.current, 'uTime', t)
 
-    // Phase 3: content labels
-    if (contentRef.current) contentRef.current.visible = content > 0
-    for (let i = 0; i < 4; i++) {
-      const label = contentTextRefs.current[i]
-      if (label) label.fillOpacity = content
+    // 3 · the side panels hinge open from behind it (0.56 - 0.8)
+    const open = ease(p, 0.56, 0.8)
+    const leftHinge = leftHingeRef.current
+    if (leftHinge) {
+      leftHinge.visible = open > 0.001
+      leftHinge.rotation.y = SIDE_CLOSED + (SIDE_OPEN - SIDE_CLOSED) * open
+      leftHinge.position.y = PANEL_POS.y + Math.sin(t * 0.45 + 0.8) * 0.04
     }
+    const rightHinge = rightHingeRef.current
+    if (rightHinge) {
+      rightHinge.visible = open > 0.001
+      rightHinge.rotation.y = -(SIDE_CLOSED + (SIDE_OPEN - SIDE_CLOSED) * open)
+      rightHinge.position.y = PANEL_POS.y + Math.sin(t * 0.45 + 1.9) * 0.04
+    }
+    setUniform(leftPanelRef.current, 'uOpacity', open)
+    setUniform(leftPanelRef.current, 'uTime', t)
+    setUniform(rightPanelRef.current, 'uOpacity', open)
+    setUniform(rightPanelRef.current, 'uTime', t)
+    const plots = ease(p, 0.66, 0.84)
+    setLineReveal(psdRef.current, plots)
+    setLineOpacity(psdAxesRef.current, open * 0.8)
+    setLineOpacity(heatAxesRef.current, open * 0.8)
+    const qpo = qpoRef.current
+    if (qpo) (qpo.material as THREE.SpriteMaterial).opacity = ease(p, 0.76, 0.84) * (0.75 + 0.25 * Math.sin(t * 1.3))
+    setUniform(heatRef.current, 'uOpacity', open)
+    setUniform(heatRef.current, 'uReveal', plots * 1.05)
+    setUniform(heatRef.current, 'uTime', t + p * 4)
 
-    // Phase 3: plots
-    if (plotsRef.current) plotsRef.current.visible = plots > 0
-    for (let i = 0; i < 3; i++) {
-      const label = plotTextRefs.current[i]
-      if (label) label.fillOpacity = plots
-    }
-    // `<line>` collides with the SVG element type, so reach it through its wrapper group.
-    const curveLine = curveGroupRef.current?.children[0] as THREE.Line | undefined
-    if (curveLine) (curveLine.material as THREE.LineBasicMaterial).opacity = plots
-    for (let i = 0; i < BAR_COUNT; i++) {
-      const bar = barRefs.current[i]
-      if (!bar) continue
-      const h = bars[i]! * DASH_H * 0.28 * plots
-      bar.visible = h > 0
-      bar.scale.y = h * SY
-      bar.position.y = mapY(BAR_BASE_Y - h / 2)
-      ;(bar.material as THREE.MeshBasicMaterial).opacity = plots
-    }
-    const scatterPoints = scatterRef.current
-    if (scatterPoints) {
-      scatterPoints.geometry.setDrawRange(0, Math.max(0, Math.floor(SCATTER_COUNT * plots)))
-      ;(scatterPoints.material as THREE.PointsMaterial).opacity = 0.8 * plots
-    }
+    if (lcLabelRef.current) lcLabelRef.current.fillOpacity = ease(p, 0.64, 0.74) * 0.8
+    if (psdLabelRef.current) psdLabelRef.current.fillOpacity = ease(p, 0.7, 0.82) * 0.8
+    if (heatLabelRef.current) heatLabelRef.current.fillOpacity = ease(p, 0.72, 0.84) * 0.8
   })
 
   return (
-    <group ref={rootRef}>
-      {/* Phase 1: wireframe rectangles */}
-      {wires.map((pos, i) => (
-        <lineSegments key={`w${i}`} ref={(m) => { wireRefs.current[i] = m }}>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[pos, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial color="#a5b4fc" transparent opacity={0} toneMapped={false} />
-        </lineSegments>
-      ))}
-
-      {/* Phase 2: sliding sidebar + header, then fading panels */}
-      <mesh ref={sidebarRef} visible={false}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial color="#1e293b" transparent opacity={0} toneMapped={false} />
-      </mesh>
-      <mesh ref={headerRef} visible={false}>
-        <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial color="#334155" transparent opacity={0} toneMapped={false} />
-      </mesh>
-      <FixedPanel spec={MAIN_PANEL} z={-0.01} color="#334155" setRef={(m) => { panelRefs.current[0] = m }} />
-      <FixedPanel spec={BOTTOM_LEFT_PANEL} z={-0.01} color="#334155" setRef={(m) => { panelRefs.current[1] = m }} />
-      <FixedPanel spec={BOTTOM_RIGHT_PANEL} z={-0.01} color="#334155" setRef={(m) => { panelRefs.current[2] = m }} />
-
-      {/* Phase 3: content labels */}
-      <group ref={contentRef} visible={false}>
-        <Text ref={(m) => { contentTextRefs.current[0] = m }} position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.38} color="#e0e0e0" fillOpacity={0}>Stingray QL</Text>
-        <Text ref={(m) => { contentTextRefs.current[1] = m }} position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.13), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#a5b4fc" fillOpacity={0}>Obs ID: 4040130102</Text>
-        <Text ref={(m) => { contentTextRefs.current[2] = m }} position={[mapX(DASH_X + 0.02), mapY(DASH_Y + 0.2), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#a5b4fc" fillOpacity={0}>Target: Cygnus X-1</Text>
-        <Text ref={(m) => { contentTextRefs.current[3] = m }} position={[mapX(DASH_X + SIDEBAR_W + 0.02), mapY(DASH_Y + HEADER_H / 2), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={0}>Quicklook Dashboard - X-Ray Time Series</Text>
+    <group>
+      {/* Light curve: photons, the binned curve, axes and (once folded) its panel */}
+      <group ref={lcGroupRef} position={ASSEMBLY_POS} scale={ASSEMBLY_SCALE}>
+        <mesh ref={lcPanelRef} material={lcPanelMat} position={[0, 0, -0.02]}>
+          <planeGeometry args={[LC_W, LC_H]} />
+        </mesh>
+        <LightLine ref={lcAxesRef} points={lcAxes} segments color={PALETTE.nearWhite} intensity={0.5} width={0.008} opacity={0} />
+        <points ref={photonsRef} geometry={photonGeo} material={photonMat} frustumCulled={false} />
+        <LightLine ref={curveRef} points={curve} color={PALETTE.signal} intensity={1.6} width={0.014} />
+        <GlowSprite ref={flareRef} position={flarePeak} color={PALETTE.starGold} intensity={GLOW.hero} size={0.45} opacity={0} />
+        <Label ref={lcLabelRef} position={[0, LC_H / 2 + 0.2, 0]} color={PALETTE.signal} opacity={0}>Light curve</Label>
       </group>
 
-      {/* Phase 3: light curve */}
-      <group ref={plotsRef} visible={false}>
-        <Text ref={(m) => { plotTextRefs.current[0] = m }} position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + HEADER_H + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={0}>Light Curve</Text>
-        <group ref={curveGroupRef}>
-        <line>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[curve, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial color="#fde047" transparent opacity={0} toneMapped={false} />
-        </line>
-        </group>
-
-        {/* Power spectrum bars */}
-        <Text ref={(m) => { plotTextRefs.current[1] = m }} position={[mapX(DASH_X + SIDEBAR_W + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={0}>Power Spectrum</Text>
-        {bars.map((_, i) => (
-          <mesh
-            key={`b${i}`}
-            ref={(m) => { barRefs.current[i] = m }}
-            position={[mapX(DASH_X + SIDEBAR_W + 0.02 + i * BAR_SLOT + BAR_SLOT * 0.4), 0, 0.02]}
-            scale={[BAR_SLOT * 0.7 * SX, 0, 1]}
-            visible={false}
-          >
-            <planeGeometry args={[1, 1]} />
-            <meshBasicMaterial color="#4ade80" transparent opacity={0} toneMapped={false} />
+      {/* Left: power spectrum, hinged on the centre panel's left edge */}
+      <group ref={leftHingeRef} position={[PANEL_POS.x - LC_W / 2 - 0.06, PANEL_POS.y, PANEL_POS.z]} visible={false}>
+        <group position={[-SIDE_W / 2, 0, 0]}>
+          <mesh ref={leftPanelRef} material={leftPanelMat}>
+            <planeGeometry args={[SIDE_W, SIDE_H]} />
           </mesh>
-        ))}
+          <LightLine ref={psdAxesRef} points={psdAxes} segments color={PALETTE.nearWhite} intensity={0.5} width={0.008} opacity={0} />
+          <LightLine ref={psdRef} points={psd.points} color={PALETTE.signal} intensity={1.5} width={0.012} />
+          <GlowSprite ref={qpoRef} position={[psd.peak.x, psd.peak.y, 0.02]} color={PALETTE.starGold} intensity={GLOW.hero} size={0.42} opacity={0} />
+          <Label ref={psdLabelRef} position={[0, SIDE_H / 2 + 0.2, 0]} color={PALETTE.signal} opacity={0}>Power spectrum</Label>
+        </group>
+      </group>
 
-        {/* Phase-lag scatter */}
-        <Text ref={(m) => { plotTextRefs.current[2] = m }} position={[mapX(DASH_X + DASH_W * 0.62 + 0.03), mapY(DASH_Y + DASH_H * 0.6 + 0.05), 0.03]} anchorX="left" anchorY="middle" fontSize={0.3} color="#e0e0e0" fillOpacity={0}>Phase Lag</Text>
-        <points ref={scatterRef} frustumCulled={false}>
-          <bufferGeometry drawRange={{ start: 0, count: 0 }}>
-            <bufferAttribute attach="attributes-position" args={[scatter, 3]} />
-          </bufferGeometry>
-          <pointsMaterial size={0.12} color="#ef4444" transparent opacity={0} toneMapped={false} sizeAttenuation />
-        </points>
+      {/* Right: dynamical power spectrum heat strip */}
+      <group ref={rightHingeRef} position={[PANEL_POS.x + LC_W / 2 + 0.06, PANEL_POS.y, PANEL_POS.z]} visible={false}>
+        <group position={[SIDE_W / 2, 0, 0]}>
+          <mesh ref={rightPanelRef} material={rightPanelMat}>
+            <planeGeometry args={[SIDE_W, SIDE_H]} />
+          </mesh>
+          <LightLine ref={heatAxesRef} points={heatAxes} segments color={PALETTE.nearWhite} intensity={0.5} width={0.008} opacity={0} />
+          <mesh ref={heatRef} material={heatMat} position={[0, 0, 0.006]}>
+            <planeGeometry args={[2.0, 1.04]} />
+          </mesh>
+          <Label ref={heatLabelRef} position={[0, SIDE_H / 2 + 0.2, 0]} color={PALETTE.signal} opacity={0}>Dynamical spectrum</Label>
+        </group>
       </group>
     </group>
   )

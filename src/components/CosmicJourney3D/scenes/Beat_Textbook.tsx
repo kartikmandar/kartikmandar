@@ -1,250 +1,461 @@
 // src/components/CosmicJourney3D/scenes/Beat_Textbook.tsx
 'use client'
 
+// Beat 1 · The Spark: NAO (Act I, spark).
+// An open Olympiad textbook made of light lies beside a small glowing figure.
+// Its pages peel off one by one, swing up out of the book and fly into place as
+// the tiles of a star chart; as each page settles, its printed lines morph into
+// the chart's RA/Dec grid. Then constellation lines ignite outward from the
+// figure, star by star, until the sky around the child is drawn in.
+
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Text } from '@react-three/drei'
 import type { BeatSceneProps } from '../types'
-import { useBeat, type BeatHandle } from '../store'
+import { useBeat } from '../store'
+import { PALETTE, GLOW, hdr } from '../art/palette'
+import { createRimMaterial, getGlowTexture, setUniform, useDisposable } from '../art/materials'
+import { GlowSprite } from '../art/GlowSprite'
+import { LightLine, setLineOpacity, setLineReveal, type LightLineObject } from '../art/LightLine'
+import { Label } from '../art/Label'
+import { ease, ramp, seeded } from '../art/anim'
 
-// Acceptance: a textbook page fades; 2D outline planets (Saturn w/ rings,
-// Jupiter, Mars) lift off and become shaded 3D spheres as localProgress 0->1.
-// Mirrors drawPageToCosmos: pageFade = 1 - p/0.3, liftOff = p/0.6,
-// become3D = (p - 0.4) / 0.6. The page fills the inner 80% (0.1..0.9), and
-// planet normalized coords are relative to that inner box.
+// ---- Layout -----------------------------------------------------------------
 
-// Inner-page extent (the original draws planets inside the 0.1..0.9 page box).
-// Sized to fill ~9x6 of the head-on frame; the whole group is raised by
-// PAGE_Y_OFFSET so the page bottom clears the overlay floor at local Y = -1.5.
-const PAGE_W = 9.2
-const PAGE_H = 5.2
-const PAGE_Y_OFFSET = 1.2
+const PAGES = 6
+const COLS = 3
+const ROWS = 2
+/** Book page size (portrait) and chart tile size (landscape). */
+const PAGE_W = 1.1
+const PAGE_H = 1.45
+const TILE_W = 2.2
+const TILE_H = 1.8
+/** Star chart: 3 x 2 tiles centred behind the book. */
+const CHART_W = TILE_W * COLS
+const CHART_H = TILE_H * ROWS
+const CHART_X0 = -CHART_W / 2
+const CHART_Y0 = -0.05
+const CHART_Z = -2.6
 
-// id, normalized [x, y] inside the page box, world radius, color, label.
-const PLANETS = [
-  { id: 'saturn', x: 0.24, y: 0.42, r: 0.62, color: '#e3dccb', ring: true, label: 'Saturn' },
-  { id: 'jupiter', x: 0.7, y: 0.58, r: 0.95, color: '#d8bba2', ring: false, label: 'Jupiter' },
-  { id: 'mars', x: 0.82, y: 0.26, r: 0.42, color: '#d66a3e', ring: false, label: 'Mars' },
-] as const
+/** The open book lies tilted back toward the camera. */
+const BOOK_POS = new THREE.Vector3(0.75, -0.62, 0.35)
+const BOOK_TILT = -1.05
+const QBOOK = new THREE.Quaternion().setFromEuler(new THREE.Euler(BOOK_TILT, 0, 0))
+const IDENTITY = new THREE.Quaternion()
+const AXIS_Y = new THREE.Vector3(0, 1, 0)
 
-// Map a normalized page coord [0..1] into local XY (page box centered at origin).
-const pagePos = (nx: number, ny: number): [number, number] => [
-  (nx - 0.5) * PAGE_W,
-  (0.5 - ny) * PAGE_H,
+/** The child: a small figure standing beside the book, looking up. */
+const FIGURE = new THREE.Vector3(-0.95, -0.86, 0.55)
+/** Where the figure's head lands on the chart plane (chart-normalised), the ignition origin. */
+const IGNITE_ORIGIN = new THREE.Vector2(0.3, -0.2)
+
+/** Each page's peel start (p). Top page first. */
+const peelStart = (i: number) => 0.15 + i * 0.045
+
+// ---- Constellations (chart-normalised coordinates) ------------------------------
+
+type Pt = readonly [number, number]
+const CONSTELLATIONS: ReadonlyArray<ReadonlyArray<readonly [Pt, Pt]>> = [
+  // Orion
+  [
+    [[0.62, 0.68], [0.74, 0.66]], [[0.62, 0.68], [0.66, 0.5]], [[0.74, 0.66], [0.7, 0.46]],
+    [[0.66, 0.5], [0.68, 0.48]], [[0.68, 0.48], [0.7, 0.46]], [[0.66, 0.5], [0.63, 0.3]], [[0.7, 0.46], [0.76, 0.32]],
+  ],
+  // Cassiopeia
+  [[[0.1, 0.82], [0.16, 0.9]], [[0.16, 0.9], [0.22, 0.8]], [[0.22, 0.8], [0.28, 0.88]], [[0.28, 0.88], [0.34, 0.8]]],
+  // The Plough
+  [
+    [[0.7, 0.92], [0.76, 0.9]], [[0.76, 0.9], [0.82, 0.86]], [[0.82, 0.86], [0.88, 0.8]],
+    [[0.88, 0.8], [0.96, 0.82]], [[0.96, 0.82], [0.95, 0.72]], [[0.95, 0.72], [0.88, 0.7]], [[0.88, 0.7], [0.88, 0.8]],
+  ],
+  // Leo
+  [
+    [[0.18, 0.52], [0.22, 0.57]], [[0.22, 0.57], [0.27, 0.55]], [[0.27, 0.55], [0.28, 0.46]],
+    [[0.28, 0.46], [0.24, 0.4]], [[0.28, 0.46], [0.38, 0.44]], [[0.38, 0.44], [0.42, 0.36]], [[0.42, 0.36], [0.24, 0.4]],
+  ],
+  // Cygnus: a quiet nod to the black hole that comes much later.
+  [[[0.5, 0.86], [0.5, 0.74]], [[0.5, 0.74], [0.5, 0.6]], [[0.43, 0.76], [0.5, 0.74]], [[0.5, 0.74], [0.57, 0.72]]],
 ]
+const CYGNUS_LABEL: Pt = [0.5, 0.56]
 
-// Build XY segment pairs for a closed outline circle (for <lineSegments>).
-const circleSegments = (radius: number, seg = 48): Float32Array => {
-  const arr = new Float32Array(seg * 6)
-  for (let i = 0; i < seg; i++) {
-    const a0 = (i / seg) * Math.PI * 2
-    const a1 = ((i + 1) / seg) * Math.PI * 2
-    arr[i * 6] = Math.cos(a0) * radius
-    arr[i * 6 + 1] = Math.sin(a0) * radius
-    arr[i * 6 + 2] = 0
-    arr[i * 6 + 3] = Math.cos(a1) * radius
-    arr[i * 6 + 4] = Math.sin(a1) * radius
-    arr[i * 6 + 5] = 0
+const chartWorld = (u: number, v: number, out: THREE.Vector3) =>
+  out.set(CHART_X0 + u * CHART_W, CHART_Y0 + v * CHART_H, CHART_Z + 0.03)
+
+interface ChartStars {
+  linePoints: THREE.Vector3[]
+  nodes: Float32Array
+  nodeDelay: Float32Array
+}
+
+/** Sorts every constellation segment by distance from the figure, so the reveal ignites outward. */
+function buildConstellations(): ChartStars {
+  const segs: Array<{ a: Pt; b: Pt; d: number }> = []
+  for (const c of CONSTELLATIONS) {
+    for (const [a, b] of c) {
+      const mx = (a[0] + b[0]) / 2 - IGNITE_ORIGIN.x
+      const my = (a[1] + b[1]) / 2 - IGNITE_ORIGIN.y
+      segs.push({ a, b, d: Math.hypot(mx, my) })
+    }
   }
-  return arr
-}
-
-type TroikaText = THREE.Mesh & { fillOpacity: number }
-
-// Fixed page border (module-level: never rebuilt).
-const PAGE_BORDER = new Float32Array([
-  -PAGE_W / 2, -PAGE_H / 2, 0, PAGE_W / 2, -PAGE_H / 2, 0,
-  PAGE_W / 2, -PAGE_H / 2, 0, PAGE_W / 2, PAGE_H / 2, 0,
-  PAGE_W / 2, PAGE_H / 2, 0, -PAGE_W / 2, PAGE_H / 2, 0,
-  -PAGE_W / 2, PAGE_H / 2, 0, -PAGE_W / 2, -PAGE_H / 2, 0,
-])
-
-interface PlanetProps {
-  planetIndex: number
-  beat: BeatHandle
-  reducedMotion: boolean
-  outline: { body: Float32Array; ring: Float32Array | null }
-}
-
-function Planet({ planetIndex, beat, reducedMotion, outline }: PlanetProps) {
-  const p = PLANETS[planetIndex]!
-  const [bx, by] = pagePos(p.x, p.y)
-
-  const groupRef = useRef<THREE.Group>(null)
-  const shadowRef = useRef<THREE.Mesh>(null)
-  const shadowMatRef = useRef<THREE.MeshBasicMaterial>(null)
-  const bodyOutlineRef = useRef<THREE.LineSegments>(null)
-  const bodyOutlineMatRef = useRef<THREE.LineBasicMaterial>(null)
-  const ringOutlineRef = useRef<THREE.LineSegments>(null)
-  const ringOutlineMatRef = useRef<THREE.LineBasicMaterial>(null)
-  const sphereRef = useRef<THREE.Mesh>(null)
-  const sphereMatRef = useRef<THREE.MeshBasicMaterial>(null)
-  const ringRef = useRef<THREE.Mesh>(null)
-  const ringMatRef = useRef<THREE.MeshBasicMaterial>(null)
-  const labelRef = useRef<TroikaText>(null)
-
-  useFrame(() => {
-    if (!beat.near) return
-    const local = beat.local
-    const liftOff = Math.min(1, local / 0.6)
-    const become3D = Math.max(0, (local - 0.4) / 0.6)
-    const spin = (reducedMotion ? 0 : beat.clock) * (0.15 + planetIndex * 0.05)
-    // liftOff raises planets toward the top (original: liftY = -liftOff * baseY * 0.5).
-    const lift = liftOff * (PAGE_H / 2 - by) * 0.5
-
-    if (groupRef.current) groupRef.current.position.y = by + lift
-
-    const shadow = shadowRef.current
-    if (shadow) {
-      shadow.visible = liftOff < 1
-      shadow.position.y = -lift - 0.15
-      shadow.scale.set(1 - liftOff, 0.3 * (1 - liftOff), 1)
-      if (shadowMatRef.current) shadowMatRef.current.opacity = 0.2 * (1 - liftOff)
-    }
-
-    const outlineVisible = become3D < 1
-    if (bodyOutlineRef.current) bodyOutlineRef.current.visible = outlineVisible
-    if (bodyOutlineMatRef.current) bodyOutlineMatRef.current.opacity = 1 - become3D
-    if (ringOutlineRef.current) ringOutlineRef.current.visible = outlineVisible
-    if (ringOutlineMatRef.current) ringOutlineMatRef.current.opacity = 1 - become3D
-
-    const solid = become3D > 0
-    if (sphereRef.current) {
-      sphereRef.current.visible = solid
-      sphereRef.current.rotation.y = spin
-    }
-    if (sphereMatRef.current) sphereMatRef.current.opacity = become3D
-    if (ringRef.current) ringRef.current.visible = solid
-    if (ringMatRef.current) ringMatRef.current.opacity = become3D * 0.6
-    if (labelRef.current) {
-      labelRef.current.visible = solid
-      labelRef.current.fillOpacity = become3D
+  segs.sort((s, t) => s.d - t.d)
+  const linePoints: THREE.Vector3[] = []
+  const delays = new Map<string, { pt: Pt; delay: number }>()
+  segs.forEach((s, i) => {
+    linePoints.push(chartWorld(s.a[0], s.a[1], new THREE.Vector3()), chartWorld(s.b[0], s.b[1], new THREE.Vector3()))
+    const f = i / segs.length
+    for (const pt of [s.a, s.b]) {
+      const key = `${pt[0]},${pt[1]}`
+      const prev = delays.get(key)
+      if (!prev || f < prev.delay) delays.set(key, { pt, delay: f })
     }
   })
-
-  return (
-    <group ref={groupRef} position={[bx, by, 0]}>
-      {/* Drop shadow on the page while still 2D (flattens + fades as it lifts). */}
-      <mesh ref={shadowRef} position={[0, -0.15, -0.49]} scale={[1, 0.3, 1]}>
-        <ringGeometry args={[0, p.r, 24]} />
-        <meshBasicMaterial ref={shadowMatRef} color="#000000" transparent opacity={0.2} toneMapped={false} />
-      </mesh>
-
-      {/* Outline circle (2D), fades out as it becomes 3D. */}
-      <lineSegments ref={bodyOutlineRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[outline.body, 3]} />
-        </bufferGeometry>
-        <lineBasicMaterial ref={bodyOutlineMatRef} color="#333333" transparent opacity={1} toneMapped={false} />
-      </lineSegments>
-
-      {/* Saturn outline ring (oval) before it becomes 3D. */}
-      {p.ring && outline.ring && (
-        <lineSegments ref={ringOutlineRef} rotation={[0, 0, -0.3]} scale={[p.r * 1.5, p.r * 0.5, 1]}>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[outline.ring, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial ref={ringOutlineMatRef} color="#333333" transparent opacity={1} toneMapped={false} />
-        </lineSegments>
-      )}
-
-      {/* Shaded 3D sphere, fades in as become3D rises. */}
-      <mesh ref={sphereRef} rotation={[0.2, 0, 0]} visible={false}>
-        <sphereGeometry args={[p.r, 32, 32]} />
-        <meshBasicMaterial ref={sphereMatRef} color={p.color} transparent opacity={0} toneMapped={false} />
-      </mesh>
-
-      {/* Saturn's filled ring once 3D. */}
-      {p.ring && (
-        <mesh ref={ringRef} rotation={[Math.PI / 2 - 0.45, 0, -0.3]} visible={false}>
-          <ringGeometry args={[p.r * 1.25, p.r * 1.9, 48]} />
-          <meshBasicMaterial
-            ref={ringMatRef}
-            color={p.color}
-            transparent
-            opacity={0}
-            side={THREE.DoubleSide}
-            toneMapped={false}
-          />
-        </mesh>
-      )}
-
-      {/* Name label beside each planet, fading in with the 3D body. */}
-      <Text
-        ref={labelRef}
-        visible={false}
-        position={[p.r + 0.25, p.r + 0.18, 0.1]}
-        fontSize={0.34}
-        color="#cfd6e6"
-        anchorX="left"
-        anchorY="middle"
-        fillOpacity={0}
-        outlineWidth={0.012}
-        outlineColor="#05070f"
-      >
-        {p.label}
-      </Text>
-    </group>
-  )
+  const entries = [...delays.values()]
+  const nodes = new Float32Array(entries.length * 3)
+  const nodeDelay = new Float32Array(entries.length)
+  const v = new THREE.Vector3()
+  entries.forEach((e, i) => {
+    chartWorld(e.pt[0], e.pt[1], v)
+    nodes[i * 3] = v.x
+    nodes[i * 3 + 1] = v.y
+    nodes[i * 3 + 2] = v.z + 0.01
+    nodeDelay[i] = e.delay
+  })
+  return { linePoints, nodes, nodeDelay }
 }
 
-export default function Beat_Textbook({ index, reducedMotion }: BeatSceneProps) {
+/** Open-book outline in book-local space (pages in XY, normal +Z, spine on Y). */
+function bookOutline(): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = []
+  const seg = (ax: number, ay: number, az: number, bx: number, by: number, bz: number) =>
+    pts.push(new THREE.Vector3(ax, ay, az), new THREE.Vector3(bx, by, bz))
+  const h = PAGE_H / 2
+  // left page (already read) and right page block
+  seg(-PAGE_W, -h, 0, 0, -h, 0)
+  seg(-PAGE_W, h, 0, 0, h, 0)
+  seg(-PAGE_W, -h, 0, -PAGE_W, h, 0)
+  seg(PAGE_W, -h, 0, PAGE_W, h, 0)
+  seg(0, -h, 0, PAGE_W, -h, 0)
+  seg(0, h, 0, PAGE_W, h, 0)
+  // spine
+  seg(0, -h - 0.04, -0.02, 0, h + 0.04, -0.02)
+  // page-block thickness under the right page
+  seg(PAGE_W, -h, 0, PAGE_W, -h, -0.06)
+  seg(PAGE_W, h, 0, PAGE_W, h, -0.06)
+  seg(PAGE_W, -h, -0.06, PAGE_W, h, -0.06)
+  // a few printed lines on the left page
+  for (let k = 0; k < 6; k++) {
+    const y = h - 0.3 - k * 0.17
+    const len = 0.45 + 0.4 * seeded(k, 11)
+    seg(-PAGE_W + 0.14, y, 0.002, -PAGE_W + 0.14 + len * (PAGE_W - 0.28), y, 0.002)
+  }
+  return pts
+}
+
+// ---- Shaders -------------------------------------------------------------------
+
+// Page sheets (instanced): book text and a diagram when in the book, the star
+// chart's grid (in chart space, continuous across tiles) once a page has landed.
+const PAGE_VERT = /* glsl */ `
+  attribute vec2 aTile;
+  attribute float aDelay;
+  uniform float uP;
+  varying vec2 vUv;
+  varying vec2 vChart;
+  varying float vMorph;
+  varying float vSeed;
+  void main() {
+    vUv = uv;
+    vChart = (aTile + uv) / vec2(${COLS}.0, ${ROWS}.0);
+    vMorph = smoothstep(aDelay, aDelay + 0.08, uP);
+    vSeed = aTile.x * 7.0 + aTile.y * 3.0;
+    vec4 local = vec4(position, 1.0);
+    #ifdef USE_INSTANCING
+      local = instanceMatrix * local;
+    #endif
+    gl_Position = projectionMatrix * modelViewMatrix * local;
+  }
+`
+
+const PAGE_FRAG = /* glsl */ `
+  uniform vec3 uColor;
+  uniform vec3 uGrid;
+  uniform float uTime;
+  uniform float uOpacity;
+  varying vec2 vUv;
+  varying vec2 vChart;
+  varying float vMorph;
+  varying float vSeed;
+  float h11(float n) { return fract(sin(n * 91.345) * 43758.5453); }
+  float gridLine(float v, float spacing) {
+    float g = abs(fract(v / spacing - 0.5) - 0.5) * spacing;
+    return 1.0 - smoothstep(0.0, fwidth(v) * 1.3, g);
+  }
+  void main() {
+    vec2 e = min(vUv, 1.0 - vUv);
+    float edge = 1.0 - smoothstep(0.0, 0.014, min(e.x, e.y));
+
+    // Book: printed lines in the lower half, a planet diagram up top.
+    float row = vUv.y * 18.0;
+    float ri = floor(row);
+    float len = 0.35 + 0.55 * h11(ri + vSeed * 13.0);
+    float text = (1.0 - smoothstep(0.06, 0.13, abs(fract(row) - 0.5)))
+      * step(0.12, vUv.x) * step(vUv.x, 0.12 + 0.76 * len)
+      * step(0.08, vUv.y) * step(vUv.y, 0.56);
+    vec2 c = (vUv - vec2(0.5, 0.76)) * vec2(1.0, 1.32);
+    float rc = length(c);
+    float diagram = exp(-pow((rc - 0.11) / 0.008, 2.0)) + 0.6 * exp(-pow((length(c * vec2(1.0, 3.2)) - 0.2) / 0.008, 2.0));
+    float book = text * 0.45 + diagram * 0.8;
+
+    // Chart: RA meridians + Dec parallels, and the ecliptic as a dashed curve.
+    vec2 cp = vChart * vec2(12.0, 6.0);
+    float grid = max(gridLine(cp.x, 1.0), gridLine(cp.y, 1.0));
+    float ecl = 0.5 + 0.2 * sin(vChart.x * 6.2832 + 0.6);
+    float eclLine = (1.0 - smoothstep(0.0, fwidth(vChart.y) * 1.6, abs(vChart.y - ecl)))
+      * step(0.5, fract(vChart.x * 40.0));
+
+    float scan = 0.5 + 0.5 * sin(vUv.y * 140.0 - uTime * 2.0);
+    vec3 col = uColor * (edge * mix(1.0, 0.22, vMorph) + book * (1.0 - vMorph) + (0.04 + 0.025 * scan) * (1.0 - 0.6 * vMorph));
+    col += uGrid * (grid * 0.55 + eclLine * 1.1) * vMorph;
+    gl_FragColor = vec4(col * uOpacity, 1.0);
+  }
+`
+
+const STAR_VERT = /* glsl */ `
+  attribute float aDelay;
+  attribute float aSeed;
+  uniform float uIgnite;
+  uniform float uTime;
+  uniform float uSize;
+  varying float vLit;
+  varying float vTwinkle;
+  void main() {
+    vLit = smoothstep(aDelay, aDelay + 0.08, uIgnite);
+    vTwinkle = 0.75 + 0.25 * sin(uTime * (0.8 + aSeed * 1.7) + aSeed * 40.0);
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = uSize * (0.55 + 0.9 * aSeed) * (1.0 + 0.6 * vLit) / -mv.z;
+    gl_Position = projectionMatrix * mv;
+  }
+`
+
+const STAR_FRAG = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform vec3 uColor;
+  uniform float uBase;
+  uniform float uOpacity;
+  varying float vLit;
+  varying float vTwinkle;
+  void main() {
+    float a = texture2D(uMap, gl_PointCoord).a;
+    gl_FragColor = vec4(uColor * a * (uBase + vLit) * vTwinkle * uOpacity, 1.0);
+  }
+`
+
+function starMaterial(color: THREE.Color, size: number, base: number): THREE.ShaderMaterial {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: getGlowTexture() },
+      uColor: { value: color },
+      uIgnite: { value: 0 },
+      uTime: { value: 0 },
+      uSize: { value: size },
+      uBase: { value: base },
+      uOpacity: { value: 0 },
+    },
+    vertexShader: STAR_VERT,
+    fragmentShader: STAR_FRAG,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: false,
+  })
+}
+
+// ---- Scratch (no allocation in useFrame) -------------------------------------------
+
+const _peel = new THREE.Vector3()
+const _tile = new THREE.Vector3()
+const _q = new THREE.Quaternion()
+const _obj = new THREE.Object3D()
+
+type Fadeable = THREE.Mesh & { fillOpacity: number }
+
+export default function Beat_Textbook({ index, quality, reducedMotion }: BeatSceneProps) {
   const beat = useBeat(index)
-  const pageGroupRef = useRef<THREE.Group>(null)
-  const pageMatRef = useRef<THREE.MeshBasicMaterial>(null)
-  const pageLineMatRef = useRef<THREE.LineBasicMaterial>(null)
-  const pageTitleRef = useRef<TroikaText>(null)
+  const pagesRef = useRef<THREE.InstancedMesh>(null)
+  const bookRef = useRef<LightLineObject>(null)
+  const linesRef = useRef<LightLineObject>(null)
+  const nodesRef = useRef<THREE.Points>(null)
+  const fieldRef = useRef<THREE.Points>(null)
+  const figureGlowRef = useRef<THREE.Sprite>(null)
+  const figureRef = useRef<THREE.Group>(null)
+  const labelRef = useRef<Fadeable>(null)
 
-  // Pre-compute outline geometry per planet (radius + optional saturn ring oval).
-  const outlines = useMemo(
-    () =>
-      PLANETS.map((p) => ({
-        body: circleSegments(p.r),
-        ring: p.ring ? circleSegments(1) : null,
-      })),
-    [],
-  )
+  const stars = useMemo(() => buildConstellations(), [])
+  const book = useMemo(() => bookOutline(), [])
+  const labelPos = useMemo<[number, number, number]>(() => {
+    const v = chartWorld(CYGNUS_LABEL[0], CYGNUS_LABEL[1], new THREE.Vector3())
+    return [v.x, v.y - 0.12, v.z + 0.05]
+  }, [])
+
+  // One instanced quad per page; per-instance chart tile and morph delay.
+  const pageGeo = useDisposable(() => {
+    const g = new THREE.PlaneGeometry(1, 1)
+    const tile = new Float32Array(PAGES * 2)
+    const delay = new Float32Array(PAGES)
+    for (let i = 0; i < PAGES; i++) {
+      tile[i * 2] = i % COLS
+      tile[i * 2 + 1] = ROWS - 1 - Math.floor(i / COLS)
+      delay[i] = peelStart(i) + 0.17
+    }
+    g.setAttribute('aTile', new THREE.InstancedBufferAttribute(tile, 2))
+    g.setAttribute('aDelay', new THREE.InstancedBufferAttribute(delay, 1))
+    return g
+  })
+  const pageMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uColor: { value: hdr(PALETTE.stellarBlue, GLOW.base) },
+      uGrid: { value: hdr(PALETTE.stellarBlue, 0.32) },
+      uTime: { value: 0 },
+      uP: { value: 0 },
+      uOpacity: { value: 0 },
+    },
+    vertexShader: PAGE_VERT,
+    fragmentShader: PAGE_FRAG,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide,
+    fog: false,
+  }))
+
+  const nodeGeo = useDisposable(() => {
+    const g = new THREE.BufferGeometry()
+    const n = stars.nodeDelay.length
+    const seed = new Float32Array(n)
+    for (let i = 0; i < n; i++) seed[i] = 0.6 + 0.4 * seeded(i, 3)
+    g.setAttribute('position', new THREE.BufferAttribute(stars.nodes, 3))
+    g.setAttribute('aDelay', new THREE.BufferAttribute(stars.nodeDelay, 1))
+    g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1))
+    return g
+  }, [stars])
+  const nodeMat = useDisposable(() => starMaterial(hdr(PALETTE.nearWhite, GLOW.hero), 64, 0.18))
+
+  // Background chart stars, printed faintly on the chart.
+  const fieldCount = quality === 'mobile' ? 90 : quality === 'low' ? 170 : 340
+  const fieldGeo = useDisposable(() => {
+    const pos = new Float32Array(fieldCount * 3)
+    const delay = new Float32Array(fieldCount)
+    const seed = new Float32Array(fieldCount)
+    const v = new THREE.Vector3()
+    for (let i = 0; i < fieldCount; i++) {
+      chartWorld(seeded(i, 1), seeded(i, 2), v)
+      pos[i * 3] = v.x
+      pos[i * 3 + 1] = v.y
+      pos[i * 3 + 2] = v.z - 0.01
+      delay[i] = 2 // never "ignites": stays at its base level
+      seed[i] = Math.pow(seeded(i, 4), 2.2)
+    }
+    const g = new THREE.BufferGeometry()
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+    g.setAttribute('aDelay', new THREE.BufferAttribute(delay, 1))
+    g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1))
+    return g
+  }, [fieldCount])
+  const fieldMat = useDisposable(() => starMaterial(hdr(PALETTE.stellarBlue, 1.0), 30, 0.55))
+
+  const figureMat = useDisposable(() => createRimMaterial({
+    base: hdr(PALETTE.stellarBlue, 0.12),
+    rim: hdr(PALETTE.nearWhite, GLOW.hero),
+    power: 1.8,
+  }))
 
   useFrame(() => {
     if (!beat.near) return
-    const pageFade = Math.max(0, 1 - beat.local / 0.3)
-    if (pageGroupRef.current) pageGroupRef.current.visible = pageFade > 0
-    if (pageMatRef.current) pageMatRef.current.opacity = pageFade
-    if (pageLineMatRef.current) pageLineMatRef.current.opacity = pageFade
-    if (pageTitleRef.current) pageTitleRef.current.fillOpacity = pageFade
+    const p = beat.local
+    const t = reducedMotion ? 0 : beat.clock
+
+    const appear = ease(p, 0.0, 0.14)
+    setLineOpacity(bookRef.current, appear * 0.9)
+
+    // 1 · pages peel off the book and fly up into the chart
+    const pages = pagesRef.current
+    if (pages) {
+      setUniform(pages, 'uP', p)
+      setUniform(pages, 'uTime', t)
+      setUniform(pages, 'uOpacity', appear)
+      for (let i = 0; i < PAGES; i++) {
+        const s = peelStart(i)
+        const flip = ease(p, s, s + 0.1)
+        const fly = ease(p, s + 0.05, s + 0.22)
+        const theta = flip * 0.62 * Math.PI
+        // hinge on the spine (book-local Y), lifting out of the page toward +Z
+        _peel.set((PAGE_W / 2) * Math.cos(theta), 0, (PAGE_W / 2) * Math.sin(theta) + (PAGES - i) * 0.005)
+          .applyQuaternion(QBOOK).add(BOOK_POS)
+        _q.setFromAxisAngle(AXIS_Y, -theta).premultiply(QBOOK)
+        const col = i % COLS
+        const row = Math.floor(i / COLS)
+        _tile.set(CHART_X0 + (col + 0.5) * TILE_W, CHART_Y0 + (ROWS - 1 - row + 0.5) * TILE_H, CHART_Z)
+        _obj.position.lerpVectors(_peel, _tile, fly)
+        _obj.position.y += Math.sin(Math.PI * fly) * 0.55
+        _obj.quaternion.slerpQuaternions(_q, IDENTITY, fly)
+        _obj.scale.set(PAGE_W + (TILE_W - PAGE_W) * fly, PAGE_H + (TILE_H - PAGE_H) * fly, 1)
+        _obj.updateMatrix()
+        pages.setMatrixAt(i, _obj.matrix)
+      }
+      pages.instanceMatrix.needsUpdate = true
+    }
+
+    // 2 · the chart's stars, then constellations igniting outward from the figure
+    const chart = ease(p, 0.36, 0.56)
+    const ignite = ease(p, 0.48, 0.76)
+    setUniform(fieldRef.current, 'uOpacity', chart)
+    setUniform(fieldRef.current, 'uTime', t)
+    setUniform(nodesRef.current, 'uOpacity', chart)
+    setUniform(nodesRef.current, 'uIgnite', ignite)
+    setUniform(nodesRef.current, 'uTime', t)
+    setLineReveal(linesRef.current, ignite)
+
+    // 3 · the child: present from the start, glowing brighter as the sky lights up
+    const glow = figureGlowRef.current
+    if (glow) {
+      const breathe = 0.92 + 0.08 * Math.sin(t * 1.4)
+      ;(glow.material as THREE.SpriteMaterial).opacity = appear * (0.45 + 0.55 * ignite) * breathe
+      const s = 1.0 + 0.5 * ignite + 0.15 * ease(p, 0.85, 1)
+      glow.scale.set(s, s, 1)
+    }
+    const figure = figureRef.current
+    if (figure) figure.rotation.x = -0.12 * ramp(p, 0.3, 0.6)
+
+    if (labelRef.current) labelRef.current.fillOpacity = ease(p, 0.7, 0.8) * 0.7
   })
 
   return (
-    <group position={[0, PAGE_Y_OFFSET, 0]}>
-      {/* Fading textbook page */}
-      <group ref={pageGroupRef} position={[0, 0, -0.5]}>
-        <mesh>
-          <planeGeometry args={[PAGE_W, PAGE_H]} />
-          <meshBasicMaterial ref={pageMatRef} color="#f0f0f0" transparent opacity={1} toneMapped={false} />
-        </mesh>
-        <lineSegments>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[PAGE_BORDER, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial ref={pageLineMatRef} color="#c8c8c8" transparent opacity={1} toneMapped={false} />
-        </lineSegments>
-        <Text
-          ref={pageTitleRef}
-          position={[0, PAGE_H / 2 - 0.55, 0.01]}
-          fontSize={0.5}
-          color="#555"
-          anchorX="center"
-          anchorY="middle"
-          fillOpacity={1}
-        >
-          The Solar System
-        </Text>
+    <group>
+      {/* The open textbook */}
+      <group position={BOOK_POS} rotation={[BOOK_TILT, 0, 0]}>
+        <LightLine ref={bookRef} points={book} segments color={PALETTE.stellarBlue} intensity={GLOW.base} width={0.012} opacity={0} />
       </group>
 
-      {PLANETS.map((p, i) => (
-        <Planet key={p.id} planetIndex={i} beat={beat} reducedMotion={reducedMotion} outline={outlines[i]!} />
-      ))}
+      {/* Pages of light: book sheets that become the star chart's tiles */}
+      <instancedMesh ref={pagesRef} args={[pageGeo, pageMat, PAGES]} frustumCulled={false} />
+
+      {/* Chart stars and the constellations */}
+      <points ref={fieldRef} geometry={fieldGeo} material={fieldMat} frustumCulled={false} />
+      <LightLine ref={linesRef} points={stars.linePoints} segments color={PALETTE.stellarBlue} intensity={1.7} width={0.016} />
+      <points ref={nodesRef} geometry={nodeGeo} material={nodeMat} frustumCulled={false} />
+
+      {/* The small glowing figure */}
+      <group ref={figureRef} position={FIGURE}>
+        <mesh position={[0, 0.25, 0]} material={figureMat}>
+          <capsuleGeometry args={[0.085, 0.26, 6, 16]} />
+        </mesh>
+        <mesh position={[0, 0.56, 0]} material={figureMat}>
+          <sphereGeometry args={[0.08, 24, 24]} />
+        </mesh>
+      </group>
+      <GlowSprite ref={figureGlowRef} position={[FIGURE.x, FIGURE.y + 0.42, FIGURE.z]} color={PALETTE.stellarBlue} intensity={GLOW.hero} size={1} opacity={0} />
+
+      <Label ref={labelRef} position={labelPos} color={PALETTE.stellarBlue} opacity={0}>Cygnus</Label>
     </group>
   )
 }

@@ -67,7 +67,9 @@ const DISK_FRAG = /* glsl */ `
     float theta = atan(vXY.y, vXY.x);
     lum *= 0.75 + 0.45 * (0.5 + 0.5 * sin(theta + 0.6));
     // hot inner rim + soft inner falloff
-    float rim = exp(-pow((r - uInner) / (0.045 + 0.04 * uInner), 2.0));
+    // squares written out: pow() is undefined for a negative base on some GPUs
+    float rd = (r - uInner) / (0.045 + 0.04 * uInner);
+    float rim = exp(-rd * rd);
     lum += rim * 1.4;
     float inner = smoothstep(uInner * 0.92, uInner * 1.04, r);
     float outer = 1.0 - smoothstep(uOuter * 0.62, uOuter, r);
@@ -81,7 +83,9 @@ const RING_FRAG = /* glsl */ `
   varying vec2 vUv;
   void main() {
     float r = length(vUv - 0.5) * 2.0;
-    float ring = exp(-pow((r - 0.62) / 0.05, 2.0)) + 0.35 * exp(-pow((r - 0.62) / 0.16, 2.0));
+    float a = (r - 0.62) / 0.05;
+    float b = (r - 0.62) / 0.16;
+    float ring = exp(-a * a) + 0.35 * exp(-b * b);
     gl_FragColor = vec4(uColor * ring * uOpacity, 1.0);
   }
 `

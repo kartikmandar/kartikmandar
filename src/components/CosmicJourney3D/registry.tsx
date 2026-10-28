@@ -1,32 +1,51 @@
 // src/components/CosmicJourney3D/registry.tsx
 import type React from 'react'
-import { NARRATIVE } from './narrative'
+import { NARRATIVE, type Act, type EvidenceLink } from './narrative'
 import { BEATS_META } from './beatsMeta'
 import type { BeatMeta, BeatSceneProps } from './types'
 import UnbuiltBeatMarker from './scenes/UnbuiltBeatMarker'
+// Act I
 import Beat_Textbook from './scenes/Beat_Textbook'
 import Beat_Comet from './scenes/Beat_Comet'
-import Beat_FocusLens from './scenes/Beat_FocusLens'
-import Beat_Constellation from './scenes/Beat_Constellation'
+import Beat_Trajectory from './scenes/Beat_Trajectory'
+import Beat_Eclipse from './scenes/Beat_Eclipse'
 import Beat_Search from './scenes/Beat_Search'
-import Beat_Network from './scenes/Beat_Network'
-import Beat_Compass from './scenes/Beat_Compass'
+// Act II
+import Beat_CodeOrbits from './scenes/Beat_CodeOrbits'
+import Beat_TidalLock from './scenes/Beat_TidalLock'
 import Beat_Slingshot from './scenes/Beat_Slingshot'
-import Beat_MajorLens from './scenes/Beat_MajorLens'
+import Beat_ThreeSuns from './scenes/Beat_ThreeSuns'
 import Beat_DualPaths from './scenes/Beat_DualPaths'
+import Beat_SmashToCoach from './scenes/Beat_SmashToCoach'
+// Act III
+import Beat_HeraArray from './scenes/Beat_HeraArray'
 import Beat_Dashboard from './scenes/Beat_Dashboard'
 import Beat_MidnightOil from './scenes/Beat_MidnightOil'
-import Beat_ExitFork from './scenes/Beat_ExitFork'
+import Beat_JournalClub from './scenes/Beat_JournalClub'
+import Beat_LoneTrajectory from './scenes/Beat_LoneTrajectory'
 import Beat_Lensing from './scenes/Beat_Lensing'
-import Beat_PaperPlane from './scenes/Beat_PaperPlane'
-import Beat_Workbench from './scenes/Beat_Workbench'
-import Beat_Walker from './scenes/Beat_Walker'
-import Beat_HeraArray from './scenes/Beat_HeraArray'
+import Beat_Nufft from './scenes/Beat_Nufft'
 import Beat_CygnusX1 from './scenes/Beat_CygnusX1'
-import Beat_SmashToCoach from './scenes/Beat_SmashToCoach'
+// Act IV
+import Beat_JonesChain from './scenes/Beat_JonesChain'
+import Beat_Upstream from './scenes/Beat_Upstream'
+import Beat_Instruments from './scenes/Beat_Instruments'
+import Beat_Reflection from './scenes/Beat_Reflection'
+import Beat_Revival from './scenes/Beat_Revival'
+import Beat_Reconcile from './scenes/Beat_Reconcile'
+import Beat_HonestRoad from './scenes/Beat_HonestRoad'
+import Beat_RunTrekShip from './scenes/Beat_RunTrekShip'
+// Act V
+import Beat_Portal from './scenes/Beat_Portal'
+import Beat_Etna from './scenes/Beat_Etna'
+import Beat_EorWedge from './scenes/Beat_EorWedge'
+import Beat_Finale from './scenes/Beat_Finale'
 
 export interface Beat {
   id: string
+  act: Act
+  hud: string
+  evidence?: EvidenceLink
   eyebrow?: string
   headline: string
   body?: string
@@ -35,30 +54,41 @@ export interface Beat {
   Scene: React.FC<BeatSceneProps>
 }
 
-// Every scene is on the beat API (useBeat refs, no per-frame re-render). Beats
-// without a built scene fly as an UnbuiltBeatMarker until Phase 4 builds them.
+// Every beat has a scene in the made-of-light idiom (useBeat refs, no per-frame
+// re-render). UnbuiltBeatMarker remains only as a safety fallback.
 // The origin black hole is mounted separately (scenes/OriginBlackHole.tsx).
 const SCENES: Record<string, React.FC<BeatSceneProps>> = {
   'nao-section': Beat_Textbook,
   'comet-section': Beat_Comet,
-  'decision-section': Beat_FocusLens,
-  'constellation-section': Beat_Constellation,
+  'decision-section': Beat_Trajectory,
+  'constellation-section': Beat_Eclipse,
   'search-section-wrapper': Beat_Search,
-  'new-system-section': Beat_Network,
-  'fixation-section': Beat_Compass,
+  'new-system-section': Beat_CodeOrbits,
+  'fixation-section': Beat_TidalLock,
   'slingshot-section': Beat_Slingshot,
-  'lens-section': Beat_MajorLens,
+  'lens-section': Beat_ThreeSuns,
   'internship-section': Beat_DualPaths,
   'injury-section': Beat_SmashToCoach,
   'rri-research-section': Beat_HeraArray,
   'gsoc-section': Beat_Dashboard,
   'doubling-down-section': Beat_MidnightOil,
-  'bs-exit-section': Beat_ExitFork,
+  'journal-club-section': Beat_JournalClub,
+  'bs-exit-section': Beat_LoneTrajectory,
   'lensing-section': Beat_Lensing,
-  'publication-section': Beat_PaperPlane,
+  'publication-section': Beat_Nufft,
   'cygnus-publication-section': Beat_CygnusX1,
-  'analysis-section': Beat_Workbench,
-  'journey-continues-section': Beat_Walker,
+  'radiosim-section': Beat_JonesChain,
+  'hera-upstream-section': Beat_Upstream,
+  'instruments-section': Beat_Instruments,
+  'xray-followup-section': Beat_Reflection,
+  'oss-maintainer-section': Beat_Revival,
+  'engineer-section': Beat_Reconcile,
+  'enrolia-section': Beat_HonestRoad,
+  'off-court-section': Beat_RunTrekShip,
+  'admission-section': Beat_Portal,
+  'arrival-section': Beat_Etna,
+  'analysis-section': Beat_EorWedge,
+  'journey-continues-section': Beat_Finale,
 }
 
 export const BEATS: Beat[] = NARRATIVE.map((b) => ({

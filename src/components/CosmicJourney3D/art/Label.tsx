@@ -18,6 +18,8 @@ export interface LabelProps {
   position?: [number, number, number]
   anchorX?: 'left' | 'center' | 'right'
   opacity?: number
+  /** Keep the given case (e.g. physics notation like "k_perp"); labels are uppercase by default. */
+  preserveCase?: boolean
   ref?: Ref<THREE.Mesh>
 }
 
@@ -27,7 +29,7 @@ export interface LabelProps {
  * make troika fetch fallback fonts from a CDN. Fade via ref: mesh.fillOpacity.
  */
 export function Label({
-  children, size = 'small', color = PALETTE.nearWhite, intensity = 1.1, position, anchorX = 'center', opacity = 1, ref,
+  children, size = 'small', color = PALETTE.nearWhite, intensity = 1.1, position, anchorX = 'center', opacity = 1, preserveCase = false, ref,
 }: LabelProps) {
   const tint = useMemo(() => hdr(color, intensity), [color, intensity])
   return (
@@ -43,7 +45,7 @@ export function Label({
       fillOpacity={opacity}
       outlineWidth={0}
     >
-      {children.toUpperCase()}
+      {preserveCase ? children : children.toUpperCase()}
     </Text>
   )
 }

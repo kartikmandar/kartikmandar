@@ -44,3 +44,11 @@ describe('dwell', () => {
     expect(Math.max(...lengths)).toBeGreaterThan(Math.min(...lengths))
   })
 })
+
+describe('registry', () => {
+  it('gives every beat a built scene (no placeholder markers left)', async () => {
+    const { BEATS } = await import('../registry')
+    const { default: UnbuiltBeatMarker } = await import('../scenes/UnbuiltBeatMarker')
+    expect(BEATS.filter((b) => b.Scene === UnbuiltBeatMarker).map((b) => b.id)).toEqual([])
+  })
+})

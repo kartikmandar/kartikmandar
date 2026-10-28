@@ -1,223 +1,353 @@
 // src/components/CosmicJourney3D/scenes/Beat_Search.tsx
 'use client'
 
-import { useRef } from 'react'
+// Beat 5 · Searching for the Right Trajectory (Act I, spark).
+// A young star made of light, ringed by candidate orbits drawn as dotted light
+// paths. Each carries a small probe and flickers like an option being weighed.
+// One by one the candidates fade; the survivor brightens, its probe peels off
+// the orbit and leads a solid light path toward a new star system in the
+// distance (the hand-off into Act II). The typed phrases live in the DOM overlay.
+
+import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import { Text } from '@react-three/drei'
 import type { BeatSceneProps } from '../types'
 import { useBeat } from '../store'
+import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
+import { createRimMaterial, getGlowTexture, setUniform, useDisposable } from '../art/materials'
+import { GlowSprite } from '../art/GlowSprite'
+import { LightLine, setLineOpacity, setLineReveal, type LightLineObject } from '../art/LightLine'
+import { Label } from '../art/Label'
+import { ease, pulse, ramp, seeded } from '../art/anim'
 
-// Acceptance: a dark glowing terminal panel types and deletes through three
-// search phrases in order and stops on the last ("IISER Bhopal"), turning the
-// caret green (mirrors the original React typewriter in CosmicJourney).
+const STAR = new THREE.Vector3(-1.2, 0.95, -1.8)
+const STAR_RADIUS = 0.3
+const NEW_SYSTEM = new THREE.Vector3(3.1, 2.45, -4.6)
+const ORBIT_SAMPLES = 256
 
-// The three phrases, typed in order. The first two type, hold, then delete; the
-// final phrase types and stays, settling the trajectory with a green caret.
-const PHRASES = ['DU > Hansraj College...', 'IISERs...', 'IISER Bhopal'] as const
-
-// Panel geometry in this beat's local XY plane. The panel is lifted to PANEL_Y
-// so the terminal sits in the upper-center of the frame, clear of the overlay
-// copy reserved below local Y = -1.5, and fills more of the ~9x6 stage.
-const PANEL_W = 9
-const PANEL_H = 2.6
-const PANEL_Y = 1.0
-const FONT_SIZE = 0.5
-// Approximate per-character advance for the default drei font at FONT_SIZE,
-// used to deterministically place the block caret after the typed text.
-const CHAR_ADVANCE = FONT_SIZE * 0.55
-// Left edge where the "> " prompt starts, and where typed text begins after it.
-const PROMPT_X = -PANEL_W / 2 + 0.5
-const TEXT_X = PROMPT_X + 2 * CHAR_ADVANCE + 0.15
-
-// Per-phrase window allocations across localProgress [0..1]. The first two
-// phrases each get a type/hold/delete cycle; the final phrase gets type/hold so
-// it settles and remains for the rest of the beat.
-const SEGMENTS = [
-  { type: 0.1, hold: 0.06, del: 0.06 }, // 'DU > Hansraj College...'
-  { type: 0.07, hold: 0.06, del: 0.05 }, // 'IISERs...'
-  { type: 0.1, hold: 0.33, del: 0 }, // 'IISER Bhopal' (final, no delete)
-] as const
-
-const TOTAL = SEGMENTS.reduce((s, seg) => s + seg.type + seg.hold + seg.del, 0)
-
-// Outlined rectangle (line loop) for the thin panel border, centered at origin.
-function borderPositions(w: number, h: number, z = 0.01): Float32Array {
-  const x = w / 2
-  const y = h / 2
-  return new Float32Array([
-    -x, -y, z, x, -y, z, x, -y, z, x, y, z,
-    x, y, z, -x, y, z, -x, y, z, -x, -y, z,
-  ])
+interface Candidate {
+  /** Semi-major axis. */
+  a: number
+  /** Eccentricity. */
+  e: number
+  /** Orbit-plane orientation (the orbit is built in XZ with the star at a focus). */
+  rot: [number, number, number]
+  /** Flicker frequency (rad/s) and the order in which it gives up. */
+  flicker: number
+  fadeAt: number
 }
 
-const BORDER = borderPositions(PANEL_W, PANEL_H)
+// Five candidate trajectories. Index SURVIVOR is the one that holds.
+const CANDIDATES: Candidate[] = [
+  { a: 1.05, e: 0.12, rot: [0.72, 0.3, 0.22], flicker: 3.1, fadeAt: 0.4 },
+  { a: 1.55, e: 0.38, rot: [0.62, -0.5, -0.28], flicker: 2.3, fadeAt: 0.3 },
+  { a: 1.95, e: 0.22, rot: [0.78, 2.6, 0.12], flicker: 1.7, fadeAt: 0 },
+  { a: 1.35, e: 0.55, rot: [0.92, 1.3, 0.42], flicker: 3.7, fadeAt: 0.34 },
+  { a: 2.15, e: 0.42, rot: [0.58, -1.7, -0.36], flicker: 2.7, fadeAt: 0.45 },
+]
+const SURVIVOR = 2
 
-type TroikaText = THREE.Mesh & {
-  text: string
-  color: string
-  fillOpacity: number
-  sync: () => void
-}
-
-// Module-level scratch so resolving the typed text never allocates per frame.
-const typingScratch = { phraseIndex: 0, chars: 0, final: false }
-
-// Resolve which phrase is showing, how many characters of it are visible, and
-// whether we are on the final, settled phrase, from a deterministic localProgress.
-function resolveTyping(progress: number): void {
-  const p = Math.min(1, Math.max(0, progress)) * TOTAL
-  let cursor = 0
-  for (let i = 0; i < SEGMENTS.length; i++) {
-    const seg = SEGMENTS[i]
-    const phrase = PHRASES[i]
-    if (!seg || phrase === undefined) continue
-    const span = seg.type + seg.hold + seg.del
-    const isLast = i === SEGMENTS.length - 1
-    if (p < cursor + span || (isLast && p >= cursor)) {
-      const local = p - cursor
-      typingScratch.phraseIndex = i
-      if (local < seg.type) {
-        const t = seg.type > 0 ? local / seg.type : 1
-        const chars = Math.round(t * phrase.length)
-        typingScratch.chars = chars
-        typingScratch.final = isLast && chars >= phrase.length
-        return
-      }
-      if (local < seg.type + seg.hold) {
-        typingScratch.chars = phrase.length
-        typingScratch.final = isLast
-        return
-      }
-      // Deleting tail (only the non-final phrases reach here).
-      const dl = local - seg.type - seg.hold
-      const t = seg.del > 0 ? dl / seg.del : 1
-      typingScratch.chars = Math.round((1 - Math.min(1, t)) * phrase.length)
-      typingScratch.final = false
-      return
-    }
-    cursor += span
+function orbitPoints(c: Candidate): THREE.Vector3[] {
+  const euler = new THREE.Euler(c.rot[0], c.rot[1], c.rot[2])
+  const pts: THREE.Vector3[] = []
+  const semiLatus = c.a * (1 - c.e * c.e)
+  for (let i = 0; i <= ORBIT_SAMPLES; i++) {
+    const nu = (i / ORBIT_SAMPLES) * Math.PI * 2
+    const r = semiLatus / (1 + c.e * Math.cos(nu))
+    pts.push(new THREE.Vector3(r * Math.cos(nu), 0, r * Math.sin(nu)).applyEuler(euler).add(STAR))
   }
-  // Past the end: settle on the final phrase.
-  typingScratch.phraseIndex = PHRASES.length - 1
-  typingScratch.chars = PHRASES[PHRASES.length - 1]?.length ?? 0
-  typingScratch.final = true
+  return pts
 }
 
-const GREEN = '#4ade80'
-const GLOW_BLUE = new THREE.Color('#38bdf8')
-const GLOW_GREEN = new THREE.Color(GREEN)
-const BORDER_BLUE = new THREE.Color('#1e3a5f')
-const BORDER_GREEN = new THREE.Color(GREEN)
+function ringPoints(radius: number, tilt: number, center: THREE.Vector3): THREE.Vector3[] {
+  const pts: THREE.Vector3[] = []
+  const euler = new THREE.Euler(tilt, 0, 0.18)
+  for (let i = 0; i <= 96; i++) {
+    const a = (i / 96) * Math.PI * 2
+    pts.push(new THREE.Vector3(Math.cos(a) * radius, 0, Math.sin(a) * radius).applyEuler(euler).add(center))
+  }
+  return pts
+}
 
-export default function Beat_Search({ index, reducedMotion }: BeatSceneProps) {
+// Ambient star dust: soft additive points that twinkle on the clock.
+const DUST_VERT = /* glsl */ `
+  attribute float aSeed;
+  uniform float uTime;
+  uniform float uSize;
+  varying float vTwinkle;
+  void main() {
+    vTwinkle = 0.55 + 0.45 * sin(uTime * (0.6 + aSeed * 1.4) + aSeed * 40.0);
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    gl_PointSize = uSize * (0.5 + aSeed) / -mv.z;
+    gl_Position = projectionMatrix * mv;
+  }
+`
+const DUST_FRAG = /* glsl */ `
+  uniform sampler2D uMap;
+  uniform vec3 uColor;
+  uniform float uOpacity;
+  varying float vTwinkle;
+  void main() {
+    float a = texture2D(uMap, gl_PointCoord).a;
+    gl_FragColor = vec4(uColor * a * vTwinkle * uOpacity, 1.0);
+  }
+`
+
+function dustGeometry(count: number): THREE.BufferGeometry {
+  const pos = new Float32Array(count * 3)
+  const seed = new Float32Array(count)
+  for (let i = 0; i < count; i++) {
+    pos[i * 3] = (seeded(i, 11) - 0.5) * 11
+    pos[i * 3 + 1] = -1.2 + seeded(i, 12) * 5.2
+    pos[i * 3 + 2] = -6 + seeded(i, 13) * 6.5
+    seed[i] = seeded(i, 14)
+  }
+  const g = new THREE.BufferGeometry()
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3))
+  g.setAttribute('aSeed', new THREE.BufferAttribute(seed, 1))
+  return g
+}
+
+// Module-level scratch: no allocation inside useFrame.
+const _pos = new THREE.Vector3()
+const _color = new THREE.Color()
+const BLUE = new THREE.Color(PALETTE.stellarBlue)
+const SIGNAL = new THREE.Color(PALETTE.signal)
+
+function sampleLoop(out: THREE.Vector3, pts: readonly THREE.Vector3[], f: number): THREE.Vector3 {
+  const n = pts.length - 1
+  const x = ((f % 1) + 1) % 1 * n
+  const i = Math.floor(x)
+  return out.lerpVectors(pts[i]!, pts[Math.min(n, i + 1)]!, x - i)
+}
+
+function samplePath(out: THREE.Vector3, pts: readonly THREE.Vector3[], f: number): THREE.Vector3 {
+  const n = pts.length - 1
+  const x = Math.max(0, Math.min(1, f)) * n
+  const i = Math.min(n - 1, Math.floor(x))
+  return out.lerpVectors(pts[i]!, pts[i + 1]!, x - i)
+}
+
+export default function Beat_Search({ index, quality, reducedMotion }: BeatSceneProps) {
   const beat = useBeat(index)
-  const glowRef = useRef<THREE.Mesh>(null)
-  const borderRef = useRef<THREE.LineSegments>(null)
-  const typedRef = useRef<TroikaText>(null)
-  const caretRef = useRef<TroikaText>(null)
-  // Last values pushed to the scene, so text/colour work happens only on change.
-  const lastPhraseRef = useRef(-1)
-  const lastCharsRef = useRef(-1)
-  const lastFinalRef = useRef<boolean | null>(null)
+  const orbitsRef = useRef<THREE.Group>(null)
+  const probesRef = useRef<THREE.Group>(null)
+  const departRef = useRef<LightLineObject>(null)
+  const starGlowRef = useRef<THREE.Sprite>(null)
+  const newStarRef = useRef<THREE.Group>(null)
+  const newGlowRef = useRef<THREE.Sprite>(null)
+  const newRingsRef = useRef<THREE.Group>(null)
+  const dustRef = useRef<THREE.Points>(null)
+  const labelRef = useRef<THREE.Mesh & { fillOpacity: number }>(null)
+
+  const orbits = useMemo(() => CANDIDATES.map(orbitPoints), [])
+
+  // The departure: leave the survivor orbit where its heading best points at
+  // the new system, then curve out to it on a cubic Bezier.
+  const departure = useMemo(() => {
+    const pts = orbits[SURVIVOR]!
+    const tangent = new THREE.Vector3()
+    const toward = new THREE.Vector3()
+    let best = 0
+    let bestScore = -Infinity
+    for (let i = 0; i < ORBIT_SAMPLES; i++) {
+      tangent.subVectors(pts[i + 1]!, pts[i]!).normalize()
+      toward.subVectors(NEW_SYSTEM, pts[i]!).normalize()
+      const score = tangent.dot(toward)
+      if (score > bestScore) {
+        bestScore = score
+        best = i
+      }
+    }
+    const p0 = pts[best]!.clone()
+    const dir = new THREE.Vector3().subVectors(pts[best + 1]!, pts[best]!).normalize()
+    const p1 = p0.clone().addScaledVector(dir, 1.6)
+    const p3 = NEW_SYSTEM.clone().add(new THREE.Vector3(-0.42, -0.08, 0.3))
+    const p2 = p3.clone().add(new THREE.Vector3(-1.3, -0.5, 0.9))
+    const curve = new THREE.CubicBezierCurve3(p0, p1, p2, p3)
+    return { leaveAt: best / ORBIT_SAMPLES, points: curve.getPoints(90) }
+  }, [orbits])
+
+  const newRings = useMemo(() => [ringPoints(0.55, 0.62, NEW_SYSTEM), ringPoints(0.9, 0.62, NEW_SYSTEM)], [])
+
+  const starMat = useDisposable(() => createRimMaterial({
+    base: hdr(PALETTE.stellarBlue, 0.45),
+    rim: hdr(PALETTE.nearWhite, GLOW.hero),
+    power: 1.6,
+  }))
+  const newStarMat = useDisposable(() => createRimMaterial({
+    base: hdr(PALETTE.signal, 0.35),
+    rim: hdr(PALETTE.nearWhite, GLOW.hero),
+    power: 1.8,
+  }))
+
+  const dustCount = quality === 'mobile' ? 100 : quality === 'low' ? 200 : 400
+  const dustGeo = useDisposable(() => dustGeometry(dustCount), [dustCount])
+  const dustMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: getGlowTexture() },
+      uColor: { value: hdr(PALETTE.stellarBlue, GLOW.dim) },
+      uTime: { value: 0 },
+      uSize: { value: 22 },
+      uOpacity: { value: 0 },
+    },
+    vertexShader: DUST_VERT,
+    fragmentShader: DUST_FRAG,
+    transparent: true,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
+    fog: false,
+  }))
 
   useFrame(() => {
     if (!beat.near) return
-    resolveTyping(beat.local)
-    const { phraseIndex, chars, final } = typingScratch
+    const p = beat.local
+    const t = reducedMotion ? 0 : beat.clock
 
-    // Typed phrase: re-sync the troika text only when the visible string changes.
-    const typed = typedRef.current
-    if (typed && (phraseIndex !== lastPhraseRef.current || chars !== lastCharsRef.current)) {
-      lastPhraseRef.current = phraseIndex
-      lastCharsRef.current = chars
-      typed.text = PHRASES[phraseIndex]!.slice(0, chars)
-      typed.sync()
+    const appear = ease(p, 0.0, 0.2)
+    setUniform(dustRef.current, 'uTime', t)
+    setUniform(dustRef.current, 'uOpacity', appear)
+
+    const starGlow = starGlowRef.current
+    if (starGlow) {
+      const breathe = 0.9 + 0.1 * Math.sin(t * 0.8)
+      ;(starGlow.material as THREE.SpriteMaterial).opacity = (0.4 + 0.6 * appear) * breathe * (1 - 0.35 * ease(p, 0.7, 1))
     }
 
-    // Blinking caret driven by the clock; steady (always shown) when reduced motion.
-    const caret = caretRef.current
-    if (caret) {
-      caret.visible = reducedMotion ? true : Math.sin(beat.clock * Math.PI * 2 * 1.3) > 0
-      // Place the block caret just after the last typed glyph.
-      caret.position.x = TEXT_X + chars * CHAR_ADVANCE
-    }
-
-    // Green tint once the trajectory settles on the final phrase.
-    if (final !== lastFinalRef.current) {
-      lastFinalRef.current = final
-      if (caret) caret.color = final ? GREEN : '#e0e0e0'
-      const glow = glowRef.current
-      if (glow) (glow.material as THREE.MeshBasicMaterial).color.copy(final ? GLOW_GREEN : GLOW_BLUE)
-      const border = borderRef.current
-      if (border) {
-        const borderMaterial = border.material as THREE.LineBasicMaterial
-        borderMaterial.color.copy(final ? BORDER_GREEN : BORDER_BLUE)
-        borderMaterial.opacity = final ? 0.9 : 0.6
+    // Candidates: each draws on, flickers while being weighed, then gives up in turn.
+    const choose = ease(p, 0.5, 0.62)
+    const orbitsGroup = orbitsRef.current
+    const probes = probesRef.current
+    for (let i = 0; i < CANDIDATES.length; i++) {
+      const c = CANDIDATES[i]!
+      const line = (orbitsGroup?.children[i] ?? null) as LightLineObject | null
+      const probe = (probes?.children[i] ?? null) as THREE.Sprite | null
+      const draw = ease(p, 0.04 + i * 0.03, 0.22 + i * 0.03)
+      setLineReveal(line, draw)
+      // Flicker on the clock and on scroll (so a still frame still varies per candidate).
+      const flick = 0.5 + 0.5 * Math.sin(t * c.flicker + p * 31 + i * 1.9)
+      if (i === SURVIVOR) {
+        const steady = 0.55 + 0.25 * flick * (1 - choose)
+        setLineOpacity(line, draw * (steady + 0.45 * choose))
+        if (line) {
+          // Brighten: base stellar blue to a hero signal cyan as it is chosen.
+          _color.lerpColors(BLUE, SIGNAL, choose)
+          setHdr((line.material as THREE.Material & { color: THREE.Color }).color, _color, GLOW.base + (GLOW.hero - GLOW.base) * choose)
+        }
+      } else {
+        const fade = 1 - ease(p, 0.3 + c.fadeAt * 0.5, 0.42 + c.fadeAt * 0.5)
+        setLineOpacity(line, draw * (0.3 + 0.45 * flick) * fade)
+        if (probe) {
+          const visible = draw * fade
+          probe.visible = visible > 0.01
+          ;(probe.material as THREE.SpriteMaterial).opacity = visible * (0.5 + 0.5 * flick)
+          // Ambient orbit on the clock, nudged by scroll.
+          sampleLoop(_pos, orbits[i]!, seeded(i, 3) + t * 0.035 * (1 + i * 0.2) + p * 0.4)
+          probe.position.copy(_pos)
+        }
       }
     }
+
+    // Survivor probe: rides its orbit up to the departure point, then leaves.
+    const leave = ease(p, 0.56, 0.95)
+    const survivorProbe = (probes?.children[SURVIVOR] ?? null) as THREE.Sprite | null
+    if (survivorProbe) {
+      const approach = ease(p, 0.08, 0.56)
+      if (leave <= 0) {
+        sampleLoop(_pos, orbits[SURVIVOR]!, departure.leaveAt - (1 - approach) * 1.15)
+      } else {
+        samplePath(_pos, departure.points, leave)
+      }
+      survivorProbe.position.copy(_pos)
+      const s = 0.42 + 0.3 * choose
+      survivorProbe.scale.set(s, s, 1)
+      ;(survivorProbe.material as THREE.SpriteMaterial).opacity = ease(p, 0.06, 0.2) * (0.7 + 0.3 * choose)
+    }
+    setLineReveal(departRef.current, leave)
+
+    // The new system: faint at first, then answering as the probe arrives.
+    const arrive = ease(p, 0.6, 0.9)
+    const newStar = newStarRef.current
+    if (newStar) {
+      newStar.visible = p > 0.35
+      const s = 0.4 + 0.6 * ease(p, 0.4, 0.75)
+      newStar.scale.set(s, s, s)
+    }
+    const newGlow = newGlowRef.current
+    if (newGlow) {
+      const flare = pulse(p, 0.84, 1.0)
+      ;(newGlow.material as THREE.SpriteMaterial).opacity = ease(p, 0.38, 0.7) * (0.5 + 0.5 * arrive) + 0.3 * flare
+    }
+    const rings = newRingsRef.current
+    if (rings) {
+      for (let i = 0; i < rings.children.length; i++) {
+        const ring = rings.children[i] as LightLineObject
+        setLineReveal(ring, ease(p, 0.66 + i * 0.06, 0.86 + i * 0.05))
+        setLineOpacity(ring, 0.85 * ramp(p, 0.66, 0.7))
+      }
+    }
+    if (labelRef.current) labelRef.current.fillOpacity = ease(p, 0.72, 0.84) * 0.7
   })
 
   return (
-    <group position={[0, PANEL_Y, 0]}>
-      {/* Faint glow plane behind the panel for the "glowing terminal" feel. */}
-      <mesh ref={glowRef} position={[0, 0, -0.02]}>
-        <planeGeometry args={[PANEL_W + 0.6, PANEL_H + 0.6]} />
-        <meshBasicMaterial color="#38bdf8" transparent opacity={0.12} toneMapped={false} />
+    <group>
+      <points ref={dustRef} geometry={dustGeo} material={dustMat} frustumCulled={false} />
+
+      {/* The young star */}
+      <mesh position={STAR} material={starMat}>
+        <sphereGeometry args={[STAR_RADIUS, 40, 40]} />
       </mesh>
+      <GlowSprite ref={starGlowRef} position={[STAR.x, STAR.y, STAR.z]} color={PALETTE.stellarBlue} intensity={GLOW.hero} size={2.6} opacity={0.4} />
 
-      {/* Dark, semi-transparent terminal panel. */}
-      <mesh position={[0, 0, 0]}>
-        <planeGeometry args={[PANEL_W, PANEL_H]} />
-        <meshBasicMaterial color="#0a0f1a" transparent opacity={0.82} toneMapped={false} />
-      </mesh>
+      {/* Candidate orbits: dotted light paths */}
+      <group ref={orbitsRef}>
+        {orbits.map((pts, i) => (
+          <LightLine
+            key={i}
+            points={pts}
+            color={PALETTE.stellarBlue}
+            intensity={GLOW.base}
+            width={i === SURVIVOR ? 0.02 : 0.016}
+            opacity={0}
+            dashed
+            dashSize={0.035}
+            gapSize={0.07}
+          />
+        ))}
+      </group>
 
-      {/* Thin border outline, tinting green once the trajectory settles. */}
-      <lineSegments ref={borderRef}>
-        <bufferGeometry>
-          <bufferAttribute attach="attributes-position" args={[BORDER, 3]} />
-        </bufferGeometry>
-        <lineBasicMaterial color="#1e3a5f" transparent opacity={0.6} toneMapped={false} />
-      </lineSegments>
+      {/* One probe per candidate */}
+      <group ref={probesRef}>
+        {CANDIDATES.map((_, i) => (
+          <GlowSprite
+            key={i}
+            color={i === SURVIVOR ? PALETTE.nearWhite : PALETTE.stellarBlue}
+            intensity={i === SURVIVOR ? GLOW.hot : GLOW.hero}
+            size={i === SURVIVOR ? 0.5 : 0.32}
+            opacity={0}
+          />
+        ))}
+      </group>
 
-      {/* Green monospace prompt. */}
-      <Text
-        position={[PROMPT_X, 0, 0.05]}
-        anchorX="left"
-        anchorY="middle"
-        fontSize={FONT_SIZE}
-        color="#4ade80"
-      >
-        {'> '}
-      </Text>
+      {/* The surviving trajectory, leaving for the new system */}
+      <LightLine ref={departRef} points={departure.points} color={PALETTE.signal} intensity={GLOW.hero} width={0.024} />
 
-      {/* Typed phrase. */}
-      <Text
-        ref={(mesh) => {
-          typedRef.current = mesh as TroikaText | null
-        }}
-        position={[TEXT_X, 0, 0.05]}
-        anchorX="left"
-        anchorY="middle"
-        fontSize={FONT_SIZE}
-        color="#e0e0e0"
-      >
-        {''}
-      </Text>
+      {/* The new star system ahead */}
+      <group ref={newStarRef} position={NEW_SYSTEM} visible={false}>
+        <mesh material={newStarMat}>
+          <sphereGeometry args={[0.16, 32, 32]} />
+        </mesh>
+      </group>
+      <GlowSprite ref={newGlowRef} position={[NEW_SYSTEM.x, NEW_SYSTEM.y, NEW_SYSTEM.z]} color={PALETTE.signal} intensity={GLOW.hero} size={1.9} opacity={0} />
+      <group ref={newRingsRef}>
+        {newRings.map((pts, i) => (
+          <LightLine key={i} points={pts} color={PALETTE.signal} intensity={GLOW.base} width={0.012} opacity={0} />
+        ))}
+      </group>
 
-      {/* Blinking block caret, green once settled on the final phrase. */}
-      <Text
-        ref={(mesh) => {
-          caretRef.current = mesh as TroikaText | null
-        }}
-        position={[TEXT_X, 0, 0.05]}
-        anchorX="left"
-        anchorY="middle"
-        fontSize={FONT_SIZE}
-        color="#e0e0e0"
-      >
-        {'█'}
-      </Text>
+      <Label ref={labelRef} position={[NEW_SYSTEM.x - 0.1, NEW_SYSTEM.y + 0.85, NEW_SYSTEM.z]} color={PALETTE.signal} opacity={0}>
+        IISER Bhopal
+      </Label>
     </group>
   )
 }
