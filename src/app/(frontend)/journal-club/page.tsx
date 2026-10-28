@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
@@ -95,22 +96,14 @@ export default async function JournalClubPage() {
   ])
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-5xl mx-auto">
 
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
-            Astrophysics Journal Club
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto mb-2">
-            IISER Bhopal
-          </p>
-        </div>
+        <PageHeader eyebrow="Talks & Teaching" title="Astrophysics Journal Club" lead="IISER Bhopal" />
 
         {/* How It Works Section */}
         <section className="mb-16">

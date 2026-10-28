@@ -2,6 +2,7 @@ import type { Metadata } from 'next/types'
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { PageHeader } from '@/components/motion'
 import { ArrowLeft, ExternalLink, Globe, Calendar } from 'lucide-react'
 import { GithubIcon as Github } from '@/components/icons/GithubIcon'
 
@@ -20,21 +21,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default function GSoC2024FinalReport(): React.JSX.Element {
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <div className="max-w-4xl mx-auto">
         
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-yellow-500 to-orange-500 mb-6">
-            GSoC 2024 Final Report
-          </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-            Stingray Explorer
-          </h2>
-          <p className="text-xl text-muted-foreground">
-            A Quicklook Dashboard for X-ray Astronomy with Stingray
-          </p>
-        </div>
+        <PageHeader
+          eyebrow="Software"
+          title="GSoC 2024 Final Report"
+          lead={
+            <>
+              <span className="block text-2xl md:text-3xl font-semibold text-foreground mb-4">
+                Stingray Explorer
+              </span>
+              A Quicklook Dashboard for X-ray Astronomy with Stingray
+            </>
+          }
+        />
 
         {/* Last Updated */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">

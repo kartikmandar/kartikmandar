@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { PageHeader } from '@/components/motion'
 import React, { useEffect, useRef, useState, useCallback } from 'react'
 
 export default function NotFound() {
@@ -372,17 +373,17 @@ export default function NotFound() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <div className="max-w-6xl mx-auto">
         
         {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-primary via-primary/80 to-primary/60">
-            404: Lost in the Cellular Cosmos
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-4xl mx-auto mb-8 leading-relaxed">
-            You&apos;ve drifted into Conway&apos;s Game of Life. Click anywhere in the simulation to create cells and watch evolution unfold.
-          </p>
+        <div className="mb-12">
+          <PageHeader
+            eyebrow="404"
+            title="404: Lost in the Cellular Cosmos"
+            lead="You&apos;ve drifted into Conway&apos;s Game of Life. Click anywhere in the simulation to create cells and watch evolution unfold."
+            className="pb-8"
+          />
           <Link 
             href="/" 
             className="inline-flex items-center justify-center px-8 py-4 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"

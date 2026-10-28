@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
@@ -42,18 +43,14 @@ export default function TalksPage(): React.JSX.Element {
   ])
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-5xl mx-auto">
 
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
-            Talks & Presentations
-          </h1>
-        </div>
+        <PageHeader eyebrow="Talks & Teaching" title="Talks & Presentations" />
 
         <div className="space-y-10">
           {talks.map((talk) => {

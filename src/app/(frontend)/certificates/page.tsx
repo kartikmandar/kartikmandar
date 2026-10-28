@@ -1,3 +1,4 @@
+import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
@@ -215,19 +216,14 @@ export default async function CertificatesPage(): Promise<React.JSX.Element> {
   ])
 
   return (
-    <div className="container mx-auto px-4 py-20">
+    <div className="container mx-auto px-4 pb-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-5xl mx-auto">
 
-        {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-foreground/90 to-foreground/60">
-            Certificates
-          </h1>
-        </div>
+        <PageHeader eyebrow="About" title="Certificates" />
 
         {/* Certificates by Category */}
         {Object.entries(groupedCertificates).map(([category, certs]) => (
