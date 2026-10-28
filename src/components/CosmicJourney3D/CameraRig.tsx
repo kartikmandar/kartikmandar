@@ -6,7 +6,7 @@ import { useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import { useScrollProgressRef } from './ScrollRig'
 import { cumulativeRanges } from './scrollMath'
-import { easedCurveU } from './cameraPath'
+import { flightCurveT } from './cameraPath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { splitProgress } from './prologueScroll'
@@ -45,14 +45,15 @@ export function CameraRig() {
   const tmp = useRef(new THREE.Vector3())
 
   useFrame(() => {
-    const u = easedCurveU(splitProgress(progressRef.current).flightProgress, ranges)
+    const u = flightCurveT(splitProgress(progressRef.current).flightProgress, ranges)
     // light smoothing so wheel deltas read as inertia, not steps; capture snaps
     if (readCapture().enabled) lastU.current = u
     else lastU.current += (u - lastU.current) * 0.12
     const cu = Math.max(0, Math.min(1, lastU.current))
-    posCurve.getPointAt(cu, tmp.current)
+    // getPoint (uniform per control point), not getPointAt (arc length): stations land exactly.
+    posCurve.getPoint(cu, tmp.current)
     camera.position.copy(tmp.current)
-    lookCurve.getPointAt(cu, tmp.current)
+    lookCurve.getPoint(cu, tmp.current)
     camera.lookAt(tmp.current)
   })
 
