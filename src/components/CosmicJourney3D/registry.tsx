@@ -2,7 +2,7 @@
 import type React from 'react'
 import { NARRATIVE } from './narrative'
 import { BEATS_META } from './beatsMeta'
-import type { BeatMeta, SceneProps } from './types'
+import type { BeatMeta, BeatSceneProps, SceneProps } from './types'
 import UnbuiltBeatMarker from './scenes/UnbuiltBeatMarker'
 import Beat_Textbook from './scenes/Beat_Textbook'
 import Beat_Comet from './scenes/Beat_Comet'
@@ -24,6 +24,9 @@ import Beat_PaperPlane from './scenes/Beat_PaperPlane'
 import Beat_Milestones from './scenes/Beat_Milestones'
 import Beat_Workbench from './scenes/Beat_Workbench'
 import Beat_Walker from './scenes/Beat_Walker'
+import Beat_HeraArray from './scenes/Beat_HeraArray'
+import Beat_CygnusX1 from './scenes/Beat_CygnusX1'
+import Beat_SmashToCoach from './scenes/Beat_SmashToCoach'
 
 export interface Beat {
   id: string
@@ -32,7 +35,17 @@ export interface Beat {
   body?: string
   typedPhrases?: string[]
   meta: BeatMeta
+  /** Beat-API scene (preferred). When present it is used instead of Scene. */
+  BeatScene?: React.FC<BeatSceneProps>
+  /** Legacy scene, driven through LegacyBeat until it is migrated. */
   Scene: React.FC<SceneProps>
+}
+
+// Scenes on the Phase 1 beat API (useBeat refs, no per-frame re-render).
+const BEAT_SCENES: Record<string, React.FC<BeatSceneProps>> = {
+  'injury-section': Beat_SmashToCoach,
+  'rri-research-section': Beat_HeraArray,
+  'cygnus-publication-section': Beat_CygnusX1,
 }
 
 // Built scenes are registered here; everything else flies as an UnbuiltBeatMarker
@@ -63,6 +76,7 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
 export const BEATS: Beat[] = NARRATIVE.map((b) => ({
   ...b,
   meta: BEATS_META[b.id]!,
+  BeatScene: BEAT_SCENES[b.id],
   Scene: SCENES[b.id] ?? UnbuiltBeatMarker,
 }))
 

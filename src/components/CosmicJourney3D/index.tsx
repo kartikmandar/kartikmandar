@@ -1,8 +1,9 @@
 // src/components/CosmicJourney3D/index.tsx
 'use client'
 
-import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { Canvas, addEffect, useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 import { ScrollRig, useScrollProgressRef } from './ScrollRig'
 import { CameraRig } from './CameraRig'
 import { Environment } from './Environment'
@@ -14,50 +15,81 @@ import { ORIGIN_ANCHOR } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
 import { readJourneyEnv, selectQuality } from './tiers'
 import { fallbackMode } from './fallbackPlan'
-import { cumulativeRanges, locate } from './scrollMath'
-import type { QualityTier } from './types'
+import { cumulativeRanges } from './scrollMath'
+import type { QualityTier, SceneProps } from './types'
+import { journeyFrame, journeyStore, useActiveBeat, writeBeatProgress } from './store'
 import { HeroPrologue } from './HeroPrologue'
 import { splitProgress, pageScrollVh } from './prologueScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
-// Drives clock + localProgress into the active (and origin) scenes; one shared time base.
-function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
+// Writes the shared per-frame journey state once, before any useFrame runs
+// (R3F addEffect). Scenes read it through useBeat(); React only hears about
+// discrete active-beat changes via journeyStore.
+function JourneyDriver() {
   const progressRef = useScrollProgressRef()
-  const ranges = useMemo(() => cumulativeRanges(BEATS.map((b) => b.meta.scrollLength)), [])
-  const capture = readCapture()
-  const [clock, setClock] = useState(capture.enabled ? capture.time : 0)
-  const [active, setActive] = useState(0)
-  const localRef = useRef(0)
+  useEffect(() => {
+    const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
+    const capture = readCapture()
+    journeyFrame.clock = capture.enabled ? capture.time : 0
+    let last: number | null = null
+    return addEffect((timestamp) => {
+      const dt = last === null ? 0 : Math.min((timestamp - last) / 1000, 1 / 30) // clamp protects tab-return
+      last = timestamp
+      const raw = progressRef.current
+      // Use flightProgress (not raw) so scenes stay in lockstep with the camera
+      // and overlay, which also remap through the prologue.
+      const flight = splitProgress(raw).flightProgress
+      journeyFrame.raw = raw
+      journeyFrame.flight = flight
+      journeyFrame.dt = capture.enabled ? 0 : dt
+      if (!capture.enabled) journeyFrame.clock += dt
+      const active = writeBeatProgress(flight, ranges, journeyFrame.local)
+      journeyFrame.activeIndex = active
+      if (journeyStore.getState().activeIndex !== active) journeyStore.setState({ activeIndex: active })
+    })
+  }, [progressRef])
+  return null
+}
 
-  useFrame((_s, dt) => {
-    const d = Math.min(dt, 1 / 30) // clamp; protects the phase machine on tab-return
-    if (!capture.enabled) setClock((c) => c + d)
-    // Use flightProgress (not raw) so the visible scene stays in lockstep with
-    // the camera and overlay, which also remap through the prologue.
-    const { index, local } = locate(splitProgress(progressRef.current).flightProgress, ranges)
-    localRef.current = local
-    setActive((p) => (p === index ? p : index))
+// Adapter for scenes still on the legacy prop API: re-renders only while the
+// beat is on screen (active ±1), instead of every scene every frame.
+function LegacyBeat({ index, Scene, quality, reducedMotion }: {
+  index: number
+  Scene: React.FC<SceneProps>
+  quality: QualityTier
+  reducedMotion: boolean
+}) {
+  const [frame, setFrame] = useState({ local: 0, clock: journeyFrame.clock })
+  useFrame(() => {
+    const near = index < 0 ? journeyFrame.activeIndex <= 1 : Math.abs(journeyFrame.activeIndex - index) <= 1
+    if (!near) return
+    const local = index < 0 ? 0 : (journeyFrame.local[index] ?? 0)
+    const clock = journeyFrame.clock
+    setFrame((f) => (f.local === local && f.clock === clock ? f : { local, clock }))
   })
+  return <Scene localProgress={frame.local} clock={frame.clock} quality={quality} reducedMotion={reducedMotion} />
+}
 
+// Mounts every beat at its anchor; only the active beat and its neighbours are visible.
+function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
+  const active = useActiveBeat()
   return (
     <>
+      <JourneyDriver />
       <group position={ORIGIN_ANCHOR.position}>
-        <OriginBlackHole localProgress={0} clock={clock} quality={quality} reducedMotion={reducedMotion} />
+        <LegacyBeat index={-1} Scene={OriginBlackHole} quality={quality} reducedMotion={reducedMotion} />
       </group>
-      {/* eslint-disable react-hooks/refs -- localRef is written in useFrame (R3F loop, not React render); reading .current per beat here is intentional */}
       {BEATS.map((b, i) => (
         <group key={b.id} position={b.meta.anchor.position} visible={Math.abs(i - active) <= 1}>
-          <b.Scene
-            localProgress={i === active ? localRef.current : i < active ? 1 : 0}
-            clock={clock}
-            quality={quality}
-            reducedMotion={reducedMotion}
-          />
+          {b.BeatScene ? (
+            <b.BeatScene index={i} quality={quality} reducedMotion={reducedMotion} />
+          ) : (
+            <LegacyBeat index={i} Scene={b.Scene} quality={quality} reducedMotion={reducedMotion} />
+          )}
         </group>
       ))}
-      {/* eslint-enable react-hooks/refs */}
     </>
   )
 }
@@ -144,7 +176,16 @@ export default function CosmicJourney3D() {
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>
       {quality !== 'mobile' && <PrologueLayer />}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }} aria-hidden>
-        <Canvas frameloop={frameloop} camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }} dpr={capture.enabled ? capture.dpr : quality === 'high' ? [1, 2] : [1, 1.5]}>
+        <Canvas
+          frameloop={frameloop}
+          camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }}
+          dpr={capture.enabled ? capture.dpr : quality === 'high' ? [1, 2] : [1, 1.5]}
+          // AgX everywhere: the post ToneMapping effect handles composited tiers;
+          // the renderer handles the mobile tier, which has no composer.
+          onCreated={({ gl }) => {
+            gl.toneMapping = THREE.AgXToneMapping
+          }}
+        >
           <Environment quality={quality} />
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} />
@@ -156,6 +197,14 @@ export default function CosmicJourney3D() {
           )}
         </Canvas>
       </div>
+      {/* CSS vignette: replaces the post-processing Vignette pass at zero GPU cost. */}
+      <div
+        aria-hidden
+        style={{
+          position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 85% 75% at 50% 45%, transparent 55%, rgba(2,3,8,0.78) 100%)',
+        }}
+      />
       {!capture.hideUi && <Overlay />}
       {!capture.hideUi && <ChapterRail />}
     </ScrollRig>
