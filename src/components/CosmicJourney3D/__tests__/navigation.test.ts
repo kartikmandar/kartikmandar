@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { beatIndexForSlug, beatTargetProgress, JUMP_LOCAL, slugFor } from '../navigation'
 import { cumulativeRanges } from '../scrollMath'
-import { PROLOGUE_FRACTION } from '../prologueScroll'
+import { flightStart } from '../prologueScroll'
 import { COPY_IN, COPY_OUT } from '../overlayView'
 
 describe('deep links', () => {
@@ -22,7 +22,7 @@ describe('deep links', () => {
     expect(JUMP_LOCAL).toBeLessThan(COPY_OUT)
     const ranges = cumulativeRanges([100, 200, 100])
     const p = beatTargetProgress(1, ranges)
-    const flight = (p - PROLOGUE_FRACTION) / (1 - PROLOGUE_FRACTION)
+    const flight = (p - flightStart()) / (1 - flightStart())
     expect((flight - ranges[1]!.start) / (ranges[1]!.end - ranges[1]!.start)).toBeCloseTo(JUMP_LOCAL, 9)
   })
 
