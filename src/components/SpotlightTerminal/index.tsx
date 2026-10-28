@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Terminal } from 'lucide-react'
 import { useRouter, usePathname } from 'next/navigation'
@@ -9,6 +9,8 @@ import { CommandProcessor } from './CommandProcessor'
 import { FileSystemMapper, type StaticContent } from './FileSystemMapper'
 import { WELCOME_LINES } from './asciiArt'
 import type { OutputLine } from './types'
+import { useChromeStore } from '@/components/SiteChrome/chromeStore'
+import { lockScroll } from '@/lib/scrollLock'
 
 interface SpotlightTerminalProps {
   navItems: Array<{ link: { label: string; url: string } }>
@@ -31,20 +33,29 @@ function createOutputLine(
 }
 
 export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, content }) => {
-  const [isExpanded, setIsExpanded] = useState<boolean>(false)
+  // Cmd-K: the terminal opens over the page from the top bar's search button or
+  // the shortcut. Its open state lives in the chrome store, so it and the menu
+  // never stack.
+  const isExpanded = useChromeStore((state) => state.overlay === 'command')
+  const openOverlay = useChromeStore((state) => state.open)
+  const closeOverlay = useChromeStore((state) => state.close)
+  const setIsExpanded = useCallback((next: boolean | ((prev: boolean) => boolean)) => {
+    const current = useChromeStore.getState().overlay === 'command'
+    const value = typeof next === 'function' ? next(current) : next
+    if (value) openOverlay('command')
+    else if (current) closeOverlay()
+  }, [openOverlay, closeOverlay])
   const [commandHistory, setCommandHistory] = useState<string[]>([])
   const [output, setOutput] = useState<OutputLine[]>(() =>
     WELCOME_LINES.map((line, i) => createOutputLine('welcome', line, i === 0))
   )
   const [currentInput, setCurrentInput] = useState<string>('')
-  const [isVisible, setIsVisible] = useState<boolean>(true)
-  const [isInteracting, setIsInteracting] = useState<boolean>(false)
 
   const router = useRouter()
   const pathname = usePathname()
   const terminalRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null)
+  const restoreFocusRef = useRef<HTMLElement | null>(null)
 
   // Initialize file system mapper and command processor with useMemo to prevent recreation
   const fileSystemMapper = React.useMemo(() => new FileSystemMapper(navItems, content), [navItems, content])
@@ -53,10 +64,15 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
   // Derive current directory from pathname
   const currentDirectory = React.useMemo(() => fileSystemMapper.urlToPath(pathname), [pathname, fileSystemMapper])
 
-  // Focus input when expanded
+  // Focus input when expanded; hold the page still and hand focus back on close
   useEffect(() => {
-    if (isExpanded && inputRef.current) {
-      inputRef.current.focus()
+    if (!isExpanded) return
+    restoreFocusRef.current = document.activeElement as HTMLElement | null
+    inputRef.current?.focus()
+    const unlock = lockScroll()
+    return () => {
+      unlock()
+      restoreFocusRef.current?.focus?.({ preventScroll: true })
     }
   }, [isExpanded])
 
@@ -75,50 +91,11 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [isExpanded])
+  }, [isExpanded, setIsExpanded])
 
-  // Handle auto-hide based on scroll and interactions
-  useEffect(() => {
-    const startHideTimer = () => {
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-
-      scrollTimeoutRef.current = setTimeout(() => {
-        if (!isExpanded && !isInteracting) {
-          setIsVisible(false)
-        }
-      }, 2000)
-    }
-
-    const handleScroll = () => {
-      setIsVisible(true)
-      startHideTimer()
-    }
-
-    if (!isInteracting && !isExpanded) {
-      startHideTimer()
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current)
-      }
-    }
-  }, [isExpanded, isInteracting])
-
-  // Handle keyboard shortcuts
+  // Escape closes (Cmd-K itself is handled by LazyCommand, which loads this on first use)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key === 'k') {
-        event.preventDefault()
-        setIsExpanded(prev => !prev)
-        setIsVisible(true)
-      }
-
       if (event.key === 'Escape' && isExpanded) {
         setIsExpanded(false)
       }
@@ -126,11 +103,7 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
 
     document.addEventListener('keydown', handleKeyDown)
     return () => document.removeEventListener('keydown', handleKeyDown)
-  }, [isExpanded])
-
-  const handleExpand = (): void => {
-    setIsExpanded(true)
-  }
+  }, [isExpanded, setIsExpanded])
 
   const handleCommand = async (command: string): Promise<void> => {
     if (!command.trim()) return
@@ -172,39 +145,16 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
 
   return (
     <>
-      {/* Collapsed State - Dynamic Island */}
+      {/* Backdrop */}
       <AnimatePresence>
-        {!isExpanded && (
+        {isExpanded && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: -20 }}
-            animate={{
-              opacity: isVisible ? 1 : 0,
-              scale: isVisible ? 1 : 0.8,
-              y: isVisible ? 0 : -20
-            }}
-            exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-4 left-20 md:left-0 md:right-0 md:mx-auto w-auto md:w-fit z-50 flex md:justify-center"
-          >
-            <motion.button
-              onClick={handleExpand}
-              onMouseEnter={() => setIsInteracting(true)}
-              onMouseLeave={() => setIsInteracting(false)}
-              className="group flex items-center gap-3 px-4 sm:px-6 md:px-8 bg-black/20 backdrop-blur-md border border-white/10 rounded-full text-white/80 hover:text-white transition-all duration-300 hover:bg-black/30 hover:border-white/20 min-w-0 max-w-[calc(100vw-180px)] md:max-w-[320px] h-12"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Terminal size={16} className="text-white/60 group-hover:text-white/80 flex-shrink-0" />
-              <div className="flex-1 flex items-center justify-center min-w-0">
-                <span className="text-sm font-medium text-center truncate">
-                  {getCurrentPath()}
-                </span>
-              </div>
-              <div className="hidden md:flex items-center gap-1 text-xs text-white/40 flex-shrink-0">
-                <span>⌘K</span>
-              </div>
-            </motion.button>
-          </motion.div>
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 bg-background-deep/50 backdrop-blur-sm z-[var(--z-command)]"
+          />
         )}
       </AnimatePresence>
 
@@ -217,7 +167,11 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: -20 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-4xl z-[9998]"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Terminal: search and navigate the site"
+            data-lenis-prevent
+            className="fixed top-4 left-0 right-0 mx-auto w-[95vw] sm:w-[90vw] max-w-4xl z-[var(--z-command)]"
           >
             <div className="bg-black/90 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
               {/* Header */}
@@ -255,18 +209,6 @@ export const SpotlightTerminal: React.FC<SpotlightTerminalProps> = ({ navItems, 
         )}
       </AnimatePresence>
 
-      {/* Backdrop */}
-      <AnimatePresence>
-        {isExpanded && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9997]"
-          />
-        )}
-      </AnimatePresence>
     </>
   )
 }

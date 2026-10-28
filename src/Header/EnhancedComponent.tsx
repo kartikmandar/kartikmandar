@@ -1,5 +1,5 @@
-import { HeaderClient } from './Component.client'
-import { SpotlightTerminal } from '@/components/SpotlightTerminal'
+import { LazyCommand, LazyMenu } from '@/components/SiteChrome/LazyOverlays'
+import { TopBar } from '@/components/SiteChrome/TopBar'
 import { NAVIGATION_ITEMS } from '@/constants/navigation'
 import { getAllPosts } from '@/lib/posts'
 import { getPublishedProjects } from '@/data/projects'
@@ -16,11 +16,12 @@ export function EnhancedHeader() {
 
   return (
     <>
-      {/* Spotlight Terminal - New primary navigation */}
-      <SpotlightTerminal navItems={navItems} content={{ posts, projects, talks }} />
+      {/* Slim top bar: name, search (Cmd-K) and the fullscreen menu */}
+      <TopBar />
+      <LazyMenu />
 
-      {/* Original Header - Keep as fallback/alternative navigation */}
-      <HeaderClient data={{ navItems }} />
+      {/* Cmd-K: the terminal, opened from the top bar or the shortcut */}
+      <LazyCommand navItems={navItems} content={{ posts, projects, talks }} />
     </>
   )
 }
