@@ -4,8 +4,11 @@
 import { useMemo } from 'react'
 import * as THREE from 'three'
 import { Stars } from '@react-three/drei'
-import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
+import { EffectComposer, Bloom, Noise, SMAA, ToneMapping } from '@react-three/postprocessing'
+import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import type { QualityTier } from './types'
+import { PALETTE } from './art/palette'
+import { getGlowTexture } from './art/materials'
 import { NEBULA_ANCHOR } from './beatsMeta'
 
 // Nebula field reaches a little beyond the end of the flight.
@@ -41,18 +44,25 @@ export function Environment({ quality }: { quality: QualityTier }) {
     return g
   }, [quality])
 
+  // Art bible post stack: bloom only on HDR emissives (> ~1), AgX tone mapping
+  // applied once (here, not on the renderer), fine film grain, SMAA in place of
+  // MSAA. The vignette is a CSS overlay (index.tsx), so it costs no GPU pass.
   return (
     <>
-      <color attach="background" args={['#02030a']} />
+      <color attach="background" args={[PALETTE.void]} />
+      {/* Distance fog matched to the background: stations emerge and dissolve instead of popping. */}
+      <fogExp2 attach="fog" args={[PALETTE.void, 0.045]} />
       <ambientLight intensity={0.15} />
       <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
       <points geometry={nebula}>
-        <pointsMaterial size={1.4} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} />
+        <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
       </points>
       {quality !== 'mobile' && (
-        <EffectComposer>
-          <Bloom intensity={quality === 'high' ? 0.9 : 0.5} luminanceThreshold={0.2} mipmapBlur />
-          <Vignette eskil={false} offset={0.15} darkness={0.85} />
+        <EffectComposer multisampling={0}>
+          <Bloom intensity={quality === 'high' ? 1.1 : 0.7} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur radius={0.7} />
+          <ToneMapping mode={ToneMappingMode.AGX} />
+          <SMAA />
+          <Noise premultiply opacity={0.035} blendFunction={BlendFunction.SOFT_LIGHT} />
         </EffectComposer>
       )}
     </>

@@ -46,6 +46,7 @@
     "next-themes": "^0.4.6",
     "pnpm": "^10.11.0",
     "posthog-js": "^1.369.2",
+    "postprocessing": "6.39.1",
     "prism-react-renderer": "^2.4.1",
     "qrcode": "^1.5.4",
     "react": "19.2.5",
@@ -60,6 +61,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@fontsource/jetbrains-mono": "5.3.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@tailwindcss/typography": "^0.5.19",
     "@types/escape-html": "^1.0.4",
