@@ -1,9 +1,11 @@
 // src/components/CosmicJourney3D/scenes/Beat_FocusLens.tsx
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat, type BeatHandle } from '../store'
 
 // Acceptance: a vignette/tunnel closes in while a stick-figure astronomer
 // (arm up, with a small telescope appearing past 50%) sharpens into focus in
@@ -46,76 +48,138 @@ const seg = (pairs: ReadonlyArray<readonly [[number, number], [number, number]]>
   return new Float32Array(arr)
 }
 
-export default function Beat_FocusLens({ localProgress, clock, reducedMotion }: SceneProps) {
-  // Astronomer comes into focus after 40%, identical to the 2D metaphor.
-  const sharpness = Math.max(0, (localProgress - 0.4) / 0.6)
-  // Gentle settle-in so the figure fills ~6 tall without bursting the frame.
-  const scale = 0.78 + sharpness * 0.22
-  const showScope = localProgress > 0.5
+// Lens vignette: a tunnel of dark rings that tighten toward center as we focus.
+const RINGS = 6
+const RING_SEGMENTS = 64
+const RING_COS = new Float32Array(RING_SEGMENTS + 1)
+const RING_SIN = new Float32Array(RING_SEGMENTS + 1)
+for (let i = 0; i <= RING_SEGMENTS; i++) {
+  RING_COS[i] = Math.cos((i / RING_SEGMENTS) * Math.PI * 2)
+  RING_SIN[i] = Math.sin((i / RING_SEGMENTS) * Math.PI * 2)
+}
+
+interface VignetteRingProps {
+  ringIndex: number
+  beat: BeatHandle
+}
+
+function VignetteRing({ ringIndex, beat }: VignetteRingProps) {
+  const meshRef = useRef<THREE.Mesh>(null)
+  const geometryRef = useRef<THREE.RingGeometry>(null)
+  const materialRef = useRef<THREE.MeshBasicMaterial>(null)
+  const k = ringIndex / (RINGS - 1) // 0 = outermost, 1 = innermost
+
+  useFrame(() => {
+    if (!beat.near) return
+    const close = Math.min(beat.local, 0.85) // matches lensRadius shrink
+    // Outer radius starts wide; rings march inward as `close` grows.
+    const outer = (1 - close * 0.9) * (6.2 - k * 4.6) + 0.6
+    const inner = outer - 0.55
+    const mesh = meshRef.current
+    const geometry = geometryRef.current
+    if (!mesh || !geometry) return
+    mesh.visible = inner > 0
+    if (inner <= 0) return
+    // RingGeometry layout (1 phi segment): vertices [0..N] inner ring, [N+1..2N+1] outer ring.
+    const attribute = geometry.attributes.position as THREE.BufferAttribute
+    const arr = attribute.array as Float32Array
+    const stride = RING_SEGMENTS + 1
+    for (let i = 0; i <= RING_SEGMENTS; i++) {
+      arr[i * 3] = RING_COS[i]! * inner
+      arr[i * 3 + 1] = RING_SIN[i]! * inner
+      arr[(stride + i) * 3] = RING_COS[i]! * outer
+      arr[(stride + i) * 3 + 1] = RING_SIN[i]! * outer
+    }
+    attribute.needsUpdate = true
+    if (materialRef.current) materialRef.current.opacity = 0.18 + k * 0.5 + close * 0.25
+  })
+
+  return (
+    <mesh ref={meshRef} position={[0, FIG_Y_OFFSET, 0.4 + ringIndex * 0.02]} frustumCulled={false}>
+      <ringGeometry ref={geometryRef} args={[0.5, 1, RING_SEGMENTS]} />
+      <meshBasicMaterial
+        ref={materialRef}
+        color="#000000"
+        transparent
+        opacity={0.18 + k * 0.5}
+        toneMapped={false}
+        side={THREE.DoubleSide}
+      />
+    </mesh>
+  )
+}
+
+export default function Beat_FocusLens({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
+  const glowRef = useRef<THREE.Mesh>(null)
+  const glowMatRef = useRef<THREE.MeshBasicMaterial>(null)
+  const figureRef = useRef<THREE.Group>(null)
+  const headMatRef = useRef<THREE.MeshBasicMaterial>(null)
+  const bodyMatRef = useRef<THREE.LineBasicMaterial>(null)
+  const scopeRef = useRef<THREE.LineSegments>(null)
+  const scopeMatRef = useRef<THREE.LineBasicMaterial>(null)
 
   const bodyPos = useMemo(() => seg(FIGURE), [])
   const scopePos = useMemo(() => seg(TELESCOPE), [])
 
-  // Lens vignette: a tunnel of dark rings that tighten toward center as we focus.
-  const RINGS = 6
-  const close = Math.min(localProgress, 0.85) // matches lensRadius shrink
-  const sway = reducedMotion ? 0 : Math.sin(clock * 0.5) * 0.04
+  useFrame(() => {
+    if (!beat.near) return
+    const p = beat.local
+    // Astronomer comes into focus after 40%, identical to the 2D metaphor.
+    const sharpness = Math.max(0, (p - 0.4) / 0.6)
+    // Gentle settle-in so the figure fills ~6 tall without bursting the frame.
+    const scale = 0.78 + sharpness * 0.22
+    const sway = reducedMotion ? 0 : Math.sin(beat.clock * 0.5) * 0.04
+
+    if (glowRef.current) glowRef.current.scale.setScalar(scale)
+    if (glowMatRef.current) glowMatRef.current.opacity = sharpness * 0.3
+    const figure = figureRef.current
+    if (figure) {
+      figure.visible = sharpness > 0
+      figure.scale.setScalar(scale)
+      figure.rotation.z = sway
+    }
+    if (headMatRef.current) headMatRef.current.opacity = sharpness
+    if (bodyMatRef.current) bodyMatRef.current.opacity = sharpness
+    if (scopeRef.current) scopeRef.current.visible = p > 0.5
+    if (scopeMatRef.current) scopeMatRef.current.opacity = sharpness
+  })
 
   return (
     <group>
       {/* Sky-blue focus glow behind the astronomer (filled disc via ring 0..r) */}
-      <mesh position={[0, FIG_Y_OFFSET, -0.5]} scale={scale}>
+      <mesh ref={glowRef} position={[0, FIG_Y_OFFSET, -0.5]} scale={0.78}>
         <ringGeometry args={[0, 3.2, 48]} />
-        <meshBasicMaterial color="#87ceeb" transparent opacity={sharpness * 0.3} toneMapped={false} />
+        <meshBasicMaterial ref={glowMatRef} color="#87ceeb" transparent opacity={0} toneMapped={false} />
       </mesh>
 
       {/* Astronomer, scaling and brightening into focus */}
-      {sharpness > 0 && (
-        <group position={[0, FIG_Y_OFFSET, 0]} scale={[scale, scale, scale]} rotation={[0, 0, sway]}>
-          {/* Head */}
-          <mesh position={fp(0, -40)}>
-            <torusGeometry args={[12 * FIG_SCALE, 1.4 * FIG_SCALE, 8, 24]} />
-            <meshBasicMaterial color="#ffffff" transparent opacity={sharpness} toneMapped={false} />
-          </mesh>
-          {/* Limbs */}
-          <lineSegments>
-            <bufferGeometry>
-              <bufferAttribute attach="attributes-position" args={[bodyPos, 3]} />
-            </bufferGeometry>
-            <lineBasicMaterial color="#ffffff" transparent opacity={sharpness} toneMapped={false} />
-          </lineSegments>
-          {/* Telescope appears past the half-way mark */}
-          {showScope && (
-            <lineSegments>
-              <bufferGeometry>
-                <bufferAttribute attach="attributes-position" args={[scopePos, 3]} />
-              </bufferGeometry>
-              <lineBasicMaterial color="#c8c8c8" transparent opacity={sharpness} toneMapped={false} />
-            </lineSegments>
-          )}
-        </group>
-      )}
+      <group ref={figureRef} position={[0, FIG_Y_OFFSET, 0]} scale={[0.78, 0.78, 0.78]} visible={false}>
+        {/* Head */}
+        <mesh position={fp(0, -40)}>
+          <torusGeometry args={[12 * FIG_SCALE, 1.4 * FIG_SCALE, 8, 24]} />
+          <meshBasicMaterial ref={headMatRef} color="#ffffff" transparent opacity={0} toneMapped={false} />
+        </mesh>
+        {/* Limbs */}
+        <lineSegments>
+          <bufferGeometry>
+            <bufferAttribute attach="attributes-position" args={[bodyPos, 3]} />
+          </bufferGeometry>
+          <lineBasicMaterial ref={bodyMatRef} color="#ffffff" transparent opacity={0} toneMapped={false} />
+        </lineSegments>
+        {/* Telescope appears past the half-way mark */}
+        <lineSegments ref={scopeRef} visible={false}>
+          <bufferGeometry>
+            <bufferAttribute attach="attributes-position" args={[scopePos, 3]} />
+          </bufferGeometry>
+          <lineBasicMaterial ref={scopeMatRef} color="#c8c8c8" transparent opacity={0} toneMapped={false} />
+        </lineSegments>
+      </group>
 
       {/* Vignette / focusing-lens tunnel closing in around the figure */}
-      {Array.from({ length: RINGS }, (_, i) => {
-        const k = i / (RINGS - 1) // 0 = outermost, 1 = innermost
-        // Outer radius starts wide; rings march inward as `close` grows.
-        const outer = (1 - close * 0.9) * (6.2 - k * 4.6) + 0.6
-        const inner = outer - 0.55
-        if (inner <= 0) return null
-        return (
-          <mesh key={`v${i}`} position={[0, FIG_Y_OFFSET, 0.4 + i * 0.02]}>
-            <ringGeometry args={[inner, outer, 64]} />
-            <meshBasicMaterial
-              color="#000000"
-              transparent
-              opacity={0.18 + k * 0.5 + close * 0.25}
-              toneMapped={false}
-              side={THREE.DoubleSide}
-            />
-          </mesh>
-        )
-      })}
+      {Array.from({ length: RINGS }, (_, i) => (
+        <VignetteRing key={`v${i}`} ringIndex={i} beat={beat} />
+      ))}
     </group>
   )
 }

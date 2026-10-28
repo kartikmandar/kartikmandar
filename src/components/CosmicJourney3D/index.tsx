@@ -16,7 +16,7 @@ import OriginBlackHole from './scenes/OriginBlackHole'
 import { readJourneyEnv, selectQuality } from './tiers'
 import { fallbackMode } from './fallbackPlan'
 import { cumulativeRanges } from './scrollMath'
-import type { QualityTier, SceneProps } from './types'
+import type { QualityTier } from './types'
 import { journeyFrame, journeyStore, useActiveBeat, writeBeatProgress } from './store'
 import { HeroPrologue } from './HeroPrologue'
 import { splitProgress, pageScrollVh } from './prologueScroll'
@@ -64,25 +64,6 @@ function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
   return null
 }
 
-// Adapter for scenes still on the legacy prop API: re-renders only while the
-// beat is on screen (active ±1), instead of every scene every frame.
-function LegacyBeat({ index, Scene, quality, reducedMotion }: {
-  index: number
-  Scene: React.FC<SceneProps>
-  quality: QualityTier
-  reducedMotion: boolean
-}) {
-  const [frame, setFrame] = useState({ local: 0, clock: journeyFrame.clock })
-  useFrame(() => {
-    const near = index < 0 ? journeyFrame.activeIndex <= 1 : Math.abs(journeyFrame.activeIndex - index) <= 1
-    if (!near) return
-    const local = index < 0 ? 0 : (journeyFrame.local[index] ?? 0)
-    const clock = journeyFrame.clock
-    setFrame((f) => (f.local === local && f.clock === clock ? f : { local, clock }))
-  })
-  return <Scene localProgress={frame.local} clock={frame.clock} quality={quality} reducedMotion={reducedMotion} />
-}
-
 // Mounts every beat at its anchor; only the active beat and its neighbours are visible.
 function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityTier; reducedMotion: boolean; prologuePass: boolean }) {
   const active = useActiveBeat()
@@ -93,11 +74,7 @@ function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityT
       <OriginBlackHole position={ORIGIN_BLACK_HOLE} quality={quality} />
       {BEATS.map((b, i) => (
         <group key={b.id} position={b.meta.anchor.position} visible={Math.abs(i - active) <= 1}>
-          {b.BeatScene ? (
-            <b.BeatScene index={i} quality={quality} reducedMotion={reducedMotion} />
-          ) : (
-            <LegacyBeat index={i} Scene={b.Scene} quality={quality} reducedMotion={reducedMotion} />
-          )}
+          <b.Scene index={i} quality={quality} reducedMotion={reducedMotion} />
         </group>
       ))}
       </CoverAware>

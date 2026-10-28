@@ -2,7 +2,7 @@
 import type React from 'react'
 import { NARRATIVE } from './narrative'
 import { BEATS_META } from './beatsMeta'
-import type { BeatMeta, BeatSceneProps, SceneProps } from './types'
+import type { BeatMeta, BeatSceneProps } from './types'
 import UnbuiltBeatMarker from './scenes/UnbuiltBeatMarker'
 import Beat_Textbook from './scenes/Beat_Textbook'
 import Beat_Comet from './scenes/Beat_Comet'
@@ -14,14 +14,11 @@ import Beat_Compass from './scenes/Beat_Compass'
 import Beat_Slingshot from './scenes/Beat_Slingshot'
 import Beat_MajorLens from './scenes/Beat_MajorLens'
 import Beat_DualPaths from './scenes/Beat_DualPaths'
-import Beat_Shuttlecock from './scenes/Beat_Shuttlecock'
-import Beat_SignalToSim from './scenes/Beat_SignalToSim'
 import Beat_Dashboard from './scenes/Beat_Dashboard'
 import Beat_MidnightOil from './scenes/Beat_MidnightOil'
 import Beat_ExitFork from './scenes/Beat_ExitFork'
 import Beat_Lensing from './scenes/Beat_Lensing'
 import Beat_PaperPlane from './scenes/Beat_PaperPlane'
-import Beat_Milestones from './scenes/Beat_Milestones'
 import Beat_Workbench from './scenes/Beat_Workbench'
 import Beat_Walker from './scenes/Beat_Walker'
 import Beat_HeraArray from './scenes/Beat_HeraArray'
@@ -35,22 +32,13 @@ export interface Beat {
   body?: string
   typedPhrases?: string[]
   meta: BeatMeta
-  /** Beat-API scene (preferred). When present it is used instead of Scene. */
-  BeatScene?: React.FC<BeatSceneProps>
-  /** Legacy scene, driven through LegacyBeat until it is migrated. */
-  Scene: React.FC<SceneProps>
+  Scene: React.FC<BeatSceneProps>
 }
 
-// Scenes on the Phase 1 beat API (useBeat refs, no per-frame re-render).
-const BEAT_SCENES: Record<string, React.FC<BeatSceneProps>> = {
-  'injury-section': Beat_SmashToCoach,
-  'rri-research-section': Beat_HeraArray,
-  'cygnus-publication-section': Beat_CygnusX1,
-}
-
-// Built scenes are registered here; everything else flies as an UnbuiltBeatMarker
-// until its own phase replaces it. Origin black hole is mounted separately at ORIGIN_ANCHOR.
-const SCENES: Record<string, React.FC<SceneProps>> = {
+// Every scene is on the beat API (useBeat refs, no per-frame re-render). Beats
+// without a built scene fly as an UnbuiltBeatMarker until Phase 4 builds them.
+// The origin black hole is mounted separately (scenes/OriginBlackHole.tsx).
+const SCENES: Record<string, React.FC<BeatSceneProps>> = {
   'nao-section': Beat_Textbook,
   'comet-section': Beat_Comet,
   'decision-section': Beat_FocusLens,
@@ -61,14 +49,14 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
   'slingshot-section': Beat_Slingshot,
   'lens-section': Beat_MajorLens,
   'internship-section': Beat_DualPaths,
-  'injury-section': Beat_Shuttlecock,
-  'rri-research-section': Beat_SignalToSim,
+  'injury-section': Beat_SmashToCoach,
+  'rri-research-section': Beat_HeraArray,
   'gsoc-section': Beat_Dashboard,
   'doubling-down-section': Beat_MidnightOil,
   'bs-exit-section': Beat_ExitFork,
   'lensing-section': Beat_Lensing,
   'publication-section': Beat_PaperPlane,
-  'cygnus-publication-section': Beat_Milestones,
+  'cygnus-publication-section': Beat_CygnusX1,
   'analysis-section': Beat_Workbench,
   'journey-continues-section': Beat_Walker,
 }
@@ -76,7 +64,6 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
 export const BEATS: Beat[] = NARRATIVE.map((b) => ({
   ...b,
   meta: BEATS_META[b.id]!,
-  BeatScene: BEAT_SCENES[b.id],
   Scene: SCENES[b.id] ?? UnbuiltBeatMarker,
 }))
 

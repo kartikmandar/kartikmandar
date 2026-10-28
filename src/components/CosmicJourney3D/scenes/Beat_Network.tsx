@@ -1,10 +1,12 @@
 // src/components/CosmicJourney3D/scenes/Beat_Network.tsx
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: a central indigo node connects out to surrounding nodes one by one
 // as localProgress grows; academic vs code nodes differ; connection lines + small
@@ -13,6 +15,7 @@ import type { SceneProps } from '../types'
 const NODE_COUNT = 8
 
 type NetNode = { pos: THREE.Vector3; academic: boolean; icon: string; color: string }
+type TroikaText = THREE.Mesh & { fillOpacity: number }
 
 // Map the original 2D [0..1] layout into the XY plane of this beat's local space.
 // Widen the spread so the hub-and-spokes fill ~9x6, and lift the whole graph up
@@ -26,7 +29,9 @@ const INDIGO = '#a5b4fc'
 const ACADEMIC = '#fde047'
 const CODE = '#4ade80'
 
-export default function Beat_Network({ localProgress, clock, reducedMotion }: SceneProps) {
+export default function Beat_Network({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
+
   // Deterministic radial layout matching generateNetworkNodes(8).
   const nodes = useMemo<NetNode[]>(() => {
     return Array.from({ length: NODE_COUNT }, (_, i) => {
@@ -42,45 +47,93 @@ export default function Beat_Network({ localProgress, clock, reducedMotion }: Sc
     })
   }, [])
 
-  // One-by-one reveal: nodesToShow whole nodes plus a partially-drawn last line.
-  const reach = localProgress * NODE_COUNT
-  const nodesToShow = Math.floor(reach)
-  const lastLineT = reach % 1
+  // Fixed-size buffers (updated in place): hub-to-node segments and flowing particles.
+  const linePositions = useMemo(() => new Float32Array(NODE_COUNT * 6), [])
+  const particlePositions = useMemo(() => new Float32Array(NODE_COUNT * 3), [])
+  const particleColors = useMemo(() => {
+    const colors = new Float32Array(NODE_COUNT * 3)
+    const scratchColor = new THREE.Color()
+    nodes.forEach((node, i) => {
+      scratchColor.set(node.color)
+      colors[i * 3] = scratchColor.r
+      colors[i * 3 + 1] = scratchColor.g
+      colors[i * 3 + 2] = scratchColor.b
+    })
+    return colors
+  }, [nodes])
 
-  // Connection lines (indigo), drawing the final one in progressively.
-  const linePositions = useMemo(() => {
-    const arr: number[] = []
-    for (let i = 0; i < nodesToShow; i++) {
-      const node = nodes[i]
-      if (!node) continue
-      const t = i === nodesToShow - 1 && lastLineT < 1 ? lastLineT : 1
-      const end = CENTER.clone().lerp(node.pos, t)
-      arr.push(CENTER.x, CENTER.y, CENTER.z, end.x, end.y, end.z)
+  const spinGroupRef = useRef<THREE.Group>(null)
+  const lineGeometryRef = useRef<THREE.BufferGeometry>(null)
+  const particleGeometryRef = useRef<THREE.BufferGeometry>(null)
+  const nodeGroupsRef = useRef<Array<THREE.Group | null>>([])
+  const coreMaterialsRef = useRef<Array<THREE.MeshBasicMaterial | null>>([])
+  const haloMaterialsRef = useRef<Array<THREE.MeshBasicMaterial | null>>([])
+  const labelsRef = useRef<Array<TroikaText | null>>([])
+
+  useFrame(() => {
+    if (!beat.near) return
+    const p = beat.local
+    const t = beat.clock
+
+    // One-by-one reveal: nodesToShow whole nodes plus a partially-drawn last line.
+    const reach = p * NODE_COUNT
+    const nodesToShow = Math.floor(reach)
+    const lastLineT = reach % 1
+    const drift = reducedMotion ? 0.4 : (t * 0.5) % 1
+
+    const spinGroup = spinGroupRef.current
+    if (spinGroup) spinGroup.rotation.z = reducedMotion ? 0 : Math.sin(t * 0.15) * 0.06
+
+    const lineGeometry = lineGeometryRef.current
+    const particleGeometry = particleGeometryRef.current
+    const lineArray = lineGeometry?.attributes.position!.array as Float32Array | undefined
+    const particleArray = particleGeometry?.attributes.position!.array as Float32Array | undefined
+
+    for (let i = 0; i < NODE_COUNT; i++) {
+      const node = nodes[i]!
+      const nodeGroup = nodeGroupsRef.current[i]
+      const shown = i < nodesToShow
+      if (nodeGroup) nodeGroup.visible = shown
+      if (shown && lineArray && particleArray) {
+        const appear = i === nodesToShow - 1 ? lastLineT : 1
+        const core = coreMaterialsRef.current[i]
+        const halo = haloMaterialsRef.current[i]
+        const label = labelsRef.current[i]
+        if (core) core.opacity = appear
+        if (halo) halo.opacity = 0.15 * appear
+        if (label) label.fillOpacity = appear
+
+        // Connection line, drawing the final one in progressively.
+        const lineT = i === nodesToShow - 1 && lastLineT < 1 ? lastLineT : 1
+        const lo = i * 6
+        lineArray[lo] = CENTER.x
+        lineArray[lo + 1] = CENTER.y
+        lineArray[lo + 2] = CENTER.z
+        lineArray[lo + 3] = CENTER.x + (node.pos.x - CENTER.x) * lineT
+        lineArray[lo + 4] = CENTER.y + (node.pos.y - CENTER.y) * lineT
+        lineArray[lo + 5] = CENTER.z + (node.pos.z - CENTER.z) * lineT
+
+        // Particle flowing from the hub toward this node.
+        const particleT = (drift + i * 0.13) % 1
+        const po = i * 3
+        particleArray[po] = CENTER.x + (node.pos.x - CENTER.x) * particleT
+        particleArray[po + 1] = CENTER.y + (node.pos.y - CENTER.y) * particleT
+        particleArray[po + 2] = CENTER.z + (node.pos.z - CENTER.z) * particleT
+      }
     }
-    return new Float32Array(arr)
-  }, [nodes, nodesToShow, lastLineT])
 
-  // Particles flowing from center toward each revealed node, colored by type.
-  const drift = reducedMotion ? 0.4 : (clock * 0.5) % 1
-  const { particlePos, particleCol } = useMemo(() => {
-    const pos: number[] = []
-    const col: number[] = []
-    for (let i = 0; i < nodesToShow; i++) {
-      const node = nodes[i]
-      if (!node) continue
-      const t = (drift + i * 0.13) % 1
-      const p = CENTER.clone().lerp(node.pos, t)
-      pos.push(p.x, p.y, p.z)
-      const c = new THREE.Color(node.color)
-      col.push(c.r, c.g, c.b)
+    if (lineGeometry) {
+      lineGeometry.attributes.position!.needsUpdate = true
+      lineGeometry.setDrawRange(0, nodesToShow * 2)
     }
-    return { particlePos: new Float32Array(pos), particleCol: new Float32Array(col) }
-  }, [nodes, nodesToShow, drift])
-
-  const spin = reducedMotion ? 0 : Math.sin(clock * 0.15) * 0.06
+    if (particleGeometry) {
+      particleGeometry.attributes.position!.needsUpdate = true
+      particleGeometry.setDrawRange(0, nodesToShow)
+    }
+  })
 
   return (
-    <group rotation={[0, 0, spin]}>
+    <group ref={spinGroupRef}>
       {/* Central indigo hub */}
       <mesh position={CENTER}>
         <sphereGeometry args={[0.46, 24, 24]} />
@@ -92,53 +145,71 @@ export default function Beat_Network({ localProgress, clock, reducedMotion }: Sc
       </mesh>
 
       {/* Surrounding academic / code nodes, revealed one by one */}
-      {nodes.map((node, i) => {
-        if (i >= nodesToShow) return null
-        const appear = i === nodesToShow - 1 ? lastLineT : 1
-        return (
-          <group key={`n${i}`} position={node.pos}>
-            <mesh>
-              <sphereGeometry args={[0.28, 16, 16]} />
-              <meshBasicMaterial color={node.color} transparent opacity={appear} toneMapped={false} />
-            </mesh>
-            <mesh>
-              <sphereGeometry args={[0.46, 14, 14]} />
-              <meshBasicMaterial color={node.color} transparent opacity={0.15 * appear} toneMapped={false} />
-            </mesh>
-            <Text
-              position={[0, 0.5, 0]}
-              fontSize={0.4}
+      {nodes.map((node, i) => (
+        <group
+          key={`n${i}`}
+          ref={(group) => {
+            nodeGroupsRef.current[i] = group
+          }}
+          position={node.pos}
+          visible={false}
+        >
+          <mesh>
+            <sphereGeometry args={[0.28, 16, 16]} />
+            <meshBasicMaterial
+              ref={(material) => {
+                coreMaterialsRef.current[i] = material
+              }}
               color={node.color}
-              anchorX="center"
-              anchorY="middle"
-              fillOpacity={appear}
-            >
-              {node.icon}
-            </Text>
-          </group>
-        )
-      })}
+              transparent
+              opacity={0}
+              toneMapped={false}
+            />
+          </mesh>
+          <mesh>
+            <sphereGeometry args={[0.46, 14, 14]} />
+            <meshBasicMaterial
+              ref={(material) => {
+                haloMaterialsRef.current[i] = material
+              }}
+              color={node.color}
+              transparent
+              opacity={0}
+              toneMapped={false}
+            />
+          </mesh>
+          <Text
+            ref={(label) => {
+              labelsRef.current[i] = label as TroikaText | null
+            }}
+            position={[0, 0.5, 0]}
+            fontSize={0.4}
+            color={node.color}
+            anchorX="center"
+            anchorY="middle"
+            fillOpacity={0}
+          >
+            {node.icon}
+          </Text>
+        </group>
+      ))}
 
       {/* Indigo connection lines from hub to each node */}
-      {linePositions.length > 0 && (
-        <lineSegments>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial color={INDIGO} transparent opacity={0.6} toneMapped={false} />
-        </lineSegments>
-      )}
+      <lineSegments frustumCulled={false}>
+        <bufferGeometry ref={lineGeometryRef} drawRange={{ start: 0, count: 0 }}>
+          <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color={INDIGO} transparent opacity={0.6} toneMapped={false} />
+      </lineSegments>
 
       {/* Small flowing particles travelling outward along each line */}
-      {particlePos.length > 0 && (
-        <points>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[particlePos, 3]} />
-            <bufferAttribute attach="attributes-color" args={[particleCol, 3]} />
-          </bufferGeometry>
-          <pointsMaterial size={0.22} vertexColors transparent opacity={0.95} sizeAttenuation toneMapped={false} />
-        </points>
-      )}
+      <points frustumCulled={false}>
+        <bufferGeometry ref={particleGeometryRef} drawRange={{ start: 0, count: 0 }}>
+          <bufferAttribute attach="attributes-position" args={[particlePositions, 3]} />
+          <bufferAttribute attach="attributes-color" args={[particleColors, 3]} />
+        </bufferGeometry>
+        <pointsMaterial size={0.22} vertexColors transparent opacity={0.95} sizeAttenuation toneMapped={false} />
+      </points>
     </group>
   )
 }

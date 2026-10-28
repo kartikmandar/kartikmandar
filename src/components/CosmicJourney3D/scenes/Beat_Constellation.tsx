@@ -1,9 +1,11 @@
 // src/components/CosmicJourney3D/scenes/Beat_Constellation.tsx
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: engineering cluster fades; Gemini named stars light; indigo lines
 // connect, completing by localProgress ~0.4 (mirrors drawConstellations).
@@ -30,26 +32,49 @@ const toPos = (p: readonly [number, number]) =>
     0,
   )
 
-export default function Beat_Constellation({ localProgress }: SceneProps) {
+export default function Beat_Constellation({ index }: BeatSceneProps) {
+  const beat = useBeat(index)
   const researchPts = useMemo(() => RESEARCH.map(toPos), [])
   const engPts = useMemo(() => ENGINEERING.map(toPos), [])
-  const lineDone = Math.min(1, localProgress / 0.4)
-  const engAlpha = Math.max(0, 1 - localProgress * 2.5)
+  // Fixed-size line buffer: 2 vertices per constellation line, revealed via drawRange.
+  const linePositions = useMemo(() => new Float32Array(LINES.length * 6), [])
+  const lineGeometryRef = useRef<THREE.BufferGeometry>(null)
+  const engMaterialsRef = useRef<Array<THREE.MeshBasicMaterial | null>>([])
 
-  const linePositions = useMemo(() => {
-    const arr: number[] = []
-    LINES.forEach(([a, b], i) => {
-      if (lineDone * LINES.length > i) {
-        const t = Math.min(1, lineDone * LINES.length - i)
-        const p1 = researchPts[a]
-        const p2 = researchPts[b]
-        if (!p1 || !p2) return
-        const mid = p1.clone().lerp(p2, t)
-        arr.push(p1.x, p1.y, p1.z, mid.x, mid.y, mid.z)
-      }
-    })
-    return new Float32Array(arr)
-  }, [lineDone, researchPts])
+  useFrame(() => {
+    if (!beat.near) return
+    const p = beat.local
+    const lineDone = Math.min(1, p / 0.4)
+    const engAlpha = Math.max(0, 1 - p * 2.5)
+
+    const engMaterials = engMaterialsRef.current
+    for (let i = 0; i < engMaterials.length; i++) {
+      const material = engMaterials[i]
+      if (material) material.opacity = engAlpha
+    }
+
+    const geometry = lineGeometryRef.current
+    if (!geometry) return
+    const lineArray = geometry.attributes.position!.array as Float32Array
+    let segmentCount = 0
+    for (let i = 0; i < LINES.length; i++) {
+      if (!(lineDone * LINES.length > i)) continue
+      const line = LINES[i]!
+      const t = Math.min(1, lineDone * LINES.length - i)
+      const p1 = researchPts[line[0]]!
+      const p2 = researchPts[line[1]]!
+      const o = segmentCount * 6
+      lineArray[o] = p1.x
+      lineArray[o + 1] = p1.y
+      lineArray[o + 2] = p1.z
+      lineArray[o + 3] = p1.x + (p2.x - p1.x) * t
+      lineArray[o + 4] = p1.y + (p2.y - p1.y) * t
+      lineArray[o + 5] = p1.z + (p2.z - p1.z) * t
+      segmentCount++
+    }
+    geometry.attributes.position!.needsUpdate = true
+    geometry.setDrawRange(0, segmentCount * 2)
+  })
 
   return (
     <group>
@@ -62,17 +87,23 @@ export default function Beat_Constellation({ localProgress }: SceneProps) {
       {engPts.map((p, i) => (
         <mesh key={`e${i}`} position={p}>
           <sphereGeometry args={[0.13, 12, 12]} />
-          <meshBasicMaterial color="#ffffff" transparent opacity={engAlpha} toneMapped={false} />
+          <meshBasicMaterial
+            ref={(material) => {
+              engMaterialsRef.current[i] = material
+            }}
+            color="#ffffff"
+            transparent
+            opacity={1}
+            toneMapped={false}
+          />
         </mesh>
       ))}
-      {linePositions.length > 0 && (
-        <lineSegments>
-          <bufferGeometry>
-            <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
-          </bufferGeometry>
-          <lineBasicMaterial color="#a5b4fc" transparent opacity={0.85} toneMapped={false} />
-        </lineSegments>
-      )}
+      <lineSegments frustumCulled={false}>
+        <bufferGeometry ref={lineGeometryRef} drawRange={{ start: 0, count: 0 }}>
+          <bufferAttribute attach="attributes-position" args={[linePositions, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color="#a5b4fc" transparent opacity={0.85} toneMapped={false} />
+      </lineSegments>
     </group>
   )
 }

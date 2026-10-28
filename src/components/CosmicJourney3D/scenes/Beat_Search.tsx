@@ -1,8 +1,12 @@
 // src/components/CosmicJourney3D/scenes/Beat_Search.tsx
 'use client'
 
+import { useRef } from 'react'
+import { useFrame } from '@react-three/fiber'
+import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: a dark glowing terminal panel types and deletes through three
 // search phrases in order and stops on the last ("IISER Bhopal"), turning the
@@ -49,9 +53,19 @@ function borderPositions(w: number, h: number, z = 0.01): Float32Array {
 
 const BORDER = borderPositions(PANEL_W, PANEL_H)
 
-// Resolve the visible substring and whether we are on the final, settled phrase
-// from a deterministic localProgress in [0..1].
-function resolveTyping(progress: number): { text: string; final: boolean } {
+type TroikaText = THREE.Mesh & {
+  text: string
+  color: string
+  fillOpacity: number
+  sync: () => void
+}
+
+// Module-level scratch so resolving the typed text never allocates per frame.
+const typingScratch = { phraseIndex: 0, chars: 0, final: false }
+
+// Resolve which phrase is showing, how many characters of it are visible, and
+// whether we are on the final, settled phrase, from a deterministic localProgress.
+function resolveTyping(progress: number): void {
   const p = Math.min(1, Math.max(0, progress)) * TOTAL
   let cursor = 0
   for (let i = 0; i < SEGMENTS.length; i++) {
@@ -62,48 +76,94 @@ function resolveTyping(progress: number): { text: string; final: boolean } {
     const isLast = i === SEGMENTS.length - 1
     if (p < cursor + span || (isLast && p >= cursor)) {
       const local = p - cursor
+      typingScratch.phraseIndex = i
       if (local < seg.type) {
         const t = seg.type > 0 ? local / seg.type : 1
         const chars = Math.round(t * phrase.length)
-        return { text: phrase.slice(0, chars), final: isLast && chars >= phrase.length }
+        typingScratch.chars = chars
+        typingScratch.final = isLast && chars >= phrase.length
+        return
       }
       if (local < seg.type + seg.hold) {
-        return { text: phrase, final: isLast }
+        typingScratch.chars = phrase.length
+        typingScratch.final = isLast
+        return
       }
       // Deleting tail (only the non-final phrases reach here).
       const dl = local - seg.type - seg.hold
       const t = seg.del > 0 ? dl / seg.del : 1
-      const chars = Math.round((1 - Math.min(1, t)) * phrase.length)
-      return { text: phrase.slice(0, chars), final: false }
+      typingScratch.chars = Math.round((1 - Math.min(1, t)) * phrase.length)
+      typingScratch.final = false
+      return
     }
     cursor += span
   }
   // Past the end: settle on the final phrase.
-  const last = PHRASES[PHRASES.length - 1]
-  return { text: last ?? '', final: true }
+  typingScratch.phraseIndex = PHRASES.length - 1
+  typingScratch.chars = PHRASES[PHRASES.length - 1]?.length ?? 0
+  typingScratch.final = true
 }
 
-export default function Beat_Search({ localProgress, clock, reducedMotion }: SceneProps) {
-  const { text, final } = resolveTyping(localProgress)
+const GREEN = '#4ade80'
+const GLOW_BLUE = new THREE.Color('#38bdf8')
+const GLOW_GREEN = new THREE.Color(GREEN)
+const BORDER_BLUE = new THREE.Color('#1e3a5f')
+const BORDER_GREEN = new THREE.Color(GREEN)
 
-  // Blinking caret driven by the clock; steady (always shown) when reduced motion.
-  const caretOn = reducedMotion ? true : Math.sin(clock * Math.PI * 2 * 1.3) > 0
-  // Caret turns green once the trajectory settles on the final phrase.
-  const caretColor = final ? '#4ade80' : '#e0e0e0'
-  // Place the block caret just after the last typed glyph.
-  const caretX = TEXT_X + text.length * CHAR_ADVANCE
+export default function Beat_Search({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
+  const glowRef = useRef<THREE.Mesh>(null)
+  const borderRef = useRef<THREE.LineSegments>(null)
+  const typedRef = useRef<TroikaText>(null)
+  const caretRef = useRef<TroikaText>(null)
+  // Last values pushed to the scene, so text/colour work happens only on change.
+  const lastPhraseRef = useRef(-1)
+  const lastCharsRef = useRef(-1)
+  const lastFinalRef = useRef<boolean | null>(null)
+
+  useFrame(() => {
+    if (!beat.near) return
+    resolveTyping(beat.local)
+    const { phraseIndex, chars, final } = typingScratch
+
+    // Typed phrase: re-sync the troika text only when the visible string changes.
+    const typed = typedRef.current
+    if (typed && (phraseIndex !== lastPhraseRef.current || chars !== lastCharsRef.current)) {
+      lastPhraseRef.current = phraseIndex
+      lastCharsRef.current = chars
+      typed.text = PHRASES[phraseIndex]!.slice(0, chars)
+      typed.sync()
+    }
+
+    // Blinking caret driven by the clock; steady (always shown) when reduced motion.
+    const caret = caretRef.current
+    if (caret) {
+      caret.visible = reducedMotion ? true : Math.sin(beat.clock * Math.PI * 2 * 1.3) > 0
+      // Place the block caret just after the last typed glyph.
+      caret.position.x = TEXT_X + chars * CHAR_ADVANCE
+    }
+
+    // Green tint once the trajectory settles on the final phrase.
+    if (final !== lastFinalRef.current) {
+      lastFinalRef.current = final
+      if (caret) caret.color = final ? GREEN : '#e0e0e0'
+      const glow = glowRef.current
+      if (glow) (glow.material as THREE.MeshBasicMaterial).color.copy(final ? GLOW_GREEN : GLOW_BLUE)
+      const border = borderRef.current
+      if (border) {
+        const borderMaterial = border.material as THREE.LineBasicMaterial
+        borderMaterial.color.copy(final ? BORDER_GREEN : BORDER_BLUE)
+        borderMaterial.opacity = final ? 0.9 : 0.6
+      }
+    }
+  })
 
   return (
     <group position={[0, PANEL_Y, 0]}>
       {/* Faint glow plane behind the panel for the "glowing terminal" feel. */}
-      <mesh position={[0, 0, -0.02]}>
+      <mesh ref={glowRef} position={[0, 0, -0.02]}>
         <planeGeometry args={[PANEL_W + 0.6, PANEL_H + 0.6]} />
-        <meshBasicMaterial
-          color={final ? '#4ade80' : '#38bdf8'}
-          transparent
-          opacity={0.12}
-          toneMapped={false}
-        />
+        <meshBasicMaterial color="#38bdf8" transparent opacity={0.12} toneMapped={false} />
       </mesh>
 
       {/* Dark, semi-transparent terminal panel. */}
@@ -113,16 +173,11 @@ export default function Beat_Search({ localProgress, clock, reducedMotion }: Sce
       </mesh>
 
       {/* Thin border outline, tinting green once the trajectory settles. */}
-      <lineSegments>
+      <lineSegments ref={borderRef}>
         <bufferGeometry>
           <bufferAttribute attach="attributes-position" args={[BORDER, 3]} />
         </bufferGeometry>
-        <lineBasicMaterial
-          color={final ? '#4ade80' : '#1e3a5f'}
-          transparent
-          opacity={final ? 0.9 : 0.6}
-          toneMapped={false}
-        />
+        <lineBasicMaterial color="#1e3a5f" transparent opacity={0.6} toneMapped={false} />
       </lineSegments>
 
       {/* Green monospace prompt. */}
@@ -138,27 +193,31 @@ export default function Beat_Search({ localProgress, clock, reducedMotion }: Sce
 
       {/* Typed phrase. */}
       <Text
+        ref={(mesh) => {
+          typedRef.current = mesh as TroikaText | null
+        }}
         position={[TEXT_X, 0, 0.05]}
         anchorX="left"
         anchorY="middle"
         fontSize={FONT_SIZE}
         color="#e0e0e0"
       >
-        {text}
+        {''}
       </Text>
 
       {/* Blinking block caret, green once settled on the final phrase. */}
-      {caretOn && (
-        <Text
-          position={[caretX, 0, 0.05]}
-          anchorX="left"
-          anchorY="middle"
-          fontSize={FONT_SIZE}
-          color={caretColor}
-        >
-          {'█'}
-        </Text>
-      )}
+      <Text
+        ref={(mesh) => {
+          caretRef.current = mesh as TroikaText | null
+        }}
+        position={[TEXT_X, 0, 0.05]}
+        anchorX="left"
+        anchorY="middle"
+        fontSize={FONT_SIZE}
+        color="#e0e0e0"
+      >
+        {'█'}
+      </Text>
     </group>
   )
 }

@@ -5,7 +5,8 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import { Text } from '@react-three/drei'
 import * as THREE from 'three'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: a compass rose whose red needle swings from North and locks onto a
 // glowing Physics star (which grows on the right) with a slight tremble.
@@ -25,9 +26,18 @@ const TARGET_ANGLE = Math.atan2(STAR.y - COMPASS.y, STAR.x - COMPASS.x)
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
-export default function Beat_Compass({ localProgress, clock, reducedMotion }: SceneProps) {
+type TroikaText = THREE.Mesh & { fillOpacity: number }
+
+export default function Beat_Compass({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
   const needleRef = useRef<THREE.Group>(null)
   const roseRef = useRef<THREE.Group>(null)
+  const starGroupRef = useRef<THREE.Group>(null)
+  const starScaleRef = useRef<THREE.Group>(null)
+  const haloRef = useRef<THREE.Mesh>(null)
+  const midRef = useRef<THREE.Mesh>(null)
+  const coreRef = useRef<THREE.Mesh>(null)
+  const starLabelRef = useRef<TroikaText>(null)
 
   // Cardinal tick marks around the rose (N/E/S/W + diagonals).
   const tickPositions = useMemo(() => {
@@ -43,17 +53,27 @@ export default function Beat_Compass({ localProgress, clock, reducedMotion }: Sc
     return new Float32Array(arr)
   }, [])
 
-  // Star grows and brightens with progress; swing completes by progress 0.5.
-  const starScale = Math.max(0.001, localProgress)
-  const starAlpha = localProgress
-  const swing = Math.min(1, localProgress * 2)
-
   useFrame(() => {
+    if (!beat.near) return
+    const localProgress = beat.local
+    const clock = beat.clock
+    // Star grows and brightens with progress; swing completes by progress 0.5.
+    const starScale = Math.max(0.001, localProgress)
+    const starAlpha = localProgress
+    const swing = Math.min(1, localProgress * 2)
+
     const tremble = reducedMotion ? 0 : Math.sin(clock * 20) * 0.02 * localProgress
     const angle = lerp(NORTH_ANGLE, TARGET_ANGLE, swing) + tremble
     // Three-space rotation: angle measured from +X, needle starts modelled along +X.
     if (needleRef.current) needleRef.current.rotation.z = angle
     if (roseRef.current) roseRef.current.rotation.z = reducedMotion ? 0 : Math.sin(clock * 0.3) * 0.04
+
+    if (starGroupRef.current) starGroupRef.current.visible = starAlpha > 0.001
+    if (starScaleRef.current) starScaleRef.current.scale.setScalar(starScale)
+    if (haloRef.current) (haloRef.current.material as THREE.MeshBasicMaterial).opacity = starAlpha * 0.35
+    if (midRef.current) (midRef.current.material as THREE.MeshBasicMaterial).opacity = starAlpha * 0.7
+    if (coreRef.current) (coreRef.current.material as THREE.MeshBasicMaterial).opacity = starAlpha
+    if (starLabelRef.current) starLabelRef.current.fillOpacity = starAlpha
   })
 
   return (
@@ -99,27 +119,25 @@ export default function Beat_Compass({ localProgress, clock, reducedMotion }: Sc
       </group>
 
       {/* Physics star on the right: indigo halo + white core, grows in */}
-      {starAlpha > 0.001 && (
-        <group position={STAR}>
-          <group scale={starScale}>
-            <mesh>
-              <sphereGeometry args={[0.9, 24, 24]} />
-              <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.35} toneMapped={false} />
-            </mesh>
-            <mesh>
-              <sphereGeometry args={[0.5, 24, 24]} />
-              <meshBasicMaterial color="#a5b4fc" transparent opacity={starAlpha * 0.7} toneMapped={false} />
-            </mesh>
-            <mesh>
-              <sphereGeometry args={[0.28, 20, 20]} />
-              <meshBasicMaterial color="#ffffff" transparent opacity={starAlpha} toneMapped={false} />
-            </mesh>
-          </group>
-          <Text position={[0, 1.5, 0]} fontSize={0.45} color="#c7d2fe" anchorX="center" anchorY="bottom" fillOpacity={starAlpha} outlineWidth={0.012} outlineColor="#1e1b4b">
-            Physics
-          </Text>
+      <group ref={starGroupRef} position={STAR} visible={false}>
+        <group ref={starScaleRef} scale={0.001}>
+          <mesh ref={haloRef}>
+            <sphereGeometry args={[0.9, 24, 24]} />
+            <meshBasicMaterial color="#a5b4fc" transparent opacity={0} toneMapped={false} />
+          </mesh>
+          <mesh ref={midRef}>
+            <sphereGeometry args={[0.5, 24, 24]} />
+            <meshBasicMaterial color="#a5b4fc" transparent opacity={0} toneMapped={false} />
+          </mesh>
+          <mesh ref={coreRef}>
+            <sphereGeometry args={[0.28, 20, 20]} />
+            <meshBasicMaterial color="#ffffff" transparent opacity={0} toneMapped={false} />
+          </mesh>
         </group>
-      )}
+        <Text ref={starLabelRef} position={[0, 1.5, 0]} fontSize={0.45} color="#c7d2fe" anchorX="center" anchorY="bottom" fillOpacity={0} outlineWidth={0.012} outlineColor="#1e1b4b">
+          Physics
+        </Text>
+      </group>
     </group>
   )
 }

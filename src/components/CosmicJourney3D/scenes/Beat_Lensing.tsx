@@ -4,12 +4,13 @@
 import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: true gravitational lensing — a procedural blue/indigo galaxy field is
 // warped around a moving Einstein-ring lens (dark core + bright ring glow). Ports the
 // ShaderMaterial from initGravitationalLensing in src/blocks/CosmicJourney/Component.tsx,
-// driving lens_mass = localProgress, einstein_radius = sin(localProgress*PI)*0.15, and a
+// driving lens_mass = beat progress, einstein_radius = sin(progress*PI)*0.15, and a
 // Lissajous lens_pos drift off the R3F clock (frozen under reducedMotion). No Date.now().
 
 const VERTEX_SHADER = /* glsl */ `
@@ -91,8 +92,9 @@ function createGalaxyTexture(): THREE.CanvasTexture | null {
   return texture
 }
 
-export default function Beat_Lensing({ localProgress, clock, reducedMotion }: SceneProps) {
-  const materialRef = useRef<THREE.ShaderMaterial | null>(null)
+export default function Beat_Lensing({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
+  const meshRef = useRef<THREE.Mesh>(null)
 
   // Procedural galaxy texture — generated once, offscreen, like the original.
   const texture = useMemo(() => createGalaxyTexture(), [])
@@ -123,34 +125,36 @@ export default function Beat_Lensing({ localProgress, clock, reducedMotion }: Sc
   }, [material, texture])
 
   useFrame(() => {
-    const uniforms = materialRef.current?.uniforms
+    if (!beat.near) return
+    const uniforms = (meshRef.current?.material as THREE.ShaderMaterial | undefined)?.uniforms
     if (!uniforms) return
+    const p = beat.local
+    const t = beat.clock
 
     // lens_mass tracks scroll progress through the beat.
-    if (uniforms.lens_mass) uniforms.lens_mass.value = localProgress
+    if (uniforms.lens_mass) uniforms.lens_mass.value = p
 
     // einstein_radius swells then shrinks across the beat (sin envelope), peak 0.15.
     if (uniforms.einstein_radius) {
-      uniforms.einstein_radius.value = Math.sin(localProgress * Math.PI) * 0.15
+      uniforms.einstein_radius.value = Math.sin(p * Math.PI) * 0.15
     }
 
-    // time + Lissajous lens drift come from the R3F clock (no Date.now()). Under
+    // time + Lissajous lens drift come from the clock (no Date.now()). Under
     // reducedMotion we freeze drift/time and keep the static lensed composition.
     if (reducedMotion) {
       if (uniforms.lens_pos) uniforms.lens_pos.value.set(0.5, 0.5)
     } else {
-      if (uniforms.time) uniforms.time.value = clock
+      if (uniforms.time) uniforms.time.value = t
       if (uniforms.lens_pos) {
-        uniforms.lens_pos.value.x = 0.5 + Math.sin(clock * 0.5) * 0.2 * localProgress
-        uniforms.lens_pos.value.y = 0.5 + Math.cos(clock * 0.4) * 0.2 * localProgress
+        uniforms.lens_pos.value.x = 0.5 + Math.sin(t * 0.5) * 0.2 * p
+        uniforms.lens_pos.value.y = 0.5 + Math.cos(t * 0.4) * 0.2 * p
       }
     }
   })
 
   return (
-    <mesh position={[0, 0, 0]}>
+    <mesh ref={meshRef} position={[0, 0, 0]} material={material}>
       <planeGeometry args={[13, 8]} />
-      <primitive object={material} ref={materialRef} attach="material" />
     </mesh>
   )
 }

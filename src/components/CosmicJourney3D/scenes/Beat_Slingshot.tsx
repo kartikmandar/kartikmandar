@@ -1,10 +1,12 @@
 // src/components/CosmicJourney3D/scenes/Beat_Slingshot.tsx
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useRef, type Ref } from 'react'
+import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { Text } from '@react-three/drei'
-import type { SceneProps } from '../types'
+import type { BeatSceneProps } from '../types'
+import { useBeat } from '../store'
 
 // Acceptance: a small planet orbits a yellow sun, follows a transfer trajectory
 // across to a larger blue-indigo sun, settling into a new wider orbit; dotted
@@ -39,26 +41,41 @@ const ringPositions = (cx: number, cy: number, r: number, seg = 96) => {
   return arr
 }
 
-const bezier = (t: number) => {
+// Writes the transfer-curve point at t into `out` (no allocation).
+const bezierInto = (t: number, out: THREE.Vector3) => {
   const u = 1 - t
-  return new THREE.Vector3(
+  return out.set(
     u * u * T_START.x + 2 * u * t * T_CTRL.x + t * t * T_END.x,
     u * u * T_START.y + 2 * u * t * T_CTRL.y + t * t * T_END.y,
     0,
   )
 }
 
-export default function Beat_Slingshot({ localProgress, clock, reducedMotion }: SceneProps) {
-  const p = THREE.MathUtils.clamp(localProgress, 0, 1)
-  const ambient = reducedMotion ? 0 : clock
+// `visible` is a THREE prop that the SVG-typed `line` JSX element does not declare.
+const HIDDEN_PROPS = { visible: false } as object
+
+const scratchPoint = new THREE.Vector3()
+
+export default function Beat_Slingshot({ index, reducedMotion }: BeatSceneProps) {
+  const beat = useBeat(index)
+  const sun1Ref = useRef<THREE.Group>(null)
+  const sun2Ref = useRef<THREE.Group>(null)
+  const sun2CoreRef = useRef<THREE.Mesh>(null)
+  const sun2GlowRef = useRef<THREE.Mesh>(null)
+  const orbit1Ref = useRef<THREE.Points>(null)
+  const transferRef = useRef<THREE.Line>(null)
+  const orbit2Ref = useRef<THREE.Points>(null)
+  const planetRef = useRef<THREE.Group>(null)
+  const planetCoreRef = useRef<THREE.Mesh>(null)
 
   const orbit1Buf = useMemo(() => ringPositions(SUN1.x, SUN1.y, ORBIT1), [])
   const orbit2Buf = useMemo(() => ringPositions(SUN2.x, SUN2.y, ORBIT2), [])
   const transferBuf = useMemo(() => {
     const seg = 64
     const arr = new Float32Array((seg + 1) * 3)
+    const pt = new THREE.Vector3()
     for (let i = 0; i <= seg; i++) {
-      const pt = bezier(i / seg)
+      bezierInto(i / seg, pt)
       arr[i * 3] = pt.x
       arr[i * 3 + 1] = pt.y
       arr[i * 3 + 2] = 0
@@ -66,31 +83,60 @@ export default function Beat_Slingshot({ localProgress, clock, reducedMotion }: 
     return arr
   }, [])
 
-  // Guide opacities (matching the canvas alpha curves).
-  const sun2Alpha = Math.min(1, p * 1.5)
-  const orbit1Alpha = p < 0.4 ? 0.5 : Math.max(0, 0.5 - (p - 0.4) * 2)
-  const transferAlpha = p >= 0.3 && p <= 0.8
-    ? p < 0.4 ? (p - 0.3) / 0.1 : p > 0.7 ? (0.8 - p) / 0.1 : 1
-    : 0
-  const orbit2Alpha = p < 0.6 ? 0 : Math.min(0.5, (p - 0.6) * 2.5)
+  useFrame(() => {
+    if (!beat.near) return
+    const p = THREE.MathUtils.clamp(beat.local, 0, 1)
+    const ambient = reducedMotion ? 0 : beat.clock
 
-  // Planet position across the three phases.
-  const planetPos = useMemo(() => {
-    if (p < 0.4) {
-      const angle = 2 * Math.PI * (p / 0.4) + Math.PI
-      return new THREE.Vector3(SUN1.x + Math.cos(angle) * ORBIT1, SUN1.y + Math.sin(angle) * ORBIT1, 0)
+    // Guide opacities (matching the canvas alpha curves).
+    const sun2Alpha = Math.min(1, p * 1.5)
+    const orbit1Alpha = p < 0.4 ? 0.5 : Math.max(0, 0.5 - (p - 0.4) * 2)
+    const transferAlpha = p >= 0.3 && p <= 0.8
+      ? p < 0.4 ? (p - 0.3) / 0.1 : p > 0.7 ? (0.8 - p) / 0.1 : 1
+      : 0
+    const orbit2Alpha = p < 0.6 ? 0 : Math.min(0.5, (p - 0.6) * 2.5)
+
+    if (sun1Ref.current) sun1Ref.current.rotation.z = ambient * 0.15
+    if (sun2Ref.current) sun2Ref.current.rotation.z = -ambient * 0.1
+    if (sun2CoreRef.current) (sun2CoreRef.current.material as THREE.MeshBasicMaterial).opacity = sun2Alpha
+    if (sun2GlowRef.current) (sun2GlowRef.current.material as THREE.MeshBasicMaterial).opacity = sun2Alpha * 0.25
+
+    const orbit1 = orbit1Ref.current
+    if (orbit1) {
+      orbit1.visible = orbit1Alpha > 0
+      ;(orbit1.material as THREE.PointsMaterial).opacity = orbit1Alpha
     }
-    if (p < 0.7) {
-      return bezier((p - 0.4) / 0.3)
+    const transfer = transferRef.current
+    if (transfer) {
+      transfer.visible = transferAlpha > 0
+      ;(transfer.material as THREE.LineBasicMaterial).opacity = transferAlpha * 0.6
     }
-    const angle = 2 * Math.PI * ((p - 0.7) / 0.3) - Math.PI / 2
-    return new THREE.Vector3(SUN2.x + Math.cos(angle) * ORBIT2, SUN2.y + Math.sin(angle) * ORBIT2, 0)
-  }, [p])
+    const orbit2 = orbit2Ref.current
+    if (orbit2) {
+      orbit2.visible = orbit2Alpha > 0
+      ;(orbit2.material as THREE.PointsMaterial).opacity = orbit2Alpha
+    }
+
+    // Planet position across the three phases.
+    const planet = planetRef.current
+    if (planet) {
+      if (p < 0.4) {
+        const angle = 2 * Math.PI * (p / 0.4) + Math.PI
+        planet.position.set(SUN1.x + Math.cos(angle) * ORBIT1, SUN1.y + Math.sin(angle) * ORBIT1, 0)
+      } else if (p < 0.7) {
+        planet.position.copy(bezierInto((p - 0.4) / 0.3, scratchPoint))
+      } else {
+        const angle = 2 * Math.PI * ((p - 0.7) / 0.3) - Math.PI / 2
+        planet.position.set(SUN2.x + Math.cos(angle) * ORBIT2, SUN2.y + Math.sin(angle) * ORBIT2, 0)
+      }
+    }
+    if (planetCoreRef.current) planetCoreRef.current.rotation.y = ambient * 0.6
+  })
 
   return (
     <group>
       {/* Yellow source sun */}
-      <group position={SUN1} rotation={[0, 0, ambient * 0.15]}>
+      <group ref={sun1Ref} position={SUN1}>
         <mesh>
           <sphereGeometry args={[0.55, 24, 24]} />
           <meshBasicMaterial color="#fde047" toneMapped={false} />
@@ -102,50 +148,45 @@ export default function Beat_Slingshot({ localProgress, clock, reducedMotion }: 
       </group>
 
       {/* Larger blue-indigo destination sun, fades in */}
-      <group position={SUN2} rotation={[0, 0, -ambient * 0.1]}>
-        <mesh>
+      <group ref={sun2Ref} position={SUN2}>
+        <mesh ref={sun2CoreRef}>
           <sphereGeometry args={[0.95, 28, 28]} />
-          <meshBasicMaterial color="#a5b4fc" transparent opacity={sun2Alpha} toneMapped={false} />
+          <meshBasicMaterial color="#a5b4fc" transparent opacity={0} toneMapped={false} />
         </mesh>
-        <mesh>
+        <mesh ref={sun2GlowRef}>
           <sphereGeometry args={[1.35, 28, 28]} />
-          <meshBasicMaterial color="#4f46e5" transparent opacity={sun2Alpha * 0.25} toneMapped={false} />
+          <meshBasicMaterial color="#4f46e5" transparent opacity={0} toneMapped={false} />
         </mesh>
       </group>
 
       {/* Dotted starting orbit guide (fades out as planet leaves) */}
-      {orbit1Alpha > 0 && (
-        <points>
+      <points ref={orbit1Ref}>
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[orbit1Buf, 3]} />
           </bufferGeometry>
-          <pointsMaterial color="#fde047" size={0.08} sizeAttenuation transparent opacity={orbit1Alpha} toneMapped={false} />
-        </points>
-      )}
+          <pointsMaterial color="#fde047" size={0.08} sizeAttenuation transparent opacity={0.5} toneMapped={false} />
+      </points>
 
       {/* Transfer trajectory, visible during the slingshot */}
-      {transferAlpha > 0 && (
-        <line>
+      {/* JSX `line` is typed as SVG; the ref receives a THREE.Line at runtime. */}
+      <line ref={transferRef as unknown as Ref<SVGLineElement>} {...HIDDEN_PROPS}>
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[transferBuf, 3]} />
           </bufferGeometry>
-          <lineBasicMaterial color="#a5b4fc" transparent opacity={transferAlpha * 0.6} toneMapped={false} />
-        </line>
-      )}
+          <lineBasicMaterial color="#a5b4fc" transparent opacity={0} toneMapped={false} />
+      </line>
 
       {/* Dotted wider destination orbit (fades in as planet arrives) */}
-      {orbit2Alpha > 0 && (
-        <points>
+      <points ref={orbit2Ref} visible={false}>
           <bufferGeometry>
             <bufferAttribute attach="attributes-position" args={[orbit2Buf, 3]} />
           </bufferGeometry>
-          <pointsMaterial color="#a5b4fc" size={0.09} sizeAttenuation transparent opacity={orbit2Alpha} toneMapped={false} />
-        </points>
-      )}
+          <pointsMaterial color="#a5b4fc" size={0.09} sizeAttenuation transparent opacity={0} toneMapped={false} />
+      </points>
 
       {/* The travelling planet */}
-      <group position={planetPos}>
-        <mesh rotation={[0, ambient * 0.6, 0]}>
+      <group ref={planetRef} position={[T_START.x, T_START.y, 0]}>
+        <mesh ref={planetCoreRef}>
           <sphereGeometry args={[0.16, 16, 16]} />
           <meshBasicMaterial color="#ffffff" toneMapped={false} />
         </mesh>
