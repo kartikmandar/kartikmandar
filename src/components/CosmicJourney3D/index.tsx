@@ -26,6 +26,7 @@ import { diveState } from './prologueDive'
 import { getLenis } from './scrollEngine'
 import { ProloguePass } from './ProloguePass'
 import { CoverAware } from './CoverAware'
+import { FinaleConstellation } from './FinaleConstellation'
 import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
@@ -82,6 +83,7 @@ function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityT
           <b.Scene index={i} quality={quality} reducedMotion={reducedMotion} />
         </group>
       ))}
+      <FinaleConstellation />
       </CoverAware>
     </>
   )

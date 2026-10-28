@@ -91,3 +91,17 @@ export const NEBULA_ANCHOR: Anchor = {
   position: [0, 8, LAST_STATION_Z - 6],
   lookAt: [0, 12, LAST_STATION_Z - 36],
 }
+
+/**
+ * Where the finale's constellation (all beats, in miniature) floats: 12 units
+ * ahead of the nebula camera along its view, nudged up so the end card sits below it.
+ */
+export const CONSTELLATION_CENTER: [number, number, number] = (() => {
+  const [px, py, pz] = NEBULA_ANCHOR.position
+  const [lx, ly, lz] = NEBULA_ANCHOR.lookAt!
+  const dx = lx - px
+  const dy = ly - py
+  const dz = lz - pz
+  const len = Math.hypot(dx, dy, dz) || 1
+  return [px + (dx / len) * 12, py + (dy / len) * 12 + 1.9, pz + (dz / len) * 12]
+})()

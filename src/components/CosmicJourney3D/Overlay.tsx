@@ -19,6 +19,8 @@ import { readCapture } from './capture'
 import { overlayView, type OverlayView } from './overlayView'
 import { PROLOGUE_FRACTION } from './prologueScroll'
 import { Phase } from '@/components/QuasarBackground/engine/types'
+import { Hud } from './Hud'
+import { MagneticLink } from './MagneticLink'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(SplitText)
 
@@ -55,6 +57,7 @@ export function Overlay() {
         heroIndex: HERO_LINE[phaseStateFromProgress(f.prologue).phase],
         activeIndex: f.activeIndex,
         local: f.local[f.activeIndex] ?? 0,
+        lastIndex: BEATS.length - 1,
       })
       if (!sameView(current, next)) {
         current = next
@@ -99,6 +102,26 @@ export function Overlay() {
     return () => ctx.revert()
   }, [view, capture.enabled])
 
+  if (view.kind === 'end') {
+    return (
+      <div style={endWrap}>
+        <div ref={rootRef} key="end" style={endInner}>
+          <div data-fade style={eyebrow}>Still searching for signals</div>
+          <h2 id={BEAT_HEADING_ID} tabIndex={-1} data-split style={endTitle}>Let&apos;s talk.</h2>
+          <p data-split style={{ ...body, maxWidth: 560, margin: '0 auto 30px' }}>
+            Research, open-source tools, or a hard problem that needs both. I&apos;d love to hear from you.
+          </p>
+          <nav data-fade aria-label="Get in touch" style={endLinks}>
+            <MagneticLink href="mailto:contact@kartikmandar.com" primary>Email me</MagneticLink>
+            <MagneticLink href="/cv">CV</MagneticLink>
+            <MagneticLink href="/publications">Publications</MagneticLink>
+            <MagneticLink href="https://orcid.org/0009-0002-6037-4613" external>ORCID</MagneticLink>
+          </nav>
+        </div>
+      </div>
+    )
+  }
+
   if (view.kind === 'hero') {
     return (
       <div aria-live="polite" style={heroWrap}>
@@ -115,6 +138,7 @@ export function Overlay() {
     <div aria-live="polite" style={beatWrap}>
       {/* Lower-third scrim: guarantees text contrast over any frame. */}
       <div aria-hidden style={scrim} />
+      <Hud index={view.index} total={BEATS.length} text={beat.hud} visible={view.visible} />
       <div ref={rootRef} key={`beat-${view.index}`} style={beatInner}>
         <div data-fade style={eyebrow}>
           <span style={{ opacity: 0.6 }}>{pad(view.index + 1)} / {pad(BEATS.length)}</span>
@@ -130,6 +154,21 @@ export function Overlay() {
               </li>
             ))}
           </ol>
+        )}
+        {beat.evidence && (
+          <div data-fade style={{ marginTop: 22 }}>
+            <a
+              href={beat.evidence.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="journey-chip"
+              style={chip}
+            >
+              {beat.evidence.label}
+              <span aria-hidden style={{ marginLeft: 8, opacity: 0.7 }}>↗</span>
+              <span style={srOnly}> (opens in a new tab)</span>
+            </a>
+          </div>
         )}
       </div>
     </div>
@@ -172,4 +211,29 @@ const body: React.CSSProperties = {
 const phrases: React.CSSProperties = {
   listStyle: 'none', padding: 0, margin: 0, fontFamily: 'var(--font-jetbrains-mono), ui-monospace, monospace',
   fontSize: 'clamp(14px, 1.2vw, 17px)', lineHeight: 1.9,
+}
+const chip: React.CSSProperties = {
+  pointerEvents: 'auto', display: 'inline-flex', alignItems: 'center', padding: '8px 14px', borderRadius: 999,
+  fontFamily: 'var(--font-jetbrains-mono), ui-monospace, monospace', fontSize: 12, letterSpacing: '0.08em',
+  color: '#eef2ff', textDecoration: 'none', border: '1px solid rgba(94,231,255,0.45)',
+  background: 'rgba(94,231,255,0.08)', boxShadow: '0 0 24px rgba(94,231,255,0.18)',
+}
+const srOnly: React.CSSProperties = {
+  position: 'absolute', width: 1, height: 1, overflow: 'hidden', clip: 'rect(0 0 0 0)', whiteSpace: 'nowrap',
+}
+const endWrap: React.CSSProperties = {
+  // bottom-aligned: the journey's constellation floats above the card
+  position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center', paddingBottom: '10vh',
+  color: '#eef2ff', zIndex: 4, pointerEvents: 'none',
+  background: 'radial-gradient(ellipse 70% 60% at 50% 55%, rgba(4,5,11,0.55) 0%, rgba(4,5,11,0) 70%)',
+}
+const endInner: React.CSSProperties = {
+  textAlign: 'center', width: 'min(820px, 90vw)', opacity: 0, visibility: 'hidden',
+}
+const endTitle: React.CSSProperties = {
+  fontSize: 'clamp(48px, 8vw, 112px)', fontWeight: 600, letterSpacing: '-0.04em', lineHeight: 1,
+  margin: '0 0 22px', outline: 'none',
+}
+const endLinks: React.CSSProperties = {
+  display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap', pointerEvents: 'auto',
 }

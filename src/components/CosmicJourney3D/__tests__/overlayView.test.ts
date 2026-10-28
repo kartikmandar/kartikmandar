@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { COPY_IN, COPY_OUT, overlayView } from '../overlayView'
+import { COPY_IN, COPY_OUT, END_AT, overlayView } from '../overlayView'
 
 describe('overlayView', () => {
   it('shows the hero line during the prologue', () => {
@@ -13,5 +13,13 @@ describe('overlayView', () => {
     expect(at(0.5)).toBe(true)
     expect(at(COPY_OUT)).toBe(true)
     expect(at(0.95)).toBe(false)
+  })
+
+  it('hands the final beat over to the end card as the camera pulls back', () => {
+    const last = (local: number) => overlayView({ inPrologue: false, heroIndex: 0, activeIndex: 30, local, lastIndex: 30 })
+    expect(last(0.5).kind).toBe('beat')
+    expect(last(END_AT)).toEqual({ kind: 'end', index: 30, visible: true })
+    expect(last(1).kind).toBe('end')
+    expect(overlayView({ inPrologue: false, heroIndex: 0, activeIndex: 12, local: 0.95, lastIndex: 30 }).kind).toBe('beat')
   })
 })
