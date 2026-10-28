@@ -10,6 +10,7 @@ import { splitProgress } from './prologueScroll'
 import { phaseStateFromProgress } from './prologuePhase'
 import { readCapture } from './capture'
 
+// ?legacyPrologue only: the pre-Phase-2 prologue in its own WebGL context.
 export function HeroPrologue({ opacity }: { opacity: number }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const progressRef = useScrollProgressRef()

@@ -15,6 +15,14 @@ export interface JourneyFrame {
   raw: number
   /** Flight progress 0..1 (after the prologue split). */
   flight: number
+  /** Prologue progress 0..1 (the supernova → black hole act). */
+  prologue: number
+  /** Prologue → flight hand-off 0..1 (the photon-ring dive band). */
+  crossfade: number
+  /** True while the prologue pass fully covers the screen (the flight can skip drawing). */
+  covered: boolean
+  /** True for a few frames behind the loader: draw the flight's opening once so GPU uploads happen early. */
+  warmup: boolean
   /** Shared scene clock in seconds (frozen in capture mode). */
   clock: number
   /** Clamped frame delta in seconds. */
@@ -26,7 +34,10 @@ export interface JourneyFrame {
 }
 
 export function createJourneyFrame(beatCount: number): JourneyFrame {
-  return { raw: 0, flight: 0, clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount) }
+  return {
+    raw: 0, flight: 0, prologue: 0, crossfade: 0, covered: true, warmup: false,
+    clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount),
+  }
 }
 
 /** Writes every beat's continuous progress into `out` without allocating. Returns the active index. */

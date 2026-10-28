@@ -9,6 +9,7 @@ import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import type { QualityTier } from './types'
 import { PALETTE } from './art/palette'
 import { getGlowTexture } from './art/materials'
+import { CoverAware } from './CoverAware'
 import { NEBULA_ANCHOR } from './beatsMeta'
 
 // Nebula field reaches a little beyond the end of the flight.
@@ -53,10 +54,13 @@ export function Environment({ quality }: { quality: QualityTier }) {
       {/* Distance fog matched to the background: stations emerge and dissolve instead of popping. */}
       <fogExp2 attach="fog" args={[PALETTE.void, 0.045]} />
       <ambientLight intensity={0.15} />
-      <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
-      <points geometry={nebula}>
-        <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
-      </points>
+      {/* The prologue pass brings its own lensed sky; hide ours while it covers the screen. */}
+      <CoverAware>
+        <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
+        <points geometry={nebula}>
+          <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+        </points>
+      </CoverAware>
       {quality !== 'mobile' && (
         <EffectComposer multisampling={0}>
           <Bloom intensity={quality === 'high' ? 1.1 : 0.7} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur radius={0.7} />
