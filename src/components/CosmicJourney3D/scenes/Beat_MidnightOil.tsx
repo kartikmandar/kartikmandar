@@ -143,7 +143,7 @@ export default function Beat_MidnightOil({ localProgress, clock, reducedMotion }
           <meshBasicMaterial color="#4ade80" toneMapped={false} />
         </mesh>
         <Text position={[-barW / 2 + 0.25, 0, 0.02]} fontSize={0.4} color="#03200f" anchorX="left" anchorY="middle">
-          RRIViz
+          RRIVis
         </Text>
       </group>
     </group>

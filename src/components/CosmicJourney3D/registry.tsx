@@ -17,7 +17,6 @@ import Beat_DualPaths from './scenes/Beat_DualPaths'
 import Beat_Shuttlecock from './scenes/Beat_Shuttlecock'
 import Beat_SignalToSim from './scenes/Beat_SignalToSim'
 import Beat_Dashboard from './scenes/Beat_Dashboard'
-import Beat_Visibility from './scenes/Beat_Visibility'
 import Beat_MidnightOil from './scenes/Beat_MidnightOil'
 import Beat_ExitFork from './scenes/Beat_ExitFork'
 import Beat_Lensing from './scenes/Beat_Lensing'
@@ -52,7 +51,6 @@ const SCENES: Record<string, React.FC<SceneProps>> = {
   'injury-section': Beat_Shuttlecock,
   'rri-research-section': Beat_SignalToSim,
   'gsoc-section': Beat_Dashboard,
-  'radio-section': Beat_Visibility,
   'doubling-down-section': Beat_MidnightOil,
   'bs-exit-section': Beat_ExitFork,
   'lensing-section': Beat_Lensing,

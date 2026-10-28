@@ -170,7 +170,7 @@ export default function Beat_SignalToSim({ localProgress, clock, reducedMotion }
             anchorY="middle"
             fillOpacity={plot}
           >
-            RRIViz
+            RRIVis
           </Text>
         </group>
       )}

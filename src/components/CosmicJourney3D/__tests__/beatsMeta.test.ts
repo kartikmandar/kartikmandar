@@ -25,4 +25,9 @@ describe('beatsMeta', () => {
     expect(NEBULA_ANCHOR.position).toHaveLength(3)
     expect(ORIGIN_ANCHOR.position).not.toEqual(NEBULA_ANCHOR.position)
   })
+
+  it('places the nebula beyond the last station so the camera never doubles back', () => {
+    const lastZ = Math.min(...NARRATIVE.map((b) => BEATS_META[b.id]!.anchor.position[2]))
+    expect(NEBULA_ANCHOR.position[2]).toBeLessThan(lastZ)
+  })
 })

@@ -6,6 +6,10 @@ import * as THREE from 'three'
 import { Stars } from '@react-three/drei'
 import { EffectComposer, Bloom, Vignette } from '@react-three/postprocessing'
 import type { QualityTier } from './types'
+import { NEBULA_ANCHOR } from './beatsMeta'
+
+// Nebula field reaches a little beyond the end of the flight.
+const NEBULA_DEPTH = Math.abs(NEBULA_ANCHOR.position[2]) + 80
 
 /** Mulberry32 seeded PRNG — deterministic, lint-safe replacement for Math.random(). */
 function mulberry32(seed: number): () => number {
@@ -27,7 +31,7 @@ export function Environment({ quality }: { quality: QualityTier }) {
     const palette = [new THREE.Color('#6366f1'), new THREE.Color('#a78bfa'), new THREE.Color('#22d3ee')]
     const count = quality === 'mobile' ? 600 : quality === 'low' ? 1500 : 4000
     for (let i = 0; i < count; i++) {
-      positions.push((rand() - 0.5) * 400, (rand() - 0.5) * 200, -rand() * 260)
+      positions.push((rand() - 0.5) * 400, (rand() - 0.5) * 200, -rand() * NEBULA_DEPTH)
       const c = palette[i % palette.length]!
       colors.push(c.r, c.g, c.b)
     }
