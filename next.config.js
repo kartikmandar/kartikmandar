@@ -6,6 +6,13 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    // Vercel Analytics and Speed Insights load their scripts from /_vercel/*,
+    // which only exists on a Vercel deployment. Anywhere else (next start on a
+    // laptop) that request returns the HTML 404 page and the browser throws
+    // "Unexpected token '<'", so the tags render only on Vercel builds.
+    NEXT_PUBLIC_ON_VERCEL: process.env.VERCEL ? '1' : '',
+  },
   turbopack: {
     // Turbopack configuration options can go here
   },

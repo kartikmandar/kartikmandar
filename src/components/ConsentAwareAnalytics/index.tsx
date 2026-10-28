@@ -12,8 +12,9 @@ interface ConsentAwareAnalyticsProps {
 export function ConsentAwareAnalytics({ _className = '' }: ConsentAwareAnalyticsProps) {
   const { analyticsConsent, isLoading } = useCookieConsent();
 
-  // Derived directly — no state or effect needed
-  if (isLoading || !analyticsConsent) {
+  // Derived directly — no state or effect needed. Off the Vercel platform the
+  // /_vercel/* script endpoints don't exist, so nothing is rendered there.
+  if (process.env.NEXT_PUBLIC_ON_VERCEL !== '1' || isLoading || !analyticsConsent) {
     return null;
   }
 
