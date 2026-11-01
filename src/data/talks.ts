@@ -9,7 +9,7 @@ export const talks: Talk[] = [
     "id": 3,
     "displayOrder": 1,
     "title": "RRIVis",
-    "shortDescription": "Talk on RRIVis at the School and Workshop on 21-cm Cosmology, TIFR Mumbai",
+    "shortDescription": "Talk on RRIVis, now RadioSim, at the School and Workshop on 21-cm Cosmology, TIFR Mumbai",
     "abstract": "Presented RRIVis, a full-RIME, GPU-accelerated radio interferometric visibility simulator developed at the Raman Research Institute. RRIVis is an interferometric visibility simulator (no approximation) for forward modelling the whole pipeline, used for validating radio interferometry data in the context of 21-cm cosmology and the Epoch of Reionization.",
     "talkType": "presentation",
     "language": "english",
@@ -131,10 +131,36 @@ export const talks: Talk[] = [
     }
   },
   {
-    "id": 2,
+    "id": 4,
     "displayOrder": 2,
+    "title": "Radio Array Systematics: HERA Case Study",
+    "presentedBy": "Dr. Rajorshi Chandra",
+    "shortDescription": "Our Raman Research Institute work on radio-array systematics, with HERA as the case study. Presented by Dr. Rajorshi Chandra; work done with Prof. Saurabh Singh and me.",
+    "abstract": "Radio-array systematics in 21-cm cosmology, with HERA as the case study: the array design, Phase II upper limits, signal loss and delay power spectra. Presented by Dr. Rajorshi Chandra; work done with Prof. Saurabh Singh and Kartik Mandar.",
+    "talkType": "presentation",
+    "language": "english",
+    "slug": "radio-array-systematics-hera-salf-xi",
+    "eventDetails": {
+      "eventName": "Science at Low Frequencies XI",
+      "eventType": "conference",
+      "city": null,
+      "country": "France"
+    },
+    "scheduling": {
+      "talkDate": "2025-12-01T00:00:00.000Z",
+      "talkStatus": "completed"
+    },
+    "topics": [
+      { "topic": "21-cm Cosmology" },
+      { "topic": "Radio Array Systematics" },
+      { "topic": "HERA" }
+    ]
+  },
+  {
+    "id": 2,
+    "displayOrder": 3,
     "title": "Contributing to Open Source: A Primer to GSoC and beyond",
-    "shortDescription": "Google Summer of Code talk",
+    "shortDescription": "An introduction to open source, Google Summer of Code and what comes after it.",
     "abstract": "This talk dives into Google Summer of Code (GSoC) from a natural science and engineering perspective. Srutanik Bhaduri and I share our personal journeys, such as building tools like the \"Stingray Explorer\" for X-ray astronomy and integrating gprMax with Jupyter Notebooks. It’s not just about coding but connecting with mentors, learning new skills, and contributing meaningfully to open source. \n",
     "talkType": "presentation",
     "duration": 60,
@@ -268,7 +294,7 @@ export const talks: Talk[] = [
   },
   {
     "id": 1,
-    "displayOrder": 3,
+    "displayOrder": 4,
     "title": "Talk on Celestial Sphere Mechanics",
     "abstract": "Human beings have long looked up at the sky and pondered its mysteries. Evidence of the long struggle to understand its secrets may be seen in remnants of cultures around the world: the great Stonehenge monument in England, the structures and the writings of the Maya and Aztecs, and the medicine wheels of the Native Americans. However, our modern scientific view of the universe traces its beginnings to the ancient Greek tradition of natural philosophy.\n",
     "talkType": "presentation",
@@ -379,11 +405,6 @@ export const talks: Talk[] = [
     "topics": [
       {
         "topic": "Celestial Sphere Mechanics"
-      }
-    ],
-    "technologies": [
-      {
-        "technology": "Java"
       }
     ],
     "collaboration": {

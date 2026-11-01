@@ -273,6 +273,8 @@ export interface Talk {
   id: number | string
   displayOrder?: number
   title: string
+  /** Set when someone else gave the talk, so the credit stays accurate. */
+  presentedBy?: string | null
   shortDescription?: string | null
   abstract: string
   talkType?: TalkType | null

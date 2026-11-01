@@ -5,6 +5,7 @@ import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
 import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import { getTalks } from '@/data/talks'
 import { CardAction, ContentCard } from '@/components/ContentCard'
+import { CV_SECTIONS_AFTER } from '@/data/cv'
 
 export const dynamic = 'force-static'
 
@@ -26,7 +27,7 @@ function formatDate(dateString?: string | null): string {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric',
+      timeZone: 'UTC',
     })
   } catch {
     return 'TBD'
@@ -35,6 +36,7 @@ function formatDate(dateString?: string | null): string {
 
 export default function TalksPage(): React.JSX.Element {
   const talks = getTalks()
+  const meetings = CV_SECTIONS_AFTER.find((section) => section.id === 'schools')?.entries ?? []
   const serverUrl = getServerSideURL()
   const breadcrumbJsonLd = generateBreadcrumbSchema([
     { name: 'Home', url: serverUrl },
@@ -58,7 +60,8 @@ export default function TalksPage(): React.JSX.Element {
             const venue = talk.eventDetails?.venue
             const city = talk.eventDetails?.city
             const country = talk.eventDetails?.country
-            const location = [venue, city, country].filter(Boolean).join(', ')
+            // Venues often carry the city already ("IISER Bhopal"), so don't repeat it.
+            const location = [venue, city && !venue?.includes(city) ? city : null, country].filter(Boolean).join(', ')
             const topics = talk.topics?.map(t => t.topic) || []
             const technologies = talk.technologies?.map(t => t.technology) || []
             const tags = [...new Set([...topics, ...technologies])]
@@ -70,7 +73,7 @@ export default function TalksPage(): React.JSX.Element {
                 variant="row"
                 titleAs="h2"
                 title={talk.title}
-                eyebrow={status ? status.charAt(0).toUpperCase() + status.slice(1) : undefined}
+                eyebrow={talk.presentedBy ? `Presented by ${talk.presentedBy}` : status ? status.charAt(0).toUpperCase() + status.slice(1) : undefined}
                 image={coverImage?.url ? { src: coverImage.url, alt: coverImage.alt || talk.title } : undefined}
                 meta={
                   <>
@@ -88,6 +91,21 @@ export default function TalksPage(): React.JSX.Element {
             )
           })}
         </div>
+
+        <section className="mt-16">
+          <h2 className="font-display text-display-md text-foreground">Schools & meetings attended</h2>
+          <ul className="mt-6 divide-y divide-border border-y border-border">
+            {meetings.map((meeting) => (
+              <li key={meeting.title} className="grid gap-1 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-6">
+                <div>
+                  <p className="text-foreground">{meeting.title}</p>
+                  <p className="text-sm text-muted-foreground">{meeting.organisation}</p>
+                </div>
+                <p className="text-sm text-muted-foreground">{meeting.dates}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
       </div>
     </div>
