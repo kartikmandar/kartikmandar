@@ -5,6 +5,7 @@
 //   &t=<seconds>      frozen scene clock; default 0
 //   &dpr=<n>          fixed device pixel ratio; default 1
 //   &ui=0             hide the DOM overlay and chapter rail
+//   &solo=1           render only the active beat, without its neighbours (posters)
 // When the frame is settled, <html data-capture="ready"> is set for automation.
 
 export interface CaptureConfig {
@@ -13,9 +14,10 @@ export interface CaptureConfig {
   time: number
   dpr: number
   hideUi: boolean
+  solo: boolean
 }
 
-const OFF: CaptureConfig = { enabled: false, progress: 0, time: 0, dpr: 1, hideUi: false }
+const OFF: CaptureConfig = { enabled: false, progress: 0, time: 0, dpr: 1, hideUi: false, solo: false }
 
 const finiteOr = (raw: string | null, fallback: number) => {
   if (raw === null || raw.trim() === '') return fallback
@@ -33,6 +35,7 @@ export function parseCapture(search: string): CaptureConfig {
     time: Math.max(0, finiteOr(params.get('t'), 0)),
     dpr: Math.max(0.5, Math.min(3, finiteOr(params.get('dpr'), 1))),
     hideUi: params.get('ui') === '0',
+    solo: params.get('solo') === '1',
   }
 }
 

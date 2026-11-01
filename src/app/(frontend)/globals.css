@@ -419,6 +419,9 @@ html.lenis body {
   clip-path: inset(50%);
   white-space: nowrap;
 }
+.story-article-poster {
+  display: none;
+}
 .story-article-header {
   max-width: 42rem;
   margin: 0 auto;
@@ -431,6 +434,9 @@ html.lenis body {
 }
 .story-article-beat:last-child {
   padding-bottom: 7rem;
+}
+html[data-story-mode='static'] .story-article-poster {
+  display: block;
 }
 html[data-story-mode='static'] .story-article {
   position: static;
@@ -450,6 +456,9 @@ html[data-story-mode='static'] .story-article {
     overflow: visible;
     clip-path: none;
     white-space: normal;
+  }
+  .story-article-poster {
+    display: block;
   }
   .story-loader {
     display: none !important;

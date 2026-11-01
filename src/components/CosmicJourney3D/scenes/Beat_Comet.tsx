@@ -110,7 +110,7 @@ const SKY_FRAG = /* glsl */ `
     }
     float air = exp(-max(vUv.y - 0.12, 0.0) * 9.0) * smoothstep(0.0, 0.12, vUv.y);
     col += uGlow * air;
-    float edge = smoothstep(0.0, 0.08, vUv.x) * smoothstep(1.0, 0.92, vUv.x) * smoothstep(1.0, 0.85, vUv.y);
+    float edge = smoothstep(0.0, 0.3, vUv.x) * smoothstep(1.0, 0.7, vUv.x) * smoothstep(1.0, 0.7, vUv.y) * smoothstep(0.0, 0.2, vUv.y);
     gl_FragColor = vec4(col * edge * uOpacity, 1.0);
   }
 `

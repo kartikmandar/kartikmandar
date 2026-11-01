@@ -79,7 +79,7 @@ export const BEATS_META: Record<string, BeatMeta> = Object.fromEntries(
       scrollLength: partial.scrollLength ?? dwellFor(wordsIn(id)),
       pin: partial.pin ?? false,
       anchor: partial.anchor ?? station(i),
-      posterSrc: `/media/my-story/${id}.jpg`,
+      posterSrc: `/media/my-story/${id}.webp`,
       acceptance: partial.acceptance ?? [],
     } satisfies BeatMeta,
   ]),

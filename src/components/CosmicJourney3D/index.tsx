@@ -19,7 +19,7 @@ import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
 import { journeyFrame, journeyStore, useActiveBeat, writeBeatProgress } from './store'
 import { HeroPrologue } from './HeroPrologue'
-import { splitProgress, pageScrollVh } from './prologueScroll'
+import { flightFractionToGlobal, splitProgress, pageScrollVh } from './prologueScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
 import { diveState } from './prologueDive'
 import { getLenis } from './scrollEngine'
@@ -37,7 +37,16 @@ const PerfProbe = lazy(() => import('./PerfProbe'))
 // with that frame as a PNG, for rendering the home loop. toBlob runs in an after
 // effect because the drawing buffer is only valid until the frame is composited.
 function installFrameGrabber() {
-  const target = window as unknown as { __captureFrame?: (time: number) => Promise<Blob | null> }
+  const target = window as unknown as {
+    __captureFrame?: (time: number) => Promise<Blob | null>
+    __storyBeats?: { id: string; progress: number }[]
+  }
+  // Each beat's id and the page progress at the middle of its scroll range, for scripts/capture-posters.mjs.
+  const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
+  target.__storyBeats = BEATS.map((b, i) => ({
+    id: b.id,
+    progress: flightFractionToGlobal((ranges[i]!.start + ranges[i]!.end) / 2),
+  }))
   target.__captureFrame = (time) => new Promise((resolve) => {
     journeyFrame.clock = time
     let frames = 0
@@ -99,7 +108,7 @@ function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityT
       <CoverAware>
       <OriginBlackHole position={ORIGIN_BLACK_HOLE} quality={quality} />
       {BEATS.map((b, i) => (
-        <group key={b.id} position={b.meta.anchor.position} visible={Math.abs(i - active) <= 1}>
+        <group key={b.id} position={b.meta.anchor.position} visible={readCapture().solo ? i === active : Math.abs(i - active) <= 1}>
           <b.Scene index={i} quality={quality} reducedMotion={reducedMotion} />
         </group>
       ))}

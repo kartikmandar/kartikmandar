@@ -10,13 +10,13 @@ describe('parseCapture', () => {
 
   it('reads progress, time, dpr and ui', () => {
     expect(parseCapture('?capture=1&p=0.42&t=3.5&dpr=2&ui=0')).toEqual({
-      enabled: true, progress: 0.42, time: 3.5, dpr: 2, hideUi: true,
+      enabled: true, progress: 0.42, time: 3.5, dpr: 2, hideUi: true, solo: false,
     })
   })
 
   it('defaults to the start of the page at t=0, dpr 1, UI visible', () => {
     expect(parseCapture('?capture=1')).toEqual({
-      enabled: true, progress: 0, time: 0, dpr: 1, hideUi: false,
+      enabled: true, progress: 0, time: 0, dpr: 1, hideUi: false, solo: false,
     })
   })
 

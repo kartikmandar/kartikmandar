@@ -7,6 +7,7 @@ import { generateStorySchema } from '@/utilities/structuredData'
 export const metadata: Metadata = {
   title: 'My Story (Preview) - Kartik Mandar',
   robots: { index: false, follow: false },
+  openGraph: { images: ['/media/my-story/share.jpg'] },
 }
 
 export default function MyStoryPreviewPage() {
