@@ -38,7 +38,7 @@ export function ChapterRail() {
   const jump = (i: number) => scrollToProgress(beatTargetProgress(i, ranges), { onComplete: focusBeatHeading })
 
   return (
-    <nav aria-label="Story chapters" style={rail}>
+    <nav aria-label="Story chapters" className="journey-rail" style={rail}>
       <div aria-hidden style={track}>
         <div ref={fillRef} style={fillStyle} />
       </div>

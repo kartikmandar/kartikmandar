@@ -79,3 +79,21 @@ export function beatVisible(index: number, active: number, activeLocal: number):
   if (index === active + 1) return activeLocal > 1 - SHOT_TRAVEL / 2
   return false
 }
+
+const FOV_LANDSCAPE = 60
+const FOV_PORTRAIT_MAX = 100
+/** Narrower than this, the fixed vertical field of view starts cropping scenes at the sides. */
+const FULL_WIDTH_ASPECT = 1.2
+
+/** Vertical field of view that keeps a scene's width in frame on portrait screens. */
+export function baseFov(aspect: number): number {
+  if (aspect >= FULL_WIDTH_ASPECT) return FOV_LANDSCAPE
+  const halfWidth = Math.tan((FOV_LANDSCAPE * Math.PI) / 360) * FULL_WIDTH_ASPECT
+  const fov = (2 * Math.atan(halfWidth / Math.max(aspect, 0.1)) * 180) / Math.PI
+  return Math.min(FOV_PORTRAIT_MAX, fov)
+}
+
+/** How far to lift the image on portrait screens (fraction of height), so the art clears the copy below it. */
+export function portraitLift(aspect: number): number {
+  return aspect < 0.8 ? 0.16 : 0
+}

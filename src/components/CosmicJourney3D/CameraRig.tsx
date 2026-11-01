@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { cumulativeRanges } from './scrollMath'
-import { shotCurveT } from './cameraPath'
+import { shotCurveT, baseFov, portraitLift } from './cameraPath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { readCapture } from './capture'
@@ -15,7 +15,6 @@ import { journeyFrame } from './store'
  *  input, so this is light: it only removes residual steps. Frame-rate independent. */
 const FOLLOW_LAMBDA = 10
 /** Speed → FOV kick: scrolling fast widens the lens a little, like a warp. Capped. */
-const FOV_BASE = 60
 const FOV_KICK_MAX = 9
 const FOV_PER_SPEED = 120
 const FOV_LAMBDA = 5
@@ -55,7 +54,8 @@ export function CameraRig() {
   }, [])
 
   const followU = useRef(0)
-  const fov = useRef(FOV_BASE)
+  const fov = useRef(60)
+  const appliedView = useRef('')
   const sway = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
   const first = useRef(true)
 
@@ -88,8 +88,9 @@ export function CameraRig() {
 
     // Speed (curve units/s) widens the lens a touch; settles back at rest.
     const speed = f.dt > 0 ? Math.abs(followU.current - prevU) / f.dt : 0
-    const fovTarget = capture ? FOV_BASE : FOV_BASE + Math.min(FOV_KICK_MAX, speed * FOV_PER_SPEED)
-    fov.current = capture ? FOV_BASE : THREE.MathUtils.damp(fov.current, fovTarget, FOV_LAMBDA, f.dt)
+    const fovBase = baseFov(camera.aspect)
+    const fovTarget = capture ? fovBase : fovBase + Math.min(FOV_KICK_MAX, speed * FOV_PER_SPEED)
+    fov.current = capture ? fovBase : THREE.MathUtils.damp(fov.current, fovTarget, FOV_LAMBDA, f.dt)
 
     const s = sway.current
     if (capture) {
@@ -105,6 +106,16 @@ export function CameraRig() {
     lookCurve.getPoint(cu, _look)
     camera.position.set(_pos.x + s.x * SWAY, _pos.y - s.y * SWAY * 0.6, _pos.z)
     camera.lookAt(_look)
+
+    // A lens shift, not a tilt, so the composition stays the same.
+    const { width, height } = state.size
+    const lift = portraitLift(camera.aspect) * height
+    const viewKey = `${width}x${height}:${lift}`
+    if (viewKey !== appliedView.current) {
+      appliedView.current = viewKey
+      if (lift > 0) camera.setViewOffset(width, height, 0, lift, width, height)
+      else camera.clearViewOffset()
+    }
     if (Math.abs(camera.fov - fov.current) > 0.01) {
       camera.fov = fov.current
       camera.updateProjectionMatrix()

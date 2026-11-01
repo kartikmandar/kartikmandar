@@ -51,7 +51,7 @@ export function Hud({ index, total, text, visible }: { index: number; total: num
   }, [text, visible])
 
   return (
-    <div ref={wrapRef} aria-hidden style={wrapStyle}>
+    <div ref={wrapRef} aria-hidden className="journey-hud" style={wrapStyle}>
       <div style={{ opacity: 0.55, marginBottom: 6 }}>
         {String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
       </div>

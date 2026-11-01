@@ -5,7 +5,7 @@ import React, { createContext, useContext, useEffect, useRef } from 'react'
 import Lenis from 'lenis'
 import 'lenis/dist/lenis.css'
 import { readCapture } from './capture'
-import { progressForScroll, setLenis, setScrollTrack } from './scrollEngine'
+import { progressForScroll, setLenis, setScrollTrack, steadyViewportHeight } from './scrollEngine'
 
 export const ScrollProgressContext = createContext<React.MutableRefObject<number>>({ current: 0 })
 
@@ -40,7 +40,7 @@ export function ScrollRig({ totalScrollVh, children }: { totalScrollVh: number; 
     window.addEventListener('resize', measure)
 
     const update = (scrollY: number) => {
-      if (!capture.enabled) progressRef.current = progressForScroll(scrollY, window.innerHeight)
+      if (!capture.enabled) progressRef.current = progressForScroll(scrollY, steadyViewportHeight(window.innerWidth, window.innerHeight))
     }
 
     // Lenis owns smoothing here; the site's CSS smooth-scroll would fight it.

@@ -61,7 +61,7 @@ const _size = new THREE.Vector2()
 const ORIGIN = new THREE.Vector3()
 const ORTHO = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
 
-export function ProloguePass({ quality }: { quality: QualityTier }) {
+export function ProloguePass({ quality, halfFloat }: { quality: QualityTier; halfFloat: boolean }) {
   const gl = useThree((s) => s.gl)
   const marchRef = useRef<THREE.Mesh>(null)
   const displayRef = useRef<THREE.Mesh>(null)
@@ -129,7 +129,7 @@ export function ProloguePass({ quality }: { quality: QualityTier }) {
     const h = Math.max(1, Math.round(_size.y * scale))
     let target = targetRef.current
     if (!target) {
-      target = new THREE.WebGLRenderTarget(w, h, { type: THREE.HalfFloatType, depthBuffer: false })
+      target = new THREE.WebGLRenderTarget(w, h, { type: halfFloat ? THREE.HalfFloatType : THREE.UnsignedByteType, depthBuffer: false })
       targetRef.current = target
     } else if (target.width !== w || target.height !== h) {
       target.setSize(w, h)

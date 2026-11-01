@@ -28,7 +28,7 @@ function mulberry32(seed: number): () => number {
   }
 }
 
-export function Environment({ quality }: { quality: QualityTier }) {
+export function Environment({ quality, halfFloat }: { quality: QualityTier; halfFloat: boolean }) {
   // The star shell travels with the camera, so it reads as infinitely far away however long the flight.
   const starsRef = useRef<THREE.Group>(null)
   useFrame(({ camera }) => {
@@ -73,7 +73,7 @@ export function Environment({ quality }: { quality: QualityTier }) {
         </points>
       </CoverAware>
       {quality !== 'mobile' && (
-        <EffectComposer multisampling={0}>
+        <EffectComposer multisampling={0} frameBufferType={halfFloat ? THREE.HalfFloatType : THREE.UnsignedByteType}>
           <Bloom intensity={quality === 'high' ? 1.1 : 0.7} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur radius={0.7} />
           <ToneMapping mode={ToneMappingMode.AGX} />
           <SMAA />

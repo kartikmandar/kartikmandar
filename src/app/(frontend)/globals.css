@@ -454,6 +454,18 @@ html[data-story-mode='calm'] .story-article {
   scroll-margin-top: 5rem;
 }
 
+/* The flight on a phone: clear the floating buttons, keep the rail in the margin, drop the HUD. */
+@media (max-width: 640px) {
+  .journey-rail { right: 4px !important; }
+  .journey-hud { display: none; }
+  .journey-beat { padding-bottom: 104px !important; }
+  .journey-scrim {
+    height: 78vh !important;
+    background: linear-gradient(to top, rgba(4, 5, 11, 0.95) 0%, rgba(4, 5, 11, 0.86) 62%, rgba(4, 5, 11, 0) 100%) !important;
+  }
+  .journey-end { padding-bottom: 96px !important; }
+}
+
 /* The CV prints as a plain black-on-white document with none of the site chrome. */
 @media print {
   @page { margin: 1.6cm; }

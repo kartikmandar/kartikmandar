@@ -26,6 +26,22 @@ export function setScrollTrack(next: ScrollTrack): void {
   track = next
 }
 
+/** A height change smaller than this is a phone's address bar, not a real resize. */
+const ADDRESS_BAR_MAX_PX = 160
+
+let stableViewport = { width: 0, height: 0 }
+
+/**
+ * The viewport height with the address bar ignored. Phones change innerHeight as
+ * the bar slides; following that would nudge every scroll position mid-flight.
+ */
+export function steadyViewportHeight(width: number, height: number): number {
+  if (width !== stableViewport.width || Math.abs(height - stableViewport.height) > ADDRESS_BAR_MAX_PX) {
+    stableViewport = { width, height }
+  }
+  return stableViewport.height
+}
+
 /** Global journey progress (0..1) for a page scroll offset in px. */
 export function progressForScroll(scrollY: number, viewport: number, t: ScrollTrack = track): number {
   const range = Math.max(1, t.height - viewport)
@@ -46,7 +62,7 @@ export function scrollToProgress(
   progress: number,
   { immediate = false, onComplete }: { immediate?: boolean; onComplete?: () => void } = {},
 ): void {
-  const viewport = window.innerHeight
+  const viewport = steadyViewportHeight(window.innerWidth, window.innerHeight)
   const target = scrollForProgress(progress, viewport)
   if (lenis) {
     // Lenis caches the page height, and the page is briefly short while the 3D code

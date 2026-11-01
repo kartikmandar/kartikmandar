@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cumulativeRanges } from '../scrollMath'
-import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep, beatVisible } from '../cameraPath'
+import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep, beatVisible, baseFov, portraitLift } from '../cameraPath'
 
 describe('smootherstep', () => {
   it('pins endpoints and has near-zero slope at the ends', () => {
@@ -123,5 +123,26 @@ describe('beatVisible', () => {
   it('shows the neighbour the camera is travelling from or to', () => {
     expect(beatVisible(4, 5, 0.05)).toBe(true)
     expect(beatVisible(6, 5, 0.95)).toBe(true)
+  })
+})
+
+describe('baseFov', () => {
+  it('stays at 60 on landscape screens', () => {
+    expect(baseFov(16 / 9)).toBe(60)
+    expect(baseFov(1.2)).toBe(60)
+  })
+
+  it('widens as the screen narrows, with a limit', () => {
+    expect(baseFov(1)).toBeGreaterThan(60)
+    expect(baseFov(0.75)).toBeGreaterThan(baseFov(1))
+    expect(baseFov(0.46)).toBe(100)
+  })
+})
+
+describe('portraitLift', () => {
+  it('lifts the image only on portrait screens', () => {
+    expect(portraitLift(0.6)).toBeGreaterThan(0)
+    expect(portraitLift(1)).toBe(0)
+    expect(portraitLift(16 / 9)).toBe(0)
   })
 })

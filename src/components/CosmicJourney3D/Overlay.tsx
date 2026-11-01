@@ -104,7 +104,7 @@ export function Overlay() {
 
   if (view.kind === 'end') {
     return (
-      <div style={endWrap}>
+      <div className="journey-end" style={endWrap}>
         <div ref={rootRef} key="end" style={endInner}>
           <div data-fade style={eyebrow}>Still searching for signals</div>
           <h2 id={BEAT_HEADING_ID} tabIndex={-1} data-split style={endTitle}>Let&apos;s talk.</h2>
@@ -137,9 +137,9 @@ export function Overlay() {
   return (
     <div style={beatWrap}>
       {/* Lower-third scrim: guarantees text contrast over any frame. */}
-      <div aria-hidden style={scrim} />
+      <div aria-hidden className="journey-scrim" style={scrim} />
       <Hud index={view.index} total={BEATS.length} text={beat.hud} visible={view.visible} />
-      <div ref={rootRef} key={`beat-${view.index}`} style={beatInner}>
+      <div ref={rootRef} key={`beat-${view.index}`} className="journey-beat" style={beatInner}>
         <div data-fade style={eyebrow}>
           <span style={{ opacity: 0.6 }}>{pad(view.index + 1)} / {pad(BEATS.length)}</span>
           {beat.eyebrow && <span>{` · ${beat.eyebrow}`}</span>}
@@ -181,7 +181,8 @@ const heroWrap: React.CSSProperties = {
 }
 const heroText: React.CSSProperties = {
   fontSize: 'clamp(32px, 4.4vw, 66px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.01em', lineHeight: 1.08,
-  margin: 0, maxWidth: 980, textShadow: '0 2px 30px rgba(0,0,0,0.85)',
+  // A drop-shadow filter, not text-shadow: SplitText's line masks would clip that into visible bands.
+  margin: 0, maxWidth: 980, filter: 'drop-shadow(0 2px 14px rgba(0,0,0,0.85))',
 }
 const beatWrap: React.CSSProperties = {
   position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',

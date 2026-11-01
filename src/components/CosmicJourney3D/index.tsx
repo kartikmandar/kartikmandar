@@ -14,6 +14,7 @@ import { BEATS, TOTAL_SCROLL_VH } from './registry'
 import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
 import { adaptiveDpr, DPR_START_FACTOR, readJourneyEnv, selectQuality } from './tiers'
+import { TierGovernor } from './TierGovernor'
 import { beatVisible } from './cameraPath'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
@@ -176,6 +177,7 @@ function PrologueLayer() {
 export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }) {
   const [ready, setReady] = useState(false)
   const [quality, setQuality] = useState<QualityTier>('high')
+  const [halfFloat, setHalfFloat] = useState(true)
   const [frameloop, setFrameloop] = useState<'always' | 'never'>('always')
   const capture = readCapture()
   const [perf, setPerf] = useState(false)
@@ -187,6 +189,7 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
     const env = readJourneyEnv()
     const tier = selectQuality(env)
     setQuality(tier)
+    setHalfFloat(env.halfFloat)
     setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
     const params = new URLSearchParams(window.location.search)
     setPerf(params.has('perf'))
@@ -201,6 +204,17 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
     }
   // eslint-enable react-hooks/set-state-in-effect
   }, [])
+
+  const setTier = useCallback((tier: QualityTier) => {
+    setQuality(tier)
+    setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
+  }, [])
+
+  // The tier in use, for debugging on a real device.
+  useEffect(() => {
+    document.documentElement.dataset.storyTier = quality
+    return () => { delete document.documentElement.dataset.storyTier }
+  }, [quality])
 
   // R3F builds the renderer in an async step no error boundary can see, so a
   // context the probe got but the real canvas can't is caught here.
@@ -219,7 +233,8 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
   return (
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>
       {legacyPrologue && quality !== 'mobile' && <PrologueLayer />}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0 }} aria-hidden>
+      {/* lvh: a phone's address bar sliding away must not resize the canvas. */}
+      <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100lvh', zIndex: 0 }} aria-hidden>
         <Canvas
           gl={createRenderer}
           frameloop={frameloop}
@@ -231,8 +246,8 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
             gl.toneMapping = THREE.AgXToneMapping
           }}
         >
-          {!legacyPrologue && <ProloguePass quality={quality} />}
-          <Environment quality={quality} />
+          {!legacyPrologue && <ProloguePass quality={quality} halfFloat={halfFloat} />}
+          <Environment quality={quality} halfFloat={halfFloat} />
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} prologuePass={!legacyPrologue} />
           <Precompile />
@@ -247,7 +262,7 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
               onFallback={() => setDpr(adaptiveDpr(quality, 0, window.devicePixelRatio || 1))}
             />
           )}
-          {capture.enabled && <CaptureReady />}
+          {capture.enabled ? <CaptureReady /> : <TierGovernor quality={quality} onChange={setTier} />}
           {perf && (
             <Suspense fallback={null}>
               <PerfProbe />
