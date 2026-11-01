@@ -899,7 +899,7 @@ export const projects: Project[] = [
     "id": 9,
     "displayOrder": 4,
     "title": "CygX1 X-ray Analysis",
-    "shortDescription": "Timing and spectral analysis of Cygnus X-1 using 26 NuSTAR observations spanning 12 years. Accepted in The Astrophysical Journal.",
+    "shortDescription": "Timing and spectral analysis of Cygnus X-1 using 26 NuSTAR observations spanning 12 years. Published in The Astrophysical Journal.",
     "description": "A comprehensive multi-mission X-ray timing and spectral analysis project studying the black hole binary Cygnus X-1.",
     "category": "research",
     "projectStatus": "active",

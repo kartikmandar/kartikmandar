@@ -147,16 +147,22 @@ export function Footer() {
   // Publications
   const publications = [
     {
-      title: 'State-Dependent X-ray Variability in Cygnus X-1: A 12-Year NuSTAR Timing Study of Accretion Flow Geometry',
+      title: 'A NuSTAR Reflection-Spectroscopy Survey of Cygnus X-1',
       authors: 'Duraphe, Mandar, et. al',
-      journal: 'arXiv preprint',
-      url: '#'
+      journal: 'Under review at ApJ',
+      url: 'https://arxiv.org/abs/2608.15902'
+    },
+    {
+      title: 'State-dependent X-Ray Variability in Cygnus X-1: A 12 yr NuSTAR Timing Study of Accretion Flow Geometry',
+      authors: 'Duraphe, Mandar, et. al',
+      journal: 'ApJ 1003, 13 (2026)',
+      url: 'https://doi.org/10.3847/1538-4357/ae5632'
     },
     {
       title: 'fftvis: A Non-Uniform Fast Fourier Transform Based Interferometric Visibility Simulator',
       authors: 'Cox et. al',
-      journal: 'arXiv preprint',
-      url: 'https://arxiv.org/abs/2506.02130'
+      journal: 'RASTI 4, rzaf056 (2025)',
+      url: 'https://doi.org/10.1093/rasti/rzaf056'
     },
     {
       title: 'A New Master Supernovae Ia sample and the investigation of the H0 tension',
