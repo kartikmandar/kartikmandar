@@ -47,14 +47,14 @@ export default async function ContactPage() {
                 <h3 className="font-semibold text-foreground mb-1">Institute</h3>
                 <p className="text-muted-foreground text-sm">
                   <a
-                    href="https://www.rri.res.in/"
+                    href="https://www.unict.it/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-primary hover:text-primary/80 transition-colors"
                   >
-                    Raman Research Institute
+                    University of Catania
                   </a><br />
-                  Bangalore, Karnataka, India
+                  Catania, Italy
                 </p>
               </div>
             </div>

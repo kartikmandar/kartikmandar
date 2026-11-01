@@ -227,7 +227,7 @@ export function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <div className="mb-4 sm:mb-6">
               <h3 className="text-lg sm:text-xl font-bold mb-1">Kartik Mandar</h3>
-              <p className="text-zinc-400 mb-2 text-sm sm:text-base">BS Physics</p>
+              <p className="text-zinc-400 mb-2 text-sm sm:text-base">MSc Astrophysics</p>
             </div>
             
             {/* Social links */}
@@ -370,13 +370,13 @@ export function Footer() {
               <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
             </h4>
             <div className="space-y-3 text-sm">
-              <a href="https://www.rri.res.in/" target="_blank" rel="noopener noreferrer" className="flex gap-3 items-start hover:text-white transition-colors group">
+              <a href="https://www.unict.it/" target="_blank" rel="noopener noreferrer" className="flex gap-3 items-start hover:text-white transition-colors group">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                 </svg>
                 <div className="text-gray-300 text-sm leading-relaxed group-hover:text-white">
-                  Raman Research Institute<br />
-                  Bangalore, Karnataka
+                  University of Catania<br />
+                  Catania, Italy
                 </div>
               </a>
               <a href="mailto:contact@kartikmandar.com" className="flex gap-3 items-start hover:text-white transition-colors group">
