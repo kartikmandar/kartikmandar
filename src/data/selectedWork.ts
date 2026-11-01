@@ -17,7 +17,7 @@ export const SELECTED_WORK: SelectedWork[] = [
   },
   {
     title: 'fftvis',
-    summary: 'A NUFFT-based visibility simulator for HERA, with my CUDA/CuPy GPU backend.',
+    summary: 'A NUFFT-based visibility simulator for HERA. I co-authored the paper and wrote its CUDA/CuPy GPU backend, now in an open pull request.',
     image: '/media/fftvis_visibilties.png',
     imageAlt: 'Visibility plots made with fftvis',
     href: 'https://github.com/tyler-a-cox/fftvis',

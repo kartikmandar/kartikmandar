@@ -6,7 +6,7 @@ export interface IndexedProject {
 }
 
 export const PROJECT_INDEX: IndexedProject[] = [
-  { name: 'Enrolia', description: 'React Native app for AI-powered graduate admissions consulting with Expo Dev Builds, Supabase backend, and LLM integration.', href: 'https://enrolia.app' },
+  { name: 'Enrolia', description: 'The honest consultant for graduate applicants: find masters and PhD programs and keep track of every application.', href: 'https://enrolia.app' },
   { name: 'Merakinist Labs', description: 'A forward-deployed AI engineering lab.', href: 'https://merakinist.com' },
   { name: 'Colloquia', description: 'Local-first AI research assistant with Zotero integration, RAG via ChromaDB, and real-time voice/text LLM interaction.' },
   { name: 'Workflow Orchestrator', description: 'OpenEnv environment for training and evaluating LLM agent orchestration across DAG-based workflows.' },
