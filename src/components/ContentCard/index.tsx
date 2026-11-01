@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { ArrowUpRight } from 'lucide-react'
 import { BLUR_DATA } from '@/data/blurData.generated'
 import { cn } from '@/utilities/ui'
+import { cardActionClass } from './cardAction'
 
 type Variant = 'feature' | 'row' | 'compact'
 
@@ -163,10 +164,7 @@ export function CardAction({ href, children, primary = false, external = true }:
   primary?: boolean
   external?: boolean
 }) {
-  const className = cn(
-    'inline-flex min-h-10 items-center gap-1.5 rounded-full px-4 text-sm font-medium transition-colors',
-    primary ? 'bg-foreground text-primary-foreground hover:bg-ember' : 'border border-border text-foreground hover:border-ember hover:text-ember',
-  )
+  const className = cardActionClass(primary)
   if (!external) return <Link href={href} className={className}>{children}</Link>
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
