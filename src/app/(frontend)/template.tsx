@@ -8,15 +8,15 @@ import { motion } from 'framer-motion'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState, type ReactNode } from 'react'
 import { EASE_OUT_EXPO, ROUTE_TRANSITION, isQuickRoute, skipsRouteTransition } from '@/lib/motion'
-import { isFirstLoad, markFirstLoadDone } from '@/lib/navigationState'
+import { isFirstLoad, noteRoute } from '@/lib/navigationState'
 
 export default function Template({ children }: { children: ReactNode }) {
   const pathname = usePathname()
-  const [animate] = useState(() => !isFirstLoad() && !skipsRouteTransition(pathname))
+  const [animate] = useState(() => !isFirstLoad(pathname) && !skipsRouteTransition(pathname))
 
   useEffect(() => {
-    markFirstLoadDone()
-  }, [])
+    noteRoute(pathname)
+  }, [pathname])
 
   if (!animate) return <>{children}</>
 
