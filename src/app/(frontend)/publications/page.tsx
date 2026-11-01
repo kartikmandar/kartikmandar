@@ -3,31 +3,16 @@ import React from 'react'
 import { CardAction, ContentCard } from '@/components/ContentCard'
 import { SOCIAL_LINKS } from '@/constants/navigation'
 import { PageHeader } from '@/components/motion'
+import { Authors } from '@/components/Publications/Authors'
 import { CopyBibtex } from '@/components/Publications/CopyBibtex'
 import { PublicationList } from '@/components/Publications/PublicationList'
-import { PUBLICATIONS, PUBLICATION_TOPICS, citationLine, toBibtex, type Publication } from '@/data/publications'
+import { PUBLICATIONS, PUBLICATION_TOPICS, citationLine, toBibtex } from '@/data/publications'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
 import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 
 export const dynamic = 'force-static'
 
 const PROFILE_LINKS = SOCIAL_LINKS.filter((link) => link.label === 'Scholar' || link.label === 'ORCID')
-
-function Authors({ authors }: { authors: Publication['authors'] }) {
-  return (
-    <p>
-      {authors.map(({ first, last }, index) => {
-        const name = `${first} ${last}`
-        return (
-          <React.Fragment key={name}>
-            {index > 0 && ', '}
-            {last === 'Mandar' ? <strong className="font-medium text-foreground">{name}</strong> : name}
-          </React.Fragment>
-        )
-      })}
-    </p>
-  )
-}
 
 export default function PublicationsPage(): React.JSX.Element {
   const serverUrl = getServerSideURL()
@@ -66,7 +51,7 @@ export default function PublicationsPage(): React.JSX.Element {
                 variant="row"
                 eyebrow={citationLine(publication)}
                 title={publication.title}
-                meta={<Authors authors={publication.authors} />}
+                meta={<p><Authors authors={publication.authors} /></p>}
                 summary={publication.summary}
                 actions={
                   <>

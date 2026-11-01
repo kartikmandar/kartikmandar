@@ -408,3 +408,21 @@ html.lenis body {
 .skip-link:focus-visible {
   transform: translateY(0);
 }
+
+/* The CV prints as a plain black-on-white document with none of the site chrome. */
+@media print {
+  @page { margin: 1.6cm; }
+  html:has(.cv-print) {
+    --background: white;
+    --foreground: black;
+    --muted-foreground: oklch(0.35 0 0);
+    --border: oklch(0.8 0 0);
+    --ember: oklch(0.45 0.13 52);
+    overflow: visible !important;
+    background: white;
+  }
+  body:has(.cv-print) { background: white; }
+  body:has(.cv-print) :is(header:not(.cv-print header), .skip-link, .site-grain),
+  body:has(.cv-print) main ~ * { display: none !important; }
+  .cv-print section { scroll-margin: 0; }
+}
