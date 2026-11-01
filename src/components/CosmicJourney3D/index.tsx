@@ -14,7 +14,6 @@ import { BEATS, TOTAL_SCROLL_VH } from './registry'
 import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
 import { adaptiveDpr, DPR_START_FACTOR, readJourneyEnv, selectQuality } from './tiers'
-import { fallbackMode } from './fallbackPlan'
 import { beatVisible } from './cameraPath'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
@@ -174,10 +173,9 @@ function PrologueLayer() {
   return <HeroPrologue opacity={1 - xfade} />
 }
 
-export default function CosmicJourney3D() {
+export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }) {
   const [ready, setReady] = useState(false)
   const [quality, setQuality] = useState<QualityTier>('high')
-  const [mode, setMode] = useState<'none' | 'static'>('none')
   const [frameloop, setFrameloop] = useState<'always' | 'never'>('always')
   const capture = readCapture()
   const [perf, setPerf] = useState(false)
@@ -190,30 +188,18 @@ export default function CosmicJourney3D() {
     const tier = selectQuality(env)
     setQuality(tier)
     setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
-    // Capture mode renders deliberately, whatever the renderer.
-    const softwareRenderer = env.softwareRenderer && !readCapture().enabled
-    setMode(fallbackMode(env.reducedMotion, env.webgl2, softwareRenderer))
     const params = new URLSearchParams(window.location.search)
     setPerf(params.has('perf'))
     setLegacyPrologue(params.has('legacyPrologue'))
     setReady(true)
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setMode(fallbackMode(mq.matches, env.webgl2, softwareRenderer))
-    mq.addEventListener('change', onChange)
     // Pause the WebGL render loop when the tab is backgrounded (battery/CPU).
     const onVis = () => setFrameloop(document.hidden ? 'never' : 'always')
     document.addEventListener('visibilitychange', onVis)
     onVis()
     return () => {
-      mq.removeEventListener('change', onChange)
       document.removeEventListener('visibilitychange', onVis)
     }
   // eslint-enable react-hooks/set-state-in-effect
-  }, [])
-
-  const abandonFlight = useCallback(() => {
-    setMode('static')
-    window.scrollTo(0, 0)
   }, [])
 
   // R3F builds the renderer in an async step no error boundary can see, so a
@@ -222,30 +208,13 @@ export default function CosmicJourney3D() {
     try {
       return new THREE.WebGLRenderer(props)
     } catch (error) {
-      abandonFlight()
+      onAbandon()
       throw error
     }
-  }, [abandonFlight])
-
-  // Static mode reveals the server-rendered article; the flight keeps it hidden and out of the tab order.
-  useEffect(() => {
-    if (!ready) return
-    const root = document.documentElement
-    const links = document.querySelectorAll<HTMLElement>('.story-article a')
-    if (mode === 'static') {
-      root.dataset.storyMode = 'static'
-    } else {
-      links.forEach((link) => { link.tabIndex = -1 })
-    }
-    return () => {
-      delete root.dataset.storyMode
-      links.forEach((link) => link.removeAttribute('tabindex'))
-    }
-  }, [ready, mode])
+  }, [onAbandon])
 
   // Until the client probe runs, keep showing the server's first paint (never a black frame).
   if (!ready) return <LoaderView progress={0.05} />
-  if (mode === 'static') return null
 
   return (
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>
@@ -267,7 +236,7 @@ export default function CosmicJourney3D() {
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} prologuePass={!legacyPrologue} />
           <Precompile />
-          <ContextGuard onAbandon={abandonFlight} />
+          <ContextGuard onAbandon={onAbandon} />
           {!capture.enabled && (
             // Adaptive resolution: sheds DPR under load (thermal throttling, slow GPUs)
             // and recovers with headroom, in 0.25 steps; gives up flip-flopping after 4.

@@ -2,16 +2,16 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { BEATS_META } from './beatsMeta'
 import { CONTACT_EMAIL } from '@/constants/navigation'
+import { slugFor } from './storyView'
 import { HERO_PHASES, NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE } from './narrative'
 
-// Shown instead of the canvas when JavaScript is off. Reduced motion and missing
-// WebGL reveal the same article through globals.css.
+// Shown when JavaScript is off. The timeline view reveals the same article through globals.css.
 const NO_SCRIPT_CSS = '.story-article{position:static;width:auto;height:auto;margin:0;clip-path:none;overflow:visible;white-space:normal}.story-article-poster{display:block}.story-loader{display:none!important}'
 
 /**
  * The whole story as plain HTML, so search engines, screen readers and visitors
- * without WebGL get every beat. Over the flight it stays in the document but
- * visually hidden, and the canvas is the visual enhancement of it.
+ * without JavaScript get every beat. Over the flight it stays in the document but
+ * visually hidden, calm mode replaces it, and the timeline view shows it.
  */
 export function StoryArticle() {
   return (
@@ -29,7 +29,7 @@ export function StoryArticle() {
         </header>
 
         {NARRATIVE.map((beat) => (
-          <section key={beat.id} className="story-article-beat">
+          <section key={beat.id} id={`timeline-${slugFor(beat.id)}`} className="story-article-beat">
             {/* Decorative: the text below carries the meaning. Display none keeps it unloaded during the flight. */}
             <Image
               src={BEATS_META[beat.id]!.posterSrc}
@@ -60,7 +60,7 @@ export function StoryArticle() {
           </section>
         ))}
 
-        <section className="story-article-beat">
+        <section id="timeline-lets-talk" className="story-article-beat">
           <p className="mono-label mb-3 text-ember">Still searching for signals</p>
           <h2 className="font-display text-display-md text-foreground">Let&apos;s talk.</h2>
           <p className="mt-3 text-lg leading-relaxed text-muted-foreground">

@@ -5,11 +5,9 @@ import { BEATS, SCROLL_LENGTHS } from './registry'
 import { cumulativeRanges, type Range } from './scrollMath'
 import { flightFractionToGlobal } from './prologueScroll'
 import { SHOT_TRAVEL } from './cameraPath'
+import { slugFor } from './storyView'
 
-/** Beat id → URL slug: drop the legacy "-section"/"-wrapper" suffixes. */
-export function slugFor(id: string): string {
-  return id.replace(/-wrapper$/, '').replace(/-section$/, '')
-}
+export { slugFor }
 
 export function beatIndexForSlug(slug: string, ids: readonly string[] = BEATS.map((b) => b.id)): number {
   const clean = slug.replace(/^#/, '').toLowerCase()

@@ -409,7 +409,7 @@ html.lenis body {
   transform: translateY(0);
 }
 
-/* The story's HTML article: hidden over the flight, the page itself in static mode. */
+/* The story's HTML article: hidden over the flight, replaced by calm mode, the page itself in the timeline view. */
 .story-article {
   position: absolute;
   width: 1px;
@@ -435,10 +435,10 @@ html.lenis body {
 .story-article-beat:last-child {
   padding-bottom: 7rem;
 }
-html[data-story-mode='static'] .story-article-poster {
+html[data-story-mode='timeline'] .story-article-poster {
   display: block;
 }
-html[data-story-mode='static'] .story-article {
+html[data-story-mode='timeline'] .story-article {
   position: static;
   width: auto;
   height: auto;
@@ -447,22 +447,11 @@ html[data-story-mode='static'] .story-article {
   clip-path: none;
   white-space: normal;
 }
-@media (prefers-reduced-motion: reduce) {
-  .story-article {
-    position: static;
-    width: auto;
-    height: auto;
-    margin: 0;
-    overflow: visible;
-    clip-path: none;
-    white-space: normal;
-  }
-  .story-article-poster {
-    display: block;
-  }
-  .story-loader {
-    display: none !important;
-  }
+html[data-story-mode='calm'] .story-article {
+  display: none;
+}
+.story-article-beat {
+  scroll-margin-top: 5rem;
 }
 
 /* The CV prints as a plain black-on-white document with none of the site chrome. */

@@ -49,6 +49,9 @@ export function scrollToProgress(
   const viewport = window.innerHeight
   const target = scrollForProgress(progress, viewport)
   if (lenis) {
+    // Lenis caches the page height, and the page is briefly short while the 3D code
+    // loads. A stale height would clamp a deep link's jump back to the top.
+    lenis.resize()
     const distance = Math.abs(target - lenis.scroll)
     const duration = Math.min(3.2, 0.9 + distance / (viewport * 6))
     // force: also works while Lenis is stopped (e.g. a deep link applied as the loader hands over)
