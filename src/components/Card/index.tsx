@@ -1,12 +1,6 @@
-'use client'
-import { cn } from '@/utilities/ui'
-import useClickableCard from '@/utilities/useClickableCard'
-import Link from 'next/link'
-import React, { Fragment } from 'react'
-import { ChevronRight } from 'lucide-react'
+import React from 'react'
 
-import Image from 'next/image'
-import { Media } from '@/components/Media'
+import { ContentCard } from '@/components/ContentCard'
 import type { CardPostData } from '@/data/types'
 
 export type { CardPostData }
@@ -40,126 +34,51 @@ function extractTextFromContent(content: unknown): string {
   return fullText.substring(0, 150).split(' ').slice(0, -1).join(' ') + '...'
 }
 
+function formatDate(date: string): string {
+  return new Date(date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+/** A post on the shared ContentCard (compact variant). */
 export const Card: React.FC<{
-  alignItems?: 'center'
   className?: string
   doc?: CardPostData & { content?: unknown }
   relationTo?: 'posts'
   showCategories?: boolean
   title?: string
-}> = (props) => {
-  const { cardRef, linkRef } = useClickableCard({})
-  const { className, doc, relationTo, showCategories, title: titleFromProps } = props
-
+}> = ({ className, doc, relationTo, showCategories, title: titleFromProps }) => {
   const { slug, categories, meta, title, publishedAt, populatedAuthors, content, excerpt } = doc || {} as CardPostData & { content?: unknown }
   const { description, image: metaImage } = meta || {}
 
-  const hasCategories = categories && Array.isArray(categories) && categories.length > 0
-  const titleToUse = titleFromProps || title
-  const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
-
-  // Get formatted authors
+  const titleToUse = titleFromProps || title || ''
   const authorNames = (populatedAuthors || [])
-    .map((a) => (typeof a === 'object' && a !== null ? a.name : null))
+    .map((author) => (typeof author === 'object' && author !== null ? author.name : null))
     .filter(Boolean) as string[]
-  const authorsText = authorNames.length > 0 ? authorNames.join(', ') : null
+  const categoryNames = (categories || [])
+    .map((category) => (typeof category === 'object' && category !== null ? category.title || 'Untitled category' : null))
+    .filter(Boolean) as string[]
 
-  // Use excerpt for MDX posts, fall back to Lexical content extraction
-  const contentPreview = excerpt || extractTextFromContent(content)
+  // Use excerpt for MDX posts, fall back to Lexical content extraction, then the meta description
+  const preview = excerpt || extractTextFromContent(content) || description?.replace(/\s/g, ' ')
+  const imageSrc = typeof metaImage === 'string' ? metaImage : metaImage?.url
+  const imageAlt = (typeof metaImage === 'object' && metaImage?.alt) || titleToUse
 
   return (
-    <article
-      className={cn(
-        'border border-border rounded-lg overflow-hidden bg-card hover:cursor-pointer hover:shadow-lg transition-all duration-300 group',
-        className,
-      )}
-      ref={cardRef}
-    >
-      <div className="relative w-full">
-        {!metaImage && <div className="">No image</div>}
-        {metaImage && typeof metaImage === 'object' && metaImage !== null && 'url' in metaImage && (
-          <div className="aspect-video overflow-hidden">
-            <Media
-              resource={metaImage as Parameters<typeof Media>[0]['resource']}
-              size="33vw"
-              imgClassName="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        )}
-        {metaImage && typeof metaImage === 'string' && (
-          <div className="aspect-video overflow-hidden relative">
-            <Image
-              src={metaImage}
-              alt={titleToUse || ''}
-              fill
-              sizes="33vw"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-          </div>
-        )}
-      </div>
-      <div className="p-6">
-        {showCategories && hasCategories && (
-          <div className="uppercase text-sm mb-4 text-muted-foreground">
-            {categories?.map((category, index) => {
-              if (typeof category === 'object') {
-                const { title: titleFromCategory } = category
-                const categoryTitle = titleFromCategory || 'Untitled category'
-                const isLast = index === categories.length - 1
-
-                return (
-                  <Fragment key={index}>
-                    {categoryTitle}
-                    {!isLast && <Fragment>, &nbsp;</Fragment>}
-                  </Fragment>
-                )
-              }
-              return null
-            })}
-          </div>
-        )}
-        
-        <div className="mb-4">
-          {titleToUse && (
-            <h3 className="font-bold text-foreground mb-2 group-hover:text-primary transition-colors line-clamp-2">
-              <Link className="not-prose" href={href} ref={linkRef}>
-                {titleToUse}
-              </Link>
-            </h3>
-          )}
-          
-          {/* Content preview from post content */}
-          {contentPreview && (
-            <p className="text-muted-foreground text-sm line-clamp-3 mb-2">
-              {contentPreview}
-            </p>
-          )}
-          {/* Fallback to meta description if no content preview */}
-          {!contentPreview && sanitizedDescription && (
-            <p className="text-muted-foreground text-sm line-clamp-3 mb-2">
-              {sanitizedDescription}
-            </p>
-          )}
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-muted-foreground">
-            {authorsText && (
-              <div className="mb-1">
-                By {authorsText}
-              </div>
-            )}
-            {publishedAt && new Date(publishedAt).toLocaleDateString()}
-          </div>
-          <Link 
-            href={href}
-            className="inline-flex items-center gap-1 text-sm text-primary hover:text-primary/80 transition-colors"
-          >
-            Read <ChevronRight className="w-3 h-3" />
-          </Link>
-        </div>
-      </div>
-    </article>
+    <ContentCard
+      variant="compact"
+      className={className}
+      title={titleToUse}
+      href={`/${relationTo}/${slug}`}
+      cursorLabel="Read"
+      eyebrow={showCategories && categoryNames.length > 0 ? categoryNames.join(', ') : undefined}
+      image={imageSrc ? { src: imageSrc, alt: imageAlt } : undefined}
+      summary={preview ? <p className="line-clamp-3">{preview}</p> : undefined}
+      meta={authorNames.length > 0 || publishedAt ? (
+        <>
+          {authorNames.length > 0 && <span>By {authorNames.join(', ')}</span>}
+          {authorNames.length > 0 && publishedAt && ' · '}
+          {publishedAt && <span>{formatDate(publishedAt)}</span>}
+        </>
+      ) : undefined}
+    />
   )
 }

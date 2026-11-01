@@ -1,12 +1,10 @@
+import { CardAction, ContentCard } from '@/components/ContentCard'
 import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
 import { generateBreadcrumbSchema } from '@/utilities/structuredData'
-import {
-  Users,
-  ExternalLink
-} from 'lucide-react'
+import { Users } from 'lucide-react'
 
 export const dynamic = 'force-static'
 
@@ -103,6 +101,22 @@ const featuredProjects = [
 
 
 
+function FeatureList({ features }: { features: string[] }) {
+  return (
+    <div className="mt-6">
+      <h4 className="mono-label mb-3 text-muted-foreground">Features</h4>
+      <div className="grid gap-3 md:grid-cols-2">
+        {features.map((feature) => (
+          <div key={feature} className="flex items-center gap-2">
+            <div className="size-1.5 flex-shrink-0 rounded-full bg-ember" />
+            <span className="text-sm text-foreground/85">{feature}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export default function OpenSourcePage(): React.JSX.Element {
   const serverUrl = getServerSideURL()
   const breadcrumbJsonLd = generateBreadcrumbSchema([
@@ -123,161 +137,73 @@ export default function OpenSourcePage(): React.JSX.Element {
 
         {/* Google Summer of Code Section */}
         <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          <div className="mb-8">
+            <h2 className="font-display text-display-md text-foreground">
               Google Summer of Code
             </h2>
           </div>
           
           <div className="space-y-6">
-            {gsocProjects.map((gsocProject, projectIndex) => (
-              <div key={projectIndex} className="bg-card border border-border rounded-lg p-6 md:p-8 transition-colors hover:bg-accent/50">
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
-                  <div className="order-2 sm:order-1">
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{gsocProject.project}</h3>
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {gsocProject.organization}
-                      </span>
-                      <span className="hidden sm:inline">•</span>
-                      <span>{gsocProject.duration}</span>
-                      <span className="hidden sm:inline">•</span>
-                      <span className="w-full sm:w-auto">Mentor{gsocProject.mentors.length > 1 ? 's' : ''}: {gsocProject.mentors.join(', ')}</span>
-                    </div>
+            {gsocProjects.map((gsocProject) => (
+              <ContentCard
+                key={gsocProject.year}
+                variant="row"
+                eyebrow={gsocProject.year}
+                title={gsocProject.project}
+                meta={
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <span className="flex items-center gap-1"><Users aria-hidden className="size-4" />{gsocProject.organization}</span>
+                    <span>{gsocProject.duration}</span>
+                    <span>Mentor{gsocProject.mentors.length > 1 ? 's' : ''}: {gsocProject.mentors.join(', ')}</span>
                   </div>
-                  <div className="order-1 sm:order-2 text-3xl font-bold text-muted-foreground flex-shrink-0">
-                    {gsocProject.year}
-                  </div>
-                </div>
-                
-                <p className="text-muted-foreground mb-6">{gsocProject.description}</p>
-                
-                <div className="mb-6">
-                  <h4 className="font-semibold mb-3">Features</h4>
-                  <div className="grid md:grid-cols-2 gap-3">
-                    {gsocProject.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-muted-foreground rounded-full flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex flex-wrap gap-2 sm:gap-4">
-                  <a
-                    href={gsocProject.finalReportUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
-                  >
-                    Final Report <ExternalLink className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={gsocProject.weeklyBlogsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
-                  >
-                    Weekly Blogs <ExternalLink className="w-4 h-4" />
-                  </a>
-                  <a
-                    href={gsocProject.repositoryUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
-                  >
-                    View Repository <ExternalLink className="w-4 h-4" />
-                  </a>
-                  {gsocProject.proposalUrl && (
-                    <a
-                      href={gsocProject.proposalUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
-                    >
-                      Proposal <ExternalLink className="w-4 h-4" />
-                    </a>
-                  )}
-                </div>
-              </div>
+                }
+                summary={<p className="text-base">{gsocProject.description}</p>}
+                actions={
+                  <>
+                    <CardAction href={gsocProject.finalReportUrl} primary>Final Report</CardAction>
+                    <CardAction href={gsocProject.weeklyBlogsUrl}>Weekly Blogs</CardAction>
+                    <CardAction href={gsocProject.repositoryUrl}>View Repository</CardAction>
+                    {gsocProject.proposalUrl && <CardAction href={gsocProject.proposalUrl}>Proposal</CardAction>}
+                  </>
+                }
+              >
+                <FeatureList features={gsocProject.features} />
+              </ContentCard>
             ))}
           </div>
         </section>
 
         {/* Other Contributions */}
         <section className="mb-16">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">Other Contributions</h2>
+          <div className="mb-8">
+            <h2 className="font-display text-display-md text-foreground">Other Contributions</h2>
           </div>
           
           <div className="space-y-6">
-            {featuredProjects.map((project, projectIndex) => (
-              <div key={projectIndex} className="bg-card border border-border rounded-lg p-6 md:p-8 transition-colors hover:bg-accent/50">
-                <div className="flex flex-col gap-4 mb-6">
-                  <div>
-                    <h3 className="text-xl sm:text-2xl font-bold mb-2">{project.name}</h3>
-                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1">
-                        <Users className="w-4 h-4" />
-                        {project.organization}
-                      </span>
-                      <span className="hidden sm:inline">•</span>
-                      <span>{project.duration}</span>
-                      <span className="hidden sm:inline">•</span>
-                      <span className="px-2 py-0.5 bg-muted text-muted-foreground rounded text-xs">
-                        {project.role}
-                      </span>
-                    </div>
+            {featuredProjects.map((project) => (
+              <ContentCard
+                key={project.name}
+                variant="row"
+                eyebrow={project.role}
+                title={project.name}
+                meta={
+                  <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+                    <span className="flex items-center gap-1"><Users aria-hidden className="size-4" />{project.organization}</span>
+                    <span>{project.duration}</span>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {project.techStack.map((tech, i) => (
-                      <span key={i} className="text-xs px-2 py-1 bg-muted rounded-md">
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-                
-                <p className="text-muted-foreground mb-6">{project.description}</p>
-                
-                <div className="mb-6">
-                  <h4 className="font-semibold mb-3">Features</h4>
-                  <div className="grid md:grid-cols-2 gap-3">
-                    {project.features.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-muted-foreground rounded-full flex-shrink-0" />
-                        <span className="text-sm">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <p className="text-sm text-muted-foreground italic order-2 sm:order-1">
-                    {project.impact}
-                  </p>
-                  <div className="flex flex-wrap gap-2 sm:gap-4 order-1 sm:order-2">
-                    <a
-                      href={project.repositoryUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors text-sm"
-                    >
-                      Repository <ExternalLink className="w-4 h-4" />
-                    </a>
-                    <a
-                      href={project.contributionsUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors text-sm"
-                    >
-                      My Contributions <ExternalLink className="w-4 h-4" />
-                    </a>
-                  </div>
-                </div>
-              </div>
+                }
+                summary={<p className="text-base">{project.description}</p>}
+                tags={project.techStack}
+                actions={
+                  <>
+                    <CardAction href={project.repositoryUrl} primary>Repository</CardAction>
+                    <CardAction href={project.contributionsUrl}>My Contributions</CardAction>
+                  </>
+                }
+              >
+                <FeatureList features={project.features} />
+                <p className="mt-6 text-sm italic text-muted-foreground">{project.impact}</p>
+              </ContentCard>
             ))}
           </div>
         </section>

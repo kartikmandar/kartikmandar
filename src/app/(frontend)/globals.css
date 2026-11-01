@@ -355,6 +355,42 @@ html.lenis body {
   scale: 1;
 }
 
+/* The shared card (components/ContentCard). The ember border and glow follow the
+   pointer through --spot-x/--spot-y, set by CardSpotlight. */
+.content-card {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid oklch(1 0 0 / 0.1);
+  border-radius: 0.75rem;
+  background: var(--card);
+  transition: border-color 0.3s ease;
+}
+.content-card:hover { border-color: oklch(1 0 0 / 0.18); }
+.content-card:has(a:focus-visible) { outline: 2px solid var(--ember); outline-offset: 2px; }
+.content-card::before,
+.content-card::after {
+  content: '';
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.content-card::before {
+  inset: -1px;
+  z-index: 2;
+  padding: 1px;
+  background: radial-gradient(20rem circle at var(--spot-x, 50%) var(--spot-y, 50%), var(--ember), transparent 70%);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.content-card::after {
+  inset: 0;
+  z-index: 1;
+  background: radial-gradient(18rem circle at var(--spot-x, 50%) var(--spot-y, 50%), var(--ember-soft), transparent 70%);
+}
+.content-card[data-spot]::before,
+.content-card[data-spot]::after { opacity: 1; }
+
 .skip-link {
   position: fixed;
   left: 16px;

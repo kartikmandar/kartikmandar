@@ -10,6 +10,7 @@ import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { SmoothScroll } from '@/providers/SmoothScroll'
+import { CardSpotlight } from '@/components/ContentCard/CardSpotlight'
 import { CursorLabel } from '@/components/motion'
 import { HideInJourney, SiteGrain } from '@/components/SiteChrome/RouteGate'
 import { fontVariables } from '@/app/fonts'
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <CookieConsentBanner />
           <ConsentAwareAnalytics />
           <SiteGrain />
+          <CardSpotlight />
           <CursorLabel />
         </Providers>
       </body>

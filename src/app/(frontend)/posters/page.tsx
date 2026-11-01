@@ -1,3 +1,4 @@
+import { CardAction, ContentCard } from '@/components/ContentCard'
 import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
@@ -6,8 +7,7 @@ import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 import {
   Calendar,
   MapPin,
-  Users,
-  ExternalLink
+  Users
 } from 'lucide-react'
 
 export const dynamic = 'force-static'
@@ -67,87 +67,34 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
         {Object.entries(groupedPosters).map(([category, categoryPosters]) => (
           <section key={category} className="mb-12">
             <div className="flex items-center gap-3 mb-6">
-              <h2 className="text-2xl font-bold text-foreground">{category}</h2>
+              <h2 className="font-display text-display-md text-foreground">{category}</h2>
               <div className="flex-1 h-px bg-border"></div>
               <span className="text-sm text-muted-foreground bg-muted px-3 py-1 rounded-full">
                 {categoryPosters.length} poster{categoryPosters.length !== 1 ? 's' : ''}
               </span>
             </div>
             
-            <div className="grid gap-8">
+            <div className="grid gap-6">
               {categoryPosters.map((poster, index) => (
-                <div 
-                  key={`${category}-${index}`} 
-                  className="bg-card border border-border rounded-lg p-6 md:p-8"
+                <ContentCard
+                  key={`${category}-${index}`}
+                  variant="row"
+                  title={poster.title}
+                  summary={poster.subtitle}
+                  meta={
+                    <ul className="mt-3 space-y-2">
+                      <li className="flex items-start gap-2"><Users aria-hidden className="mt-0.5 size-4 flex-shrink-0" />{poster.venue}</li>
+                      <li className="flex items-start gap-2"><MapPin aria-hidden className="mt-0.5 size-4 flex-shrink-0" />{poster.location}</li>
+                      <li className="flex items-start gap-2"><Calendar aria-hidden className="mt-0.5 size-4 flex-shrink-0" />{poster.date}</li>
+                    </ul>
+                  }
+                  actions={poster.posterUrl ? <CardAction href={poster.posterUrl} primary>View Poster</CardAction> : undefined}
                 >
-                  <div className="grid lg:grid-cols-3 gap-6">
-                    
-                    {/* Left Column - Title */}
-                    <div className="lg:col-span-1">
-                      <h3 className="text-2xl font-bold mb-2 text-foreground">
-                        {poster.title}
-                      </h3>
-                      {poster.subtitle && (
-                        <p className="text-lg text-primary font-medium mb-4">
-                          {poster.subtitle}
-                        </p>
-                      )}
-                      
-                      {/* Presentation Details */}
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-start gap-3">
-                          <Users className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-sm font-medium text-foreground">{poster.venue}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start gap-3">
-                          <MapPin className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">{poster.location}</p>
-                          </div>
-                        </div>
-                        
-                        <div className="flex items-start gap-3">
-                          <Calendar className="w-5 h-5 text-muted-foreground flex-shrink-0 mt-0.5" />
-                          <div>
-                            <p className="text-sm text-muted-foreground">{poster.date}</p>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      {/* View Poster Button */}
-                      {poster.posterUrl ? (
-                        <a
-                          href={poster.posterUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all duration-200 bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-md"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                          View Poster
-                        </a>
-                      ) : (
-                        <div className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-lg text-sm font-medium bg-muted text-muted-foreground cursor-not-allowed">
-                          <ExternalLink className="w-4 h-4" />
-                          View Poster
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Right Column - Abstract */}
-                    <div className="lg:col-span-2">
-                      <h4 className="text-lg font-semibold mb-4 text-foreground">Abstract</h4>
-                      <div className="bg-background/50 rounded-lg p-6 border border-border/50">
-                        <p className="text-muted-foreground leading-relaxed text-justify">
-                          {poster.abstract}
-                        </p>
-                      </div>
-                    </div>
-                    
+                  <div className="mt-6 border-t border-border pt-5">
+                    <h4 className="mono-label mb-3 text-muted-foreground">Abstract</h4>
+                    <p className="max-w-3xl leading-relaxed text-muted-foreground">{poster.abstract}</p>
                   </div>
-                </div>
+                </ContentCard>
               ))}
             </div>
           </section>
