@@ -6,7 +6,7 @@ The plan's Phase 6 exit check, run on 2026-11-01 against the production build in
 | Check | Result |
 |---|---|
 | Every route in 2 interactions | **Pass.** All 11 main routes are in the fullscreen menu (button, then link). `/search` and the Stingray report are secondary and are reached from Cmd-K's route and the Open Source page. |
-| No spinner for static data | **Pass.** None in the HTML or after load on 13 routes, and none during 4 in-site navigations on slow 4G. |
+| No spinner for static data | **Pass after a correction.** The first run wrongly passed: it searched for the wrong class, while every static route's HTML started with the telescope loader and hid the content until JavaScript swapped it in. Fixed in Phase 7 by moving `loading.tsx` to `/search`. 13 static routes now have none in the HTML or after load, and none appeared during 4 in-site navigations on slow 4G. `/search` keeps it, because it reads the query in the browser. |
 | Hero LCP under 2.0 s on mobile | **Passes in simulation:** 1.05, 1.19 and 1.53 s. A real phone hasn't been measured. |
 | 5-second test with 3 people | **Not done.** It needs the owner. |
 
