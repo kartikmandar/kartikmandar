@@ -33,8 +33,8 @@ export function CameraRig() {
   const { posCurve, lookCurve } = useMemo(() => {
     // Each beat scene is mounted AT its anchor position and is ~10x7 units. Frame
     // it head-on by placing the camera CAM_BACK in front (toward +Z, the viewer
-    // side) and slightly up, looking AT the scene center. CAM_BACK < the 8-unit
-    // station spacing so the previous scene sits behind the camera.
+    // side) and slightly up, looking AT the scene center. CAM_BACK is well under
+    // STATION_SPACING so the previous scene sits behind the camera.
     const CAM_BACK = 7
     const CAM_UP = 1.5
     const back = new THREE.Vector3(0, CAM_UP, CAM_BACK)

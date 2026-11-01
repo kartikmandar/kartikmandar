@@ -70,3 +70,12 @@ export function holdProgress(local: number, travel: number = SHOT_TRAVEL): numbe
   const half = travel / 2
   return Math.max(0, Math.min(1, (local - half) / (1 - travel)))
 }
+
+// Whether beat `index` draws. The active beat always does. A neighbour draws only
+// while the camera travels to or from it, so a held shot shows just its own scene.
+export function beatVisible(index: number, active: number, activeLocal: number): boolean {
+  if (index === active) return true
+  if (index === active - 1) return activeLocal < SHOT_TRAVEL / 2
+  if (index === active + 1) return activeLocal > 1 - SHOT_TRAVEL / 2
+  return false
+}

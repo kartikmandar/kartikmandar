@@ -9,7 +9,9 @@ export const ORIGIN_BLACK_HOLE: [number, number, number] = [0, 0, 0]
 // Anchors lay the stations along a forward-and-down corridor in Z, gently
 // alternating in X so the CatmullRom path curves. Tuned visually in later phases;
 // these are real starting coordinates, not placeholders.
-export const STATION_SPACING = 8
+// Far enough that, while the camera holds on a beat, the previous scene is well
+// behind it and the next is a faint speck in the fog.
+export const STATION_SPACING = 18
 const STATION_START_Z = -14
 
 function station(i: number): Anchor {

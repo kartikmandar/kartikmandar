@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cumulativeRanges } from '../scrollMath'
-import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep } from '../cameraPath'
+import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep, beatVisible } from '../cameraPath'
 
 describe('smootherstep', () => {
   it('pins endpoints and has near-zero slope at the ends', () => {
@@ -105,5 +105,23 @@ describe('holdProgress', () => {
     expect(holdProgress(0.1)).toBe(0)
     expect(holdProgress(0.5)).toBeCloseTo(0.5, 9)
     expect(holdProgress(0.9)).toBe(1)
+  })
+})
+
+describe('beatVisible', () => {
+  it('always draws the active beat and never distant ones', () => {
+    expect(beatVisible(5, 5, 0.5)).toBe(true)
+    expect(beatVisible(3, 5, 0.01)).toBe(false)
+    expect(beatVisible(7, 5, 0.99)).toBe(false)
+  })
+
+  it('hides both neighbours during a held shot', () => {
+    expect(beatVisible(4, 5, 0.5)).toBe(false)
+    expect(beatVisible(6, 5, 0.5)).toBe(false)
+  })
+
+  it('shows the neighbour the camera is travelling from or to', () => {
+    expect(beatVisible(4, 5, 0.05)).toBe(true)
+    expect(beatVisible(6, 5, 0.95)).toBe(true)
   })
 })

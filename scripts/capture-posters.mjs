@@ -15,7 +15,10 @@ const SOFTWARE_RENDERER = /swiftshader|llvmpipe|softpipe|software|basic render|m
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 
-const [outDir, ...only] = process.argv.slice(2)
+const args = process.argv.slice(2)
+// --flight keeps the neighbouring scenes, to see a beat as visitors do.
+const flight = args.includes('--flight')
+const [outDir, ...only] = args.filter((arg) => arg !== '--flight')
 if (!outDir) throw new Error('Usage: capture-posters.mjs <png-dir> [beat-id ...]')
 mkdirSync(outDir, { recursive: true })
 
@@ -80,7 +83,7 @@ if (!(await waitForReady())) throw new Error('The story never settled')
 const targets = (await evaluate('window.__storyBeats')).filter((target) => only.length === 0 || only.includes(target.id))
 
 for (const target of targets) {
-  await send('Page.navigate', { url: `${STORY}?capture=1&p=${target.progress.toFixed(5)}&t=${SCENE_TIME}&ui=0&solo=1` })
+  await send('Page.navigate', { url: `${STORY}?capture=1&p=${target.progress.toFixed(5)}&t=${SCENE_TIME}&ui=0${flight ? '' : '&solo=1'}` })
   await wait(1500)
   if (!(await waitForReady())) {
     console.log(`${target.id}: never settled`)

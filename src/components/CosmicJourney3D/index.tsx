@@ -15,9 +15,10 @@ import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
 import { adaptiveDpr, DPR_START_FACTOR, readJourneyEnv, selectQuality } from './tiers'
 import { fallbackMode } from './fallbackPlan'
+import { beatVisible } from './cameraPath'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
-import { journeyFrame, journeyStore, useActiveBeat, writeBeatProgress } from './store'
+import { journeyFrame, journeyStore, writeBeatProgress } from './store'
 import { HeroPrologue } from './HeroPrologue'
 import { flightFractionToGlobal, splitProgress, pageScrollVh } from './prologueScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
@@ -101,14 +102,22 @@ function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
 
 // Mounts every beat at its anchor; only the active beat and its neighbours are visible.
 function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityTier; reducedMotion: boolean; prologuePass: boolean }) {
-  const active = useActiveBeat()
+  const groups = useRef<(THREE.Group | null)[]>([])
+  // Per frame, not per render: a held shot hides its neighbours without a React update.
+  useFrame(() => {
+    const active = journeyFrame.activeIndex
+    const local = journeyFrame.local[active] ?? 0
+    groups.current.forEach((group, i) => {
+      if (group) group.visible = readCapture().solo ? i === active : beatVisible(i, active, local)
+    })
+  })
   return (
     <>
       <JourneyDriver prologuePass={prologuePass} />
       <CoverAware>
       <OriginBlackHole position={ORIGIN_BLACK_HOLE} quality={quality} />
       {BEATS.map((b, i) => (
-        <group key={b.id} position={b.meta.anchor.position} visible={readCapture().solo ? i === active : Math.abs(i - active) <= 1}>
+        <group key={b.id} ref={(group) => { groups.current[i] = group }} position={b.meta.anchor.position} visible={false}>
           <b.Scene index={i} quality={quality} reducedMotion={reducedMotion} />
         </group>
       ))}
