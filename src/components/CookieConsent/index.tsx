@@ -16,7 +16,7 @@ interface CookieConsentBannerProps {
 const CARD_DELAY_MS = 2400;
 
 /**
- * A compact corner card (bottom-left) that springs in once the page has
+ * A compact corner card (bottom-right, above the audio button) that springs in once the page has
  * settled, so it never sits over a hero or a caption on arrival. Customising
  * opens inline inside the card. It stays out of the story flight, whose copy
  * runs along the bottom of the screen.
@@ -61,7 +61,7 @@ export function CookieConsentBanner({ className = '' }: CookieConsentBannerProps
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 24 } }}
           exit={{ opacity: 0, y: 24, transition: { duration: 0.25 } }}
-          className={`fixed bottom-4 left-4 z-[var(--z-cookie)] border border-white/10 bg-popover/92 backdrop-blur-xl w-[min(22rem,calc(100vw-2rem))] rounded-2xl p-4 shadow-2xl sm:bottom-6 sm:left-6 ${className}`}
+          className={`fixed bottom-4 left-4 z-[var(--z-cookie)] border border-white/10 bg-popover/92 backdrop-blur-xl w-[min(22rem,calc(100vw-2rem))] rounded-2xl p-4 shadow-2xl sm:bottom-24 sm:left-auto sm:right-6 ${className}`}
         >
           <p className="mono-label mb-2 text-ember">Analytics</p>
           <p className="text-[0.8125rem] leading-relaxed text-muted-foreground">
