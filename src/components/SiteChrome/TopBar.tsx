@@ -48,7 +48,8 @@ export function TopBar() {
     <header
       className={cn(
         'fixed inset-x-0 top-0 z-[var(--z-chrome)] transition-transform duration-500 ease-out-expo',
-        tucked && '-translate-y-full',
+        // Keyboard focus brings a tucked bar back, so nobody tabs through hidden links.
+        tucked && '-translate-y-full focus-within:translate-y-0',
       )}
     >
       <div

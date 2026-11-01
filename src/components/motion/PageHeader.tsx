@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { cn } from '@/utilities/ui'
 import { MaskedLines } from './MaskedLines'
-import { Reveal } from './Reveal'
 
 /**
  * The one page header: a mono eyebrow, an oversized serif title that rises in
@@ -21,9 +20,10 @@ export function PageHeader({ eyebrow, title, lead, className, children }: {
         {title}
       </MaskedLines>
       {lead && (
-        <Reveal delay={0.15} className="mt-6 max-w-2xl text-base md:text-lg leading-relaxed text-muted-foreground text-pretty">
+        // Plain on purpose: it paints with the first HTML, so it can't delay LCP or hide without JavaScript.
+        <div className="mt-6 max-w-2xl text-base md:text-lg leading-relaxed text-muted-foreground text-pretty">
           {lead}
-        </Reveal>
+        </div>
       )}
       {children}
     </header>

@@ -61,11 +61,14 @@ export function CookieConsentBanner({ className = '' }: CookieConsentBannerProps
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1, transition: { type: 'spring', stiffness: 260, damping: 24 } }}
           exit={{ opacity: 0, y: 24, transition: { duration: 0.25 } }}
-          className={`fixed bottom-4 left-4 z-[var(--z-cookie)] border border-white/10 bg-popover/92 backdrop-blur-xl w-[min(22rem,calc(100vw-2rem))] rounded-2xl p-4 shadow-2xl sm:bottom-24 sm:left-auto sm:right-6 ${className}`}
+          className={`fixed bottom-4 left-4 z-[var(--z-cookie)] border border-white/10 bg-popover/92 backdrop-blur-xl w-[min(22rem,calc(100vw-2rem))] rounded-2xl p-4 shadow-2xl sm:bottom-40 sm:left-auto sm:right-6 ${className}`}
         >
           <p className="mono-label mb-2 text-ember">Analytics</p>
           <p className="text-[0.8125rem] leading-relaxed text-muted-foreground">
             This website uses Vercel Analytics to understand how visitors interact with the site.
+          </p>
+          {/* Two short paragraphs, because one long one becomes the mobile LCP element when the card appears. */}
+          <p className="mt-2 text-[0.8125rem] leading-relaxed text-muted-foreground">
             It&apos;s basically for me to feel good about how many people have visited the website.
             It&apos;s privacy-focused, cookie-free, and only collects anonymized data.
           </p>
