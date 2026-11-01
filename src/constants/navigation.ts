@@ -30,8 +30,8 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Talks & Teaching',
     items: [
       { label: 'Talks', url: '/talks' },
-      { label: 'Journal Club', url: '/journal-club' },
-      { label: 'Courses', url: '/courses' },
+      { label: 'Journal Club', url: '/about#journal-club' },
+      { label: 'Courses', url: '/about#courses' },
     ],
   },
   {
@@ -39,8 +39,8 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { label: 'My Story', url: '/my-story' },
       { label: 'CV', url: '/cv' },
-      { label: 'Hobbies', url: '/hobbies' },
-      { label: 'Certificates', url: '/certificates' },
+      { label: 'About', url: '/about' },
+      { label: 'Certificates', url: '/about#certificates' },
     ],
   },
   {

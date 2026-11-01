@@ -175,11 +175,11 @@ export function Footer() {
   
   // Technical skills
   const technicalSkills = [
-    { label: 'Python & Data Analysis', url: '/certificates#Programming' },
-    { label: 'Machine Learning', url: '/certificates#Machine-Learning' },
-    { label: 'Web & App Development', url: '/certificates#Web-Development' },
-    { label: 'Database & DevOps', url: '/certificates#DevOps' },
-    { label: 'Mobile Development', url: '/certificates#Mobile-Development' }
+    { label: 'Python & Data Analysis', url: '/about#certificates' },
+    { label: 'Machine Learning', url: '/about#certificates' },
+    { label: 'Web & App Development', url: '/about#certificates' },
+    { label: 'Database & DevOps', url: '/about#certificates' },
+    { label: 'Mobile Development', url: '/about#certificates' }
   ]
   
   // Blog posts
@@ -202,8 +202,8 @@ export function Footer() {
     { label: 'Projects', url: '/#my-projects' },
     { label: 'Talks', url: '/talks' },
     { label: 'Posters', url: '/posters' },
-    { label: 'Courses/Labs', url: '/courses' },
-    { label: 'Journal Club', url: '/journal-club' },
+    { label: 'Courses/Labs', url: '/about#courses' },
+    { label: 'Journal Club', url: '/about#journal-club' },
   ]
 
   return (
