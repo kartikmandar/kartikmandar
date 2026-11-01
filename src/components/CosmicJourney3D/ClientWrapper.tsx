@@ -1,5 +1,6 @@
 'use client'
 
+import { Component, type ReactNode } from 'react'
 import dynamic from 'next/dynamic'
 import { LoaderView } from './LoaderView'
 
@@ -14,6 +15,33 @@ const CosmicJourney3D = dynamic(() => import('./index'), {
   loading: () => <LoaderView progress={0.05} />,
 })
 
+/** A crash in the flight, or a failed 3D download, reveals the HTML article instead. */
+class StoryBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
+  override state = { failed: false }
+
+  static getDerivedStateFromError() {
+    return { failed: true }
+  }
+
+  override componentDidCatch(error: unknown) {
+    console.error('The 3D story failed, showing the article instead.', error)
+    document.documentElement.dataset.storyMode = 'static'
+    window.scrollTo(0, 0)
+  }
+
+  override componentWillUnmount() {
+    delete document.documentElement.dataset.storyMode
+  }
+
+  override render() {
+    return this.state.failed ? null : this.props.children
+  }
+}
+
 export default function CosmicJourney3DClient() {
-  return <CosmicJourney3D />
+  return (
+    <StoryBoundary>
+      <CosmicJourney3D />
+    </StoryBoundary>
+  )
 }

@@ -1,3 +1,4 @@
+import { isSoftwareRenderer } from './robustness'
 import type { QualityTier } from './types'
 
 export interface JourneyEnv {
@@ -6,6 +7,7 @@ export interface JourneyEnv {
   smallScreen: boolean
   deviceMemoryGb: number | null
   webgl2: boolean
+  softwareRenderer: boolean
 }
 
 // Order: hard floor (no webgl2) > phone > low-memory > heuristics > high.
@@ -20,8 +22,17 @@ export function readJourneyEnv(): JourneyEnv {
   const canMatchMedia = typeof window !== 'undefined' && typeof window.matchMedia === 'function'
   const nav = navigator as Navigator & { deviceMemory?: number }
   let webgl2 = false
+  let softwareRenderer = false
   try {
-    webgl2 = !!document.createElement('canvas').getContext('webgl2')
+    // The caveat flag refuses a context the browser knows would be very slow.
+    const gl = document.createElement('canvas').getContext('webgl2', { failIfMajorPerformanceCaveat: true })
+    webgl2 = !!gl
+    if (gl) {
+      const info = gl.getExtension('WEBGL_debug_renderer_info')
+      softwareRenderer = isSoftwareRenderer(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : null)
+      // Browsers cap live contexts, so give this probe's back straight away.
+      gl.getExtension('WEBGL_lose_context')?.loseContext()
+    }
   } catch {
     webgl2 = false
   }
@@ -31,6 +42,7 @@ export function readJourneyEnv(): JourneyEnv {
     smallScreen: typeof window !== 'undefined' ? Math.min(window.screen.width, window.screen.height) < 768 : false,
     deviceMemoryGb: typeof nav?.deviceMemory === 'number' ? nav.deviceMemory : null,
     webgl2,
+    softwareRenderer,
   }
 }
 

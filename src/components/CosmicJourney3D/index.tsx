@@ -1,7 +1,7 @@
 // src/components/CosmicJourney3D/index.tsx
 'use client'
 
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import { Canvas, addAfterEffect, addEffect, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { PerformanceMonitor } from '@react-three/drei'
@@ -29,6 +29,7 @@ import { FinaleConstellation } from './FinaleConstellation'
 import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
+import { ContextGuard } from './ContextGuard'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
@@ -171,13 +172,15 @@ export default function CosmicJourney3D() {
     const tier = selectQuality(env)
     setQuality(tier)
     setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
-    setMode(fallbackMode(env.reducedMotion, env.webgl2))
+    // Capture mode renders deliberately, whatever the renderer.
+    const softwareRenderer = env.softwareRenderer && !readCapture().enabled
+    setMode(fallbackMode(env.reducedMotion, env.webgl2, softwareRenderer))
     const params = new URLSearchParams(window.location.search)
     setPerf(params.has('perf'))
     setLegacyPrologue(params.has('legacyPrologue'))
     setReady(true)
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const onChange = () => setMode(fallbackMode(mq.matches, env.webgl2))
+    const onChange = () => setMode(fallbackMode(mq.matches, env.webgl2, softwareRenderer))
     mq.addEventListener('change', onChange)
     // Pause the WebGL render loop when the tab is backgrounded (battery/CPU).
     const onVis = () => setFrameloop(document.hidden ? 'never' : 'always')
@@ -189,6 +192,22 @@ export default function CosmicJourney3D() {
     }
   // eslint-enable react-hooks/set-state-in-effect
   }, [])
+
+  const abandonFlight = useCallback(() => {
+    setMode('static')
+    window.scrollTo(0, 0)
+  }, [])
+
+  // R3F builds the renderer in an async step no error boundary can see, so a
+  // context the probe got but the real canvas can't is caught here.
+  const createRenderer = useCallback((props: THREE.WebGLRendererParameters) => {
+    try {
+      return new THREE.WebGLRenderer(props)
+    } catch (error) {
+      abandonFlight()
+      throw error
+    }
+  }, [abandonFlight])
 
   // Static mode reveals the server-rendered article; the flight keeps it hidden and out of the tab order.
   useEffect(() => {
@@ -215,6 +234,7 @@ export default function CosmicJourney3D() {
       {legacyPrologue && quality !== 'mobile' && <PrologueLayer />}
       <div style={{ position: 'fixed', inset: 0, zIndex: 0 }} aria-hidden>
         <Canvas
+          gl={createRenderer}
           frameloop={frameloop}
           camera={{ fov: 60, near: 0.1, far: 1000, position: ORIGIN_ANCHOR.position }}
           dpr={capture.enabled ? capture.dpr : dpr}
@@ -229,6 +249,7 @@ export default function CosmicJourney3D() {
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} prologuePass={!legacyPrologue} />
           <Precompile />
+          <ContextGuard onAbandon={abandonFlight} />
           {!capture.enabled && (
             // Adaptive resolution: sheds DPR under load (thermal throttling, slow GPUs)
             // and recovers with headroom, in 0.25 steps; gives up flip-flopping after 4.

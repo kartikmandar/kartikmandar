@@ -11,6 +11,9 @@ describe('fallbackMode', () => {
   it('otherwise runs the full motion experience', () => {
     expect(fallbackMode(false, true)).toBe('none')
   })
+  it('uses static experience on a software renderer', () => {
+    expect(fallbackMode(false, true, true)).toBe('static')
+  })
   it('reduced-motion with WebGL2 available still forces static', () => {
     expect(fallbackMode(true, false)).toBe('static')
   })

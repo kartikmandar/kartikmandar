@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { adaptiveDpr, selectQuality, type JourneyEnv } from '../tiers'
 
-const desktop: JourneyEnv = { reducedMotion: false, coarsePointer: false, smallScreen: false, deviceMemoryGb: 16, webgl2: true }
+const desktop: JourneyEnv = { reducedMotion: false, coarsePointer: false, smallScreen: false, deviceMemoryGb: 16, webgl2: true, softwareRenderer: false }
 
 describe('selectQuality', () => {
   it('capable desktop -> high', () => {
