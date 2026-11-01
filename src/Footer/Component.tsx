@@ -1,147 +1,22 @@
-"use client"
-
-import React, { useEffect, useState, useRef } from 'react'
+import React from 'react'
 import Link from 'next/link'
-import { scrollPageTo } from '@/providers/SmoothScroll'
 import { CookieConsentSettings } from '@/components/CookieConsent'
-import { NAVIGATION_ITEMS } from '@/constants/navigation'
+import { CONTACT_EMAIL, NAVIGATION_ITEMS } from '@/constants/navigation'
+import { BackToTop } from './BackToTop'
+import { FooterSky } from './FooterSky'
 import './footer.css'
 
 export function Footer() {
-  const [showBackToTop, setShowBackToTop] = useState(false);
-  const starsContainerRef = useRef<HTMLDivElement>(null);
-  const shootingStarsRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 300) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
-    };
-    
-    handleScroll();
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-  
-  // Create stars animation
-  useEffect(() => {
-    if (starsContainerRef.current) {
-      const container = starsContainerRef.current;
-      const starCount = 150; // Increased from 100 to 150
-      
-      // Clear any existing stars
-      container.innerHTML = '';
-      
-      for (let i = 0; i < starCount; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
-        
-        // Random size between 1px and 3px
-        const size = Math.random() * 2 + 1;
-        star.style.width = `${size}px`;
-        star.style.height = `${size}px`;
-        
-        // Random position
-        const posX = Math.random() * 100;
-        const posY = Math.random() * 100;
-        star.style.left = `${posX}%`;
-        star.style.top = `${posY}%`;
-        
-        // Random animation duration
-        const duration = Math.random() * 3 + 2;
-        star.style.setProperty('--duration', `${duration}s`);
-        
-        // Random delay
-        const delay = Math.random() * 5;
-        star.style.animationDelay = `${delay}s`;
-        
-        container.appendChild(star);
-      }
-    }
-  }, []);
-  
-  // Create shooting stars animation
-  useEffect(() => {
-    const container = shootingStarsRef.current;
-    if (!container) return;
-    // Every pending timer is tracked so unmounting stops the loop (it used to run forever).
-    const timers = new Set<ReturnType<typeof setTimeout>>();
-    const later = (fn: () => void, ms: number) => {
-      const id = setTimeout(() => {
-        timers.delete(id);
-        fn();
-      }, ms);
-      timers.add(id);
-    };
-
-    // Function to create a single shooting star
-    function createShootingStar() {
-      if (!container) return;
-      const shootingStar = document.createElement('div');
-      shootingStar.className = 'shooting-star';
-
-      // Random position (mostly from top part of the container)
-      const startPosX = Math.random() * 100 + 50; // Start from right side or beyond
-      const startPosY = Math.random() * 50;  // Start from top half
-
-      shootingStar.style.left = `${startPosX}%`;
-      shootingStar.style.top = `${startPosY}%`;
-
-      // Random size
-      const length = Math.random() * 80 + 80;
-      shootingStar.style.width = `${length}px`;
-
-      // Random duration between 0.8 and 1.5 seconds
-      const duration = Math.random() * 0.7 + 0.8;
-      shootingStar.style.animationDuration = `${duration}s`;
-
-      container.appendChild(shootingStar);
-
-      // Remove the shooting star after animation completes
-      later(() => shootingStar.remove(), duration * 1000);
-    }
-
-    // Create shooting stars at random intervals
-    function shootingStarLoop() {
-      // Create two to four shooting stars
-      const count = Math.floor(Math.random() * 3) + 2;
-
-      for (let i = 0; i < count; i++) {
-        later(createShootingStar, i * 300);
-      }
-
-      // Schedule next batch of shooting stars
-      const nextBatch = Math.random() * 2000 + 800; // Between 0.8 and 2.8 seconds
-      later(shootingStarLoop, nextBatch);
-    }
-
-    // Respect reduced motion: the static starfield stays, the meteors don't fly.
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) shootingStarLoop();
-
-    return () => {
-      for (const id of timers) clearTimeout(id);
-      timers.clear();
-      container.innerHTML = '';
-    };
-  }, []);
-
-  const scrollToTop = () => {
-    scrollPageTo(0);
-  };
-
   // Navigation items from shared constants
   const navItems = NAVIGATION_ITEMS
   
   // Research interests
   const researchInterests = [
+    '21-cm Cosmology',
     'Radio Interferometry',
-    'BHXBs',
+    'Black Hole X-ray Binaries',
+    'Strong Lensing',
     'Astronomical Data Analysis',
-    "DeepLense"
   ]
   
   // Publications
@@ -175,13 +50,13 @@ export function Footer() {
   
   // Technical skills
   const technicalSkills = [
-    { label: 'Python & Data Analysis', url: '/about#certificates' },
-    { label: 'Machine Learning', url: '/about#certificates' },
-    { label: 'Web & App Development', url: '/about#certificates' },
-    { label: 'Database & DevOps', url: '/about#certificates' },
-    { label: 'Mobile Development', url: '/about#certificates' }
+    'Python & Data Analysis',
+    'Machine Learning',
+    'Web & App Development',
+    'Database & DevOps',
+    'Mobile Development',
   ]
-  
+
   // Blog posts
   const blogPosts = [
     { label: 'GSoC 2024 Journey', url: 'https://gsoc2024.blogspot.com/' },
@@ -190,16 +65,9 @@ export function Footer() {
     { label: 'Open Source Contributions', url: '/open-source' }
   ]
   
-  // Soft skills
-  const _softSkills = [
-    { label: 'Public Speaking', url: '#' },
-    { label: 'Writing', url: '#' },
-    { label: 'Leadership', url: '#' },
-  ]
-  
   // Resources
   const resources = [
-    { label: 'Projects', url: '/#my-projects' },
+    { label: 'Projects', url: '/open-source' },
     { label: 'Talks', url: '/talks' },
     { label: 'Posters', url: '/posters' },
     { label: 'Courses/Labs', url: '/about#courses' },
@@ -208,25 +76,30 @@ export function Footer() {
 
   return (
     <>
-      {/* Back to Top Button */}
-      <button 
-        onClick={scrollToTop}
-        className={`back-to-top-button ${!showBackToTop ? 'is-hidden' : ''}`}
-        tabIndex={showBackToTop ? 0 : -1}
-        aria-label="Back to top"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clipRule="evenodd" />
-        </svg>
-      </button>
-      
+      <BackToTop />
+
       <footer className="mt-auto relative bg-background-deep text-white overflow-hidden">
-        {/* Stars background */}
-        <div className="stars-container" ref={starsContainerRef}></div>
-        
-        {/* Shooting stars */}
-        <div className="shooting-stars-container" ref={shootingStarsRef}></div>
-        
+        <FooterSky />
+
+        {/* The end moment on every page */}
+        <div className="container relative z-10 mx-auto border-b border-zinc-800 px-4 pb-16 pt-20 sm:px-6 lg:pt-28">
+          <h2 className="font-display text-display-xl text-white">Let&apos;s talk.</h2>
+          <p className="mt-4 max-w-xl text-lg text-zinc-400">
+            A research collaboration, an open-source question or an AI system to build. Write to me.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="break-all font-display text-2xl text-white underline decoration-ember underline-offset-8 transition-colors hover:text-ember sm:text-4xl"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <Link href="/contact" className="mono-label text-zinc-400 transition-colors hover:text-white">
+              Other ways to reach me
+            </Link>
+          </div>
+        </div>
+
         {/* Main footer content */}
         <div className="container py-8 sm:py-10 lg:py-12 px-4 sm:px-6 mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 relative z-10">
           {/* Profile section */}
@@ -312,21 +185,15 @@ export function Footer() {
             </ul>
             
             <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Technical Skills</h4>
-            <ul className="space-y-2 mb-4 sm:mb-6">
-              {technicalSkills.map((skill, index) => (
-                <li key={index}>
-                  <Link 
-                    href={skill.url} 
-                    className="text-gray-400 hover:text-white hover:translate-x-1 transition-all inline-block text-sm sm:text-base py-1 touch-target"
-                  >
-                    {skill.label}
-                  </Link>
-                </li>
+            <div className="flex flex-wrap gap-2 mb-4 sm:mb-6">
+              {technicalSkills.map((skill) => (
+                <span key={skill} className="bg-zinc-800 text-gray-300 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-xs">
+                  {skill}
+                </span>
               ))}
-            </ul>
-            
+            </div>
           </div>
-          
+
           {/* Publications */}
           <div>
             <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-zinc-400 pb-2 border-b border-zinc-800 inline-block">Recent Publications</h4>
@@ -385,11 +252,11 @@ export function Footer() {
                   Catania, Italy
                 </div>
               </a>
-              <a href="mailto:contact@kartikmandar.com" className="flex gap-3 items-start hover:text-white transition-colors group">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="flex gap-3 items-start hover:text-white transition-colors group">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 text-zinc-500 flex-shrink-0 mt-0.5 group-hover:text-zinc-300 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <div className="text-gray-300 text-sm leading-relaxed break-all group-hover:text-white">contact@kartikmandar.com</div>
+                <div className="text-gray-300 text-sm leading-relaxed break-all group-hover:text-white">{CONTACT_EMAIL}</div>
               </a>
             </div>
           </div>
@@ -409,7 +276,7 @@ export function Footer() {
             {/* Copyright */}
             <div className="text-center text-gray-500 text-xs sm:text-sm space-y-1">
               <div>
-                &copy; {new Date().getFullYear()} Kartik Mandar | Astrophysics Student
+                &copy; {new Date().getFullYear()} Kartik Mandar | MSc Astrophysics
               </div>
               <CookieConsentSettings className="text-center" />
             </div>

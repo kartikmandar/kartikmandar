@@ -1,6 +1,9 @@
+import Link from 'next/link'
+import { ArrowUpRight } from 'lucide-react'
 import { PageHeader } from '@/components/motion'
 import type { Metadata } from 'next/types'
 import React from 'react'
+import { CONTACT_EMAIL, SOCIAL_LINKS } from '@/constants/navigation'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
 import { generateBreadcrumbSchema } from '@/utilities/structuredData'
 
@@ -18,6 +21,27 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+const REASONS: { title: string; description: string; href: string; label: string }[] = [
+  {
+    title: 'Research',
+    description: '21-cm cosmology, radio interferometry, black hole X-ray binaries and machine learning for strong lensing.',
+    href: '/publications',
+    label: 'Publications',
+  },
+  {
+    title: 'Open source',
+    description: 'Simulators and analysis tools for radio and X-ray astronomy.',
+    href: '/open-source',
+    label: 'Open source',
+  },
+  {
+    title: 'Consultancy',
+    description: 'AI engineering and full-stack work.',
+    href: '/consultancy',
+    label: 'Consultancy',
+  },
+]
+
 export default async function ContactPage() {
   const serverUrl = getServerSideURL()
   const breadcrumbJsonLd = generateBreadcrumbSchema([
@@ -32,57 +56,67 @@ export default async function ContactPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="max-w-5xl mx-auto">
-        <PageHeader eyebrow="Contact" title="Contact Me" />
+        <PageHeader
+          eyebrow="Contact"
+          title="Get in touch"
+          lead="Email is the best way to reach me."
+        />
 
-        {/* Contact Information Section */}
-        <section className="mb-12">
-          <h2 className="text-2xl font-semibold mb-6 text-foreground">Contact Information</h2>
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* Institute */}
-            <div className="flex gap-4 items-start p-4 bg-card rounded-lg border border-border">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Institute</h3>
-                <p className="text-muted-foreground text-sm">
-                  <a
-                    href="https://www.unict.it/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-primary hover:text-primary/80 transition-colors"
-                  >
-                    University of Catania
-                  </a><br />
-                  Catania, Italy
-                </p>
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="flex gap-4 items-start p-4 bg-card rounded-lg border border-border">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-muted-foreground flex-shrink-0 mt-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              <div>
-                <h3 className="font-semibold text-foreground mb-1">Email</h3>
-                <a
-                  href="mailto:contact@kartikmandar.com"
-                  className="text-primary hover:text-primary/80 transition-colors text-sm break-words block"
-                >
-                  contact@kartikmandar.com
-                </a>
-                <a
-                  href="mailto:kartik4321mandar@gmail.com"
-                  className="text-primary hover:text-primary/80 transition-colors text-sm break-words block mt-1"
-                >
-                  kartik4321mandar@gmail.com
-                </a>
-              </div>
-            </div>
-          </div>
+        <section className="mb-16">
+          <a
+            href={`mailto:${CONTACT_EMAIL}`}
+            className="break-all font-display text-3xl text-foreground underline decoration-ember underline-offset-8 transition-colors hover:text-ember sm:text-5xl"
+          >
+            {CONTACT_EMAIL}
+          </a>
+          <p className="mt-6">
+            <a href="mailto:kartik4321mandar@gmail.com" className="break-all text-muted-foreground transition-colors hover:text-foreground">
+              kartik4321mandar@gmail.com
+            </a>
+          </p>
         </section>
 
+        <section className="mb-16">
+          <h2 className="mono-label mb-4 text-muted-foreground">What to write about</h2>
+          <dl className="grid gap-x-10 gap-y-6 md:grid-cols-3">
+            {REASONS.map((reason) => (
+              <div key={reason.title} className="border-t border-border pt-4">
+                <dt className="font-display text-2xl text-foreground">{reason.title}</dt>
+                <dd className="mt-1 text-muted-foreground">{reason.description}</dd>
+                <dd className="mt-3">
+                  <Link href={reason.href} className="text-sm text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-ember hover:decoration-ember">
+                    {reason.label}
+                  </Link>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+
+        <section className="grid gap-10 md:grid-cols-2">
+          <div>
+            <h2 className="mono-label mb-4 text-muted-foreground">Where I am</h2>
+            <p className="text-foreground">
+              <a href="https://www.unict.it/" target="_blank" rel="noopener noreferrer" className="underline decoration-border underline-offset-4 transition-colors hover:text-ember hover:decoration-ember">
+                University of Catania
+              </a>
+            </p>
+            <p className="mt-1 text-muted-foreground">Catania, Italy</p>
+          </div>
+          <div>
+            <h2 className="mono-label mb-4 text-muted-foreground">Elsewhere</h2>
+            <ul className="flex flex-wrap gap-x-6 gap-y-2">
+              {SOCIAL_LINKS.map((link) => (
+                <li key={link.url}>
+                  <a href={link.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-foreground transition-colors hover:text-ember">
+                    {link.label}
+                    <ArrowUpRight aria-hidden className="size-3.5" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
       </div>
     </div>
   )
