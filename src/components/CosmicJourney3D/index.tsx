@@ -2,7 +2,7 @@
 'use client'
 
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Canvas, addEffect, useFrame } from '@react-three/fiber'
+import { Canvas, addAfterEffect, addEffect, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { PerformanceMonitor } from '@react-three/drei'
 import { ScrollRig, useScrollProgressRef } from './ScrollRig'
@@ -33,6 +33,25 @@ import { JourneyNav } from './JourneyNav'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
+// Capture mode: window.__captureFrame(t) moves the frozen clock to t and resolves
+// with that frame as a PNG, for rendering the home loop. toBlob runs in an after
+// effect because the drawing buffer is only valid until the frame is composited.
+function installFrameGrabber() {
+  const target = window as unknown as { __captureFrame?: (time: number) => Promise<Blob | null> }
+  target.__captureFrame = (time) => new Promise((resolve) => {
+    journeyFrame.clock = time
+    let frames = 0
+    const remove = addAfterEffect(() => {
+      frames += 1
+      if (frames < 2) return
+      remove()
+      const canvas = document.querySelector('canvas')
+      if (canvas) canvas.toBlob(resolve, 'image/png')
+      else resolve(null)
+    })
+  })
+}
+
 // Writes the shared per-frame journey state once, before any useFrame runs
 // (R3F addEffect). Scenes read it through useBeat(); React only hears about
 // discrete active-beat changes via journeyStore.
@@ -42,6 +61,7 @@ function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
     const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
     const capture = readCapture()
     journeyFrame.clock = capture.enabled ? capture.time : 0
+    if (capture.enabled) installFrameGrabber()
     let last: number | null = null
     const dive = diveState(0)
     return addEffect((timestamp) => {
