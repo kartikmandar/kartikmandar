@@ -10,6 +10,7 @@ export function LoaderView({ progress, igniting = false }: { progress: number; i
   const g = glowFor(progress)
   return (
     <div
+      className="story-loader"
       role="status"
       aria-live="polite"
       aria-label={igniting ? 'Ready' : 'Loading the journey'}
@@ -28,9 +29,9 @@ export function LoaderView({ progress, igniting = false }: { progress: number; i
           opacity: igniting ? 0 : 1, transition: `opacity ${IGNITE_MS * 0.4}ms ease`,
         }}
       >
-        <h1 style={{ fontSize: 'clamp(13px, 1.3vw, 16px)', letterSpacing: '0.42em', textTransform: 'uppercase', fontWeight: 500, margin: 0 }}>
+        <p style={{ fontSize: 'clamp(13px, 1.3vw, 16px)', letterSpacing: '0.42em', textTransform: 'uppercase', fontWeight: 500, margin: 0 }}>
           {PAGE_TITLE}
-        </h1>
+        </p>
         <p style={{ fontSize: 'clamp(11px, 1vw, 13px)', letterSpacing: '0.08em', opacity: 0.55, marginTop: 14 }}>
           {PAGE_SUBTITLE}
         </p>

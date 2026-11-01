@@ -124,7 +124,7 @@ export function Overlay() {
 
   if (view.kind === 'hero') {
     return (
-      <div aria-live="polite" style={heroWrap}>
+      <div style={heroWrap}>
         <div ref={rootRef} key={`hero-${view.index}`}>
           <h2 data-split style={heroText}>{HERO_PHASES[view.index]!.text}</h2>
         </div>
@@ -135,7 +135,7 @@ export function Overlay() {
   const beat = BEATS[view.index]
   if (!beat) return null
   return (
-    <div aria-live="polite" style={beatWrap}>
+    <div style={beatWrap}>
       {/* Lower-third scrim: guarantees text contrast over any frame. */}
       <div aria-hidden style={scrim} />
       <Hud index={view.index} total={BEATS.length} text={beat.hud} visible={view.visible} />

@@ -10,7 +10,6 @@ import { CameraRig } from './CameraRig'
 import { Environment } from './Environment'
 import { Overlay } from './Overlay'
 import { ChapterRail } from './ChapterRail'
-import Fallback from './Fallback'
 import { BEATS, TOTAL_SCROLL_VH } from './registry'
 import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
 import OriginBlackHole from './scenes/OriginBlackHole'
@@ -191,9 +190,25 @@ export default function CosmicJourney3D() {
   // eslint-enable react-hooks/set-state-in-effect
   }, [])
 
+  // Static mode reveals the server-rendered article; the flight keeps it hidden and out of the tab order.
+  useEffect(() => {
+    if (!ready) return
+    const root = document.documentElement
+    const links = document.querySelectorAll<HTMLElement>('.story-article a')
+    if (mode === 'static') {
+      root.dataset.storyMode = 'static'
+    } else {
+      links.forEach((link) => { link.tabIndex = -1 })
+    }
+    return () => {
+      delete root.dataset.storyMode
+      links.forEach((link) => link.removeAttribute('tabindex'))
+    }
+  }, [ready, mode])
+
   // Until the client probe runs, keep showing the server's first paint (never a black frame).
   if (!ready) return <LoaderView progress={0.05} />
-  if (mode === 'static') return <Fallback />
+  if (mode === 'static') return null
 
   return (
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>

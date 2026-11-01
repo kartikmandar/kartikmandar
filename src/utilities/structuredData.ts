@@ -75,6 +75,20 @@ interface ArticleSchemaInput {
   slug: string
 }
 
+/** The story page as an Article by the site owner. */
+export function generateStorySchema(input: { title: string; description: string; path: string }) {
+  const siteUrl = getServerSideURL()
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: input.title,
+    description: input.description,
+    url: `${siteUrl}${input.path}`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${siteUrl}${input.path}` },
+    author: { '@type': 'Person', name: 'Kartik Mandar', url: siteUrl },
+  }
+}
+
 export function generateArticleSchema(post: ArticleSchemaInput) {
   const siteUrl = getServerSideURL()
   return {
