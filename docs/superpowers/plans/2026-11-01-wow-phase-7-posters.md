@@ -18,7 +18,7 @@ The third step of Phase 7 in `2026-10-28-site-wow-redesign-plan.md`. Built 2026-
 4. `node scripts/encode-posters.mjs <png-dir>`
 
 ## Sizes
-31 posters at 1600 x 900 total 955 kB (largest 60 kB). The share image is 36 kB.
+31 posters at 1600 x 900 total 955 kB (largest 60 kB), and the share image is 36 kB. After the scene-bleed fix added nebula points, the recapture totals 1,413 kB, and the share image is 53 kB.
 
 ## Departures from the plan
 - **WebP only, not AVIF and WebP.** `next/image` serves AVIF from the master anyway, so a second master would add nothing.
@@ -31,7 +31,7 @@ The first capture showed each beat as visitors see it. The active beat's neighbo
 - **Engineer:** a brown wash and large grey bars from a neighbouring scene.
 - **Decision and journal club:** a neighbouring sky plane with a visible edge.
 
-The posters avoid this with `solo=1`, so **the posters look cleaner than the flight does**. The flight itself isn't fixed. It needs its own step: fade each scene as the camera leaves, not just on the visible flag.
+The posters avoid this with `solo=1`. Fixed afterwards in `2026-11-01-wow-phase-7-scene-bleed.md`.
 
 ## Verified (production build)
 | Mode | Posters downloaded | Failed requests |
