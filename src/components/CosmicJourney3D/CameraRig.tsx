@@ -91,6 +91,7 @@ export function CameraRig() {
 
     // Speed (curve units/s) widens the lens a touch; settles back at rest.
     const speed = f.dt > 0 ? Math.abs(followU.current - prevU) / f.dt : 0
+    f.cameraSpeed = capture ? 0 : Math.min(1, (speed * FOV_PER_SPEED) / FOV_KICK_MAX)
     const fovBase = baseFov(camera.aspect)
     const fovTarget = capture ? fovBase : fovBase + Math.min(FOV_KICK_MAX, speed * FOV_PER_SPEED)
     fov.current = capture ? fovBase : THREE.MathUtils.damp(fov.current, fovTarget, FOV_LAMBDA, f.dt)

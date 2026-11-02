@@ -33,12 +33,14 @@ export interface JourneyFrame {
   local: Float32Array
   /** Top edge of the on-screen beat copy in px, or null when no beat copy is showing. */
   copyTopPx: number | null
+  /** How fast the camera is travelling, 0..1 (the same signal as the warp lens kick). */
+  cameraSpeed: number
 }
 
 export function createJourneyFrame(beatCount: number): JourneyFrame {
   return {
     raw: 0, flight: 0, prologue: 0, crossfade: 0, covered: true, warmup: false,
-    clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount), copyTopPx: null,
+    clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount), copyTopPx: null, cameraSpeed: 0,
   }
 }
 

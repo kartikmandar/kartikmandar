@@ -30,6 +30,7 @@ import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
 import { ContextGuard } from './ContextGuard'
+import { StorySound } from './StorySound'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
@@ -252,6 +253,7 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
       {!capture.hideUi && <Overlay />}
       {!capture.hideUi && <ChapterRail />}
       <JourneyNav />
+      {!capture.enabled && <StorySound />}
       {!capture.enabled && <JourneyLoader />}
     </ScrollRig>
   )

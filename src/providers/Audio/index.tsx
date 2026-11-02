@@ -1,6 +1,7 @@
 'use client'
 
-import React, { createContext, useContext, useRef, useState, useEffect } from 'react'
+import React, { createContext, useContext, useState } from 'react'
+import { setSoundVolume, startSound, stopSound } from '@/lib/audioEngine'
 
 interface AudioContextType {
   isPlaying: boolean
@@ -26,64 +27,25 @@ interface AudioProviderProps {
 export const AudioProvider: React.FC<AudioProviderProps> = ({ children }) => {
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolumeState] = useState(0.3)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
-
-  // Initialize audio on first interaction
-  const initializeAudio = () => {
-    if (!audioRef.current) {
-      audioRef.current = new Audio('/audio/quasar-compressed.mp3')
-      audioRef.current.loop = true
-      audioRef.current.volume = volume
-      
-      // Add event listeners
-      audioRef.current.addEventListener('play', () => setIsPlaying(true))
-      audioRef.current.addEventListener('pause', () => setIsPlaying(false))
-      audioRef.current.addEventListener('ended', () => setIsPlaying(false))
-    }
-  }
 
   const toggleAudio = () => {
-    initializeAudio()
-    
-    if (!audioRef.current) return
-
     if (isPlaying) {
-      audioRef.current.pause()
-    } else {
-      // Handle promise for play() method
-      const playPromise = audioRef.current.play()
-      if (playPromise !== undefined) {
-        playPromise.catch((error) => {
-          console.log('Audio play failed:', error)
-          setIsPlaying(false)
-        })
-      }
+      stopSound()
+      setIsPlaying(false)
+      return
     }
+    startSound(volume)
+      .then(setIsPlaying)
+      .catch((error) => {
+        console.log('Audio play failed:', error)
+        setIsPlaying(false)
+      })
   }
 
   const setVolume = (newVolume: number) => {
     setVolumeState(newVolume)
-    if (audioRef.current) {
-      audioRef.current.volume = newVolume
-    }
+    setSoundVolume(newVolume)
   }
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        audioRef.current = null
-      }
-    }
-  }, [])
-
-  // Update volume when it changes
-  useEffect(() => {
-    if (audioRef.current) {
-      audioRef.current.volume = volume
-    }
-  }, [volume])
 
   const value: AudioContextType = {
     isPlaying,
