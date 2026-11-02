@@ -14,7 +14,7 @@ export const PROJECT_INDEX: IndexedProject[] = [
   { name: 'LLM Financial AI System', description: 'Self-hosted open-source LLM deployment on Vast.ai for financial statement analysis with structured JSON output pipelines.' },
   { name: 'Molecular Dynamics Simulation', description: 'GROMACS/LAMMPS pipeline modeling thermal motion of DNA/RNA molecules within CAD-defined nanoscale boundaries.' },
   { name: 'HPC Cluster & Homelab', description: 'Earlier 5-node Slurm and Proxmox HA clusters with GPU scheduling, Kubernetes, TrueNAS, and Grafana/Prometheus monitoring.' },
-  { name: 'AzuFlow', description: 'Privacy-first productivity app (React Native mobile + Electron desktop) with background alerts and cross-platform sync.' },
+  { name: 'AzuFlow', description: 'Native SwiftUI macOS focus app with a Safari extension and a bring-your-own-key AI coach, built for OpenAI Build Week.' },
   { name: 'Sensor Data App', description: 'Cross-platform mobile app for high-frequency sensor logging (100Hz) for a mental health research study at IISER Bhopal.' },
   { name: 'Spillover', description: 'Real-time party game app (Next.js + Supabase) with anonymous hot takes, Two Truths and a Lie, and live leaderboard.' },
   { name: 'Catering Business Website', description: 'Catering business website with Payload CMS, multi-step quote wizard, menu management, and inquiry tracking.' },

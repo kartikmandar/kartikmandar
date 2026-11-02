@@ -278,6 +278,13 @@ export function Footer() {
               <div>
                 &copy; {new Date().getFullYear()} Kartik Mandar | MSc Astrophysics
               </div>
+              <div>
+                Noise in the story shaders uses{' '}
+                <a className="underline hover:text-white transition-colors" href="https://www.shadertoy.com/view/4djSRW" target="_blank" rel="noopener noreferrer">
+                  Hash without Sine
+                </a>{' '}
+                by Dave Hoskins (MIT)
+              </div>
               <CookieConsentSettings className="text-center" />
             </div>
           </div>

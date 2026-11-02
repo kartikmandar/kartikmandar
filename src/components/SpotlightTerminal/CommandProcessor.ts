@@ -49,7 +49,7 @@ export class CommandProcessor {
       name: 'cd',
       description: 'Change directory - navigate to different pages',
       usage: 'cd [path]',
-      examples: ['cd /posts', 'cd ..', 'cd /projects', 'cd ~/']
+      examples: ['cd /posts', 'cd ..', 'cd /open-source', 'cd ~/']
     })
 
     commands.set('tree', {

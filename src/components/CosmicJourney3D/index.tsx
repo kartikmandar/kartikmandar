@@ -40,13 +40,14 @@ const PerfProbe = lazy(() => import('./PerfProbe'))
 function installFrameGrabber() {
   const target = window as unknown as {
     __captureFrame?: (time: number) => Promise<Blob | null>
-    __storyBeats?: { id: string; progress: number }[]
+    __storyBeats?: { id: string; start: number; end: number }[]
   }
-  // Each beat's id and the page progress at the middle of its scroll range, for scripts/capture-posters.mjs.
+  // Each beat's id and the page progress where its scroll range starts and ends, for scripts/capture-posters.mjs.
   const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
   target.__storyBeats = BEATS.map((b, i) => ({
     id: b.id,
-    progress: flightFractionToGlobal((ranges[i]!.start + ranges[i]!.end) / 2),
+    start: flightFractionToGlobal(ranges[i]!.start),
+    end: flightFractionToGlobal(ranges[i]!.end),
   }))
   target.__captureFrame = (time) => new Promise((resolve) => {
     journeyFrame.clock = time

@@ -31,6 +31,8 @@ Phase 0 of `2026-10-28-site-wow-redesign-plan.md`. Started 2026-10-28.
 | `@mui/*` usage | `grep -rln "@mui" src` finds no imports. Both packages can be removed in Phase 5. |
 
 ## License ledger (start)
+This is the starting record from 2026-10-28. The current one is `docs/license-ledger.md`.
+
 | Asset | Source | License | Action |
 |---|---|---|---|
 | `blackhole.frag`, `sky.frag`, `meshShaders` | Written in this repo (Jun 2026 quasar-realism spec) | Owner's own | none |

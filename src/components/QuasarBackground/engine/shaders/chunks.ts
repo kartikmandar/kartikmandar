@@ -1,6 +1,7 @@
 /** Shared GLSL chunks (GLSL ES 1.0, used by both tiers). */
 import { CONSTANTS } from '../types'
 
+/** hash13 follows the "Hash without Sine" pattern (Dave Hoskins, MIT). */
 export const GLSL_NOISE = /* glsl */ `
 float hash13(vec3 p) {
   p = fract(p * 0.1031);

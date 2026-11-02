@@ -265,7 +265,10 @@ export class FileSystemMapper {
 
   public resolvePath(currentPath: string, targetPath: string): string {
     if (targetPath.startsWith('/')) {
-      return this.normalizePath(targetPath)
+      const normalized = this.normalizePath(targetPath)
+      // Visitors type site URLs, so /posts means /home/posts.
+      const isSiteUrl = normalized !== '/' && normalized !== '/home' && !normalized.startsWith('/home/')
+      return isSiteUrl ? `/home${normalized}` : normalized
     }
 
     if (targetPath === '.') {

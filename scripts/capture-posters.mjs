@@ -11,6 +11,10 @@ const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 const STORY = 'http://localhost:3000/my-story'
 const PORT = 9610
 const SCENE_TIME = 12
+const DEFAULT_LOCAL = 0.5
+// Beats whose art changes through the shot. Cygnus X-1 shows the disk's inner radius,
+// which only reads as a published value (5.5 to 2 Rg) once it has finished sliding.
+const POSTER_LOCAL = { 'cygnus-publication-section': 0.82 }
 const SOFTWARE_RENDERER = /swiftshader|llvmpipe|softpipe|software|basic render|mesa offscreen/i
 
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -69,7 +73,7 @@ const GRAB = `new Promise((resolve) => {
   })
 })`
 
-// Capture mode publishes each beat's id and the page progress at the middle of its scroll range.
+// Capture mode publishes each beat's id and the page progress where its scroll range starts and ends.
 const waitForReady = async () => {
   for (let attempt = 0; attempt < 120; attempt++) {
     if (await evaluate(`document.documentElement.dataset.capture === 'ready'`)) return true
@@ -83,7 +87,8 @@ if (!(await waitForReady())) throw new Error('The story never settled')
 const targets = (await evaluate('window.__storyBeats')).filter((target) => only.length === 0 || only.includes(target.id))
 
 for (const target of targets) {
-  await send('Page.navigate', { url: `${STORY}?capture=1&p=${target.progress.toFixed(5)}&t=${SCENE_TIME}&ui=0${flight ? '' : '&solo=1'}` })
+  const progress = target.start + (target.end - target.start) * (POSTER_LOCAL[target.id] ?? DEFAULT_LOCAL)
+  await send('Page.navigate', { url: `${STORY}?capture=1&p=${progress.toFixed(5)}&t=${SCENE_TIME}&ui=0${flight ? '' : '&solo=1'}` })
   await wait(1500)
   if (!(await waitForReady())) {
     console.log(`${target.id}: never settled`)
@@ -97,7 +102,7 @@ for (const target of targets) {
     continue
   }
   writeFileSync(join(outDir, `${target.id}.png`), Buffer.from(png, 'base64'))
-  console.log(`${target.id}: p=${target.progress.toFixed(4)}`)
+  console.log(`${target.id}: p=${progress.toFixed(4)}`)
 }
 
 socket.close()
