@@ -6,6 +6,8 @@
 import { glowFor, IGNITE_MS } from './loader'
 import { PAGE_SUBTITLE, PAGE_TITLE } from './narrative'
 
+export const LOADER_BACKDROP = '/media/my-story/loader-backdrop.webp'
+
 export function LoaderView({ progress, igniting = false }: { progress: number; igniting?: boolean }) {
   const g = glowFor(progress)
   return (
@@ -22,6 +24,16 @@ export function LoaderView({ progress, igniting = false }: { progress: number; i
         pointerEvents: igniting ? 'none' : 'auto',
       }}
     >
+      {/* A still sky, so a slow connection sees more than a dot. Kept short of the full window: browsers don't count a viewport-filling image as LCP. */}
+      <div
+        aria-hidden
+        style={{
+          position: 'absolute', inset: '3% 0', opacity: igniting ? 0 : 0.8,
+          backgroundImage: `url(${LOADER_BACKDROP})`, backgroundSize: 'cover', backgroundPosition: 'center',
+          maskImage: 'radial-gradient(ellipse 75% 70% at 50% 50%, #000 40%, transparent 100%)',
+          transition: `opacity ${IGNITE_MS * 0.4}ms ease`,
+        }}
+      />
       <div
         style={{
           position: 'absolute', top: '30%', left: 0, right: 0, textAlign: 'center',

@@ -7,8 +7,7 @@ import { motion } from 'framer-motion'
 import { Magnetic } from '@/components/motion'
 import { EASE_IN_OUT } from '@/lib/motion'
 
-/** The new flight's route until the Phase 7 cutover moves it to /my-story. */
-const STORY_URL = '/my-story/preview'
+const STORY_URL = '/my-story'
 const WIPE_SECONDS = 0.6
 
 /**

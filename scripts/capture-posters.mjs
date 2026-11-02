@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const STORY = 'http://localhost:3000/my-story/preview'
+const STORY = 'http://localhost:3000/my-story'
 const PORT = 9610
 const SCENE_TIME = 12
 const SOFTWARE_RENDERER = /swiftshader|llvmpipe|softpipe|software|basic render|mesa offscreen/i

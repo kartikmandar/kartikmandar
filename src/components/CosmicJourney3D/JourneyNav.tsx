@@ -2,7 +2,7 @@
 'use client'
 
 // Deep links and keyboard for the journey:
-// - the URL hash follows the beat on screen (/my-story/preview#rri-research),
+// - the URL hash follows the beat on screen (/my-story#rri-research),
 //   and loading a link with a hash flies straight to that beat after the loader;
 // - J / → next beat, K / ← previous beat, Esc skips to the end; focus moves to
 //   the beat's heading so screen readers hear where they landed;

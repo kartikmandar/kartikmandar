@@ -1,18 +1,26 @@
 import type { Metadata } from 'next/types'
-import React from 'react'
-import PageClient from '@/components/PageClient'
-import QuasarBackgroundWrapper from '@/components/QuasarBackground/ClientWrapper'
-import { CosmicJourney } from '@/blocks/CosmicJourney/Component'
+import CosmicJourney3DClient from '@/components/CosmicJourney3D/ClientWrapper'
+import { LOADER_BACKDROP } from '@/components/CosmicJourney3D/LoaderView'
+import { StoryArticle } from '@/components/CosmicJourney3D/StoryArticle'
+import { PAGE_SUBTITLE, PAGE_TITLE } from '@/components/CosmicJourney3D/narrative'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
-import { generateBreadcrumbSchema } from '@/utilities/structuredData'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { generateBreadcrumbSchema, generateStorySchema } from '@/utilities/structuredData'
 
 export const dynamic = 'force-static'
 
 export async function generateMetadata(): Promise<Metadata> {
+  const description = 'The story of Kartik Mandar, from a fascination with astrophysics to radio cosmology and software, told as a flight through space.'
   return {
     title: 'My Story - Kartik Mandar',
-    description: 'Journey through my cosmic story - from fascination with astrophysics to software development. Explore the universe that shaped my perspective.',
+    description,
     alternates: { canonical: getCanonicalUrl('/my-story') },
+    openGraph: mergeOpenGraph({
+      title: 'My Story - Kartik Mandar',
+      description,
+      url: getCanonicalUrl('/my-story'),
+      images: [{ url: `${getServerSideURL()}/media/my-story/share.jpg`, width: 1200, height: 630 }],
+    }),
   }
 }
 
@@ -22,27 +30,21 @@ export default function MyStoryPage() {
     { name: 'Home', url: serverUrl },
     { name: 'My Story', url: `${serverUrl}/my-story` },
   ])
+  const storyJsonLd = generateStorySchema({ title: PAGE_TITLE, description: PAGE_SUBTITLE, path: '/my-story' })
 
   return (
     <>
+      <link rel="preload" as="image" href={LOADER_BACKDROP} fetchPriority="high" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <PageClient />
-      
-      {/* Quasar background - 80% viewport height for immersive experience */}
-      <div className="w-full" style={{ height: '80vh' }}>
-        <QuasarBackgroundWrapper height="100%" />
-      </div>
-      
-      <article className="-mb-2">
-        {/* Cosmic Journey Component */}
-        <CosmicJourney 
-          blockType="cosmicJourney"
-          blockName="My Cosmic Journey"
-        />
-      </article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(storyJsonLd) }}
+      />
+      <StoryArticle />
+      <CosmicJourney3DClient />
     </>
   )
 }

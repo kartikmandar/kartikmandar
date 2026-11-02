@@ -20,7 +20,10 @@ const redirects = async () => {
     { source: '/courses', destination: '/about#courses', permanent: true },
   ]
 
-  const redirects = [internetExplorerRedirect, ...mergedPageRedirects]
+  // The story flight moved to /my-story. Temporary, in case the cutover is rolled back.
+  const storyRedirects = [{ source: '/my-story/preview', destination: '/my-story', permanent: false }]
+
+  const redirects = [internetExplorerRedirect, ...mergedPageRedirects, ...storyRedirects]
 
   return redirects
 }

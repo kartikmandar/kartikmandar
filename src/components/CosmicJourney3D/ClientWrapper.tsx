@@ -47,9 +47,15 @@ export default function CosmicJourney3DClient() {
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init: reads browser APIs (matchMedia, webgl2 probe) only available after mount */
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    // Here, not in redirects.js: Next's `has` matching doesn't see a query key with an empty value.
+    if (params.has('legacy')) {
+      window.location.replace('/my-story/legacy')
+      return
+    }
     const env = readJourneyEnv()
     const capable = capture.enabled || (env.webgl2 && !env.softwareRenderer)
-    const requested = new URLSearchParams(window.location.search).get('view')
+    const requested = params.get('view')
     setCanFly(capable)
     setView(capture.enabled ? 'flight' : chooseView({ requested, stored: readStoredView(), reducedMotion: env.reducedMotion, canFly: capable }))
 

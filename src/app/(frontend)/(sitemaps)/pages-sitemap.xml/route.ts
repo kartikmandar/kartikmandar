@@ -9,7 +9,7 @@ const SITE_URL =
 const STATIC_PAGES = [
   { slug: '', lastmod: '2026-03-29T00:00:00.000Z', changefreq: 'weekly' as const, priority: 1.0 },
   { slug: 'cv', lastmod: '2026-04-10T00:00:00.000Z', changefreq: 'monthly' as const, priority: 0.8 },
-  { slug: 'my-story', lastmod: '2026-03-29T00:00:00.000Z', changefreq: 'monthly' as const, priority: 0.7 },
+  { slug: 'my-story', lastmod: '2026-11-02T00:00:00.000Z', changefreq: 'monthly' as const, priority: 0.7 },
   { slug: 'open-source', lastmod: '2026-03-29T00:00:00.000Z', changefreq: 'monthly' as const, priority: 0.8 },
   { slug: 'publications', lastmod: '2026-03-29T00:00:00.000Z', changefreq: 'weekly' as const, priority: 0.8 },
   { slug: 'talks', lastmod: '2026-03-29T00:00:00.000Z', changefreq: 'monthly' as const, priority: 0.7 },

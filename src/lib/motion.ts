@@ -21,11 +21,10 @@ export const ROUTE_TRANSITION = {
 
 /**
  * The story flight: it runs its own scroll clock (its own Lenis), its own grain
- * and its own navigation, so the site chrome steps back there. (The preview
- * route until the Phase 7 cutover moves the flight to /my-story.)
+ * and its own navigation, so the site chrome steps back there.
  */
 export function isStoryFlight(pathname: string | null | undefined): boolean {
-  return !!pathname && pathname.startsWith('/my-story/preview')
+  return pathname === '/my-story'
 }
 
 /** Routes that should not animate in: the story pages own their entrance. */
