@@ -19,7 +19,7 @@ The mobile tier already had no post stack (no bloom), reduced particle counts an
 - **Rail touching text:** it moves into the margin on phones.
 - **"Reduce effects" over the evidence link:** beat text now clears the floating buttons.
 - **HUD beside the top bar:** hidden on phones, because the beat's own eyebrow repeats it.
-- **Bands behind prologue text (all screens):** SplitText's masks clipped `text-shadow` into rectangles. It's now a `drop-shadow` filter.
+- **Bands behind prologue text (all screens):** SplitText's masks clipped `text-shadow` into rectangles. It's now a stacked `drop-shadow` filter over a soft radial shade, checked on every prologue line at desktop and phone sizes.
 
 ## Verified in Chrome, on this Mac's GPU
 | Simulation | Result |
@@ -46,7 +46,6 @@ All 31 beats were captured at phone size with text on and reviewed. Typecheck, l
 To see the tier in use, inspect `<html data-story-tier>` with remote debugging.
 
 ## Known remaining
-- **Prologue text over the bright star:** harder to read since `drop-shadow` replaced `text-shadow`. It needs a stronger shadow.
 - **Longest beats on short screens:** text still overlaps the art (Cygnus, Engineer, What I'm Working On). The text stays readable.
 - **Colours differ on the mobile tier:** without the post stack, some art is more saturated, such as the Cygnus disk.
 - **A tier drop rebuilds scenes,** so expect one brief hitch.
