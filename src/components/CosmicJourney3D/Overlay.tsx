@@ -178,11 +178,13 @@ export function Overlay() {
 const heroWrap: React.CSSProperties = {
   position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
   textAlign: 'center', pointerEvents: 'none', padding: '0 8vw', color: '#eef2ff', zIndex: 2,
+  // A soft pool of shade, so the line stays readable over the brightest frames of the supernova.
+  background: 'radial-gradient(ellipse 62% 26% at 50% 50%, rgba(4,5,11,0.5) 0%, rgba(4,5,11,0) 100%)',
 }
 const heroText: React.CSSProperties = {
   fontSize: 'clamp(32px, 4.4vw, 66px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.01em', lineHeight: 1.08,
   // A drop-shadow filter, not text-shadow: SplitText's line masks would clip that into visible bands.
-  margin: 0, maxWidth: 980, filter: 'drop-shadow(0 2px 14px rgba(0,0,0,0.85))',
+  margin: 0, maxWidth: 980, filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9)) drop-shadow(0 2px 16px rgba(0,0,0,0.9)) drop-shadow(0 0 36px rgba(0,0,0,0.65))',
 }
 const beatWrap: React.CSSProperties = {
   position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
