@@ -37,7 +37,7 @@ All 31 beats were captured at phone size with text on and reviewed. Typecheck, l
 - **Also needs real phones:** heat, iOS memory limits, touch scrolling, and rail ticks that may be too small to tap.
 
 ## Owner's check (iPhone Safari and Android Chrome)
-1. Scroll the whole flight at `/my-story/preview`.
+1. Scroll the whole flight at `/my-story`.
 2. Does the canvas jump when the address bar slides?
 3. Is scrolling smooth, and does the phone get hot?
 4. Is the text readable over every beat?
