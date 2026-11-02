@@ -102,6 +102,20 @@ export function Overlay() {
     return () => ctx.revert()
   }, [view, capture.enabled])
 
+  // On portrait screens the camera fits the art into the space above the copy (CameraRig).
+  useLayoutEffect(() => {
+    const root = rootRef.current
+    if (view.kind !== 'beat' || !root) {
+      journeyFrame.copyTopPx = null
+      return
+    }
+    const measure = () => { journeyFrame.copyTopPx = root.getBoundingClientRect().top }
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(root)
+    return () => observer.disconnect()
+  }, [view.kind, view.index])
+
   if (view.kind === 'end') {
     return (
       <div className="journey-end" style={endWrap}>

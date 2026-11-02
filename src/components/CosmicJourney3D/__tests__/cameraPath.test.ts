@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cumulativeRanges } from '../scrollMath'
-import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep, beatVisible, baseFov, portraitLift } from '../cameraPath'
+import { easedCurveU, flightCurveT, holdProgress, shotCurveT, smootherstep, beatVisible, baseFov, portraitFrame } from '../cameraPath'
 
 describe('smootherstep', () => {
   it('pins endpoints and has near-zero slope at the ends', () => {
@@ -139,10 +139,28 @@ describe('baseFov', () => {
   })
 })
 
-describe('portraitLift', () => {
-  it('lifts the image only on portrait screens', () => {
-    expect(portraitLift(0.6)).toBeGreaterThan(0)
-    expect(portraitLift(1)).toBe(0)
-    expect(portraitLift(16 / 9)).toBe(0)
+describe('portraitFrame', () => {
+  it('only applies on portrait screens', () => {
+    expect(portraitFrame(1, 300, 800)).toBeNull()
+    expect(portraitFrame(16 / 9, 300, 800)).toBeNull()
+    expect(portraitFrame(0.6, 300, 800)).not.toBeNull()
+  })
+
+  it('keeps the art full size and in its usual place when the copy is short', () => {
+    expect(portraitFrame(0.6, 500, 664)).toEqual({ center: 0.34, scale: 1 })
+    expect(portraitFrame(0.6, null, 664)).toEqual({ center: 0.34, scale: 1 })
+  })
+
+  it('moves the art up and shrinks it to fit above long copy', () => {
+    const short = portraitFrame(0.6, 500, 664)!
+    const long = portraitFrame(0.6, 193, 664)!
+    expect(long.center).toBeLessThan(short.center)
+    expect(long.scale).toBeLessThan(short.scale)
+    // Centred between the top bar and the copy.
+    expect(long.center * 664).toBeCloseTo((64 + 193) / 2, 5)
+  })
+
+  it('never shrinks the art past its limit', () => {
+    expect(portraitFrame(0.6, 70, 664)!.scale).toBe(0.6)
   })
 })

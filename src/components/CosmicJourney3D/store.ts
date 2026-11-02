@@ -31,12 +31,14 @@ export interface JourneyFrame {
   activeIndex: number
   /** Continuous per-beat progress: 0 before the beat, 0..1 inside it, 1 after. */
   local: Float32Array
+  /** Top edge of the on-screen beat copy in px, or null when no beat copy is showing. */
+  copyTopPx: number | null
 }
 
 export function createJourneyFrame(beatCount: number): JourneyFrame {
   return {
     raw: 0, flight: 0, prologue: 0, crossfade: 0, covered: true, warmup: false,
-    clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount),
+    clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount), copyTopPx: null,
   }
 }
 

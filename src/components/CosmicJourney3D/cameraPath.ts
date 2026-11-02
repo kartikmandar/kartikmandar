@@ -93,7 +93,33 @@ export function baseFov(aspect: number): number {
   return Math.min(FOV_PORTRAIT_MAX, fov)
 }
 
-/** How far to lift the image on portrait screens (fraction of height), so the art clears the copy below it. */
-export function portraitLift(aspect: number): number {
-  return aspect < 0.8 ? 0.16 : 0
+const PORTRAIT_ASPECT = 0.8
+/** Where a beat's art sits on a portrait screen with room to spare (fraction of height from the top). */
+const PORTRAIT_CENTER = 0.34
+/** Height of the site's top bar on phones, in px. */
+const TOP_BAR_PX = 64
+/** Roughly how much of a portrait screen's height a scene's art needs at full size. */
+const ART_HEIGHT = 0.36
+const MIN_ART_SCALE = 0.6
+
+export interface PortraitFrame {
+  /** Where the art's centre sits, as a fraction of height from the top. */
+  center: number
+  /** Below 1, the image is drawn smaller. */
+  scale: number
+}
+
+/**
+ * On portrait screens the copy can take most of the height, so the art is placed
+ * and sized to fit the space above it: between the top bar and the copy's top edge.
+ */
+export function portraitFrame(aspect: number, copyTopPx: number | null, height: number): PortraitFrame | null {
+  if (aspect >= PORTRAIT_ASPECT) return null
+  if (copyTopPx === null || height <= 0) return { center: PORTRAIT_CENTER, scale: 1 }
+  const top = TOP_BAR_PX / height
+  const free = Math.max(0, copyTopPx / height - top)
+  return {
+    center: Math.min(PORTRAIT_CENTER, top + free / 2),
+    scale: Math.max(MIN_ART_SCALE, Math.min(1, free / ART_HEIGHT)),
+  }
 }

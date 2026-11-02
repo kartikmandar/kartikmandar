@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { cumulativeRanges } from './scrollMath'
-import { shotCurveT, baseFov, portraitLift } from './cameraPath'
+import { shotCurveT, baseFov, portraitFrame } from './cameraPath'
 import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { readCapture } from './capture'
@@ -21,6 +21,8 @@ const FOV_LAMBDA = 5
 /** Pointer sway: the camera leans a little toward the pointer (world units). */
 const SWAY = 0.3
 const SWAY_LAMBDA = 3
+/** Damping rate (1/s) for the art making room for a beat's copy on portrait screens. */
+const FRAME_LAMBDA = 3
 
 // Scratch (no allocation per frame).
 const _pos = new THREE.Vector3()
@@ -57,6 +59,7 @@ export function CameraRig() {
   const fov = useRef(60)
   const appliedView = useRef('')
   const sway = useRef({ x: 0, y: 0, targetX: 0, targetY: 0 })
+  const frame = useRef<{ center: number; scale: number } | null>(null)
   const first = useRef(true)
 
   // Pointer sway target, desktop pointers only (touch would jitter on scroll).
@@ -107,14 +110,26 @@ export function CameraRig() {
     camera.position.set(_pos.x + s.x * SWAY, _pos.y - s.y * SWAY * 0.6, _pos.z)
     camera.lookAt(_look)
 
-    // A lens shift, not a tilt, so the composition stays the same.
+    // A lens shift and a wider window, not a tilt or a dolly, so the composition stays the same.
     const { width, height } = state.size
-    const lift = portraitLift(camera.aspect) * height
-    const viewKey = `${width}x${height}:${lift}`
+    const target = portraitFrame(camera.aspect, f.copyTopPx, height)
+    if (!target || !frame.current || capture) {
+      frame.current = target && { ...target }
+    } else {
+      frame.current.center = THREE.MathUtils.damp(frame.current.center, target.center, FRAME_LAMBDA, f.dt)
+      frame.current.scale = THREE.MathUtils.damp(frame.current.scale, target.scale, FRAME_LAMBDA, f.dt)
+    }
+    const shown = frame.current
+    const viewKey = shown ? `${width}x${height}:${shown.center.toFixed(3)}:${shown.scale.toFixed(3)}` : ''
     if (viewKey !== appliedView.current) {
       appliedView.current = viewKey
-      if (lift > 0) camera.setViewOffset(width, height, 0, lift, width, height)
-      else camera.clearViewOffset()
+      if (shown) {
+        const viewWidth = width / shown.scale
+        const viewHeight = height / shown.scale
+        camera.setViewOffset(width, height, (width - viewWidth) / 2, height / 2 - shown.center * viewHeight, viewWidth, viewHeight)
+      } else {
+        camera.clearViewOffset()
+      }
     }
     if (Math.abs(camera.fov - fov.current) > 0.01) {
       camera.fov = fov.current
