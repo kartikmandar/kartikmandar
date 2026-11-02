@@ -316,11 +316,6 @@ html.lenis body {
   @apply border-border my-6;
 }
 
-@keyframes quasar-hint-bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

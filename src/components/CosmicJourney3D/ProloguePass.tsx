@@ -2,7 +2,7 @@
 'use client'
 
 // The supernova → black hole prologue as a pass inside the journey's own canvas
-// (one WebGL context). It raymarches the same shader as the live QuasarBackground
+// (one WebGL context). It raymarches the black hole shader in QuasarBackground/engine
 // from a virtual camera that dollies in across the prologue, then dives at the
 // photon ring while the frame swells with light and dissolves into the flight
 // (see prologueDive.ts).

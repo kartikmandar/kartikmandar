@@ -29,41 +29,20 @@ const JET_TAN = Math.tan((CONSTANTS.JET_HALF_ANGLE_DEG * Math.PI) / 180).toFixed
 
 /**
  * Shader variants:
- * - 'standalone': the live QuasarBackground canvas (unchanged behaviour).
  * - 'pass': fullscreen prologue pass inside the my-story R3F canvas; adds
  *   uOpacity/uExposure and three's tone-mapping/colour-space chunks.
  * - 'impostor': the same black hole as a bounded world-space object (bounding
  *   sphere mesh). Escaped rays add nothing (the flight scene's own sky shows
  *   through); captured rays write alpha so the shadow occludes it.
  */
-export type BlackholeVariant = 'standalone' | 'pass' | 'impostor'
+export type BlackholeVariant = 'pass' | 'impostor'
 
 export interface BlackholeFragOptions {
-  variant?: BlackholeVariant
+  variant: BlackholeVariant
   maxSteps?: number
   /** Escape radius in r_s (impostor: its bounding radius). */
   escapeRadius?: number
 }
-
-const STANDALONE_MAIN = /* glsl */ `
-void main() {
-  vec2 ndc = (gl_FragCoord.xy / uResolution) * 2.0 - 1.0;
-  vec4 pw = uInvProjView * vec4(ndc, 0.5, 1.0);
-  vec3 rdWorld = normalize(pw.xyz / pw.w - uCamPos);
-  vec3 ro = uWorldToDisk * uCamPos;
-  vec3 rd = uWorldToDisk * rdWorld;
-
-  vec3 col;
-  if (uPhase < 4) {
-    col = preBirthScene(ro, rd);
-  } else {
-    col = marchBlackHole(ro, rd);
-    if (uPhase == 4) col += shellEmission(ro, rd);   // remnant fading during BIRTH
-  }
-  col += vec3(uFlash);
-  gl_FragColor = vec4(col, 1.0);
-}
-`
 
 const PASS_MAIN = /* glsl */ `
 void main() {
@@ -109,16 +88,14 @@ void main() {
 `
 
 export function buildBlackholeFrag({
-  variant = 'standalone',
+  variant,
   maxSteps = 128,
   escapeRadius = CONSTANTS.ESCAPE_RADIUS_RS,
-}: BlackholeFragOptions = {}): string {
+}: BlackholeFragOptions): string {
   const variantUniforms =
     variant === 'pass'
       ? 'uniform float uOpacity;\nuniform float uExposure;'
-      : variant === 'impostor'
-        ? 'uniform vec3 uCenter;\nuniform float uScale;\nuniform float uOpacity;\nvarying vec3 vWorldPos;'
-        : ''
+      : 'uniform vec3 uCenter;\nuniform float uScale;\nuniform float uOpacity;\nvarying vec3 vWorldPos;'
   return /* glsl */ `
 precision highp float;
 
@@ -321,8 +298,6 @@ vec3 preBirthScene(vec3 ro, vec3 rd) {
   return col;
 }
 
-${variant === 'impostor' ? IMPOSTOR_MAIN : variant === 'pass' ? PASS_MAIN : STANDALONE_MAIN}
+${variant === 'impostor' ? IMPOSTOR_MAIN : PASS_MAIN}
 `
 }
-
-export const BLACKHOLE_FRAG = buildBlackholeFrag()

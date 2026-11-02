@@ -19,7 +19,6 @@ import { beatVisible } from './cameraPath'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
 import { journeyFrame, journeyStore, writeBeatProgress } from './store'
-import { HeroPrologue } from './HeroPrologue'
 import { flightFractionToGlobal, splitProgress, pageScrollVh } from './prologueScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
 import { diveState } from './prologueDive'
@@ -65,7 +64,7 @@ function installFrameGrabber() {
 // Writes the shared per-frame journey state once, before any useFrame runs
 // (R3F addEffect). Scenes read it through useBeat(); React only hears about
 // discrete active-beat changes via journeyStore.
-function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
+function JourneyDriver() {
   const progressRef = useScrollProgressRef()
   useEffect(() => {
     const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
@@ -88,20 +87,19 @@ function JourneyDriver({ prologuePass }: { prologuePass: boolean }) {
       journeyFrame.flight = flight
       journeyFrame.prologue = split.prologueProgress
       journeyFrame.crossfade = split.crossfade
-      // Only the in-canvas prologue pass can cover the flight (not ?legacyPrologue).
-      journeyFrame.covered = prologuePass && diveState(split.crossfade, dive).covers
+      journeyFrame.covered = diveState(split.crossfade, dive).covers
       journeyFrame.dt = capture.enabled ? 0 : dt
       if (!capture.enabled) journeyFrame.clock += dt
       const active = writeBeatProgress(flight, ranges, journeyFrame.local)
       journeyFrame.activeIndex = active
       if (journeyStore.getState().activeIndex !== active) journeyStore.setState({ activeIndex: active })
     })
-  }, [progressRef, prologuePass])
+  }, [progressRef])
   return null
 }
 
 // Mounts every beat at its anchor; only the active beat and its neighbours are visible.
-function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityTier; reducedMotion: boolean; prologuePass: boolean }) {
+function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
   const groups = useRef<(THREE.Group | null)[]>([])
   // Per frame, not per render: a held shot hides its neighbours without a React update.
   useFrame(() => {
@@ -113,7 +111,7 @@ function SceneHost({ quality, reducedMotion, prologuePass }: { quality: QualityT
   })
   return (
     <>
-      <JourneyDriver prologuePass={prologuePass} />
+      <JourneyDriver />
       <CoverAware>
       <OriginBlackHole position={ORIGIN_BLACK_HOLE} quality={quality} />
       {BEATS.map((b, i) => (
@@ -150,30 +148,6 @@ function CaptureReady() {
   return null
 }
 
-// ?legacyPrologue only: the pre-Phase-2 prologue in its own WebGL context, kept
-// for side-by-side comparison with the in-canvas ProloguePass. Unmounts once fully
-// faded out to release the second WebGL context. A dead-band (unmount at xfade>=1,
-// remount only when xfade<0.9) prevents frame-to-frame thrash at the crossfade edge.
-function PrologueLayer() {
-  const progressRef = useScrollProgressRef()
-  const [xfade, setXfade] = useState(0)
-  const [hidden, setHidden] = useState(false)
-  useEffect(() => {
-    let raf = 0
-    const tick = () => {
-      const c = Math.round(splitProgress(progressRef.current).crossfade * 50) / 50
-      setXfade((p) => (p === c ? p : c))
-      if (c >= 1) setHidden((h) => (h ? h : true))
-      else if (c < 0.9) setHidden((h) => (h ? false : h))
-      raf = requestAnimationFrame(tick)
-    }
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [progressRef])
-  if (hidden) return null
-  return <HeroPrologue opacity={1 - xfade} />
-}
-
 export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }) {
   const [ready, setReady] = useState(false)
   const [quality, setQuality] = useState<QualityTier>('high')
@@ -182,7 +156,6 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
   const capture = readCapture()
   const [perf, setPerf] = useState(false)
   const [dpr, setDpr] = useState(1.5)
-  const [legacyPrologue, setLegacyPrologue] = useState(false)
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init: reads browser APIs (matchMedia, webgl2 probe) only available client-side; batched by React 18 */
   useEffect(() => {
@@ -193,7 +166,6 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
     setDpr(adaptiveDpr(tier, DPR_START_FACTOR, window.devicePixelRatio || 1))
     const params = new URLSearchParams(window.location.search)
     setPerf(params.has('perf'))
-    setLegacyPrologue(params.has('legacyPrologue'))
     setReady(true)
     // Pause the WebGL render loop when the tab is backgrounded (battery/CPU).
     const onVis = () => setFrameloop(document.hidden ? 'never' : 'always')
@@ -232,7 +204,6 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
 
   return (
     <ScrollRig totalScrollVh={pageScrollVh(TOTAL_SCROLL_VH)}>
-      {legacyPrologue && quality !== 'mobile' && <PrologueLayer />}
       {/* lvh: a phone's address bar sliding away must not resize the canvas. */}
       <div style={{ position: 'fixed', top: 0, left: 0, width: '100%', height: '100lvh', zIndex: 0 }} aria-hidden>
         <Canvas
@@ -246,10 +217,10 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
             gl.toneMapping = THREE.AgXToneMapping
           }}
         >
-          {!legacyPrologue && <ProloguePass quality={quality} halfFloat={halfFloat} />}
+          <ProloguePass quality={quality} halfFloat={halfFloat} />
           <Environment quality={quality} halfFloat={halfFloat} />
           <CameraRig />
-          <SceneHost quality={quality} reducedMotion={false} prologuePass={!legacyPrologue} />
+          <SceneHost quality={quality} reducedMotion={false} />
           <Precompile />
           <ContextGuard onAbandon={onAbandon} />
           {!capture.enabled && (

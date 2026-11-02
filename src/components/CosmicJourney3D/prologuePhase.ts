@@ -1,9 +1,6 @@
 import { Phase, PHASE_ORDER, type PhaseState } from '@/components/QuasarBackground/engine/types'
 
-// Dwell weights across the prologue scroll. STAR/QUASAR are open-ended in the
-// timed machine; here they get fixed dwell so the hero copy is readable. The
-// middle phases approximate the timed PHASE_DURATIONS (COLLAPSE 1.5, FLASH 0.4,
-// SHELL 8 compressed to 3, BIRTH 4 -> 2.5) for pacing.
+// Dwell weights across the prologue scroll, so the hero copy is readable.
 export const PHASE_WEIGHTS: Record<Phase, number> = {
   [Phase.STAR]: 3,
   [Phase.COLLAPSE]: 1.5,

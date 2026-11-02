@@ -1,12 +1,13 @@
 import { describe, it, expect } from 'vitest'
-import { BLACKHOLE_FRAG } from '../shaders/blackhole.frag'
-import { DISK_FRAG } from '../shaders/meshShaders'
+import { buildBlackholeFrag } from '../shaders/blackhole.frag'
 import { CONSTANTS } from '../types'
+
+const BLACKHOLE_FRAG = buildBlackholeFrag({ variant: 'pass' })
 
 /**
  * Unbounded disk radiance (turbulence x relativistic beaming, ~100 HDR at
  * peaks) made UnrealBloom white out the frame in pulses as the inner-disk
- * turbulence rotated (~4.7 s period). Both tiers must bound what bloom can
+ * turbulence rotated (~4.7 s period). The disk must bound what bloom can
  * integrate.
  */
 describe('disk radiance cap', () => {
@@ -17,11 +18,6 @@ describe('disk radiance cap', () => {
   it('raymarched disk applies capRadiance', () => {
     expect(BLACKHOLE_FRAG).toContain('capRadiance(')
     expect(BLACKHOLE_FRAG).toContain(`#define DISK_CAP ${CONSTANTS.DISK_RADIANCE_CAP.toFixed(1)}`)
-  })
-
-  it('mesh disk applies capRadiance', () => {
-    expect(DISK_FRAG).toContain('capRadiance(')
-    expect(DISK_FRAG).toContain(CONSTANTS.DISK_RADIANCE_CAP.toFixed(1))
   })
 })
 
@@ -43,10 +39,5 @@ describe('disk proximity exposure', () => {
   it('raymarched disk applies diskExposure from camera distance', () => {
     expect(BLACKHOLE_FRAG).toContain('diskExposure(')
     expect(BLACKHOLE_FRAG).toContain('length(uCamPos)')
-  })
-
-  it('mesh disk applies diskExposure from camera distance', () => {
-    expect(DISK_FRAG).toContain('diskExposure(')
-    expect(DISK_FRAG).toContain('length(cameraPosition)')
   })
 })

@@ -407,14 +407,6 @@ export interface ContentBlock {
   blockType: 'content'
 }
 
-export interface CosmicJourneyBlock {
-  title?: string | null
-  subtitle?: string | null
-  id?: string | null
-  blockName?: string | null
-  blockType: 'cosmicJourney'
-}
-
 export interface MediaBlockData {
   media: Media | number
   id?: string | null
@@ -469,7 +461,6 @@ export interface TalksShowcaseBlock {
 export type LayoutBlock =
   | CallToActionBlock
   | ContentBlock
-  | CosmicJourneyBlock
   | MediaBlockData
   | ArchiveBlock
   | ProjectsShowcaseBlock

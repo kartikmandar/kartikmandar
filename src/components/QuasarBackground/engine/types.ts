@@ -1,5 +1,3 @@
-import type { PerspectiveCamera } from 'three'
-
 /** Narrative phases, in order. Numeric so they can feed a shader uniform. */
 export enum Phase {
   STAR = 0,
@@ -19,34 +17,10 @@ export const PHASE_ORDER: Phase[] = [
   Phase.QUASAR,
 ]
 
-/** Seconds. STAR and QUASAR are open-ended (no entry). */
-export const PHASE_DURATIONS: Partial<Record<Phase, number>> = {
-  [Phase.COLLAPSE]: 1.5,
-  [Phase.FLASH]: 0.4,
-  [Phase.SHELL]: 8,
-  [Phase.BIRTH]: 4,
-}
-
 export interface PhaseState {
   phase: Phase
   /** 0..1 within the current phase (0 for open-ended STAR, 1 for QUASAR). */
   progress: number
-}
-
-export interface PhaseInputs {
-  dt: number
-  cameraDistance: number
-  userInteracted: boolean
-  reducedMotion: boolean
-}
-
-/** Implemented by both tiers. index.tsx owns camera + controls. */
-export interface SceneRenderer {
-  init(container: HTMLElement, camera: PerspectiveCamera): void
-  setPhase(state: PhaseState): void
-  update(dt: number): void
-  resize(width: number, height: number): void
-  dispose(): void
 }
 
 /**

@@ -11,7 +11,7 @@ import { readJourneyEnv } from './tiers'
 // dynamic(..., { ssr: false }) is only allowed inside a Client Component in
 // Next.js 16 (Server Components reject it). This thin client wrapper keeps the
 // heavy WebGL journey (three / R3F / postprocessing) from evaluating during
-// SSR, mirroring src/components/QuasarBackground/ClientWrapper.tsx.
+// SSR.
 // The server renders the loader's first paint (title + point of light) so the
 // page is never black while the 3D bundle loads; the client loader continues it.
 const CosmicJourney3D = dynamic(() => import('./index'), {
@@ -47,15 +47,9 @@ export default function CosmicJourney3DClient() {
 
   /* eslint-disable react-hooks/set-state-in-effect -- one-time init: reads browser APIs (matchMedia, webgl2 probe) only available after mount */
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    // Here, not in redirects.js: Next's `has` matching doesn't see a query key with an empty value.
-    if (params.has('legacy')) {
-      window.location.replace('/my-story/legacy')
-      return
-    }
     const env = readJourneyEnv()
     const capable = capture.enabled || (env.webgl2 && !env.softwareRenderer)
-    const requested = params.get('view')
+    const requested = new URLSearchParams(window.location.search).get('view')
     setCanFly(capable)
     setView(capture.enabled ? 'flight' : chooseView({ requested, stored: readStoredView(), reducedMotion: env.reducedMotion, canFly: capable }))
 
