@@ -15,7 +15,7 @@ The mobile tier already had no post stack (no bloom), reduced particle counts an
 
 ## Layout problems the phone captures found
 - **Cropped art:** a fixed 60-degree view cut scenes at the sides on portrait. `baseFov` now widens up to 100 degrees.
-- **Art behind copy:** `portraitLift` shifts the image up 16% on portrait, and the scrim is stronger on phones.
+- **Art behind copy:** the image shifts up on portrait (now `portraitFrame`, see the checklist run below), and the scrim is stronger on phones.
 - **Rail touching text:** it moves into the margin on phones.
 - **"Reduce effects" over the evidence link:** beat text now clears the floating buttons.
 - **HUD beside the top bar:** hidden on phones, because the beat's own eyebrow repeats it.
@@ -45,8 +45,22 @@ All 31 beats were captured at phone size with text on and reviewed. Typecheck, l
 
 To see the tier in use, inspect `<html data-story-tier>` with remote debugging.
 
+## Checklist run in Chrome's mobile mode (2026-11-02)
+Chrome emulation at 390 x 664 (iPhone with Safari's bars) and 412 x 780 (Android), on the production build. This isn't a device test. `simctl` hung on this Mac, so iOS Safari wasn't run.
+
+| Item | Result |
+|---|---|
+| Scroll the whole flight | All 31 beats reached, no errors, no sideways scroll. Touch gestures scroll correctly. |
+| Address bar | Not testable: emulation resizes the real viewport. |
+| Smooth, not hot | Not testable: 60 fps here is the M1 Max. |
+| Text readable over every beat | Failed at 390 x 664 on Cygnus X-1, Engineer, What I'm Working On and First Publication. Fixed below; all 31 beats reviewed again. |
+| 30 Hz | Measured 33 ms: high to low, stays at low at 30 s, still running. |
+
+**The fix:** on portrait screens the camera now measures the top of each beat's copy (`portraitFrame`, `journeyFrame.copyTopPx`), then centres the art between the top bar and the copy, drawing it smaller where needed (down to 60%). It widens the view window rather than moving the camera, so the composition holds. Art on the longest beats is noticeably smaller, and the top of some of it sits level with the top bar's buttons.
+
+**Scroll length:** the page is 53,000 px at 390 x 664. Thirty 365 px swipes covered about a fifth of it. Real flicks carry momentum and travel further, but it may feel long on a phone.
+
 ## Known remaining
-- **Longest beats on short screens:** text still overlaps the art (Cygnus, Engineer, What I'm Working On). The text stays readable.
 - **Colours differ on the mobile tier:** without the post stack, some art is more saturated, such as the Cygnus disk.
 - **A tier drop rebuilds scenes,** so expect one brief hitch.
 - **Console warnings, not errors:** GSAP "target not found" and a three.js `Clock` deprecation.

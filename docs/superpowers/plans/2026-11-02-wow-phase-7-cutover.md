@@ -44,5 +44,8 @@ The target is under 2.5 s. This number comes from a simulation on an M1 Max, so 
 - Real phones, the Ubuntu PC, Firefox and Safari. Safari matters for the `mask-image` on the backdrop, which is unprefixed.
 - A real social share preview, which needs a public URL.
 
-## After a clean week, with the owner's OK
-Retire `/my-story/legacy`, `?legacy`, the `CosmicJourney` block and `QuasarBackground`'s live use.
+## Old story removed (2026-11-02)
+The owner chose to remove it now, skipping the clean week. This replaces the `/my-story/legacy` and `?legacy` entries above, so **there's no fallback page on deploy; a rollback means reverting the commit.**
+- **Removed:** `/my-story/legacy`, `?legacy`, the 3,059-line `CosmicJourney` block and its type, `QuasarBackground`'s component and wrapper, its `PhaseMachine`, `MeshRenderer`, `RaymarchedRenderer`, `tierSelect` and mesh shaders, the `?legacyPrologue` comparison mode with `HeroPrologue`, and the shader's standalone variant.
+- **Kept:** `src/components/QuasarBackground/engine/`, because the flight's prologue and black hole use its shaders, sky and phase code. The folder name is now out of date.
+- **Tests:** 176 pass, down from 206. The 30 removed covered the deleted code.
