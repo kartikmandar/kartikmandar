@@ -28,7 +28,7 @@ export default function PublicationsPage(): React.JSX.Element {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="mx-auto max-w-5xl">
-        <PageHeader eyebrow="Research" title="Publications">
+        <PageHeader title="Publications">
           <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm">
             {PROFILE_LINKS.map((link) => (
               <li key={link.label}>

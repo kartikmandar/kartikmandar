@@ -6,8 +6,7 @@ import { cn } from '@/utilities/ui'
 export function SelectedWorkGrid() {
   return (
     <section id="work" className="mx-auto max-w-6xl scroll-mt-24 px-5 pb-20 md:px-10 md:pb-32">
-      <p className="mono-label mb-4 text-ember">Selected work</p>
-      <h2 className="font-display text-display-lg mb-10 tracking-[-0.015em] text-foreground md:mb-14">Signals so far</h2>
+      <h2 className="font-display text-display-lg mb-10 tracking-[-0.015em] text-foreground md:mb-14">Selected work</h2>
       <div className="grid auto-rows-[20rem] grid-cols-1 gap-4 md:auto-rows-[19rem] md:grid-cols-6">
         {SELECTED_WORK.map((work, index) => {
           const lead = index === 0
@@ -22,7 +21,6 @@ export function SelectedWorkGrid() {
                 imageSizes={lead ? '(max-width: 768px) 100vw, 66vw' : undefined}
                 href={work.href}
                 external
-                cursorLabel="Open"
               />
             </Reveal>
           )

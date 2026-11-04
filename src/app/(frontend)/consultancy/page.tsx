@@ -39,24 +39,9 @@ const SERVICES: { title: string; description: string }[] = [
   },
 ]
 
-const PRINCIPLES: { title: string; description: string }[] = [
-  {
-    title: 'Start with the workflow',
-    description: 'Sometimes the right system has no AI in it at all, and I will say so.',
-  },
-  {
-    title: 'Check the model',
-    description: 'Deterministic verification runs after the LLM step, and the code does the arithmetic.',
-  },
-  {
-    title: 'Report honestly',
-    description: 'Results come with what was measured and how. A number I can\'t back up doesn\'t get quoted.',
-  },
-]
-
-function ItemGrid({ items, columns }: { items: { title: string; description: string }[]; columns: string }) {
+function ItemGrid({ items }: { items: { title: string; description: string }[] }) {
   return (
-    <dl className={`grid gap-x-10 gap-y-6 ${columns}`}>
+    <dl className="grid gap-x-10 gap-y-6 sm:grid-cols-2">
       {items.map((item) => (
         <div key={item.title} className="border-t border-border pt-4">
           <dt className="font-display text-2xl text-foreground">{item.title}</dt>
@@ -83,7 +68,6 @@ export default function ConsultancyPage() {
       <div className="max-w-5xl mx-auto">
 
         <PageHeader
-          eyebrow="Software"
           title="Consultancy"
           lead="I build AI systems and scientific software through Merakinist Labs, my forward-deployed AI engineering lab, and as a Top Rated Plus freelancer on Upwork."
         />
@@ -95,12 +79,14 @@ export default function ConsultancyPage() {
 
         <section className="mb-16">
           <h2 className="mb-8 font-display text-display-md text-foreground">What I build</h2>
-          <ItemGrid items={SERVICES} columns="sm:grid-cols-2" />
+          <ItemGrid items={SERVICES} />
         </section>
 
         <section className="mb-16">
-          <h2 className="mb-8 font-display text-display-md text-foreground">How I work</h2>
-          <ItemGrid items={PRINCIPLES} columns="md:grid-cols-3" />
+          <h2 className="mb-4 font-display text-display-md text-foreground">How I work</h2>
+          <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            I start from the workflow, and sometimes the right system has no AI in it at all. Where there is a model, deterministic checks run after it and the code does the arithmetic. Results come with what was measured and how.
+          </p>
         </section>
 
         <section>

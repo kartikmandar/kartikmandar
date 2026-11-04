@@ -61,7 +61,7 @@ export default async function PostersPage(): Promise<React.JSX.Element> {
       />
       <div className="max-w-5xl mx-auto">
 
-        <PageHeader eyebrow="Research" title="Posters" />
+        <PageHeader title="Posters" />
 
         {/* Posters by Category */}
         {Object.entries(groupedPosters).map(([category, categoryPosters]) => (

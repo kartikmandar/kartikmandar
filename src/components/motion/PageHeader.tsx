@@ -3,11 +3,10 @@ import { cn } from '@/utilities/ui'
 import { MaskedLines } from './MaskedLines'
 
 /**
- * The one page header: a mono eyebrow, an oversized serif title that rises in
- * line by line, and an optional lead. Replaces the per-page gradient h1s.
+ * The one page header: an oversized serif title that rises in line by line, and
+ * an optional lead. Replaces the per-page gradient h1s.
  */
-export function PageHeader({ eyebrow, title, lead, className, children }: {
-  eyebrow?: string
+export function PageHeader({ title, lead, className, children }: {
   title: string
   lead?: ReactNode
   className?: string
@@ -15,7 +14,6 @@ export function PageHeader({ eyebrow, title, lead, className, children }: {
 }) {
   return (
     <header className={cn('pt-28 pb-10 md:pt-36 md:pb-14', className)}>
-      {eyebrow && <p className="mono-label text-ember mb-5">{eyebrow}</p>}
       <MaskedLines as="h1" className="font-display text-display-xl tracking-[-0.015em] text-foreground text-balance">
         {title}
       </MaskedLines>

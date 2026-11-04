@@ -27,7 +27,7 @@ function FeatureList({ features }: { features: string[] }) {
       <div className="grid gap-3 md:grid-cols-2">
         {features.map((feature) => (
           <div key={feature} className="flex items-center gap-2">
-            <div className="size-1.5 flex-shrink-0 rounded-full bg-ember" />
+            <div className="size-1.5 flex-shrink-0 rounded-full bg-muted-foreground/60" />
             <span className="text-sm text-foreground/85">{feature}</span>
           </div>
         ))}
@@ -52,7 +52,6 @@ export default function OpenSourcePage(): React.JSX.Element {
       <div className="max-w-5xl mx-auto">
 
         <PageHeader
-          eyebrow="Software"
           title="Open source & projects"
           lead="Research software first, then the products I build. Where my work is still waiting in a pull request, the card says so."
         />

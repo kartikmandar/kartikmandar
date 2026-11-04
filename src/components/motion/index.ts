@@ -1,4 +1,3 @@
-export { CursorLabel } from './CursorLabel'
 export { Magnetic } from './Magnetic'
 export { MaskedLines } from './MaskedLines'
 export { PageHeader } from './PageHeader'

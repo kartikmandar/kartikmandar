@@ -24,7 +24,6 @@ export interface ContentCardProps {
   /** Makes the whole card a link. Actions stay clickable above it. */
   href?: string
   external?: boolean
-  cursorLabel?: string
   /** Longer content under the summary. */
   children?: ReactNode
   /** Links or buttons along the bottom (see CardAction). */
@@ -66,18 +65,14 @@ function CardTitle({ title, as: Tag, href, external, className }: {
   )
 }
 
-/**
- * The one card on the site: projects, talks, posts and posters. Its pointer
- * spotlight runs from one shared listener (CardSpotlight), so a card ships no
- * JavaScript of its own.
- */
+/** The one card on the site: projects, talks, posts and posters. It ships no JavaScript of its own. */
 export function ContentCard({
   variant, title, titleAs = 'h3', prominent = false, eyebrow, meta, summary, tags, image, imageSizes,
-  href, external = false, cursorLabel, children, actions, className,
+  href, external = false, children, actions, className,
 }: ContentCardProps) {
   const body = (
     <>
-      {eyebrow && <p className="mono-label mb-2 text-ember">{eyebrow}</p>}
+      {eyebrow && <p className="mono-label mb-2 text-muted-foreground">{eyebrow}</p>}
       <CardTitle
         title={title}
         as={titleAs}
@@ -108,7 +103,7 @@ export function ContentCard({
 
   if (variant === 'feature') {
     return (
-      <article data-cursor={cursorLabel} className={cn('content-card group flex size-full min-h-80 flex-col justify-end p-5 md:p-6', className)}>
+      <article className={cn('content-card group flex size-full min-h-80 flex-col justify-end p-5 md:p-6', className)}>
         {image && (
           <div className="absolute inset-0 -z-10 overflow-hidden rounded-[inherit]">
             <CardImage
@@ -126,7 +121,7 @@ export function ContentCard({
 
   if (variant === 'row') {
     return (
-      <article data-cursor={cursorLabel} className={cn('content-card group grid gap-6 p-6 md:p-8', image && 'sm:grid-cols-[12rem_minmax(0,1fr)]', className)}>
+      <article className={cn('content-card group grid gap-6 p-6 md:p-8', image && 'sm:grid-cols-[12rem_minmax(0,1fr)]', className)}>
         {image && (
           <div className="relative aspect-video overflow-hidden rounded-lg sm:aspect-square">
             <CardImage
@@ -142,7 +137,7 @@ export function ContentCard({
   }
 
   return (
-    <article data-cursor={cursorLabel} className={cn('content-card group flex h-full flex-col', className)}>
+    <article className={cn('content-card group flex h-full flex-col', className)}>
       {image && (
         <div className="relative aspect-video overflow-hidden rounded-t-[inherit]">
           <CardImage

@@ -68,7 +68,6 @@ export const Card: React.FC<{
       className={className}
       title={titleToUse}
       href={`/${relationTo}/${slug}`}
-      cursorLabel="Read"
       eyebrow={showCategories && categoryNames.length > 0 ? categoryNames.join(', ') : undefined}
       image={imageSrc ? { src: imageSrc, alt: imageAlt } : undefined}
       summary={preview ? <p className="line-clamp-3">{preview}</p> : undefined}

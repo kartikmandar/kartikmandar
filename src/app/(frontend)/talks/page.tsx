@@ -51,7 +51,7 @@ export default function TalksPage(): React.JSX.Element {
       />
       <div className="max-w-5xl mx-auto">
 
-        <PageHeader eyebrow="Talks & Teaching" title="Talks & Presentations" />
+        <PageHeader title="Talks & Presentations" />
 
         <div className="space-y-6">
           {talks.map((talk) => {
@@ -62,9 +62,7 @@ export default function TalksPage(): React.JSX.Element {
             const country = talk.eventDetails?.country
             // Venues often carry the city already ("IISER Bhopal"), so don't repeat it.
             const location = [venue, city && !venue?.includes(city) ? city : null, country].filter(Boolean).join(', ')
-            const topics = talk.topics?.map(t => t.topic) || []
-            const technologies = talk.technologies?.map(t => t.technology) || []
-            const tags = [...new Set([...topics, ...technologies])]
+            // Only an upcoming talk needs a status; every past one is "completed".
             const status = talk.scheduling?.talkStatus
 
             return (
@@ -73,19 +71,18 @@ export default function TalksPage(): React.JSX.Element {
                 variant="row"
                 titleAs="h2"
                 title={talk.title}
-                eyebrow={talk.presentedBy ? `Presented by ${talk.presentedBy}` : status ? status.charAt(0).toUpperCase() + status.slice(1) : undefined}
+                eyebrow={talk.presentedBy ? `Presented by ${talk.presentedBy}` : status && status !== 'completed' ? status : undefined}
                 image={coverImage?.url ? { src: coverImage.url, alt: coverImage.alt || talk.title } : undefined}
                 meta={
                   <>
                     <p>{talk.eventDetails?.eventName}</p>
                     <p>
                       {formatDate(talk.scheduling?.talkDate)}
-                      {location && ` — ${location}`}
+                      {location && `, ${location}`}
                     </p>
                   </>
                 }
                 summary={<p className="line-clamp-3">{talk.shortDescription || talk.abstract}</p>}
-                tags={tags}
                 actions={materialsUrl ? <CardAction href={materialsUrl}>View materials</CardAction> : undefined}
               />
             )

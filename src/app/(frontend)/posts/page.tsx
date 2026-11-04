@@ -26,17 +26,19 @@ export default function Page() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <div className="container mb-16">
-        <PageHeader eyebrow="Research" title="Posts" />
+        <PageHeader title="Posts" />
       </div>
 
-      <div className="container mb-8">
-        <PageRange
-          collection="posts"
-          currentPage={posts.page}
-          limit={6}
-          totalDocs={posts.totalDocs}
-        />
-      </div>
+      {posts.totalPages > 1 && (
+        <div className="container mb-8">
+          <PageRange
+            collection="posts"
+            currentPage={posts.page}
+            limit={6}
+            totalDocs={posts.totalDocs}
+          />
+        </div>
+      )}
 
       <CollectionArchive posts={posts.docs} />
 

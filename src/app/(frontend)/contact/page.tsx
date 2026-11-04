@@ -57,7 +57,6 @@ export default async function ContactPage() {
       />
       <div className="max-w-5xl mx-auto">
         <PageHeader
-          eyebrow="Contact"
           title="Get in touch"
           lead="Email is the best way to reach me."
         />

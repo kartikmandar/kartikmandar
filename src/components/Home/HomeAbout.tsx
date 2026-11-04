@@ -8,7 +8,6 @@ export function HomeAbout() {
         <Portrait />
       </Reveal>
       <Reveal delay={0.1} className="self-center">
-        <p className="mono-label mb-5 text-ember">About</p>
         <p className="font-display text-display-md text-balance text-foreground">
           I study the early universe and build software that helps me do that.
         </p>

@@ -25,7 +25,6 @@ export default function GSoC2024FinalReport(): React.JSX.Element {
       <div className="max-w-4xl mx-auto">
         
         <PageHeader
-          eyebrow="Software"
           title="GSoC 2024 Final Report"
           lead={
             <>

@@ -330,28 +330,7 @@ html.lenis body {
   will-change: transform;
 }
 
-.cursor-label {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: var(--z-skip);
-  pointer-events: none;
-  padding: 6px 10px;
-  border-radius: 999px;
-  background: var(--ember);
-  color: var(--primary-foreground);
-  opacity: 0;
-  scale: 0.6;
-  transition: opacity 200ms ease, scale 300ms var(--ease-out-expo);
-}
-
-.cursor-label[data-visible='true'] {
-  opacity: 1;
-  scale: 1;
-}
-
-/* The shared card (components/ContentCard). The ember border and glow follow the
-   pointer through --spot-x/--spot-y, set by CardSpotlight. */
+/* The shared card (components/ContentCard): a quiet border that brightens on hover. */
 .content-card {
   position: relative;
   isolation: isolate;
@@ -362,29 +341,6 @@ html.lenis body {
 }
 .content-card:hover { border-color: oklch(1 0 0 / 0.18); }
 .content-card:has(a:focus-visible) { outline: 2px solid var(--ember); outline-offset: 2px; }
-.content-card::before,
-.content-card::after {
-  content: '';
-  position: absolute;
-  border-radius: inherit;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-.content-card::before {
-  inset: -1px;
-  z-index: 2;
-  padding: 1px;
-  background: radial-gradient(20rem circle at var(--spot-x, 50%) var(--spot-y, 50%), var(--ember), transparent 70%);
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-}
-.content-card::after {
-  inset: 0;
-  z-index: 1;
-  background: radial-gradient(18rem circle at var(--spot-x, 50%) var(--spot-y, 50%), var(--ember-soft), transparent 70%);
-}
-.content-card[data-spot]::before,
-.content-card[data-spot]::after { opacity: 1; }
 
 .skip-link {
   position: fixed;

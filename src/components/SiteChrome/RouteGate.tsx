@@ -11,6 +11,13 @@ export function HideInJourney({ children }: { children: ReactNode }) {
   return <>{children}</>
 }
 
+/** Renders its children everywhere except on the listed paths. */
+export function HideOn({ paths, children }: { paths: readonly string[]; children: ReactNode }) {
+  const pathname = usePathname()
+  if (paths.includes(pathname)) return null
+  return <>{children}</>
+}
+
 /** Static film grain over the site; the story grains in its own post stack. */
 export function SiteGrain() {
   return (

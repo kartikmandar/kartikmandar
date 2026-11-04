@@ -63,12 +63,9 @@ export function TopBar() {
         {journey ? (
           <span />
         ) : (
-          <Link href="/" className="group flex items-baseline gap-3 rounded-sm" aria-label="Kartik Mandar, home">
+          <Link href="/" className="rounded-sm" aria-label="Kartik Mandar, home">
             <span className="font-display text-[1.65rem] leading-none tracking-[-0.01em] text-foreground md:text-[1.9rem]">
               Kartik Mandar
-            </span>
-            <span className="mono-label hidden text-muted-foreground transition-colors group-hover:text-foreground lg:inline">
-              Astrophysics · Software
             </span>
           </Link>
         )}

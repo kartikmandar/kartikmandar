@@ -13,14 +13,13 @@ function Row({ project }: { project: IndexedProject }) {
   )
   const rowClass = 'group grid gap-2 border-b border-border py-5 transition-[padding] duration-300 hover:md:pl-3 md:grid-cols-2 md:gap-8'
   return project.href
-    ? <a href={project.href} target="_blank" rel="noopener noreferrer" data-cursor="Open" className={rowClass}>{body}</a>
+    ? <a href={project.href} target="_blank" rel="noopener noreferrer" className={rowClass}>{body}</a>
     : <div className={rowClass}>{body}</div>
 }
 
 export function ProjectIndex() {
   return (
     <section className="mx-auto max-w-6xl px-5 pb-24 md:px-10 md:pb-36">
-      <p className="mono-label mb-4 text-ember">Index</p>
       <h2 className="font-display text-display-lg mb-8 tracking-[-0.015em] text-foreground md:mb-12">Projects</h2>
       <div className="border-t border-border">
         {PROJECT_INDEX.map((project) => <Row key={project.name} project={project} />)}

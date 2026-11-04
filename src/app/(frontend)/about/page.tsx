@@ -115,7 +115,6 @@ export default function AboutPage(): React.JSX.Element {
       <div className="mx-auto max-w-5xl">
 
         <PageHeader
-          eyebrow="About"
           title="The rest of it"
           lead="What I do away from the desk, the journal club I started, and the coursework and certificates behind the research."
         />
@@ -144,7 +143,7 @@ export default function AboutPage(): React.JSX.Element {
           title="Astrophysics Journal Club"
           lead="I founded the journal club at IISER Bhopal so that undergraduates, researchers and astronomy enthusiasts could read new papers together and practise explaining them."
         >
-          <ItemGrid items={JOURNAL_CLUB_FORMAT} />
+          <p className="max-w-2xl text-muted-foreground">{JOURNAL_CLUB_FORMAT}</p>
           <h3 className="mono-label mb-2 mt-12 text-muted-foreground">Presentations from 2025</h3>
           <ul className="divide-y divide-border border-y border-border">
             {JOURNAL_CLUB_TALKS.map((talk) => (

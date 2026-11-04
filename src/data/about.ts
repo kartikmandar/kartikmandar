@@ -60,12 +60,8 @@ export const ABOUT_PHOTOS: AboutPhoto[] = [
   { label: 'Catania', caption: 'Catania, Italy', src: null, alt: '' },
 ]
 
-export const JOURNAL_CLUB_FORMAT: AboutItem[] = [
-  { title: 'Open discussions', description: 'Papers could come from any field of astronomy and astrophysics, and anyone could join in, share insights or ask questions.' },
-  { title: 'Regular presentations', description: 'Core members presented at least two papers a month, which kept everyone reading.' },
-  { title: 'Weekly sessions', description: 'We met every week on Friday nights.' },
-  { title: 'Guest speakers', description: 'We invited researchers to discuss their own papers and findings.' },
-]
+export const JOURNAL_CLUB_FORMAT =
+  'We met every Friday night. Papers could come from any part of astronomy and astrophysics, and anyone could join in or ask questions. Core members presented at least two papers a month, and now and then a researcher came to talk about their own work.'
 
 export const JOURNAL_CLUB_TALKS: JournalClubTalk[] = [
   { title: 'Are your visibilities Validated?', presenter: 'Kartik Mandar', date: '14 March 2025', href: '/posters' },

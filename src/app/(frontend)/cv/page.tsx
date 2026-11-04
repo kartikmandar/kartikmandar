@@ -88,7 +88,7 @@ export default function CvPage() {
       />
       <div className="cv-print mx-auto max-w-5xl">
         <div className="print:hidden">
-          <PageHeader eyebrow="About" title="CV" lead={CV_RESEARCH_INTERESTS}>
+          <PageHeader title="CV" lead={CV_RESEARCH_INTERESTS}>
             <div className="mt-6 flex flex-wrap gap-2">
               <PrintButton />
               <CardAction href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing">Academic CV</CardAction>
