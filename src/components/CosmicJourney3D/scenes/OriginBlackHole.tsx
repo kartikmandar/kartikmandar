@@ -1,9 +1,9 @@
 // src/components/CosmicJourney3D/scenes/OriginBlackHole.tsx
 'use client'
 
-// The origin black hole: the same raymarched Schwarzschild shader as the
-// prologue, as a bounded world-space impostor. Emerging from the photon-ring
-// dive, the camera sees it ahead and flies over its disk into the story. Rays
+// A raymarched Schwarzschild black hole as a bounded world-space impostor.
+// Unmounted since the black hole opening was removed (2026-11-04); Phase 4 of
+// the stellar opening reuses it as the very massive path's ending. Rays
 // start on a bounding sphere (or at the camera when inside it); escaped rays add
 // nothing so the flight's own sky shows through, captured rays cast the shadow.
 
@@ -68,7 +68,7 @@ export default function OriginBlackHole({ position, quality }: { position: [numb
     if (!mesh) return
     const f = journeyFrame
     // On screen only from the hand-off until the camera has left for beat 2.
-    const opacity = ease(f.crossfade, 0.5, 0.9)
+    const opacity = ease(f.handoff, 0.5, 0.9)
     mesh.visible = (opacity > 0.001 || f.warmup) && f.activeIndex <= 1
     if (lightRef.current) lightRef.current.intensity = 6 * opacity
     if (!mesh.visible) return

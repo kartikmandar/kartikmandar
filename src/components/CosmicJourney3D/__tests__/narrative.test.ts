@@ -1,6 +1,6 @@
 // src/components/CosmicJourney3D/__tests__/narrative.test.ts
 import { describe, it, expect } from 'vitest'
-import { NARRATIVE, HERO_PHASES, PAGE_TITLE, PAGE_SUBTITLE } from '../narrative'
+import { NARRATIVE, PAGE_TITLE, PAGE_SUBTITLE } from '../narrative'
 
 // Narrative v2, approved by the owner on 2026-10-28
 // (docs/superpowers/specs/2026-10-28-my-story-narrative-v2-draft.md).
@@ -22,7 +22,7 @@ describe('narrative v2', () => {
   })
 
   it('pins the full approved copy', () => {
-    expect({ PAGE_TITLE, PAGE_SUBTITLE, HERO_PHASES, NARRATIVE }).toMatchSnapshot()
+    expect({ PAGE_TITLE, PAGE_SUBTITLE, NARRATIVE }).toMatchSnapshot()
   })
 
   it('keeps acts contiguous and in story order', () => {

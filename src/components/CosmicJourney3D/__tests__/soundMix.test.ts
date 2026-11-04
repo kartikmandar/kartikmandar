@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { arrivalNotes, storyMix } from '../soundMix'
 
-const REST = { scrollSpeed: 0, cameraSpeed: 0, crossfade: 0 }
+const REST = { scrollSpeed: 0, cameraSpeed: 0, swell: 0 }
 
 describe('storyMix', () => {
   it('is muffled, with no whoosh or sub, at rest', () => {
@@ -28,10 +28,10 @@ describe('storyMix', () => {
     expect(fast.whooshHz).toBeGreaterThan(slow.whooshHz)
   })
 
-  it('swells the sub through the black hole hand-off, silent at both ends', () => {
-    expect(storyMix({ ...REST, crossfade: 0 }).subGain).toBe(0)
-    expect(storyMix({ ...REST, crossfade: 1 }).subGain).toBeCloseTo(0)
-    expect(storyMix({ ...REST, crossfade: 0.5 }).subGain).toBeCloseTo(0.32)
+  it('swells the sub through an event, silent at both ends', () => {
+    expect(storyMix({ ...REST, swell: 0 }).subGain).toBe(0)
+    expect(storyMix({ ...REST, swell: 1 }).subGain).toBeCloseTo(0)
+    expect(storyMix({ ...REST, swell: 0.5 }).subGain).toBeCloseTo(0.32)
   })
 })
 

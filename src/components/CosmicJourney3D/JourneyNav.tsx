@@ -80,14 +80,14 @@ export function JourneyNav() {
     if (capture) return
     const onKey = (e: KeyboardEvent) => {
       if (e.metaKey || e.ctrlKey || e.altKey || isTyping(e.target)) return
-      const inPrologue = journeyFrame.flight <= 0
+      const inOpening = journeyFrame.flight <= 0
       const i = journeyStore.getState().activeIndex
       if (e.key === 'j' || e.key === 'J' || e.key === 'ArrowRight') {
         e.preventDefault()
-        jumpTo(inPrologue ? 0 : i + 1)
+        jumpTo(inOpening ? 0 : i + 1)
       } else if (e.key === 'k' || e.key === 'K' || e.key === 'ArrowLeft') {
         e.preventDefault()
-        if (inPrologue || i === 0) scrollToProgress(0)
+        if (inOpening || i === 0) scrollToProgress(0)
         else jumpTo(i - 1)
       } else if (e.key === 'Escape') {
         jumpTo(BEATS.length - 1)

@@ -7,7 +7,6 @@ import { useEffect } from 'react'
 import { addEffect } from '@react-three/fiber'
 import { isSoundOn, NEUTRAL_MIX, playNotes, setSoundMix } from '@/lib/audioEngine'
 import { overlayView } from './overlayView'
-import { PROLOGUE_FRACTION } from './prologueScroll'
 import { BEATS } from './registry'
 import { arrivalNotes, FULL_SCROLL_SPEED, storyMix } from './soundMix'
 import { journeyFrame } from './store'
@@ -35,8 +34,8 @@ export function StorySound() {
       sinceMix += f.dt
 
       const view = overlayView({
-        inPrologue: f.raw < PROLOGUE_FRACTION && f.crossfade < 0.5,
-        heroIndex: 0,
+        inOpening: f.flight <= 0,
+        openingIndex: 0,
         activeIndex: f.activeIndex,
         local: f.local[f.activeIndex] ?? 0,
         lastIndex: BEATS.length - 1,
@@ -58,7 +57,7 @@ export function StorySound() {
       }
       if (sinceMix >= MIX_INTERVAL_SECONDS) {
         sinceMix = 0
-        setSoundMix(storyMix({ scrollSpeed, cameraSpeed: f.cameraSpeed, crossfade: f.crossfade }))
+        setSoundMix(storyMix({ scrollSpeed, cameraSpeed: f.cameraSpeed, swell: f.handoff }))
       }
     })
 

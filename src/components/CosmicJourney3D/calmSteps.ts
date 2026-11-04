@@ -1,6 +1,7 @@
-// The stops in calm mode: the prologue, each beat, then the ending.
+// The stops in calm mode: the opening, each beat, then the ending.
 import { BEATS_META } from './beatsMeta'
-import { HERO_PHASES, NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE, type EvidenceLink } from './narrative'
+import { NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE, type EvidenceLink } from './narrative'
+import { DEFAULT_STAR_PATH, openingLines } from './openingStory'
 import { slugFor } from './storyView'
 
 export interface CalmStep {
@@ -15,13 +16,24 @@ export interface CalmStep {
   ending?: boolean
 }
 
+// The opening's stills come in Phase 6 of the stellar opening; until then both steps use the stars-only loader backdrop.
+const OPENING_POSTER = '/media/my-story/loader-backdrop.webp'
+const OPENING_LINES = openingLines(DEFAULT_STAR_PATH)
+const TRUNK_SEGMENTS = new Set(['cloud', 'protostar', 'choice'])
+
 export const CALM_STEPS: CalmStep[] = [
   {
     slug: '',
-    poster: '/media/home/blackhole-poster.avif',
+    poster: OPENING_POSTER,
     eyebrow: PAGE_SUBTITLE,
     headline: PAGE_TITLE,
-    paragraphs: HERO_PHASES.map((phase) => phase.text),
+    paragraphs: OPENING_LINES.filter((line) => TRUNK_SEGMENTS.has(line.segment)).map((line) => line.text),
+  },
+  {
+    slug: 'like-the-sun',
+    poster: OPENING_POSTER,
+    headline: 'A star like the Sun',
+    paragraphs: OPENING_LINES.filter((line) => !TRUNK_SEGMENTS.has(line.segment)).map((line) => line.text),
   },
   ...NARRATIVE.map((beat) => ({
     slug: slugFor(beat.id),

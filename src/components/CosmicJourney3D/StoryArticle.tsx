@@ -3,7 +3,8 @@ import Link from 'next/link'
 import { BEATS_META } from './beatsMeta'
 import { CONTACT_EMAIL } from '@/constants/navigation'
 import { slugFor } from './storyView'
-import { HERO_PHASES, NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE } from './narrative'
+import { NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE } from './narrative'
+import { DEFAULT_STAR_PATH, openingLines } from './openingStory'
 
 // Shown when JavaScript is off. The timeline view reveals the same article through globals.css.
 const NO_SCRIPT_CSS = '.story-article{position:static;width:auto;height:auto;margin:0;clip-path:none;overflow:visible;white-space:normal}.story-article-poster{display:block}.story-loader{display:none!important}'
@@ -23,10 +24,15 @@ export function StoryArticle() {
         <header className="story-article-header">
           <h1 className="font-display text-display-xl text-foreground">{PAGE_TITLE}</h1>
           <p className="mt-4 text-lg text-muted-foreground">{PAGE_SUBTITLE}</p>
-          <div className="mt-10 space-y-3 text-lg text-foreground/85">
-            {HERO_PHASES.map((phase) => <p key={phase.phase}>{phase.text}</p>)}
-          </div>
         </header>
+
+        {/* The Sun's path, the opening's default. Phase 6 of the stellar opening adds the other paths. */}
+        <section id="timeline-opening" className="story-article-beat">
+          <h2 className="font-display text-display-md text-foreground">How a star lives and ends</h2>
+          <div className="mt-3 space-y-3 text-lg leading-relaxed text-muted-foreground">
+            {openingLines(DEFAULT_STAR_PATH).map((line) => <p key={line.text}>{line.text}</p>)}
+          </div>
+        </section>
 
         {NARRATIVE.map((beat) => (
           <section key={beat.id} id={`timeline-${slugFor(beat.id)}`} className="story-article-beat">

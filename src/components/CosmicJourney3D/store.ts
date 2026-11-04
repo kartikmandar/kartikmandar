@@ -11,16 +11,14 @@ import type { Range } from './scrollMath'
 const clamp01 = (v: number) => Math.max(0, Math.min(1, v))
 
 export interface JourneyFrame {
-  /** Raw page progress 0..1 (prologue + flight). */
+  /** Raw page progress 0..1 (opening + flight). */
   raw: number
-  /** Flight progress 0..1 (after the prologue split). */
+  /** Flight progress 0..1 (after the opening split). */
   flight: number
-  /** Prologue progress 0..1 (the supernova → black hole act). */
-  prologue: number
-  /** Prologue → flight hand-off 0..1 (the photon-ring dive band). */
-  crossfade: number
-  /** True while the prologue pass fully covers the screen (the flight can skip drawing). */
-  covered: boolean
+  /** Opening progress 0..1 (a star's life, before the hand-off band). */
+  opening: number
+  /** Opening → flight hand-off 0..1 (the remnant gives way to the night sky). */
+  handoff: number
   /** True for a few frames behind the loader: draw the flight's opening once so GPU uploads happen early. */
   warmup: boolean
   /** Shared scene clock in seconds (frozen in capture mode). */
@@ -39,7 +37,7 @@ export interface JourneyFrame {
 
 export function createJourneyFrame(beatCount: number): JourneyFrame {
   return {
-    raw: 0, flight: 0, prologue: 0, crossfade: 0, covered: true, warmup: false,
+    raw: 0, flight: 0, opening: 0, handoff: 0, warmup: false,
     clock: 0, dt: 0, activeIndex: 0, local: new Float32Array(beatCount), copyTopPx: null, cameraSpeed: 0,
   }
 }

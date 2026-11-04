@@ -56,7 +56,6 @@ export interface Beat {
 
 // Every beat has a scene in the made-of-light idiom (useBeat refs, no per-frame
 // re-render). UnbuiltBeatMarker remains only as a safety fallback.
-// The origin black hole is mounted separately (scenes/OriginBlackHole.tsx).
 const SCENES: Record<string, React.FC<BeatSceneProps>> = {
   'nao-section': Beat_Textbook,
   'comet-section': Beat_Comet,

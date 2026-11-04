@@ -24,13 +24,6 @@ export interface NarrativeBeat {
 export const PAGE_TITLE = 'A Cosmic Journey'
 export const PAGE_SUBTITLE = 'The story of a path written in the stars.'
 
-export const HERO_PHASES = [
-  { phase: 'STAR', text: 'Every story begins with a massive star.' },
-  { phase: 'SHELL', text: 'It dies in a supernova, outshining its entire galaxy.' },
-  { phase: 'BIRTH', text: 'What remains collapses into a black hole. Matter spirals in, and the disk ignites.' },
-  { phase: 'QUASAR', text: "And that's only the surface of what's really happening." },
-] as const
-
 export const NARRATIVE: readonly NarrativeBeat[] = [
   // Act I — Spark
   { id: 'nao-section', act: 'spark', eyebrow: '4th Standard', headline: 'The Spark: NAO',

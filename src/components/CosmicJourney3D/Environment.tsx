@@ -10,11 +10,16 @@ import { BlendFunction, ToneMappingMode } from 'postprocessing'
 import type { QualityTier } from './types'
 import { PALETTE } from './art/palette'
 import { getGlowTexture } from './art/materials'
-import { CoverAware } from './CoverAware'
+import { journeyFrame } from './store'
 import { NEBULA_ANCHOR, STATION_SPACING } from './beatsMeta'
 
 // Nebula field reaches a little beyond the end of the flight.
 const NEBULA_DEPTH = Math.abs(NEBULA_ANCHOR.position[2]) + 80
+
+/** The flight's fog density. */
+const FLIGHT_FOG = 0.045
+/** Fog over the opening, dense enough that the first station (26 units ahead) is fully hidden. */
+const OPENING_FOG = 0.1
 
 /** Mulberry32 seeded PRNG — deterministic, lint-safe replacement for Math.random(). */
 function mulberry32(seed: number): () => number {
@@ -31,8 +36,11 @@ function mulberry32(seed: number): () => number {
 export function Environment({ quality, halfFloat }: { quality: QualityTier; halfFloat: boolean }) {
   // The star shell travels with the camera, so it reads as infinitely far away however long the flight.
   const starsRef = useRef<THREE.Group>(null)
+  const fogRef = useRef<THREE.FogExp2>(null)
   useFrame(({ camera }) => {
     starsRef.current?.position.copy(camera.position)
+    // The first station emerges out of the fog across the hand-off band, instead of popping in.
+    if (fogRef.current) fogRef.current.density = THREE.MathUtils.lerp(OPENING_FOG, FLIGHT_FOG, journeyFrame.handoff)
   })
 
   const nebula = useMemo(() => {
@@ -61,17 +69,14 @@ export function Environment({ quality, halfFloat }: { quality: QualityTier; half
     <>
       <color attach="background" args={[PALETTE.void]} />
       {/* Distance fog matched to the background: stations emerge and dissolve instead of popping. */}
-      <fogExp2 attach="fog" args={[PALETTE.void, 0.045]} />
+      <fogExp2 ref={fogRef} attach="fog" args={[PALETTE.void, FLIGHT_FOG]} />
       <ambientLight intensity={0.15} />
-      {/* The prologue pass brings its own lensed sky; hide ours while it covers the screen. */}
-      <CoverAware>
-        <group ref={starsRef}>
-          <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
-        </group>
-        <points geometry={nebula}>
-          <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
-        </points>
-      </CoverAware>
+      <group ref={starsRef}>
+        <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
+      </group>
+      <points geometry={nebula}>
+        <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
+      </points>
       {quality !== 'mobile' && (
         <EffectComposer multisampling={0} frameBufferType={halfFloat ? THREE.HalfFloatType : THREE.UnsignedByteType}>
           <Bloom intensity={quality === 'high' ? 1.1 : 0.7} luminanceThreshold={0.85} luminanceSmoothing={0.2} mipmapBlur radius={0.7} />

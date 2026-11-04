@@ -1,7 +1,7 @@
 // src/components/CosmicJourney3D/capture.ts
 // Deterministic capture mode for before/after screenshots, posters and the home loop.
 //   ?capture=1        freeze the clock and pin the scroll progress
-//   &p=<0..1>         global page progress to hold (prologue + flight); default 0
+//   &p=<0..1>         global page progress to hold (opening + flight); default 0
 //   &t=<seconds>      frozen scene clock; default 0
 //   &dpr=<n>          fixed device pixel ratio; default 1
 //   &ui=0             hide the DOM overlay and chapter rail

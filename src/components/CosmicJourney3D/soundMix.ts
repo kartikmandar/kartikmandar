@@ -14,16 +14,20 @@ const SUB_PEAK = 0.32
 
 const clamp01 = (value: number) => Math.max(0, Math.min(1, value))
 
-export function storyMix({ scrollSpeed, cameraSpeed, crossfade }: { scrollSpeed: number; cameraSpeed: number; crossfade: number }): SoundMix {
+/**
+ * `swell` is a 0..1 event whose middle carries the sub: for now the opening's
+ * hand-off into the story. Phase 6 moves it to each path's ending (spec §10).
+ */
+export function storyMix({ scrollSpeed, cameraSpeed, swell }: { scrollSpeed: number; cameraSpeed: number; swell: number }): SoundMix {
   const scroll = clamp01(scrollSpeed)
   const camera = clamp01(cameraSpeed)
-  const dive = Math.sin(Math.PI * clamp01(crossfade)) ** 2
+  const sub = Math.sin(Math.PI * clamp01(swell)) ** 2
   return {
     // Exponential, because hearing is: each step in speed opens the sound by the same amount.
     cutoffHz: REST_CUTOFF_HZ * (MOVING_CUTOFF_HZ / REST_CUTOFF_HZ) ** scroll,
     whooshGain: WHOOSH_PEAK * camera ** 1.5,
     whooshHz: WHOOSH_LOW_HZ + (WHOOSH_HIGH_HZ - WHOOSH_LOW_HZ) * camera,
-    subGain: SUB_PEAK * dive,
+    subGain: SUB_PEAK * sub,
   }
 }
 

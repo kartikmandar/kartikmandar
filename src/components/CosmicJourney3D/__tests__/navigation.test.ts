@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { beatIndexForSlug, beatTargetProgress, JUMP_LOCAL, slugFor } from '../navigation'
 import { cumulativeRanges } from '../scrollMath'
-import { flightStart } from '../prologueScroll'
+import { flightStart } from '../openingScroll'
 import { COPY_IN, COPY_OUT } from '../overlayView'
 
 describe('deep links', () => {

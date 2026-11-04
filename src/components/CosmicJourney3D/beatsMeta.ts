@@ -3,8 +3,6 @@ import type { Anchor, BeatMeta } from './types'
 import { NARRATIVE } from './narrative'
 
 export const ORIGIN_ANCHOR: Anchor = { position: [0, 0, 12], lookAt: [0, 0, 0] }
-/** The origin black hole sits where the flight's first look points: ahead of the camera as it emerges. */
-export const ORIGIN_BLACK_HOLE: [number, number, number] = [0, 0, 0]
 
 // Anchors lay the stations along a forward-and-down corridor in Z, gently
 // alternating in X so the CatmullRom path curves. Tuned visually in later phases;

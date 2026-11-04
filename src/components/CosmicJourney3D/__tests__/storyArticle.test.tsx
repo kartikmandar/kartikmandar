@@ -1,7 +1,8 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { StoryArticle } from '../StoryArticle'
-import { HERO_PHASES, NARRATIVE, PAGE_TITLE } from '../narrative'
+import { NARRATIVE, PAGE_TITLE } from '../narrative'
+import { DEFAULT_STAR_PATH, openingLines } from '../openingStory'
 
 const html = renderToStaticMarkup(<StoryArticle />)
 const escape = (text: string) => renderToStaticMarkup(<>{text}</>)
@@ -13,9 +14,9 @@ describe('StoryArticle', () => {
     expect(html).toContain(escape(PAGE_TITLE))
   })
 
-  it('has a heading for all 31 beats plus the ending', () => {
+  it('has a heading for the opening, all 31 beats and the ending', () => {
     expect(NARRATIVE).toHaveLength(31)
-    expect(count('<h2')).toBe(32)
+    expect(count('<h2')).toBe(33)
   })
 
   it('includes every headline, body, typed phrase and evidence link', () => {
@@ -27,7 +28,7 @@ describe('StoryArticle', () => {
     }
   })
 
-  it('includes the prologue', () => {
-    for (const phase of HERO_PHASES) expect(html).toContain(escape(phase.text))
+  it("includes every line of the opening's default path", () => {
+    for (const line of openingLines(DEFAULT_STAR_PATH)) expect(html).toContain(escape(line.text))
   })
 })

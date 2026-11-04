@@ -3,7 +3,7 @@
 // and a scroll target inside its held shot, so a jump lands with the copy visible.
 import { BEATS, SCROLL_LENGTHS } from './registry'
 import { cumulativeRanges, type Range } from './scrollMath'
-import { flightFractionToGlobal } from './prologueScroll'
+import { flightFractionToGlobal } from './openingScroll'
 import { SHOT_TRAVEL } from './cameraPath'
 import { slugFor } from './storyView'
 

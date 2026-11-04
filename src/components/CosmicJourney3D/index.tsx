@@ -11,20 +11,17 @@ import { Environment } from './Environment'
 import { Overlay } from './Overlay'
 import { ChapterRail } from './ChapterRail'
 import { BEATS, TOTAL_SCROLL_VH } from './registry'
-import { ORIGIN_ANCHOR, ORIGIN_BLACK_HOLE } from './beatsMeta'
-import OriginBlackHole from './scenes/OriginBlackHole'
+import { ORIGIN_ANCHOR } from './beatsMeta'
+import { ease } from './art/anim'
 import { adaptiveDpr, DPR_START_FACTOR, readJourneyEnv, selectQuality } from './tiers'
 import { TierGovernor } from './TierGovernor'
 import { beatVisible } from './cameraPath'
 import { cumulativeRanges } from './scrollMath'
 import type { QualityTier } from './types'
 import { journeyFrame, journeyStore, writeBeatProgress } from './store'
-import { flightFractionToGlobal, splitProgress, pageScrollVh } from './prologueScroll'
+import { flightFractionToGlobal, splitProgress, pageScrollVh, OPENING_FRACTION } from './openingScroll'
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
-import { diveState } from './prologueDive'
 import { getLenis } from './scrollEngine'
-import { ProloguePass } from './ProloguePass'
-import { CoverAware } from './CoverAware'
 import { FinaleConstellation } from './FinaleConstellation'
 import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
@@ -74,7 +71,6 @@ function JourneyDriver() {
     journeyFrame.clock = capture.enabled ? capture.time : 0
     if (capture.enabled) installFrameGrabber()
     let last: number | null = null
-    const dive = diveState(0)
     return addEffect((timestamp) => {
       const dt = last === null ? 0 : Math.min((timestamp - last) / 1000, 1 / 30) // clamp protects tab-return
       last = timestamp
@@ -82,14 +78,13 @@ function JourneyDriver() {
       getLenis()?.raf(timestamp)
       const raw = progressRef.current
       // Use flightProgress (not raw) so scenes stay in lockstep with the camera
-      // and overlay, which also remap through the prologue.
+      // and overlay, which also remap through the opening.
       const split = splitProgress(raw)
       const flight = split.flightProgress
       journeyFrame.raw = raw
       journeyFrame.flight = flight
-      journeyFrame.prologue = split.prologueProgress
-      journeyFrame.crossfade = split.crossfade
-      journeyFrame.covered = diveState(split.crossfade, dive).covers
+      journeyFrame.opening = split.openingProgress
+      journeyFrame.handoff = split.handoff
       journeyFrame.dt = capture.enabled ? 0 : dt
       if (!capture.enabled) journeyFrame.clock += dt
       const active = writeBeatProgress(flight, ranges, journeyFrame.local)
@@ -100,11 +95,24 @@ function JourneyDriver() {
   return null
 }
 
+/** Warm key light for the first beats' lit materials, rising over the hand-off. Always mounted, so shader programs keep one light count. */
+function OriginLight() {
+  const light = useRef<THREE.PointLight>(null)
+  useFrame(() => {
+    if (light.current) light.current.intensity = 6 * ease(journeyFrame.handoff, 0, 0.7)
+  })
+  return <pointLight ref={light} position={[0, 0, 0]} intensity={0} color="#ffd9a0" distance={40} />
+}
+
 // Mounts every beat at its anchor; only the active beat and its neighbours are visible.
+// The beats stay hidden through the opening (except during warm-up) and appear as
+// the hand-off starts, where Environment's fog still hides them, so nothing pops in.
 function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
   const groups = useRef<(THREE.Group | null)[]>([])
+  const flight = useRef<THREE.Group>(null)
   // Per frame, not per render: a held shot hides its neighbours without a React update.
   useFrame(() => {
+    if (flight.current) flight.current.visible = journeyFrame.warmup || journeyFrame.raw >= OPENING_FRACTION
     const active = journeyFrame.activeIndex
     const local = journeyFrame.local[active] ?? 0
     groups.current.forEach((group, i) => {
@@ -114,15 +122,15 @@ function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMo
   return (
     <>
       <JourneyDriver />
-      <CoverAware>
-      <OriginBlackHole position={ORIGIN_BLACK_HOLE} quality={quality} />
+      <OriginLight />
+      <group ref={flight}>
       {BEATS.map((b, i) => (
         <group key={b.id} ref={(group) => { groups.current[i] = group }} position={b.meta.anchor.position} visible={false}>
           <b.Scene index={i} quality={quality} reducedMotion={reducedMotion} />
         </group>
       ))}
       <FinaleConstellation />
-      </CoverAware>
+      </group>
     </>
   )
 }
@@ -219,7 +227,6 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
             gl.toneMapping = THREE.AgXToneMapping
           }}
         >
-          <ProloguePass quality={quality} halfFloat={halfFloat} />
           <Environment quality={quality} halfFloat={halfFloat} />
           <CameraRig />
           <SceneHost quality={quality} reducedMotion={false} />

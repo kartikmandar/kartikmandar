@@ -4,7 +4,7 @@
 // The story's copy, typeset like film titling. Each beat's text appears only
 // once its shot has settled (the hold window of the shot schedule), revealing
 // line by line through masks (GSAP SplitText), and leaves with a short blur
-// before the camera departs. The prologue's lines cross-fade per phase.
+// before the camera departs. The opening's lines change one at a time as it scrolls.
 // React re-renders only when what is on screen changes, never per frame.
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
@@ -12,27 +12,17 @@ import { addEffect } from '@react-three/fiber'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { BEATS } from './registry'
-import { HERO_PHASES } from './narrative'
+import { DEFAULT_STAR_PATH, openingLineIndex, openingLines } from './openingStory'
 import { journeyFrame } from './store'
-import { phaseStateFromProgress } from './prologuePhase'
 import { readCapture } from './capture'
 import { overlayView, type OverlayView } from './overlayView'
-import { PROLOGUE_FRACTION } from './prologueScroll'
-import { Phase } from '@/components/QuasarBackground/engine/types'
 import { Hud } from './Hud'
 import { MagneticLink } from './MagneticLink'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(SplitText)
 
-// Phase → hero line (COLLAPSE and FLASH keep the STAR line on screen).
-const HERO_LINE: Record<Phase, number> = {
-  [Phase.STAR]: 0,
-  [Phase.COLLAPSE]: 0,
-  [Phase.FLASH]: 0,
-  [Phase.SHELL]: 1,
-  [Phase.BIRTH]: 2,
-  [Phase.QUASAR]: 3,
-}
+// The Sun's path until the visitor can choose (Phase 3).
+const OPENING_LINES = openingLines(DEFAULT_STAR_PATH)
 
 export const BEAT_HEADING_ID = 'journey-beat-heading'
 
@@ -44,17 +34,17 @@ function sameView(a: OverlayView, b: OverlayView): boolean {
 
 export function Overlay() {
   const capture = readCapture()
-  const [view, setView] = useState<OverlayView>({ kind: 'hero', index: 0, visible: true })
+  const [view, setView] = useState<OverlayView>({ kind: 'opening', index: 0, visible: true })
   const rootRef = useRef<HTMLDivElement>(null)
 
   // Watch the shared frame once per frame; commit to React only on change.
   useEffect(() => {
-    let current: OverlayView = { kind: 'hero', index: 0, visible: true }
+    let current: OverlayView = { kind: 'opening', index: 0, visible: true }
     return addEffect(() => {
       const f = journeyFrame
       const next = overlayView({
-        inPrologue: f.raw < PROLOGUE_FRACTION && f.crossfade < 0.5,
-        heroIndex: HERO_LINE[phaseStateFromProgress(f.prologue).phase],
+        inOpening: f.flight <= 0,
+        openingIndex: openingLineIndex(f.opening, f.handoff > 0, OPENING_LINES),
         activeIndex: f.activeIndex,
         local: f.local[f.activeIndex] ?? 0,
         lastIndex: BEATS.length - 1,
@@ -136,11 +126,11 @@ export function Overlay() {
     )
   }
 
-  if (view.kind === 'hero') {
+  if (view.kind === 'opening') {
     return (
-      <div style={heroWrap}>
-        <div ref={rootRef} key={`hero-${view.index}`}>
-          <h2 data-split style={heroText}>{HERO_PHASES[view.index]!.text}</h2>
+      <div style={openingWrap}>
+        <div ref={rootRef} key={`opening-${view.index}`}>
+          <h2 data-split style={openingText}>{OPENING_LINES[view.index]!.text}</h2>
         </div>
       </div>
     )
@@ -189,13 +179,13 @@ export function Overlay() {
   )
 }
 
-const heroWrap: React.CSSProperties = {
+const openingWrap: React.CSSProperties = {
   position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
   textAlign: 'center', pointerEvents: 'none', padding: '0 8vw', color: '#eef2ff', zIndex: 2,
-  // A soft pool of shade, so the line stays readable over the brightest frames of the supernova.
+  // A soft pool of shade, so the line stays readable over the brightest frames of the opening.
   background: 'radial-gradient(ellipse 62% 26% at 50% 50%, rgba(4,5,11,0.5) 0%, rgba(4,5,11,0) 100%)',
 }
-const heroText: React.CSSProperties = {
+const openingText: React.CSSProperties = {
   fontSize: 'clamp(32px, 4.4vw, 66px)', fontWeight: 400, fontFamily: 'var(--font-instrument), ui-serif, Georgia, serif', letterSpacing: '-0.01em', lineHeight: 1.08,
   // A drop-shadow filter, not text-shadow: SplitText's line masks would clip that into visible bands.
   margin: 0, maxWidth: 980, filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9)) drop-shadow(0 2px 16px rgba(0,0,0,0.9)) drop-shadow(0 0 36px rgba(0,0,0,0.65))',

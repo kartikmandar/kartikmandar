@@ -3,8 +3,8 @@ import * as THREE from 'three'
 
 /**
  * World → accretion-disk frame used by the black hole shader (disk plane is y = 0).
- * Same tilt as the prologue's raymarched black hole, so every view of the black
- * hole (prologue pass, origin impostor) shows the same composition.
+ * Same tilt as the home page's pre-rendered black hole, so the impostor
+ * (scenes/OriginBlackHole.tsx) shows the same composition.
  */
 export function diskFrame(out: THREE.Matrix3): THREE.Matrix3 {
   const tilt = new THREE.Matrix4()

@@ -1,6 +1,6 @@
 # /my-story Opening: a Star's Life Cycle, Steered by the Visitor
 
-**Status:** draft for the owner's review, 2026-11-04. Nothing is built yet. Decisions in §9 need answers before Phase 1.
+**Status:** approved by the owner on 2026-11-04 ("Approve all"): every recommendation in §9 and the copy in §8 as drafted. For decision 11 the hand-off line is line 36 ("Billions of years and many stars later, someone looked up at the sky."). Build plan: `docs/superpowers/plans/2026-11-04-stellar-opening-plan.md`.
 
 **Goal:** replace the supernova → black hole prologue with a star's life cycle. The visitor watches a cloud collapse into a protostar with a disk, jets and forming planets, chooses how much mass the star gathers, and follows that star's life and ending. Every path then settles into a quiet night sky, and the existing story starts at beat 1, "The Spark: NAO".
 

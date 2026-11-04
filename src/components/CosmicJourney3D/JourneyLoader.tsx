@@ -13,8 +13,8 @@ import { LoaderView } from './LoaderView'
 const WARMUP_FRAMES = 4
 
 /**
- * Inside the Canvas: compiles every material in the scene (all 31 beats, the
- * prologue pass and the origin impostor) before the story starts, so no beat
+ * Inside the Canvas: compiles every material in the scene (all 31 beats and
+ * the opening) before the story starts, so no beat
  * hitches on first arrival. compileAsync uses KHR_parallel_shader_compile when
  * available. Progress feeds the loader's point of light.
  */
@@ -24,17 +24,17 @@ export function Precompile() {
   const camera = useThree((s) => s.camera)
   useEffect(() => {
     let cancelled = false
-    reportLoad(0.35) // canvas live, sky cubemap baked (ProloguePass bakes during render)
+    reportLoad(0.35) // canvas live
     const raf = requestAnimationFrame(() => {
       gl.compileAsync(scene, camera)
         .catch(() => undefined) // a failed precompile only costs a first-arrival hitch
         .then(() => {
           if (cancelled) return
           reportLoad(0.85)
-          // Warm-up: draw the flight's opening (beats 1–2, origin impostor, sky) for a
-          // few frames while the loader still covers the screen. compileAsync built
-          // the programs; this uploads geometry, textures and glyphs, so the
-          // photon-ring hand-off does not hitch on first reveal.
+          // Warm-up: draw the flight's start (beats 1–2, sky) for a few frames
+          // while the loader still covers the screen. compileAsync built the
+          // programs; this uploads geometry, textures and glyphs, so the
+          // hand-off into the story does not hitch on first reveal.
           journeyFrame.warmup = true
           let frames = 0
           const tick = () => {
@@ -79,7 +79,7 @@ function markSeen(): void {
 
 /**
  * DOM overlay over the canvas: the point of light from the server first paint
- * keeps brightening with real progress, then ignites into the prologue's star.
+ * keeps brightening with real progress, then ignites and gives way to the opening.
  * Scrolling is locked until then. A first visit holds at least FIRST_VISIT_MIN_MS.
  */
 export function JourneyLoader() {

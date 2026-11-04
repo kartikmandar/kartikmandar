@@ -1,6 +1,6 @@
 // src/components/CosmicJourney3D/loader.ts
-// Real load progress for the loader-as-prologue: the point of light brightens
-// as the journey actually gets ready (canvas + sky bake, every shader compiled).
+// Real load progress for the loader: the point of light brightens as the
+// journey actually gets ready (canvas live, every shader compiled).
 import { createStore } from 'zustand'
 
 export interface LoadState {

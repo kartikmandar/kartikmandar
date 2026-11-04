@@ -2,8 +2,8 @@
 import { SHOT_TRAVEL } from './cameraPath'
 
 export interface OverlayView {
-  kind: 'hero' | 'beat' | 'end'
-  /** Hero line index, or beat index. */
+  kind: 'opening' | 'beat' | 'end'
+  /** Opening line index, or beat index. */
   index: number
   /** Whether the copy should be on screen (it animates in/out on change). */
   visible: boolean
@@ -18,14 +18,14 @@ export const END_AT = 0.9
 
 /** What the overlay shows for the current frame (pure; React commits only changes). */
 export function overlayView(input: {
-  inPrologue: boolean
-  heroIndex: number
+  inOpening: boolean
+  openingIndex: number
   activeIndex: number
   local: number
   /** Index of the final beat (the bookend); its departure becomes the end card. */
   lastIndex?: number
 }): OverlayView {
-  if (input.inPrologue) return { kind: 'hero', index: input.heroIndex, visible: true }
+  if (input.inOpening) return { kind: 'opening', index: input.openingIndex, visible: true }
   if (input.lastIndex !== undefined && input.activeIndex === input.lastIndex && input.local >= END_AT) {
     return { kind: 'end', index: input.activeIndex, visible: true }
   }
