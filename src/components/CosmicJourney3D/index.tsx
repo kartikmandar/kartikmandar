@@ -23,6 +23,7 @@ import { flightFractionToGlobal, splitProgress, pageScrollVh, OPENING_FRACTION }
 import { readCapture, CAPTURE_SETTLE_FRAMES } from './capture'
 import { getLenis } from './scrollEngine'
 import { FinaleConstellation } from './FinaleConstellation'
+import { OpeningStage } from './scenes/OpeningStage'
 import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
@@ -123,6 +124,7 @@ function SceneHost({ quality, reducedMotion }: { quality: QualityTier; reducedMo
     <>
       <JourneyDriver />
       <OriginLight />
+      <OpeningStage quality={quality} reducedMotion={reducedMotion} />
       <group ref={flight}>
       {BEATS.map((b, i) => (
         <group key={b.id} ref={(group) => { groups.current[i] = group }} position={b.meta.anchor.position} visible={false}>

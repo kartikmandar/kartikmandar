@@ -10,6 +10,7 @@ import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { readCapture } from './capture'
 import { journeyFrame } from './store'
+import { openingCameraPose } from './openingCamera'
 
 /** Damping rate (1/s) for the camera following the scroll. Lenis already smooths
  *  input, so this is light: it only removes residual steps. Frame-rate independent. */
@@ -108,6 +109,8 @@ export function CameraRig() {
     // getPoint (uniform per control point), not getPointAt (arc length): stations land exactly.
     posCurve.getPoint(cu, _pos)
     lookCurve.getPoint(cu, _look)
+    // Before the flight, the opening has its own camera; it ends exactly on the curve's first point.
+    if (f.flight <= 0) openingCameraPose(f.opening, f.handoff, _pos, _look)
     camera.position.set(_pos.x + s.x * SWAY, _pos.y - s.y * SWAY * 0.6, _pos.z)
     camera.lookAt(_look)
 
