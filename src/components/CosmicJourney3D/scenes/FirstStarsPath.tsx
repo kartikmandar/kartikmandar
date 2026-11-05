@@ -17,7 +17,8 @@ import { journeyFrame } from '../store'
 import { handoffPresence } from '../openingScroll'
 import { PALETTE, hdr, setHdr } from '../art/palette'
 import { NOISE_GLSL, useDisposable } from '../art/materials'
-import { ease } from '../art/anim'
+import { ease, limitRamp } from '../art/anim'
+import { readCapture } from '../capture'
 import { createFirstStarsPath, FIRST_STAR_CORE, firstStarsPath, pathProgress } from '../pathStage'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb, surfaceTemperature } from '../starLook'
@@ -141,6 +142,9 @@ export function FirstStarsPath({ reducedMotion }: { reducedMotion: boolean }) {
   const shellHot = useMemo(() => new THREE.Color(PALETTE.starGold), [])
   const shellCool = useMemo(() => new THREE.Color(PALETTE.hydrogen), [])
 
+  /** The debris shell's glow as drawn: NaN until the path is on screen. */
+  const blastGlow = useRef(NaN)
+
   useFrame(({ camera }) => {
     const f = journeyFrame
     const root = rootRef.current
@@ -148,10 +152,15 @@ export function FirstStarsPath({ reducedMotion }: { reducedMotion: boolean }) {
     const t = pathProgress(f.opening)
     const mass = starStore.getState().mass
     root.visible = f.warmup || (t > 0 && f.handoff < 1 && pathForMass(mass) === 'first-stars')
-    if (!root.visible) return
+    if (!root.visible) {
+      blastGlow.current = NaN
+      return
+    }
     const time = reducedMotion ? 0 : f.clock
     const s = firstStarsPath(t, time, state, surfaceTemperature(mass))
     const presence = handoffPresence(f.handoff)
+    // The explosion's light ramps over at least 300 ms, however fast the scroll.
+    const glow = blastGlow.current = limitRamp(blastGlow.current, s.blastGlow, f.warmup || readCapture().enabled ? 0 : f.dt)
 
     const body = bodyRef.current
     if (body) {
@@ -176,7 +185,7 @@ export function FirstStarsPath({ reducedMotion }: { reducedMotion: boolean }) {
     }
     const shell = shellRef.current
     if (shell && shell.parent) {
-      shell.visible = s.blast > 0 && s.blastGlow > 0.001
+      shell.visible = s.blast > 0 && glow > 0.001
       // Face the camera: undo the parents' rotation, then take the camera's.
       shell.parent.getWorldQuaternion(_parentQuat)
       shell.quaternion.copy(_parentQuat.invert()).multiply(camera.quaternion)
@@ -188,7 +197,7 @@ export function FirstStarsPath({ reducedMotion }: { reducedMotion: boolean }) {
       const uniforms = (shell.material as THREE.ShaderMaterial).uniforms
       _color.copy(shellHot).lerp(shellCool, Math.min(1, s.blast / 10))
       setHdr(uniforms.uColor!.value as THREE.Color, _color, 1.0)
-      uniforms.uBright!.value = s.blastGlow * nearCamera * presence
+      uniforms.uBright!.value = glow * nearCamera * presence
       uniforms.uTime!.value = time
     }
   })

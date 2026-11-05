@@ -1,6 +1,7 @@
-// Captures a still of every story beat from the real renderer, using this machine's GPU.
+// Captures a still of every story beat, and of the opening's stills (openingStills.ts),
+// from the real renderer, using this machine's GPU.
 // Needs `pnpm build && pnpm start` running. Usage:
-//   node scripts/capture-posters.mjs <png-dir> [beat-id ...]
+//   node scripts/capture-posters.mjs <png-dir> [--origin=http://localhost:3000] [beat-id | opening-<still> ...]
 // Then review the PNGs and run scripts/encode-posters.mjs <png-dir>.
 import { spawn } from 'node:child_process'
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs'
@@ -8,7 +9,6 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-const STORY = 'http://localhost:3000/my-story'
 const PORT = 9610
 const SCENE_TIME = 12
 const DEFAULT_LOCAL = 0.5
@@ -22,7 +22,9 @@ const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
 const args = process.argv.slice(2)
 // --flight keeps the neighbouring scenes, to see a beat as visitors do.
 const flight = args.includes('--flight')
-const [outDir, ...only] = args.filter((arg) => arg !== '--flight')
+const origin = args.find((arg) => arg.startsWith('--origin='))?.slice('--origin='.length) ?? 'http://localhost:3000'
+const STORY = `${origin}/my-story`
+const [outDir, ...only] = args.filter((arg) => !arg.startsWith('--'))
 if (!outDir) throw new Error('Usage: capture-posters.mjs <png-dir> [beat-id ...]')
 mkdirSync(outDir, { recursive: true })
 
@@ -84,11 +86,19 @@ const waitForReady = async () => {
 await send('Page.navigate', { url: `${STORY}?capture=1&ui=0` })
 await wait(1500)
 if (!(await waitForReady())) throw new Error('The story never settled')
-const targets = (await evaluate('window.__storyBeats')).filter((target) => only.length === 0 || only.includes(target.id))
+const beats = (await evaluate('window.__storyBeats')).map((target) => ({
+  id: target.id,
+  progress: target.start + (target.end - target.start) * (POSTER_LOCAL[target.id] ?? DEFAULT_LOCAL),
+  star: null,
+}))
+// The opening's stills each name their path, which ?star= selects.
+const opening = (await evaluate('window.__storyOpening')).map((still) => ({ id: `opening-${still.name}`, progress: still.progress, star: still.star }))
+const targets = [...opening, ...beats].filter((target) => only.length === 0 || only.includes(target.id))
 
 for (const target of targets) {
-  const progress = target.start + (target.end - target.start) * (POSTER_LOCAL[target.id] ?? DEFAULT_LOCAL)
-  await send('Page.navigate', { url: `${STORY}?capture=1&p=${progress.toFixed(5)}&t=${SCENE_TIME}&ui=0${flight ? '' : '&solo=1'}` })
+  const { progress } = target
+  const star = target.star ? `&star=${target.star}` : ''
+  await send('Page.navigate', { url: `${STORY}?capture=1&p=${progress.toFixed(5)}&t=${SCENE_TIME}&ui=0${flight ? '' : '&solo=1'}${star}` })
   await wait(1500)
   if (!(await waitForReady())) {
     console.log(`${target.id}: never settled`)

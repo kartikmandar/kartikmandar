@@ -17,7 +17,8 @@ import { handoffPresence } from '../openingScroll'
 import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
 import { NOISE_GLSL, useDisposable } from '../art/materials'
 import { GlowSprite } from '../art/GlowSprite'
-import { ease } from '../art/anim'
+import { ease, limitRamp } from '../art/anim'
+import { readCapture } from '../capture'
 import { createMassivePath, massivePath, pathProgress, SUPERGIANT_KELVIN } from '../pathStage'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb, surfaceTemperature } from '../starLook'
@@ -229,6 +230,9 @@ export function MassivePath({ reducedMotion }: { reducedMotion: boolean }) {
   const shockHot = useMemo(() => new THREE.Color(PALETTE.starGold), [])
   const shockCool = useMemo(() => new THREE.Color(PALETTE.ember), [])
 
+  /** The shock's glow as drawn: NaN until the path is on screen. */
+  const shockGlow = useRef(NaN)
+
   useFrame(({ camera }) => {
     const f = journeyFrame
     const root = rootRef.current
@@ -236,10 +240,15 @@ export function MassivePath({ reducedMotion }: { reducedMotion: boolean }) {
     const t = pathProgress(f.opening)
     const mass = starStore.getState().mass
     root.visible = f.warmup || (t > 0 && f.handoff < 1 && pathForMass(mass) === 'massive')
-    if (!root.visible) return
+    if (!root.visible) {
+      shockGlow.current = NaN
+      return
+    }
     const time = reducedMotion ? 0 : f.clock
     const s = massivePath(t, time, state, surfaceTemperature(mass))
     const presence = handoffPresence(f.handoff)
+    // The explosion's light ramps over at least 300 ms, however fast the scroll.
+    const glow = shockGlow.current = limitRamp(shockGlow.current, s.shockGlow, f.warmup || readCapture().enabled ? 0 : f.dt)
 
     const body = bodyRef.current
     if (body) {
@@ -263,7 +272,7 @@ export function MassivePath({ reducedMotion }: { reducedMotion: boolean }) {
       uniforms.uTime!.value = time
       // Inside the star the shock shows on the cut faces; once it is outside, the shock shell takes over.
       uniforms.uShock!.value = s.shock < s.body ? s.shock / Math.max(0.001, s.body) : 0
-      uniforms.uShockGlow!.value = s.shockGlow
+      uniforms.uShockGlow!.value = glow
       uniforms.uNeutrinos!.value = s.neutrinos
       // The envelope keeps its colour until the shock reaches it.
       blackbodyRgb(SUPERGIANT_KELVIN, _rgb)
@@ -272,7 +281,7 @@ export function MassivePath({ reducedMotion }: { reducedMotion: boolean }) {
     const shock = shockRef.current
     // Only once it is outside the star: inside, the cut faces show it.
     if (shock && shock.parent) {
-      shock.visible = s.shock > s.body * 0.9 && s.shockGlow > 0.001
+      shock.visible = s.shock > s.body * 0.9 && glow > 0.001
       // Face the camera: undo the parents' rotation, then take the camera's.
       shock.parent.getWorldQuaternion(_parentQuat)
       shock.quaternion.copy(_parentQuat.invert()).multiply(camera.quaternion)
@@ -286,7 +295,7 @@ export function MassivePath({ reducedMotion }: { reducedMotion: boolean }) {
       // Hot as it breaks out, cooling to ember as it spreads.
       _color.copy(shockHot).lerp(shockCool, Math.min(1, s.shock / 10))
       setHdr(uniforms.uColor!.value as THREE.Color, _color, 0.9)
-      uniforms.uBright!.value = s.shockGlow * nearCamera * presence
+      uniforms.uBright!.value = glow * nearCamera * presence
       uniforms.uTime!.value = time
     }
     if (neutrinoRef.current) {

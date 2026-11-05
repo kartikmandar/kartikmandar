@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react'
 import { useThree } from '@react-three/fiber'
 import { useStore } from 'zustand'
-import { FIRST_VISIT_MIN_MS, IGNITE_MS, loadStore, reportLoad, SEEN_KEY } from './loader'
+import { FIRST_VISIT_MIN_MS, REVEAL_MS, loadStore, reportLoad, SEEN_KEY } from './loader'
 import { journeyFrame } from './store'
 import { getLenis } from './scrollEngine'
 import { LoaderView } from './LoaderView'
@@ -79,18 +79,18 @@ function markSeen(): void {
 
 /**
  * DOM overlay over the canvas: the point of light from the server first paint
- * keeps brightening with real progress, then ignites and gives way to the opening.
+ * keeps brightening with real progress, then fades into the opening's cloud.
  * Scrolling is locked until then. A first visit holds at least FIRST_VISIT_MIN_MS.
  */
 export function JourneyLoader() {
   const { progress, done, linked } = useStore(loadStore)
-  const [stage, setStage] = useState<'loading' | 'igniting' | 'gone'>('loading')
+  const [stage, setStage] = useState<'loading' | 'revealing' | 'gone'>('loading')
   const [minUntil] = useState(() => performance.now() + (readSeen() ? 0 : FIRST_VISIT_MIN_MS))
 
   useEffect(() => {
     // Scroll stays locked while loading. Once done, the lock lifts while the
     // loader still covers the screen, so a deep link can position the story
-    // behind it before the ignition reveals anything.
+    // behind it before the reveal shows anything.
     const root = document.documentElement
     const previous = root.style.overflow
     const lenis = getLenis()
@@ -110,19 +110,19 @@ export function JourneyLoader() {
   useEffect(() => {
     if (!done || !linked || stage !== 'loading') return
     const wait = Math.max(0, minUntil - performance.now())
-    const ignite = window.setTimeout(() => {
+    const reveal = window.setTimeout(() => {
       markSeen()
-      setStage('igniting')
+      setStage('revealing')
     }, wait)
-    return () => window.clearTimeout(ignite)
+    return () => window.clearTimeout(reveal)
   }, [done, linked, stage, minUntil])
 
   useEffect(() => {
-    if (stage !== 'igniting') return
-    const gone = window.setTimeout(() => setStage('gone'), IGNITE_MS)
+    if (stage !== 'revealing') return
+    const gone = window.setTimeout(() => setStage('gone'), REVEAL_MS)
     return () => window.clearTimeout(gone)
   }, [stage])
 
   if (stage === 'gone') return null
-  return <LoaderView progress={progress} igniting={stage === 'igniting'} />
+  return <LoaderView progress={progress} revealing={stage === 'revealing'} />
 }

@@ -29,6 +29,7 @@ import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
 import { ContextGuard } from './ContextGuard'
 import { StorySound } from './StorySound'
+import { OPENING_STILLS, type OpeningStill } from './openingStills'
 
 const PerfProbe = lazy(() => import('./PerfProbe'))
 
@@ -39,6 +40,7 @@ function installFrameGrabber() {
   const target = window as unknown as {
     __captureFrame?: (time: number) => Promise<Blob | null>
     __storyBeats?: { id: string; start: number; end: number }[]
+    __storyOpening?: readonly OpeningStill[]
   }
   // Each beat's id and the page progress where its scroll range starts and ends, for scripts/capture-posters.mjs.
   const ranges = cumulativeRanges(BEATS.map((b) => b.meta.scrollLength))
@@ -47,6 +49,8 @@ function installFrameGrabber() {
     start: flightFractionToGlobal(ranges[i]!.start),
     end: flightFractionToGlobal(ranges[i]!.end),
   }))
+  // The opening's stills: where each is captured, and on which path.
+  target.__storyOpening = OPENING_STILLS
   target.__captureFrame = (time) => new Promise((resolve) => {
     journeyFrame.clock = time
     let frames = 0

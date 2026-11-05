@@ -4,7 +4,9 @@ import { BEATS_META } from './beatsMeta'
 import { CONTACT_EMAIL } from '@/constants/navigation'
 import { slugFor } from './storyView'
 import { NARRATIVE, PAGE_SUBTITLE, PAGE_TITLE } from './narrative'
-import { DEFAULT_STAR_PATH, openingLines } from './openingStory'
+import { DEFAULT_STAR_PATH, LIFETIME_FORMULA_LINE, OPENING_HEADING, openingLines, pathSummary, STAR_PATHS } from './openingStory'
+
+const SUN_LINES = openingLines(DEFAULT_STAR_PATH)
 
 // Shown when JavaScript is off. The timeline view reveals the same article through globals.css.
 const NO_SCRIPT_CSS = '.story-article{position:static;width:auto;height:auto;margin:0;clip-path:none;overflow:visible;white-space:normal}.story-article-poster{display:block}.story-loader{display:none!important}'
@@ -26,12 +28,22 @@ export function StoryArticle() {
           <p className="mt-4 text-lg text-muted-foreground">{PAGE_SUBTITLE}</p>
         </header>
 
-        {/* The Sun's path, the opening's default. Phase 6 of the stellar opening adds the other paths. */}
+        {/* The Sun's path in full (the opening's default), then every other star briefly, then the hand-off into the story. */}
         <section id="timeline-opening" className="story-article-beat">
-          <h2 className="font-display text-display-md text-foreground">How a star lives and ends</h2>
+          <h2 className="font-display text-display-md text-foreground">{OPENING_HEADING}</h2>
           <div className="mt-3 space-y-3 text-lg leading-relaxed text-muted-foreground">
-            {openingLines(DEFAULT_STAR_PATH).map((line) => <p key={line.text}>{line.text}</p>)}
+            {SUN_LINES.slice(0, -1).map((line) => <p key={line.text}>{line.text}</p>)}
+            <p>{LIFETIME_FORMULA_LINE}</p>
           </div>
+          <dl className="mt-6 space-y-4">
+            {STAR_PATHS.filter((path) => path.id !== DEFAULT_STAR_PATH).map((path) => (
+              <div key={path.id}>
+                <dt className="mono-label text-ember">{path.label}</dt>
+                <dd className="mt-1 text-lg leading-relaxed text-muted-foreground">{pathSummary(path.id).join(' ')}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-6 text-lg leading-relaxed text-foreground">{SUN_LINES[SUN_LINES.length - 1]!.text}</p>
         </section>
 
         {NARRATIVE.map((beat) => (

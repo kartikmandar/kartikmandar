@@ -76,7 +76,7 @@ export function JourneyNav() {
     else if (initialHash.toLowerCase() === CHOOSE_HASH) scrollToProgress(choiceTargetProgress(), { immediate: true, onComplete: focusStarChoice })
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot latch after the loader hands over
     setLinked(true)
-    reportLinked() // the loader may ignite now (the story is already in place behind it)
+    reportLinked() // the loader may reveal the story now (the story is already in place behind it)
   }, [loaded, capture, linked, initialHash])
 
   // Keep the hash in step with the beat whose copy is on screen (after any deep link is applied).

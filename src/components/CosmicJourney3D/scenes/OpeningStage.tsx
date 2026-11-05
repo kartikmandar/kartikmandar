@@ -21,7 +21,7 @@ import { handoffPresence } from '../openingScroll'
 import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
 import { getGlowTexture, NOISE_GLSL, useDisposable } from '../art/materials'
 import { GlowSprite } from '../art/GlowSprite'
-import { ease, seeded } from '../art/anim'
+import { ease, limitRamp, seeded } from '../art/anim'
 import { OPENING_CENTER } from '../openingCamera'
 import { createOpeningStage, openingStage } from '../openingStage'
 import { segmentRange, type StarPathId } from '../openingStory'
@@ -546,6 +546,9 @@ const HAZE: { position: [number, number, number]; scale: [number, number, number
   { position: [14, -2, -34], scale: [90, 34, 1] },
 ]
 
+/** The star's glow multiplier runs from about 0.2 to 2.2 at an outburst's peak: the range a full ramp covers. */
+const GLOW_SPAN = 2
+
 export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
   const counts = COUNTS[quality]
   const stage = useMemo(() => createOpeningStage(), [])
@@ -660,13 +663,20 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     uColor: { value: hdr(PALETTE.hydrogen, 1.2) },
   }), [])
 
+  /** The star's exposure as drawn (ignition, and its glow with any outburst): NaN until the opening is on screen. */
+  const exposure = useRef({ ignite: NaN, glow: NaN })
+
   useFrame(() => {
     const f = journeyFrame
     const root = rootRef.current
     if (!root) return
     // Gone once the flight starts (drawn during warm-up so its buffers upload early).
     root.visible = f.warmup || f.handoff < 1
-    if (!root.visible) return
+    if (!root.visible) {
+      exposure.current.ignite = NaN
+      exposure.current.glow = NaN
+      return
+    }
     const capture = readCapture().enabled
     const chosenMass = starStore.getState().mass
     const path = pathForMass(chosenMass)
@@ -724,7 +734,12 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       const feeding = GLOW.hot * (0.15 + 0.85 * s.heat) * (1 + (Math.min(1.4, bright) - 1) * chosen)
       const shining = path === 'brown-dwarf' ? GLOW.base : GLOW.hero * Math.min(1.3, bright) * 1.15
       const core = coreRef.current.material as THREE.SpriteMaterial
-      setHdr(core.color, _mixed, (feeding + (shining - feeding) * s.ignite) * star.glow)
+      // Ignition and the endings' outbursts ramp over at least 300 ms, however fast the scroll.
+      const rampDt = f.warmup || capture ? 0 : f.dt
+      exposure.current.ignite = limitRamp(exposure.current.ignite, s.ignite, rampDt)
+      exposure.current.glow = limitRamp(exposure.current.glow, star.glow, rampDt, GLOW_SPAN)
+      const { ignite, glow } = exposure.current
+      setHdr(core.color, _mixed, (feeding + (shining - feeding) * ignite) * glow)
       core.opacity = Math.min(1, s.collapse * 2) * presence
       const radius = drawnRadius(mass)
       // The buried protostar's glow, then the star itself, settled and smaller.
@@ -732,7 +747,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       coreRef.current.scale.set(coreSize, coreSize, 1)
       const halo = haloRef.current.material as THREE.SpriteMaterial
       setHdr(halo.color, _mixed, GLOW.base)
-      halo.opacity = (s.heat * 0.6 * (1 - 0.35 * s.clear) + 0.15 * s.ignite * (path === 'brown-dwarf' ? 0 : 1)) * star.halo * presence
+      halo.opacity = (s.heat * 0.6 * (1 - 0.35 * s.clear) + 0.15 * ignite * (path === 'brown-dwarf' ? 0 : 1)) * star.halo * presence
       const haloSize = 5 * (1 + (0.6 + 0.4 * radius - 1) * chosen)
       haloRef.current.scale.set(haloSize, haloSize, 1)
     }

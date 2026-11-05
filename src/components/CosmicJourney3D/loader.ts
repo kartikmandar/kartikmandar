@@ -8,7 +8,7 @@ export interface LoadState {
   progress: number
   /** Everything is compiled and warmed up. */
   done: boolean
-  /** Any deep link has been applied behind the loader (it may ignite now). */
+  /** Any deep link has been applied behind the loader (it may reveal the story now). */
   linked: boolean
 }
 
@@ -25,10 +25,10 @@ export function reportLoad(progress: number, done = false): void {
   loadStore.setState({ progress: Math.max(s.progress, Math.min(1, progress)), done: s.done || done, linked: s.linked })
 }
 
-/** Minimum time the loader stays up on a first visit, so the ignition reads as an opening. */
+/** Minimum time the loader stays up on a first visit, so the reveal reads as an opening. */
 export const FIRST_VISIT_MIN_MS = 1200
-/** Duration of the ignite-into-the-star transition. */
-export const IGNITE_MS = 1100
+/** Duration of the loader's point of light fading into the cloud the story opens on. */
+export const REVEAL_MS = 1100
 export const SEEN_KEY = 'journey:seen'
 
 /** Glow geometry for a progress value: one source of truth for SSR and client. */

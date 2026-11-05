@@ -117,6 +117,28 @@ export const PLANETS_LINE = 'In the disk, dust grains stick together. Pebbles be
 export const CLEARING_LINE = "The star's wind and light clear away the leftover gas. What has formed by now is all there will be."
 export const HANDOFF_LINE = 'Billions of years and many stars later, someone looked up at the sky.'
 
+/** The article's and calm mode's heading for the opening (§8, "Article and calm-mode extras"). */
+export const OPENING_HEADING = 'How a star lives and ends'
+export const LIFETIME_FORMULA_LINE = "Roughly, a star's lifetime falls with its mass to the power 2.5, so a star ten times heavier lives a few hundred times less long. The rule breaks down for the smallest and largest stars."
+
+// The article tells the Sun's path in full and every other path in one or two of
+// its own lines (§10): indices into the path's ignition line followed by its life.
+const SUMMARY_LINES: Record<StarPathId, readonly number[]> = {
+  'brown-dwarf': [0, 2],
+  'red-dwarf': [2, 4],
+  'sun': [1, 2],
+  'massive': [1, 4],
+  'very-massive': [1, 3],
+  'first-stars': [1, 3],
+}
+
+/** One or two of a path's approved lines, for the article's list of other stars. */
+export function pathSummary(id: StarPathId): string[] {
+  const path = starPath(id)
+  const lines = [path.ignition, ...path.life]
+  return SUMMARY_LINES[id].map((index) => lines[index]!)
+}
+
 export type OpeningSegment = 'cloud' | 'protostar' | 'choice' | 'planets' | 'ignition' | 'path'
 
 /** Scroll budget of the opening before the hand-off band, in vh (§5). The hand-off's 200 vh is the band itself. */

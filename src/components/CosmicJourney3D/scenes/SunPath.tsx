@@ -17,6 +17,8 @@ import { handoffPresence } from '../openingScroll'
 import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
 import { getGlowTexture, NOISE_GLSL, useDisposable } from '../art/materials'
 import { createSunPath, pathProgress, sunPath } from '../pathStage'
+import { limitRamp } from '../art/anim'
+import { readCapture } from '../capture'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb } from '../starLook'
 
@@ -127,13 +129,19 @@ export function SunPath({ reducedMotion }: { reducedMotion: boolean }) {
     return { materials, dispose: () => materials.forEach((material) => material.dispose()) }
   }, [])
 
+  /** The helium flash as drawn: NaN until the path is on screen. */
+  const flash = useRef(NaN)
+
   useFrame(() => {
     const f = journeyFrame
     const root = rootRef.current
     if (!root) return
     const t = pathProgress(f.opening)
     root.visible = f.warmup || (t > 0 && f.handoff < 1 && pathForMass(starStore.getState().mass) === 'sun')
-    if (!root.visible) return
+    if (!root.visible) {
+      flash.current = NaN
+      return
+    }
     const time = reducedMotion ? 0 : f.clock
     const s = sunPath(t, time, state)
     const presence = handoffPresence(f.handoff)
@@ -153,7 +161,9 @@ export function SunPath({ reducedMotion }: { reducedMotion: boolean }) {
       // Seen through the giant, faint: the flash happens deep inside and doesn't reach the surface.
       const material = flashRef.current.material as THREE.SpriteMaterial
       setHdr(material.color, flashColor, GLOW.hero)
-      material.opacity = 0.55 * s.flash * presence
+      // It ramps over at least 300 ms, however fast the scroll.
+      flash.current = limitRamp(flash.current, s.flash, f.warmup || readCapture().enabled ? 0 : f.dt)
+      material.opacity = 0.55 * flash.current * presence
     }
     shellRefs.current.forEach((shell, i) => {
       if (!shell) return

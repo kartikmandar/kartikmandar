@@ -23,3 +23,17 @@ export function seeded(i: number, channel: number): number {
   const n = Math.sin((i + 1) * 12.9898 + channel * 78.233) * 43758.5453
   return n - Math.floor(n)
 }
+
+/** The shortest a bright change may take (photosensitivity, stellar opening spec §10): an exposure ramp, never a flash. */
+export const EXPOSURE_RAMP_SECONDS = 0.3
+
+/**
+ * Moves `current` toward `target` by at most `span` per EXPOSURE_RAMP_SECONDS,
+ * so a brightness driven by the scroll still ramps however fast the visitor
+ * scrolls. Snaps when `current` is NaN (nothing drawn yet) or `dt` isn't positive.
+ */
+export function limitRamp(current: number, target: number, dt: number, span = 1): number {
+  if (Number.isNaN(current) || !(dt > 0)) return target
+  const step = (span * dt) / EXPOSURE_RAMP_SECONDS
+  return target > current ? Math.min(target, current + step) : Math.max(target, current - step)
+}

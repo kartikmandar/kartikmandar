@@ -8,8 +8,9 @@ import { addEffect } from '@react-three/fiber'
 import { isSoundOn, NEUTRAL_MIX, playNotes, setSoundMix } from '@/lib/audioEngine'
 import { overlayView } from './overlayView'
 import { BEATS } from './registry'
-import { arrivalNotes, FULL_SCROLL_SPEED, storyMix } from './soundMix'
+import { arrivalNotes, FULL_SCROLL_SPEED, openingSwell, storyMix } from './soundMix'
 import { journeyFrame } from './store'
+import { pathForMass, starStore } from './starChoice'
 
 const MIX_INTERVAL_SECONDS = 1 / 15
 const SPEED_SMOOTHING_PER_SECOND = 6
@@ -57,7 +58,9 @@ export function StorySound() {
       }
       if (sinceMix >= MIX_INTERVAL_SECONDS) {
         sinceMix = 0
-        setSoundMix(storyMix({ scrollSpeed, cameraSpeed: f.cameraSpeed, swell: f.handoff }))
+        // The sub swells at the star's ignition and its ending; the opening is over once the hand-off begins.
+        const event = f.handoff > 0 ? null : openingSwell(pathForMass(starStore.getState().mass), f.opening)
+        setSoundMix(storyMix({ scrollSpeed, cameraSpeed: f.cameraSpeed, swell: event?.swell ?? 0, level: event?.level ?? 0 }))
       }
     })
 
