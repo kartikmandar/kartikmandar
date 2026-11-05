@@ -39,10 +39,12 @@ describe('openingCameraPose', () => {
     expect(near).toBeLessThan(12)
   })
 
-  it('looks toward the star throughout the opening', () => {
-    for (const p of [0, 0.1, 0.3, 0.7, 1]) {
-      const { look } = pose(p, 0)
-      expect(look.distanceTo(OPENING_CENTER)).toBeLessThan(2)
+  it('keeps the star well inside the 60° view throughout the opening', () => {
+    for (let p = 0; p <= 1; p += 0.01) {
+      const { position, look } = pose(p, 0)
+      const toLook = look.clone().sub(position)
+      const toStar = OPENING_CENTER.clone().sub(position)
+      expect(THREE.MathUtils.radToDeg(toLook.angleTo(toStar))).toBeLessThan(25)
     }
   })
 })

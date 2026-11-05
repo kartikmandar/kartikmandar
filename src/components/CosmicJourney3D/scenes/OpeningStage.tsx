@@ -7,7 +7,10 @@
 // A core heats up inside a dusty cocoon, seen reddened. Gas that can't fall
 // straight in settles into a disk that shears as Kepler demands (inner orbits
 // faster), and two jets with moving knots punch cavities out of the cocoon,
-// ending in red shocks. Motion lives in the shaders; buffers are built once.
+// ending in red shocks. Then the visitor's choice of mass (O5) changes the
+// star's size, colour and feeding; dust in the disk grows into planets, giants
+// beyond the snow line, while the gas clears (O6); and the core ignites (O7),
+// taking the colour of its mass. Motion lives in the shaders; buffers are built once.
 
 import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
@@ -17,9 +20,13 @@ import { journeyFrame } from '../store'
 import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
 import { getGlowTexture, NOISE_GLSL, useDisposable } from '../art/materials'
 import { GlowSprite } from '../art/GlowSprite'
-import { seeded } from '../art/anim'
+import { ease, seeded } from '../art/anim'
 import { OPENING_CENTER } from '../openingCamera'
 import { createOpeningStage, openingStage } from '../openingStage'
+import { segmentRange, type StarPathId } from '../openingStory'
+import { pathForMass, starStore } from '../starChoice'
+import { blackbodyRgb, drawnBrightness, drawnDiskScale, drawnRadius, drawnSpin, surfaceTemperature } from '../starLook'
+import { readCapture } from '../capture'
 
 const COUNTS: Record<QualityTier, { cloud: number; octaves: number; fragments: number; disk: number; jets: number }> = {
   high: { cloud: 7, octaves: 4, fragments: 9000, disk: 14000, jets: 2400 },
@@ -44,6 +51,43 @@ const DISK_OUTER = 3.2
 const JET_LENGTH = 7
 /** Disk and jets tilt a little toward the camera: close to edge-on, as young disks are usually pictured, with leaning jets. */
 const TILT: [number, number, number] = [0.16, 0, 0.22]
+/** Up to here the protostar is any young star; from the choice on it shows the chosen mass. */
+const CHOICE = segmentRange('choice')
+
+interface PlanetSeed {
+  /** Orbit radius, in the Sun's disk units (DISK_INNER..DISK_OUTER). */
+  radius: number
+  size: number
+  phase: number
+  giant: boolean
+  tint: string
+}
+/** Worlds are drawn far larger than their orbits allow, or none would be visible at all. */
+const WORLD_SCALE = 1.35
+const rock = (radius: number, size: number, phase: number): PlanetSeed => ({ radius, size: size * WORLD_SCALE, phase, giant: false, tint: '#8f8579' })
+const giant = (radius: number, size: number, phase: number, tint: string): PlanetSeed => ({ radius, size: size * WORLD_SCALE, phase, giant: true, tint })
+/**
+ * What each path's disk makes (§3.1, line 7): rocky worlds inside the snow
+ * line and giants beyond it round the Sun and red dwarfs, a couple of small
+ * worlds round a brown dwarf, and nothing round a heavy star, whose light clears
+ * the disk first. Radii are in the Sun's disk units; the disk is drawn smaller
+ * or larger with the mass.
+ */
+const PLANETS: Record<StarPathId, { snowLine: number; worlds: PlanetSeed[] }> = {
+  'brown-dwarf': { snowLine: 0, worlds: [rock(0.8, 0.05, 1.2), rock(1.25, 0.06, 4.1)] },
+  'red-dwarf': { snowLine: 1.45, worlds: [rock(0.6, 0.05, 0.4), rock(0.88, 0.065, 2.6), rock(1.18, 0.055, 4.9), giant(1.85, 0.13, 3.3, '#c7b08e')] },
+  sun: {
+    snowLine: 1.75,
+    worlds: [
+      rock(0.62, 0.045, 0.9), rock(0.86, 0.065, 3.4), rock(1.1, 0.07, 5.6), rock(1.4, 0.05, 2.1),
+      giant(2.2, 0.2, 4.4, '#c9a77a'), giant(2.9, 0.15, 1.3, '#9fb3c4'),
+    ],
+  },
+  massive: { snowLine: 0, worlds: [] },
+  'very-massive': { snowLine: 0, worlds: [] },
+  'first-stars': { snowLine: 0, worlds: [] },
+}
+const MAX_WORLDS = Math.max(...Object.values(PLANETS).map((layout) => layout.worlds.length))
 
 // --- O1: the cloud -----------------------------------------------------------
 
@@ -257,14 +301,15 @@ const DISK_VERT = /* glsl */ `
   attribute float aSeed;
   attribute vec3 aFrom;
   uniform float uDisk;
-  uniform float uTime;
+  uniform float uClock;
   uniform float uSize;
+  uniform float uPebbles;
   varying float vRadius;
   varying float vSettled;
   varying float vSeed;
   void main() {
-    // Keplerian shear: angular speed falls as r^-1.5.
-    float angle = aPhase + uTime * 0.55 * pow(aRadius, -1.5);
+    // Keplerian shear: angular speed falls as r^-1.5. uClock runs faster round a heavier star.
+    float angle = aPhase + uClock * 0.55 * pow(aRadius, -1.5);
     float height = 0.06 * pow(aRadius, 1.25) * (aSeed * 2.0 - 1.0);
     vec3 disk = vec3(cos(angle) * aRadius, height, sin(angle) * aRadius);
     // Infalling gas: from the cocoon onto the disk, outer gas last.
@@ -274,7 +319,9 @@ const DISK_VERT = /* glsl */ `
     vSettled = settle;
     vSeed = aSeed;
     vec4 mv = modelViewMatrix * vec4(p, 1.0);
-    gl_PointSize = clamp(uSize * (0.5 + aSeed) / -mv.z, 1.0, 6.0);
+    // A few grains are dust: they grow into pebbles, drawn a little larger.
+    float dust = step(aSeed, DUST_FRACTION) * uPebbles;
+    gl_PointSize = clamp(uSize * (0.5 + aSeed + 0.7 * dust) / -mv.z, 1.0, 6.0);
     gl_Position = projectionMatrix * mv;
   }
 `
@@ -285,14 +332,28 @@ const DISK_FRAG = /* glsl */ `
   uniform float uOpacity;
   uniform float uInner;
   uniform float uOuter;
+  uniform float uFeed;
+  uniform float uPebbles;
+  uniform float uClear;
+  uniform float uInnerClear;
+  uniform float uGiants;
+  uniform vec2 uGaps;
+  uniform vec3 uDustColor;
   varying float vRadius;
   varying float vSettled;
   varying float vSeed;
   void main() {
     float a = texture2D(uMap, gl_PointCoord).a;
     float t = clamp((vRadius - uInner) / (uOuter - uInner), 0.0, 1.0);
-    // Hotter and brighter inside.
-    vec3 col = mix(uHot, uCool, sqrt(t)) * pow(1.0 - 0.85 * t, 1.5) * (0.55 + 0.45 * vSeed);
+    // Hotter and brighter inside, and brighter still the faster the star feeds.
+    vec3 gas = mix(uHot, uCool, sqrt(t)) * pow(1.0 - 0.85 * t, 1.5) * (0.55 + 0.45 * vSeed) * mix(uFeed, 1.0, t);
+    // The star's light clears the gas from the outside in; a heavy star's inner disk lasts a little longer.
+    float cleared = mix(uInnerClear, uClear, smoothstep(0.7, 1.1, vRadius));
+    // Giants open gaps along their orbits as they pull in gas.
+    float gap = uGiants * max(1.0 - smoothstep(0.0, 0.16, abs(vRadius - uGaps.x)), 1.0 - smoothstep(0.0, 0.13, abs(vRadius - uGaps.y)));
+    float dust = step(vSeed, DUST_FRACTION) * uPebbles;
+    // Once the gas is gone, some of the dust stays behind as debris.
+    vec3 col = gas * (1.0 - cleared) * (1.0 - gap) * (1.0 - dust) + uDustColor * dust * (1.0 - 0.8 * cleared);
     gl_FragColor = vec4(col * a * uOpacity * (0.25 + 0.75 * vSettled), 1.0);
   }
 `
@@ -321,6 +382,71 @@ function diskGeometry(count: number): THREE.BufferGeometry {
   geometry.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1))
   geometry.setAttribute('aFrom', new THREE.BufferAttribute(from, 3))
   geometry.boundingSphere = new THREE.Sphere(new THREE.Vector3(), ENVELOPE_RADIUS * 1.4)
+  return geometry
+}
+
+/** Share of the disk's particles drawn as dust that grows into pebbles. */
+const DUST_DEFINES = { DUST_FRACTION: '0.14' }
+
+// --- O6: planets -------------------------------------------------------------
+
+const PLANET_VERT = /* glsl */ `
+  attribute vec3 aTint;
+  attribute float aGiant;
+  varying vec3 vNormal;
+  varying vec3 vToStar;
+  varying vec3 vView;
+  varying vec3 vTint;
+  varying float vBand;
+  void main() {
+    vec3 center = instanceMatrix[3].xyz;
+    vec4 mv = modelViewMatrix * instanceMatrix * vec4(position, 1.0);
+    vNormal = normalize(normalMatrix * mat3(instanceMatrix) * normal);
+    // The star sits at the disk's centre: light falls on each world from there.
+    vToStar = normalize(normalMatrix * -center);
+    vView = normalize(-mv.xyz);
+    vTint = aTint;
+    // Giants show faint bands of cloud.
+    vBand = aGiant * sin(position.y * 13.0 + sin(position.y * 31.0) * 0.6);
+    gl_Position = projectionMatrix * mv;
+  }
+`
+const PLANET_FRAG = /* glsl */ `
+  uniform vec3 uStar;
+  uniform float uOpacity;
+  varying vec3 vNormal;
+  varying vec3 vToStar;
+  varying vec3 vView;
+  varying vec3 vTint;
+  varying float vBand;
+  void main() {
+    vec3 n = normalize(vNormal);
+    float lit = max(dot(n, normalize(vToStar)), 0.0);
+    // A hairline of cold starlight on the night side, so unlit worlds still read as round.
+    float rim = pow(1.0 - max(dot(n, normalize(vView)), 0.0), 3.0);
+    vec3 tint = vTint * (1.0 + 0.12 * vBand);
+    vec3 col = tint * (uStar * lit + 0.025) + vec3(0.6, 0.7, 0.9) * rim * 0.06;
+    gl_FragColor = vec4(col * uOpacity, 1.0);
+  }
+`
+
+function planetGeometry(): THREE.BufferGeometry {
+  const geometry = new THREE.SphereGeometry(1, 24, 16)
+  const tints = new Float32Array(MAX_WORLDS * 3)
+  const giants = new Float32Array(MAX_WORLDS)
+  geometry.setAttribute('aTint', new THREE.InstancedBufferAttribute(tints, 3))
+  geometry.setAttribute('aGiant', new THREE.InstancedBufferAttribute(giants, 1))
+  return geometry
+}
+
+function circleGeometry(segments: number): THREE.BufferGeometry {
+  const points = new Float32Array(segments * 3)
+  for (let i = 0; i < segments; i++) {
+    const angle = (i / segments) * Math.PI * 2
+    points.set([Math.cos(angle), 0, Math.sin(angle)], i * 3)
+  }
+  const geometry = new THREE.BufferGeometry()
+  geometry.setAttribute('position', new THREE.BufferAttribute(points, 3))
   return geometry
 }
 
@@ -383,9 +509,10 @@ function jetGeometry(count: number): THREE.BufferGeometry {
   return geometry
 }
 
-const pointsMaterial = (vertexShader: string, fragmentShader: string, uniforms: Record<string, THREE.IUniform>) =>
+const pointsMaterial = (vertexShader: string, fragmentShader: string, uniforms: Record<string, THREE.IUniform>, defines: Record<string, string> = {}) =>
   new THREE.ShaderMaterial({
     uniforms: { uMap: { value: getGlowTexture() }, uTime: { value: 0 }, uOpacity: { value: 1 }, ...uniforms },
+    defines,
     vertexShader,
     fragmentShader,
     transparent: true,
@@ -399,6 +526,10 @@ const uniformsOf = (object: THREE.Object3D | null) => ((object as THREE.Mesh | n
 const CORE_COOL = new THREE.Color(PALETTE.emberDeep)
 const CORE_WARM = new THREE.Color(PALETTE.ember)
 const _mixed = new THREE.Color()
+const _star = new THREE.Color()
+const _rgb = { r: 1, g: 1, b: 1 }
+const _matrix = new THREE.Matrix4()
+const _tint = new THREE.Color()
 /** Background haze, well behind the filament (stage space). */
 const HAZE: { position: [number, number, number]; scale: [number, number, number] }[] = [
   { position: [-6, 1, -30], scale: [120, 46, 1] },
@@ -419,6 +550,13 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
   const clumpRefs = useRef<(THREE.Sprite | null)[]>([])
   const shockRefs = useRef<(THREE.Sprite | null)[]>([])
   const hazeRefs = useRef<(THREE.Sprite | null)[]>([])
+  const diskGroupRef = useRef<THREE.Group>(null)
+  const planetsRef = useRef<THREE.InstancedMesh>(null)
+  const snowLineRef = useRef<THREE.LineLoop>(null)
+  // The drawn mass follows the chosen one smoothly (in log mass), so dragging the slider never jumps.
+  const logMass = useRef(Math.log10(starStore.getState().mass))
+  const diskClock = useRef(0)
+  const laidOut = useRef<StarPathId | null>(null)
   const hazeColor = useMemo(() => hdr(PALETTE.stellarBlue, 0.2), [])
 
   const cloudGeo = useDisposable(() => cloudGeometry(counts.cloud), [counts.cloud])
@@ -467,6 +605,28 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     uCool: { value: hdr(PALETTE.emberDeep, 0.5) },
     uInner: { value: DISK_INNER },
     uOuter: { value: DISK_OUTER },
+    uClock: { value: 0 },
+    uFeed: { value: 1 },
+    uPebbles: { value: 0 },
+    uClear: { value: 0 },
+    uInnerClear: { value: 0 },
+    uGiants: { value: 0 },
+    uGaps: { value: new THREE.Vector2(-1, -1) },
+    uDustColor: { value: hdr(PALETTE.starGold, 0.35) },
+  }, DUST_DEFINES), [])
+  const planetGeo = useDisposable(() => planetGeometry(), [])
+  const planetMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: { uStar: { value: new THREE.Color() }, uOpacity: { value: 1 } },
+    vertexShader: PLANET_VERT,
+    fragmentShader: PLANET_FRAG,
+  }), [])
+  const snowGeo = useDisposable(() => circleGeometry(160), [])
+  const snowMat = useDisposable(() => new THREE.LineBasicMaterial({
+    color: hdr(PALETTE.stellarBlue, 0.7),
+    transparent: true,
+    opacity: 0,
+    depthWrite: false,
+    fog: false,
   }), [])
   const jetGeo = useDisposable(() => jetGeometry(counts.jets), [counts.jets])
   const jetMat = useDisposable(() => pointsMaterial(JET_VERT, JET_FRAG, {
@@ -483,9 +643,22 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     // Gone once the flight starts (drawn during warm-up so its buffers upload early).
     root.visible = f.warmup || f.handoff < 1
     if (!root.visible) return
-    const s = openingStage(f.opening, f.handoff, stage)
+    const capture = readCapture().enabled
+    const chosenMass = starStore.getState().mass
+    const path = pathForMass(chosenMass)
+    const s = openingStage(f.opening, f.handoff, stage, path)
     const time = reducedMotion ? 0 : f.clock
     const presence = s.presence
+    // Before the choice the protostar is any young star; from the choice on it shows the chosen mass.
+    const target = Math.log10(chosenMass)
+    logMass.current = f.dt > 0 && !reducedMotion ? logMass.current + (target - logMass.current) * (1 - Math.exp(-f.dt * 5)) : target
+    const chosen = ease(f.opening, CHOICE.start, CHOICE.start + 0.02)
+    const mass = 10 ** (logMass.current * chosen)
+    const spin = drawnSpin(mass)
+    diskClock.current = capture ? time * spin : diskClock.current + (reducedMotion ? 0 : f.dt * spin)
+    const bright = drawnBrightness(mass)
+    blackbodyRgb(surfaceTemperature(mass), _rgb)
+    _star.setRGB(_rgb.r, _rgb.g, _rgb.b)
 
     const cloud = uniformsOf(cloudRef.current)
     if (cloud) {
@@ -515,19 +688,78 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       envelope.uTime!.value = time
     }
     if (coreRef.current && haloRef.current) {
-      // Deep red while it is buried, warmer as the cocoon clears.
-      _mixed.copy(CORE_COOL).lerp(CORE_WARM, s.jets)
+      // Deep red while it is buried, warmer as the cocoon clears. While it feeds it already leans
+      // toward its mass's colour; once it ignites it takes that colour fully (red to blue-white).
+      _mixed.copy(CORE_COOL).lerp(CORE_WARM, Math.max(s.jets, s.clear))
+      _mixed.lerp(_star, 0.3 * chosen + 0.7 * s.ignite)
+      // Ignition is an exposure ramp, never a flash. A brown dwarf never ignites: it starts to fade instead.
+      // Settled, it is drawn less hot than the buried protostar's glow, so its colour survives tone mapping.
+      const feeding = GLOW.hot * (0.15 + 0.85 * s.heat) * (1 + (Math.min(1.4, bright) - 1) * chosen)
+      const shining = path === 'brown-dwarf' ? GLOW.base : GLOW.hero * Math.min(1.3, bright) * 1.15
       const core = coreRef.current.material as THREE.SpriteMaterial
-      setHdr(core.color, _mixed, GLOW.hot * (0.15 + 0.85 * s.heat))
+      setHdr(core.color, _mixed, feeding + (shining - feeding) * s.ignite)
       core.opacity = Math.min(1, s.collapse * 2) * presence
+      const radius = drawnRadius(mass)
+      // The buried protostar's glow, then the star itself, settled and smaller.
+      const coreSize = 1.1 * (1 + (0.7 + 0.3 * radius - 1) * chosen) * (1 - s.ignite) + 0.75 * radius * s.ignite
+      coreRef.current.scale.set(coreSize, coreSize, 1)
       const halo = haloRef.current.material as THREE.SpriteMaterial
-      halo.opacity = s.heat * presence * 0.6
+      setHdr(halo.color, _mixed, GLOW.base)
+      halo.opacity = (s.heat * 0.6 * (1 - 0.35 * s.clear) + 0.15 * s.ignite * (path === 'brown-dwarf' ? 0 : 1)) * presence
+      const haloSize = 5 * (1 + (0.6 + 0.4 * radius - 1) * chosen)
+      haloRef.current.scale.set(haloSize, haloSize, 1)
     }
+    diskGroupRef.current?.scale.setScalar(1 + (drawnDiskScale(mass) - 1) * chosen)
     const disk = uniformsOf(diskRef.current)
+    const layout = PLANETS[path]
     if (disk) {
       disk.uDisk!.value = s.disk
-      disk.uTime!.value = time
+      disk.uClock!.value = diskClock.current
       disk.uOpacity!.value = Math.min(1, s.disk * 3) * presence
+      // A heavier star feeds faster: its inner disk burns brighter.
+      disk.uFeed!.value = 1 + (Math.min(1.8, bright) - 1) * chosen
+      disk.uPebbles!.value = s.pebbles
+      disk.uClear!.value = s.clear
+      disk.uInnerClear!.value = s.innerClear
+      disk.uGiants!.value = s.giants
+      const giants = layout.worlds.filter((world) => world.giant)
+      ;(disk.uGaps!.value as THREE.Vector2).set(giants[0]?.radius ?? -1, giants[1]?.radius ?? -1)
+    }
+    const planets = planetsRef.current
+    if (planets) {
+      if (laidOut.current !== path) {
+        // Tints change only when the path does (rarely, and never while the planets are on screen).
+        laidOut.current = path
+        const tints = planets.geometry.getAttribute('aTint') as THREE.InstancedBufferAttribute
+        const giantFlags = planets.geometry.getAttribute('aGiant') as THREE.InstancedBufferAttribute
+        layout.worlds.forEach((world, i) => {
+          _tint.set(world.tint)
+          tints.setXYZ(i, _tint.r, _tint.g, _tint.b)
+          giantFlags.setX(i, world.giant ? 1 : 0)
+        })
+        tints.needsUpdate = true
+        giantFlags.needsUpdate = true
+      }
+      planets.count = layout.worlds.length
+      planets.visible = s.growth > 0 && layout.worlds.length > 0
+      layout.worlds.forEach((world, i) => {
+        // Planetesimals grow into planets; giants grow last, as they pull in gas.
+        const grown = world.giant ? s.growth * (0.3 + 0.7 * s.giants) : s.growth
+        const angle = world.phase + diskClock.current * 0.55 * world.radius ** -1.5
+        const size = Math.max(0.0001, world.size * grown)
+        _matrix.makeScale(size, size, size).setPosition(Math.cos(angle) * world.radius, 0, Math.sin(angle) * world.radius)
+        planets.setMatrixAt(i, _matrix)
+      })
+      planets.instanceMatrix.needsUpdate = true
+      const planetUniforms = (planets.material as THREE.ShaderMaterial).uniforms
+      // Lit faintly by the young star, then fully once it shines.
+      setHdr(planetUniforms.uStar!.value as THREE.Color, _star, (0.35 + 1.4 * s.ignite) * Math.min(1.5, bright))
+      planetUniforms.uOpacity!.value = presence
+    }
+    if (snowLineRef.current) {
+      snowLineRef.current.visible = s.snowLine > 0 && layout.snowLine > 0
+      snowLineRef.current.scale.setScalar(layout.snowLine || 1)
+      ;(snowLineRef.current.material as THREE.LineBasicMaterial).opacity = 0.5 * s.snowLine * presence
     }
     const jets = uniformsOf(jetsRef.current)
     if (jets) {
@@ -570,7 +802,11 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
         <mesh ref={envelopeRef} material={envelopeMat} renderOrder={4}>
           <sphereGeometry args={[ENVELOPE_RADIUS, 48, 32]} />
         </mesh>
-        <points ref={diskRef} geometry={diskGeo} material={diskMat} frustumCulled={false} renderOrder={5} />
+        <group ref={diskGroupRef}>
+          <points ref={diskRef} geometry={diskGeo} material={diskMat} frustumCulled={false} renderOrder={5} />
+          <instancedMesh ref={planetsRef} args={[planetGeo, planetMat, MAX_WORLDS]} frustumCulled={false} visible={false} />
+          <lineLoop ref={snowLineRef} geometry={snowGeo} material={snowMat} renderOrder={5} visible={false} />
+        </group>
         <points ref={jetsRef} geometry={jetGeo} material={jetMat} frustumCulled={false} renderOrder={5} />
         {[0, 1].map((i) => (
           <GlowSprite

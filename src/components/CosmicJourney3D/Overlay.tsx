@@ -4,15 +4,18 @@
 // The story's copy, typeset like film titling. Each beat's text appears only
 // once its shot has settled (the hold window of the shot schedule), revealing
 // line by line through masks (GSAP SplitText), and leaves with a short blur
-// before the camera departs. The opening's lines change one at a time as it scrolls.
+// before the camera departs. The opening's lines change one at a time as it scrolls,
+// following the path the visitor chooses; the choice line carries the mass control.
 // React re-renders only when what is on screen changes, never per frame.
 
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { addEffect } from '@react-three/fiber'
 import { gsap } from 'gsap'
 import { SplitText } from 'gsap/SplitText'
 import { BEATS } from './registry'
-import { DEFAULT_STAR_PATH, openingLineIndex, openingLines } from './openingStory'
+import { openingLineIndex, openingLines } from './openingStory'
+import { useStarPath } from './starChoice'
+import { MassChoice } from './MassChoice'
 import { journeyFrame } from './store'
 import { readCapture } from './capture'
 import { overlayView, type OverlayView } from './overlayView'
@@ -20,9 +23,6 @@ import { Hud } from './Hud'
 import { MagneticLink } from './MagneticLink'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(SplitText)
-
-// The Sun's path until the visitor can choose (Phase 3).
-const OPENING_LINES = openingLines(DEFAULT_STAR_PATH)
 
 export const BEAT_HEADING_ID = 'journey-beat-heading'
 
@@ -36,6 +36,10 @@ export function Overlay() {
   const capture = readCapture()
   const [view, setView] = useState<OverlayView>({ kind: 'opening', index: 0, visible: true })
   const rootRef = useRef<HTMLDivElement>(null)
+  const path = useStarPath()
+  const lines = useMemo(() => openingLines(path), [path])
+  const linesRef = useRef(lines)
+  useEffect(() => { linesRef.current = lines }, [lines])
 
   // Watch the shared frame once per frame; commit to React only on change.
   useEffect(() => {
@@ -44,7 +48,7 @@ export function Overlay() {
       const f = journeyFrame
       const next = overlayView({
         inOpening: f.flight <= 0,
-        openingIndex: openingLineIndex(f.opening, f.handoff > 0, OPENING_LINES),
+        openingIndex: openingLineIndex(f.opening, f.handoff > 0, linesRef.current),
         activeIndex: f.activeIndex,
         local: f.local[f.activeIndex] ?? 0,
         lastIndex: BEATS.length - 1,
@@ -127,10 +131,14 @@ export function Overlay() {
   }
 
   if (view.kind === 'opening') {
+    // Paths differ in length below the choice; a frame can pass before the index catches up with a new path.
+    const line = lines[Math.min(view.index, lines.length - 1)]!
+    const choosing = line.segment === 'choice'
     return (
-      <div style={openingWrap}>
-        <div ref={rootRef} key={`opening-${view.index}`}>
-          <h2 data-split style={openingText}>{OPENING_LINES[view.index]!.text}</h2>
+      <div style={choosing ? { ...openingWrap, ...choiceWrap } : openingWrap}>
+        <div ref={rootRef} key={`opening-${view.index}`} style={choosing ? { width: '100%' } : undefined}>
+          <h2 data-split style={choosing ? { ...openingText, ...choiceText } : openingText}>{line.text}</h2>
+          {choosing && <div data-fade><MassChoice /></div>}
         </div>
       </div>
     )
@@ -190,6 +198,10 @@ const openingText: React.CSSProperties = {
   // A drop-shadow filter, not text-shadow: SplitText's line masks would clip that into visible bands.
   margin: 0, maxWidth: 980, filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.9)) drop-shadow(0 2px 16px rgba(0,0,0,0.9)) drop-shadow(0 0 36px rgba(0,0,0,0.65))',
 }
+// The choice sits lower and smaller than the other lines, leaving the star and its disk clear above it.
+// Never lower than the page's own corner buttons (reduce effects, sound).
+const choiceWrap: React.CSSProperties = { alignItems: 'flex-end', paddingBottom: 'max(9vh, 92px)' }
+const choiceText: React.CSSProperties = { fontSize: 'clamp(26px, 3.2vw, 46px)', margin: '0 auto' }
 const beatWrap: React.CSSProperties = {
   position: 'fixed', inset: 0, display: 'flex', alignItems: 'flex-end', justifyContent: 'center',
   pointerEvents: 'none', color: '#eef2ff', zIndex: 2,

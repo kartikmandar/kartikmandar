@@ -4,6 +4,8 @@
 // Deep links and keyboard for the journey:
 // - the URL hash follows the beat on screen (/my-story#rri-research),
 //   and loading a link with a hash flies straight to that beat after the loader;
+// - #choose does the same for the choice of mass, focusing the slider, and the
+//   hash reads #choose while the choice is on screen;
 // - J / → next beat, K / ← previous beat, Esc skips to the end; focus moves to
 //   the beat's heading so screen readers hear where they landed;
 // - a "Skip the story" link appears on keyboard focus.
@@ -13,7 +15,8 @@ import { useStore } from 'zustand'
 import { BEATS } from './registry'
 import { journeyFrame, journeyStore } from './store'
 import { scrollToProgress } from './scrollEngine'
-import { beatIndexForSlug, beatTargetProgress, slugFor } from './navigation'
+import { CHOOSE_HASH, beatIndexForSlug, beatTargetProgress, choiceOnScreen, choiceTargetProgress, slugFor } from './navigation'
+import { STAR_MASS_ID } from './MassChoice'
 import { loadStore, reportLinked } from './loader'
 import { BEAT_HEADING_ID } from './Overlay'
 import { COPY_IN, COPY_OUT } from './overlayView'
@@ -26,6 +29,17 @@ export function focusBeatHeading(): void {
   const attempt = () => {
     const heading = document.getElementById(BEAT_HEADING_ID)
     if (heading) heading.focus({ preventScroll: true })
+    else if (++tries < 60) requestAnimationFrame(attempt)
+  }
+  requestAnimationFrame(attempt)
+}
+
+/** Moves focus to the mass slider once the choice has mounted. */
+function focusStarChoice(): void {
+  let tries = 0
+  const attempt = () => {
+    const slider = document.getElementById(STAR_MASS_ID)
+    if (slider) slider.focus({ preventScroll: true })
     else if (++tries < 60) requestAnimationFrame(attempt)
   }
   requestAnimationFrame(attempt)
@@ -53,6 +67,7 @@ export function JourneyNav() {
     if (!loaded || capture || linked) return
     const index = beatIndexForSlug(initialHash)
     if (index >= 0) scrollToProgress(beatTargetProgress(index), { immediate: true, onComplete: focusBeatHeading })
+    else if (initialHash.toLowerCase() === CHOOSE_HASH) scrollToProgress(choiceTargetProgress(), { immediate: true, onComplete: focusStarChoice })
     // eslint-disable-next-line react-hooks/set-state-in-effect -- one-shot latch after the loader hands over
     setLinked(true)
     reportLinked() // the loader may ignite now (the story is already in place behind it)
@@ -66,7 +81,8 @@ export function JourneyNav() {
       const i = journeyStore.getState().activeIndex
       const local = journeyFrame.local[i] ?? 0
       const inFlight = journeyFrame.flight > 0 && local >= COPY_IN && local <= COPY_OUT
-      const hash = inFlight ? `#${slugFor(BEATS[i]!.id)}` : ''
+      const choosing = journeyFrame.flight <= 0 && choiceOnScreen(journeyFrame.opening, journeyFrame.handoff)
+      const hash = inFlight ? `#${slugFor(BEATS[i]!.id)}` : choosing ? CHOOSE_HASH : ''
       if (hash === lastHash) return
       lastHash = hash
       window.history.replaceState(window.history.state, '', `${window.location.pathname}${window.location.search}${hash}`)

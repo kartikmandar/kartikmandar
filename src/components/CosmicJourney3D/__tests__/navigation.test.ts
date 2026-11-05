@@ -32,3 +32,14 @@ describe('deep links', () => {
     expect(slugs.size).toBe(3)
   })
 })
+
+describe('#choose', () => {
+  it('lands inside the choice, with the control on screen', async () => {
+    const { choiceOnScreen, choiceTargetProgress } = await import('../navigation')
+    const { splitProgress } = await import('../openingScroll')
+    const split = splitProgress(choiceTargetProgress())
+    expect(choiceOnScreen(split.openingProgress, split.handoff)).toBe(true)
+    expect(choiceOnScreen(0, 0)).toBe(false)
+    expect(choiceOnScreen(1, 0.5)).toBe(false)
+  })
+})

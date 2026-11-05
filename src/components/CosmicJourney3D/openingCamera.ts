@@ -18,15 +18,21 @@ const CLOUD_VIEW = new THREE.Vector3(0, 6, 75)
 const CLUMPS_VIEW = new THREE.Vector3(0, 3, 34)
 const STAR_DISTANCE = 9
 const STAR_HEIGHT = 2.6
+/** Over the planets the camera rises, so the orbits open out instead of lying edge-on. */
+const PLANETS_DISTANCE = 8.2
+const PLANETS_HEIGHT = 5.4
 /** How far the close view drifts round the star (radians) while the rest of the opening plays. */
 const ORBIT = 0.5
 /** The close view looks a little below the star, so it sits above the centred copy. */
 const STAR_LOOK_DROP = 1.6
+/** Seen from higher up, the disk spreads down the screen: look further below it to keep it above the copy. */
+const PLANETS_LOOK_DROP = 3.1
 /** The hand-off passes beside the star, off its jets and disk, on the way to the origin. */
 const PASS_BY = new THREE.Vector3(5, 1.5, -4)
 
 const CLOUD = segmentRange('cloud')
 const PROTOSTAR = segmentRange('protostar')
+const PLANETS = segmentRange('planets')
 
 const _a = new THREE.Vector3()
 const _b = new THREE.Vector3()
@@ -36,9 +42,15 @@ const ORIGIN_POSITION = new THREE.Vector3(...ORIGIN_ANCHOR.position)
 const ORIGIN_LOOK = new THREE.Vector3(...(ORIGIN_ANCHOR.lookAt ?? [0, 0, 0]))
 
 /** The close view at opening progress `p` (after the protostar segment), in world space. */
+/** 0..1 how far the camera has risen over the planets. */
+const riseAt = (p: number) => ease(p, PLANETS.start, PLANETS.start + (PLANETS.end - PLANETS.start) / 3)
+
 function closeView(p: number, out: THREE.Vector3): THREE.Vector3 {
   const angle = ORBIT * ramp(p, PROTOSTAR.end, 1)
-  return out.set(Math.sin(angle) * STAR_DISTANCE, STAR_HEIGHT, Math.cos(angle) * STAR_DISTANCE).add(OPENING_CENTER)
+  const rise = riseAt(p)
+  const distance = STAR_DISTANCE + (PLANETS_DISTANCE - STAR_DISTANCE) * rise
+  const height = STAR_HEIGHT + (PLANETS_HEIGHT - STAR_HEIGHT) * rise
+  return out.set(Math.sin(angle) * distance, height, Math.cos(angle) * distance).add(OPENING_CENTER)
 }
 
 /**
@@ -57,7 +69,7 @@ export function openingCameraPose(opening: number, handoff: number, position: TH
   } else {
     closeView(p, position)
   }
-  const drop = STAR_LOOK_DROP * ease(p, PROTOSTAR.start, PROTOSTAR.end)
+  const drop = STAR_LOOK_DROP * ease(p, PROTOSTAR.start, PROTOSTAR.end) + (PLANETS_LOOK_DROP - STAR_LOOK_DROP) * riseAt(p)
   look.copy(OPENING_CENTER).setY(OPENING_CENTER.y - drop)
 
   const h = Math.max(0, Math.min(1, handoff))
