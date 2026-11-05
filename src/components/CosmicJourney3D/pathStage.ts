@@ -282,6 +282,69 @@ export function createVeryMassivePath(): VeryMassivePathState {
   return { ...createPathStar(), wind: 0, stripped: 0, vanish: 0, outburst: 0, blackHole: 0, infall: 0 }
 }
 
+// --- Red dwarf (lines 13-16) -------------------------------------------------
+
+export interface RedDwarfPathState extends PathStarState {
+  /** 0..1 the cutaway showing the whole interior churning (line 13). */
+  cutaway: number
+  /** 0..1 the predicted future on screen, drawn ghosted (line 15); back to 0 for today (line 16). */
+  ghost: number
+  /** 0..1 within the prediction: heating up into a blue dwarf. */
+  heat: number
+  /** 0..1 within the prediction: shrinking into a helium white dwarf. */
+  shrink: number
+}
+
+const RD_LINES = 4
+const rLine = (k: number) => k / RD_LINES
+const RL = 1 / RD_LINES
+
+/** The red dwarf's surface radius, in the disk units it is drawn in (its disk is drawn smaller, about 0.77). */
+export const RED_DWARF_RADIUS = 0.42
+
+/**
+ * A red dwarf's life and predicted ending at path progress `t` (0..1). Its end
+ * is a model prediction (Laughlin et al. 1997): none has died yet, so it is
+ * drawn ghosted, then the scene returns to the star as it is today.
+ */
+export function redDwarfPath(t: number, _time: number, out: RedDwarfPathState, mainSequenceKelvin = 3100): RedDwarfPathState {
+  const p = Math.max(0, Math.min(1, t))
+  // Line 13: a small, cool star, cut open: convection churns all the way to the centre.
+  out.cutaway = ease(p, 0.15 * RL, 0.4 * RL) * (1 - ease(p, rLine(1) - 0.1 * RL, rLine(1) + 0.15 * RL))
+  // Line 15: the prediction, ghosted: it heats up into a blue dwarf, then shrinks into a helium white dwarf.
+  out.ghost = ease(p, rLine(2), rLine(2) + 0.12 * RL) * (1 - ease(p, rLine(3) + 0.1 * RL, rLine(3) + 0.45 * RL))
+  out.heat = ease(p, rLine(2) + 0.1 * RL, rLine(2) + 0.5 * RL)
+  out.shrink = ease(p, rLine(2) + 0.5 * RL, rLine(2) + 0.9 * RL)
+
+  const future = lerp(lerp(mainSequenceKelvin, 6500, out.heat), 12000, out.shrink)
+  out.temperature = lerp(mainSequenceKelvin, future, out.ghost)
+  const futureRadius = lerp(RED_DWARF_RADIUS * 0.85, 0.07, out.shrink)
+  out.body = lerp(RED_DWARF_RADIUS, futureRadius, out.ghost)
+  out.bodyOpacity = ease(p, 0, 0.12 * RL)
+  // The point of light becomes a soft glow round the drawn surface.
+  out.glowSize = lerp(1, (2.2 * out.body) / 0.75, out.bodyOpacity)
+  out.glow = lerp(1, 0.2, out.bodyOpacity) * (1 + 0.8 * out.ghost * out.shrink)
+  // The halo dims for the prediction, so a white dwarf the size of the Earth stays a point, not a blur.
+  out.halo = lerp(1, 0.45, out.bodyOpacity) * (1 - 0.85 * out.ghost)
+  out.engulf = 0
+  out.orbitScale = 1
+  out.debris = 1
+  return out
+}
+
+export function createRedDwarfPath(): RedDwarfPathState {
+  return { ...createPathStar(), cutaway: 0, ghost: 0, heat: 0, shrink: 0 }
+}
+
+/**
+ * How far the camera closes in on the star (0..1) for `path` at path progress `t`:
+ * a red dwarf is small, so the camera moves in for its cutaway, then back out.
+ */
+export function pathCameraZoom(path: StarPathId, t: number): number {
+  if (path !== 'red-dwarf') return 0
+  return ease(t, 0, 0.5 * RL) * (1 - ease(t, rLine(1) + 0.1 * RL, rLine(1) + 0.6 * RL))
+}
+
 // --- Every path ---------------------------------------------------------------
 
 /** Each drawn path's own state object, so every frame fills them without allocating. */
@@ -289,16 +352,18 @@ export interface PathStates {
   sun: SunPathState
   massive: MassivePathState
   veryMassive: VeryMassivePathState
+  redDwarf: RedDwarfPathState
 }
 
 export function createPathStates(): PathStates {
-  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath() }
+  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath(), redDwarf: createRedDwarfPath() }
 }
 
 /** The star's state for `path` at path progress `t`. Paths not yet drawn hold the steady main-sequence star. */
 export function pathStar(path: StarPathId, t: number, time: number, mainSequenceKelvin: number, states: PathStates): PathStarState {
   if (path === 'sun') return sunPath(t, time, states.sun, mainSequenceKelvin)
   if (path === 'massive') return massivePath(t, time, states.massive, mainSequenceKelvin)
+  if (path === 'red-dwarf') return redDwarfPath(t, time, states.redDwarf, mainSequenceKelvin)
   if (path === 'very-massive') return veryMassivePath(t, time, states.veryMassive, mainSequenceKelvin)
   return steadyStar(mainSequenceKelvin, states.sun)
 }

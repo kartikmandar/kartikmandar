@@ -10,7 +10,9 @@ import { SCROLL_LENGTHS, BEATS } from './registry'
 import { ORIGIN_ANCHOR, NEBULA_ANCHOR } from './beatsMeta'
 import { readCapture } from './capture'
 import { journeyFrame } from './store'
-import { openingCameraPose } from './openingCamera'
+import { OPENING_CENTER, openingCameraPose } from './openingCamera'
+import { pathCameraZoom, pathProgress } from './pathStage'
+import { pathForMass, starStore } from './starChoice'
 
 /** Damping rate (1/s) for the camera following the scroll. Lenis already smooths
  *  input, so this is light: it only removes residual steps. Frame-rate independent. */
@@ -28,6 +30,9 @@ const FRAME_LAMBDA = 3
 // Scratch (no allocation per frame).
 const _pos = new THREE.Vector3()
 const _look = new THREE.Vector3()
+const _toStar = new THREE.Vector3()
+/** At full zoom, how much of the way to the star the camera moves. */
+const PATH_ZOOM = 0.55
 
 export function CameraRig() {
   const ranges = useMemo(() => cumulativeRanges(SCROLL_LENGTHS), [])
@@ -110,7 +115,16 @@ export function CameraRig() {
     posCurve.getPoint(cu, _pos)
     lookCurve.getPoint(cu, _look)
     // Before the flight, the opening has its own camera; it ends exactly on the curve's first point.
-    if (f.flight <= 0) openingCameraPose(f.opening, f.handoff, _pos, _look)
+    if (f.flight <= 0) {
+      openingCameraPose(f.opening, f.handoff, _pos, _look)
+      // Some paths close in on a small star: move along the line to it, so it keeps its place on screen and grows.
+      const zoom = pathCameraZoom(pathForMass(starStore.getState().mass), pathProgress(f.opening))
+      if (zoom > 0) {
+        _toStar.copy(OPENING_CENTER).sub(_pos).multiplyScalar(PATH_ZOOM * zoom)
+        _pos.add(_toStar)
+        _look.add(_toStar)
+      }
+    }
     camera.position.set(_pos.x + s.x * SWAY, _pos.y - s.y * SWAY * 0.6, _pos.z)
     camera.lookAt(_look)
 

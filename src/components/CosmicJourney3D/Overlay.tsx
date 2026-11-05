@@ -16,6 +16,7 @@ import { BEATS } from './registry'
 import { openingLineIndex, openingLines } from './openingStory'
 import { useStarPath } from './starChoice'
 import { MassChoice } from './MassChoice'
+import { LifetimeTimeline } from './LifetimeTimeline'
 import { journeyFrame } from './store'
 import { readCapture } from './capture'
 import { overlayView, type OverlayView } from './overlayView'
@@ -134,11 +135,14 @@ export function Overlay() {
     // Paths differ in length below the choice; a frame can pass before the index catches up with a new path.
     const line = lines[Math.min(view.index, lines.length - 1)]!
     const choosing = line.segment === 'choice'
+    // Lines that carry something under them sit lower, like the choice, leaving the star clear above.
+    const lowered = choosing || line.aside !== undefined
     return (
-      <div style={choosing ? { ...openingWrap, ...choiceWrap } : openingWrap}>
-        <div ref={rootRef} key={`opening-${view.index}`} style={choosing ? { width: '100%' } : undefined}>
-          <h2 data-split style={choosing ? { ...openingText, ...choiceText } : openingText}>{line.text}</h2>
+      <div style={lowered ? { ...openingWrap, ...choiceWrap } : openingWrap}>
+        <div ref={rootRef} key={`opening-${view.index}`} style={lowered ? { width: '100%' } : undefined}>
+          <h2 data-split style={lowered ? { ...openingText, ...choiceText } : openingText}>{line.text}</h2>
           {choosing && <div data-fade><MassChoice /></div>}
+          {line.aside === 'lifetime' && <div data-fade><LifetimeTimeline /></div>}
         </div>
       </div>
     )

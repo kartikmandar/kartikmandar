@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
+  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
   SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
 } from '../pathStage'
 
@@ -76,8 +76,8 @@ describe("the Sun's path", () => {
 
 describe('paths not drawn yet', () => {
   it('hold the steady star', () => {
-    const state = pathStar('red-dwarf', 0.5, 0, 3100, createPathStates())
-    expect(state).toMatchObject({ temperature: 3100, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
+    const state = pathStar('brown-dwarf', 0.5, 0, 2800, createPathStates())
+    expect(state).toMatchObject({ temperature: 2800, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
   })
 })
 
@@ -161,5 +161,37 @@ describe('the very massive path', () => {
       expect(Math.abs(vm(t).glow - last)).toBeLessThan(0.05)
       last = vm(t).glow
     }
+  })
+})
+
+describe('the red dwarf path', () => {
+  const rd = (t: number) => ({ ...redDwarfPath(t, 0, createRedDwarfPath()) })
+  const at = (k: number, within = 0.5) => (k + within) / 4
+
+  it('shows the small star, cut open, during line 13, and closed again by line 14', () => {
+    expect(rd(at(0)).cutaway).toBe(1)
+    expect(rd(at(0)).body).toBe(RED_DWARF_RADIUS)
+    expect(rd(at(1)).cutaway).toBe(0)
+  })
+
+  it('stays a red dwarf through line 14: trillions of years, unchanged', () => {
+    expect(rd(at(1))).toMatchObject({ temperature: 3100, body: RED_DWARF_RADIUS, ghost: 0 })
+  })
+
+  it('shows the prediction ghosted in line 15: hotter, then a tiny white dwarf', () => {
+    const late = rd(at(2, 0.95))
+    expect(late.ghost).toBe(1)
+    expect(late.temperature).toBeGreaterThan(10000)
+    expect(late.body).toBeLessThan(0.1)
+  })
+
+  it('returns to the red dwarf as it is today in line 16: none has done this yet', () => {
+    expect(rd(1)).toMatchObject({ temperature: 3100, body: RED_DWARF_RADIUS, ghost: 0 })
+  })
+
+  it('closes the camera in only for the red dwarf, and only around the cutaway', () => {
+    expect(pathCameraZoom('red-dwarf', at(0))).toBe(1)
+    expect(pathCameraZoom('red-dwarf', at(2))).toBe(0)
+    expect(pathCameraZoom('sun', at(0))).toBe(0)
   })
 })

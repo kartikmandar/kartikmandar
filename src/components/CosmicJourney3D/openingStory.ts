@@ -17,6 +17,8 @@ export interface StarPath {
   ignition: string
   /** The path's life and ending. */
   life: string[]
+  /** Which `life` line carries a timeline of the star's life against the Universe's age so far, if any. */
+  lifetimeLine?: number
 }
 
 const PLANETS_GIANTS = 'Beyond the snow line, ice helps cores grow big enough to pull in gas. Giants form there.'
@@ -38,6 +40,7 @@ export const STAR_PATHS: readonly StarPath[] = [
   {
     id: 'red-dwarf', label: 'Red dwarf', mass: 0.15,
     planets: PLANETS_GIANTS,
+    lifetimeLine: 1,
     ignition: 'The core reaches a few million kelvin, just enough. Hydrogen fuses into helium, and the star settles onto the main sequence.',
     life: [
       'A small, cool red dwarf. Its whole interior churns, so it uses almost all of its hydrogen.',
@@ -129,6 +132,8 @@ export const OPENING_SEGMENTS: readonly { id: OpeningSegment; vh: number }[] = [
 export interface OpeningLine {
   segment: OpeningSegment | 'handoff'
   text: string
+  /** Shown under the line: the star's lifetime against the age of the Universe. */
+  aside?: 'lifetime'
 }
 
 /** Every line of the opening for one path, in order, ending with the hand-off line. */
@@ -144,7 +149,7 @@ export function openingLines(id: StarPathId): OpeningLine[] {
     { segment: 'planets', text: path.planets },
     { segment: 'planets', text: CLEARING_LINE },
     { segment: 'ignition', text: path.ignition },
-    ...path.life.map((text) => ({ segment: 'path' as const, text })),
+    ...path.life.map((text, i): OpeningLine => (i === path.lifetimeLine ? { segment: 'path', text, aside: 'lifetime' } : { segment: 'path', text })),
     { segment: 'handoff', text: HANDOFF_LINE },
   ]
 }
