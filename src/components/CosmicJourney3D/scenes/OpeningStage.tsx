@@ -32,6 +32,7 @@ import { SunPath } from './SunPath'
 import { MassivePath } from './MassivePath'
 import { VeryMassivePath } from './VeryMassivePath'
 import { RedDwarfPath } from './RedDwarfPath'
+import { BrownDwarfPath } from './BrownDwarfPath'
 import OriginBlackHole, { type BlackHoleLook } from './OriginBlackHole'
 import { createVeryMassivePath, veryMassivePath } from '../pathStage'
 
@@ -839,6 +840,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
           <MassivePath reducedMotion={reducedMotion} />
           <VeryMassivePath quality={quality} reducedMotion={reducedMotion} />
           <RedDwarfPath reducedMotion={reducedMotion} />
+          <BrownDwarfPath reducedMotion={reducedMotion} />
         </group>
         <points ref={jetsRef} geometry={jetGeo} material={jetMat} frustumCulled={false} renderOrder={5} />
         {[0, 1].map((i) => (

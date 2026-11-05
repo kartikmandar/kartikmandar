@@ -338,11 +338,63 @@ export function createRedDwarfPath(): RedDwarfPathState {
 
 /**
  * How far the camera closes in on the star (0..1) for `path` at path progress `t`:
- * a red dwarf is small, so the camera moves in for its cutaway, then back out.
+ * a red dwarf is small, so the camera moves in for its cutaway, then back out;
+ * a brown dwarf is smaller, so it stays close for most of its path.
  */
 export function pathCameraZoom(path: StarPathId, t: number): number {
+  // A brown dwarf is smaller still: the camera moves in and stays while it cools, then backs out for the ending.
+  if (path === 'brown-dwarf') return ease(t, 0, 0.4 * BL) * (1 - ease(t, bLine(1) + 0.45 * BL, bLine(1) + 0.9 * BL))
   if (path !== 'red-dwarf') return 0
   return ease(t, 0, 0.5 * RL) * (1 - ease(t, rLine(1) + 0.1 * RL, rLine(1) + 0.6 * RL))
+}
+
+// --- Brown dwarf (lines 11-12) -----------------------------------------------
+
+export interface BrownDwarfPathState extends PathStarState {
+  /** 0..1 deuterium burning in the core: a faint inner glow (line 11). */
+  deuterium: number
+  /** 0..1 how far it has cooled, from a young L dwarf toward a dark Y dwarf (lines 11-12). */
+  cooling: number
+}
+
+const BD_LINES = 2
+const bLine = (k: number) => k / BD_LINES
+const BL = 1 / BD_LINES
+
+/** The brown dwarf's radius, in the disk units it is drawn in: about Jupiter's size, so drawn small, close to a red dwarf's. */
+export const BROWN_DWARF_RADIUS = 0.32
+/** Where its cooling ends on screen (K): far below where its light is visible, so drawn nearly black. */
+export const BROWN_DWARF_COLD_KELVIN = 600
+
+/**
+ * A brown dwarf's life at path progress `t` (0..1). It never ignites: it burns
+ * deuterium for a while (millions of years at this mass; Spiegel et al. 2011),
+ * then cools and dims for good, shrinking a little as it goes (Burrows et al. 2001).
+ */
+export function brownDwarfPath(t: number, _time: number, out: BrownDwarfPathState, youngKelvin = 2800): BrownDwarfPathState {
+  const p = Math.max(0, Math.min(1, t))
+  // Line 11: deuterium burns for a while, then only leftover heat is left.
+  out.deuterium = ease(p, 0.1 * BL, 0.35 * BL) * (1 - ease(p, 0.6 * BL, 0.95 * BL))
+  // Lines 11-12: cooling starts once the deuterium is spent and never stops.
+  out.cooling = ease(p, 0.75 * BL, 1)
+
+  // Through the L, T and Y types: about 2,000 K, then 1,300 K, then 600 K and below.
+  out.temperature = lerp(youngKelvin, BROWN_DWARF_COLD_KELVIN, out.cooling)
+  out.body = BROWN_DWARF_RADIUS * (1 - 0.12 * out.cooling)
+  out.bodyOpacity = ease(p, 0, 0.12 * BL)
+  // The point of light becomes a soft glow round the drawn surface, never bright, and fades as it cools.
+  out.glowSize = lerp(1, (2 * out.body) / 0.75, out.bodyOpacity)
+  out.glow = lerp(1, 0.18, out.bodyOpacity) * (1 + 0.5 * out.deuterium) * (1 - 0.9 * out.cooling)
+  out.halo = lerp(1, 0.25, out.bodyOpacity) * (1 - 0.95 * out.cooling)
+  out.engulf = 0
+  out.orbitScale = 1
+  // What dust was left drifts away over the first few million years.
+  out.debris = 1 - ease(p, 0.4 * BL, bLine(1) + 0.3 * BL)
+  return out
+}
+
+export function createBrownDwarfPath(): BrownDwarfPathState {
+  return { ...createPathStar(), deuterium: 0, cooling: 0 }
 }
 
 // --- Every path ---------------------------------------------------------------
@@ -353,10 +405,11 @@ export interface PathStates {
   massive: MassivePathState
   veryMassive: VeryMassivePathState
   redDwarf: RedDwarfPathState
+  brownDwarf: BrownDwarfPathState
 }
 
 export function createPathStates(): PathStates {
-  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath(), redDwarf: createRedDwarfPath() }
+  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath(), redDwarf: createRedDwarfPath(), brownDwarf: createBrownDwarfPath() }
 }
 
 /** The star's state for `path` at path progress `t`. Paths not yet drawn hold the steady main-sequence star. */
@@ -365,5 +418,6 @@ export function pathStar(path: StarPathId, t: number, time: number, mainSequence
   if (path === 'massive') return massivePath(t, time, states.massive, mainSequenceKelvin)
   if (path === 'red-dwarf') return redDwarfPath(t, time, states.redDwarf, mainSequenceKelvin)
   if (path === 'very-massive') return veryMassivePath(t, time, states.veryMassive, mainSequenceKelvin)
+  if (path === 'brown-dwarf') return brownDwarfPath(t, time, states.brownDwarf, mainSequenceKelvin)
   return steadyStar(mainSequenceKelvin, states.sun)
 }

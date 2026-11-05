@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
+  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, createBrownDwarfPath, brownDwarfPath, BROWN_DWARF_RADIUS, BROWN_DWARF_COLD_KELVIN, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
   SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
 } from '../pathStage'
 
@@ -76,7 +76,7 @@ describe("the Sun's path", () => {
 
 describe('paths not drawn yet', () => {
   it('hold the steady star', () => {
-    const state = pathStar('brown-dwarf', 0.5, 0, 2800, createPathStates())
+    const state = pathStar('first-stars', 0.5, 0, 2800, createPathStates())
     expect(state).toMatchObject({ temperature: 2800, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
   })
 })
@@ -193,5 +193,45 @@ describe('the red dwarf path', () => {
     expect(pathCameraZoom('red-dwarf', at(0))).toBe(1)
     expect(pathCameraZoom('red-dwarf', at(2))).toBe(0)
     expect(pathCameraZoom('sun', at(0))).toBe(0)
+  })
+})
+
+describe('the brown dwarf path', () => {
+  const bd = (t: number) => ({ ...brownDwarfPath(t, 0, createBrownDwarfPath()) })
+  const at = (k: number, within = 0.5) => (k + within) / 2
+
+  it('starts as the faint point the stalled ignition left', () => {
+    expect(bd(0)).toMatchObject({ temperature: 2800, glow: 1, body: BROWN_DWARF_RADIUS, bodyOpacity: 0, deuterium: 0 })
+  })
+
+  it('burns deuterium during line 11, before it starts to cool', () => {
+    const burning = bd(at(0, 0.45))
+    expect(burning.deuterium).toBe(1)
+    expect(burning.cooling).toBe(0)
+    expect(burning.temperature).toBe(2800)
+  })
+
+  it('glows only with leftover heat once the deuterium is spent', () => {
+    expect(bd(at(1, 0)).deuterium).toBe(0)
+    expect(bd(at(1, 0)).cooling).toBeGreaterThan(0)
+  })
+
+  it('cools, dims and shrinks a little through line 12, to nearly black', () => {
+    const end = bd(1)
+    expect(end.temperature).toBe(BROWN_DWARF_COLD_KELVIN)
+    expect(end.glow).toBeLessThan(0.03)
+    expect(end.body).toBeLessThan(BROWN_DWARF_RADIUS)
+    expect(end.body).toBeGreaterThan(0.25)
+    for (let t = 0.5; t < 1; t += 0.01) expect(bd(t + 0.01).temperature).toBeLessThanOrEqual(bd(t).temperature)
+  })
+
+  it('keeps its worlds where they formed: nothing swells or loses mass', () => {
+    for (const t of [0, 0.3, 0.7, 1]) expect(bd(t)).toMatchObject({ engulf: 0, orbitScale: 1 })
+  })
+
+  it('closes the camera in for most of the path, then backs out for the ending', () => {
+    expect(pathCameraZoom('brown-dwarf', at(0))).toBe(1)
+    expect(pathCameraZoom('brown-dwarf', at(1, 0.3))).toBe(1)
+    expect(pathCameraZoom('brown-dwarf', 1)).toBe(0)
   })
 })
