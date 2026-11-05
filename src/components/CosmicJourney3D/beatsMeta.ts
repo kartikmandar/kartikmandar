@@ -24,7 +24,7 @@ const META: Array<[string, Partial<BeatMeta>]> = [
   ['nao-section', { acceptance: ['textbook pages peel off and fold into a star chart', 'constellation lines ignite around a small glowing figure'] }],
   ['comet-section', { acceptance: ['dry-ice comet vapour becomes a real comet tail', 'dark Sariska sky with a glowing tent below'] }],
   ['decision-section', { acceptance: ['trajectory line draws from Earth to a distant star and locks'] }],
-  ['constellation-section', { acceptance: ['light-wire refractor on a dune aimed at the annular eclipse', 'eclipse ring rhymes with the opening photon ring'] }],
+  ['constellation-section', { acceptance: ['light-wire refractor on a dune aimed at the annular eclipse', 'eclipse ring rhymes with the finale ring'] }],
   ['search-section-wrapper', { acceptance: ['terminal prompt types the 3 phrases', 'candidate orbits flicker; one survives toward IISER Bhopal'] }],
   // Act II — Course Correction
   ['new-system-section', { acceptance: ['code streams out of a laptop and becomes orbit lines of a new system'] }],
@@ -55,7 +55,7 @@ const META: Array<[string, Partial<BeatMeta>]> = [
   ['admission-section', { acceptance: ['portal of light opens after the dark stretch', '21cmFAST-style lightcone pours toward the camera'] }],
   ['arrival-section', { acceptance: ['Delhi → Sicily arc on a globe', 'Etna silhouette with an ember rim', 'small campfire circle echoes the journal club'] }],
   ['analysis-section', { pin: true, acceptance: ['foreground wedge in the (k⊥, k∥) plane', 'low-rank model peels layers to reveal a quiet EoR window'] }],
-  ['journey-continues-section', { scrollLength: 240, acceptance: ['ionized bubbles merge into the opening photon ring', 'eclipse ring aligns', 'pull back to reveal all beats as a constellation'] }],
+  ['journey-continues-section', { scrollLength: 240, acceptance: ['ionized bubbles grow around small first stars, rhyming with the opening star, and merge into a ring', 'eclipse ring aligns', 'pull back to reveal all beats as a constellation'] }],
 ]
 
 /**

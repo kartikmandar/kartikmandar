@@ -8,6 +8,7 @@
 import * as THREE from 'three'
 import { ORIGIN_ANCHOR } from './beatsMeta'
 import { segmentRange } from './openingStory'
+import { HANDOFF_ARRIVE } from './openingScroll'
 import { ease, ramp } from './art/anim'
 
 /** Where the followed clump, and later the star, sits. */
@@ -79,13 +80,14 @@ export function openingCameraPose(opening: number, handoff: number, position: TH
 
   const h = Math.max(0, Math.min(1, handoff))
   if (h <= 0) return
-  // Hand-off: a quadratic curve from the close view, past the star, onto the flight's first position.
-  const t = ease(h, 0, 1)
+  // Hand-off: a quadratic curve from the close view, past the star, onto the flight's first position,
+  // arriving early enough to hold there on the night sky before beat 1.
+  const t = ease(h, 0, HANDOFF_ARRIVE)
   _a.copy(position)
   _b.copy(PASS_BY).add(OPENING_CENTER)
   _c.copy(_a).lerp(_b, t)
   _b.lerp(ORIGIN_POSITION, t)
   position.copy(_c.lerp(_b, t))
   _look.copy(look)
-  look.copy(_look.lerp(ORIGIN_LOOK, ease(h, 0.15, 0.9)))
+  look.copy(_look.lerp(ORIGIN_LOOK, ease(h, 0.1, HANDOFF_ARRIVE - 0.05)))
 }

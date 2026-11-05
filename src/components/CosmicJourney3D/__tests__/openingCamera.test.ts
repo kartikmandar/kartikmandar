@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { OPENING_CENTER, openingCameraPose } from '../openingCamera'
 import { ORIGIN_ANCHOR } from '../beatsMeta'
 import { segmentRange } from '../openingStory'
+import { HANDOFF_ARRIVE } from '../openingScroll'
 
 const pose = (opening: number, handoff: number) => {
   const position = new THREE.Vector3()
@@ -16,6 +17,15 @@ describe('openingCameraPose', () => {
     const { position, look } = pose(1, 1)
     expect(position.toArray()).toEqual(ORIGIN_ANCHOR.position.map((v) => expect.closeTo(v, 9)))
     expect(look.toArray()).toEqual((ORIGIN_ANCHOR.lookAt ?? [0, 0, 0]).map((v) => expect.closeTo(v, 9)))
+  })
+
+  it('arrives early in the hand-off and holds still on the night sky until beat 1', () => {
+    const arrived = pose(1, HANDOFF_ARRIVE)
+    for (let h = HANDOFF_ARRIVE; h <= 1; h += 0.05) {
+      const { position, look } = pose(1, h)
+      expect(position.distanceTo(arrived.position)).toBeLessThan(1e-9)
+      expect(look.distanceTo(arrived.look)).toBeLessThan(1e-9)
+    }
   })
 
   it('keeps the opening behind the flight, so it is out of view once the flight starts', () => {

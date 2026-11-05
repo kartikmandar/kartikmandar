@@ -17,6 +17,7 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityTier } from '../types'
 import { journeyFrame } from '../store'
+import { handoffPresence } from '../openingScroll'
 import { PALETTE, GLOW, hdr, setHdr } from '../art/palette'
 import { getGlowTexture, NOISE_GLSL, useDisposable } from '../art/materials'
 import { GlowSprite } from '../art/GlowSprite'
@@ -558,7 +559,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     const shown = t > 0 && f.handoff < 1 && pathForMass(starStore.getState().mass) === 'very-massive'
     const s = veryMassivePath(t, f.clock, blackHoleState.current)
     const look = blackHoleLook.current
-    look.opacity = shown ? s.blackHole * (1 - ease(f.handoff, 0.2, 0.85)) : 0
+    look.opacity = shown ? s.blackHole * handoffPresence(f.handoff) : 0
     look.infall = s.infall
     return look
   }, [])

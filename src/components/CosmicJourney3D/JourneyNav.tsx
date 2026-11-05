@@ -5,7 +5,8 @@
 // - the URL hash follows the beat on screen (/my-story#rri-research),
 //   and loading a link with a hash flies straight to that beat after the loader;
 // - #choose does the same for the choice of mass, focusing the slider, and the
-//   hash reads #choose while the choice is on screen;
+//   hash reads #choose while the choice is on screen ("Try another star" and the
+//   chapter rail's opening tick fly back there);
 // - J / → next beat, K / ← previous beat, Esc skips to the end; focus moves to
 //   the beat's heading so screen readers hear where they landed;
 // - a "Skip the story" link appears on keyboard focus.
@@ -43,6 +44,11 @@ function focusStarChoice(): void {
     else if (++tries < 60) requestAnimationFrame(attempt)
   }
   requestAnimationFrame(attempt)
+}
+
+/** Flies back to the choice of mass and focuses the slider ("Try another star", decision 9.4). */
+export function jumpToChoice(): void {
+  scrollToProgress(choiceTargetProgress(), { onComplete: focusStarChoice })
 }
 
 function jumpTo(index: number): void {

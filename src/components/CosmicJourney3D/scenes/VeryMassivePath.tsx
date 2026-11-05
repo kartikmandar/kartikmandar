@@ -15,9 +15,10 @@ import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityTier } from '../types'
 import { journeyFrame } from '../store'
+import { handoffPresence } from '../openingScroll'
 import { PALETTE, hdr } from '../art/palette'
 import { getGlowTexture, useDisposable } from '../art/materials'
-import { ease, seeded } from '../art/anim'
+import { seeded } from '../art/anim'
 import { createVeryMassivePath, pathProgress, veryMassivePath } from '../pathStage'
 import { pathForMass, starStore } from '../starChoice'
 import { readCapture } from '../capture'
@@ -121,7 +122,7 @@ export function VeryMassivePath({ quality, reducedMotion }: { quality: QualityTi
     if (!wind.visible) return
     const time = reducedMotion ? 0 : f.clock
     const s = veryMassivePath(t, time, state)
-    const presence = 1 - ease(f.handoff, 0.2, 0.85)
+    const presence = handoffPresence(f.handoff)
     // A Wolf-Rayet wind is faster than the star's earlier one. The clock accumulates, so a change of speed never jumps.
     const speed = 1 + 1.5 * s.stripped
     windClock.current = readCapture().enabled ? time * speed : windClock.current + (reducedMotion ? 0 : f.dt * speed)

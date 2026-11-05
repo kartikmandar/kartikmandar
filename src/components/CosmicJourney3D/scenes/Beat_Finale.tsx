@@ -2,9 +2,11 @@
 'use client'
 
 // Beat 31 · The Journey Continues (the bookend).
-// The neutral-hydrogen web of the early Universe glows faintly; ionized bubbles
-// grow and merge, eating the web as they go (reionization). The merged light
-// tightens into the photon ring the story opened on, and the Oman eclipse ring
+// The neutral-hydrogen web of the early Universe glows faintly; small first stars
+// light up in it, and an ionized bubble grows around each one, eating the web as
+// it goes (reionization). The story ends with the first stars lighting the
+// Universe, as it began with one star. The merged light tightens into a ring of
+// light, and the Oman eclipse ring
 // from Act I slides into perfect alignment over it. As the camera departs, a
 // single 21-cm pulse rings outward. The constellation of the whole journey and
 // the end card take over from there (FinaleConstellation + Overlay).
@@ -160,6 +162,7 @@ export default function Beat_Finale({ index, quality }: BeatSceneProps) {
   const shadowRef = useRef<THREE.Mesh>(null)
   const pulseRef = useRef<THREE.Mesh>(null)
   const alignGlowRef = useRef<THREE.Sprite>(null)
+  const starRefs = useRef<Array<THREE.Sprite | null>>([])
 
   const count = quality === 'mobile' ? 900 : quality === 'low' ? 1800 : 3600
   const webGeo = useDisposable(() => webGeometry(count), [count])
@@ -243,6 +246,21 @@ export default function Beat_Finale({ index, quality }: BeatSceneProps) {
       for (let i = 0; i < BUBBLES; i++) sites[i]!.w = BUBBLE_SITES[i]![3] * ease(p, 0.18 + i * 0.05, 0.5 + i * 0.03)
     }
 
+    // 0 · a small first star lights up at the heart of each bubble, just before it grows (0.1 → 0.3),
+    // as a slow ramp, never a flash. Each rides with its bubble and fades into the ring.
+    for (let i = 0; i < BUBBLES; i++) {
+      const star = starRefs.current[i]
+      if (!star) continue
+      const lit = ease(p, 0.1 + i * 0.04, 0.2 + i * 0.04)
+      const [x, y, z] = BUBBLE_SITES[i]!
+      const converging = ease(p, 0.5, 0.72)
+      star.position.set(x + (RING_CENTER.x - x) * converging, y + (RING_CENTER.y - y) * converging, z + (RING_CENTER.z - z) * converging)
+      star.visible = lit > 0.001
+      ;(star.material as THREE.SpriteMaterial).opacity = lit * (1 - ease(p, 0.6, 0.7))
+      // A faint twinkle once it is burning.
+      star.scale.setScalar(0.34 * (0.6 + 0.4 * lit) * (1 + 0.06 * Math.sin(t * 1.7 + i * 2.1)))
+    }
+
     // 2 · the bubbles converge on one point and tighten into the photon ring (0.5 → 0.72)
     const converge = ease(p, 0.5, 0.72)
     for (let i = 0; i < BUBBLES; i++) {
@@ -294,6 +312,21 @@ export default function Beat_Finale({ index, quality }: BeatSceneProps) {
         >
           <sphereGeometry args={[1, 40, 24]} />
         </mesh>
+      ))}
+
+      {/* the first stars: small and blue-white, each at the heart of its bubble */}
+      {BUBBLE_SITES.map((site, i) => (
+        <GlowSprite
+          key={`star-${i}`}
+          ref={(s) => {
+            starRefs.current[i] = s
+          }}
+          position={[site[0], site[1], site[2]]}
+          color={PALETTE.stellarBlue}
+          intensity={GLOW.hero}
+          size={0.34}
+          opacity={0}
+        />
       ))}
 
       <group position={RING_CENTER}>

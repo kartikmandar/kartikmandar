@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { splitProgress, OPENING_FRACTION, HANDOFF_BAND, flightFractionToGlobal, flightStart, pageScrollVh } from '../openingScroll'
+import { splitProgress, OPENING_FRACTION, HANDOFF_BAND, HANDOFF_ARRIVE, flightFractionToGlobal, flightStart, handoffFogClear, handoffPresence, pageScrollVh } from '../openingScroll'
 
 describe('splitProgress', () => {
   const OF = 0.25
@@ -81,5 +81,19 @@ describe('pageScrollVh', () => {
 
   it('accepts a custom openingFraction and band', () => {
     expect(pageScrollVh(100, 0.25, 0.05)).toBeCloseTo(100 / 0.7, 6)
+  })
+})
+
+describe('the hand-off band', () => {
+  it('lets the opening scene recede before the camera arrives, leaving a night-sky hold', () => {
+    expect(handoffPresence(0)).toBe(1)
+    expect(handoffPresence(HANDOFF_ARRIVE)).toBe(0)
+    expect(handoffPresence(1)).toBe(0)
+  })
+
+  it('clears the fog only through the end of the hold, so the first station never pops in', () => {
+    expect(handoffFogClear(HANDOFF_ARRIVE - 0.1)).toBe(0)
+    expect(handoffFogClear(1)).toBe(1)
+    for (let h = 0; h < 1; h += 0.01) expect(handoffFogClear(h + 0.01)).toBeGreaterThanOrEqual(handoffFogClear(h))
   })
 })

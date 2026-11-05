@@ -7,6 +7,7 @@
 
 import { DEFAULT_STAR_PATH, segmentRange, type StarPathId } from './openingStory'
 import { ease } from './art/anim'
+import { handoffPresence } from './openingScroll'
 
 export interface OpeningStageState {
   /** 0..1 how much diffuse cloud is left in view. */
@@ -88,7 +89,7 @@ export function openingStage(
   out.innerClear = heavy ? ease(p, mid(IGNITION), IGNITION.end) : out.clear
   // Line 9: the core settles onto the main sequence (or, for a brown dwarf, never quite does).
   out.ignite = ease(p, IGNITION.start, IGNITION.start + 0.6 * (IGNITION.end - IGNITION.start))
-  out.presence = 1 - ease(Math.max(0, Math.min(1, handoff)), 0.2, 0.85)
+  out.presence = handoffPresence(Math.max(0, Math.min(1, handoff)))
   return out
 }
 

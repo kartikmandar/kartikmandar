@@ -14,9 +14,9 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { journeyFrame } from '../store'
+import { handoffPresence } from '../openingScroll'
 import { PALETTE, hdr, setHdr } from '../art/palette'
 import { NOISE_GLSL, useDisposable } from '../art/materials'
-import { ease } from '../art/anim'
 import { createRedDwarfPath, pathProgress, redDwarfPath } from '../pathStage'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb, surfaceTemperature } from '../starLook'
@@ -145,7 +145,7 @@ export function RedDwarfPath({ reducedMotion }: { reducedMotion: boolean }) {
     if (!root.visible) return
     const time = reducedMotion ? 0 : f.clock
     const s = redDwarfPath(t, time, state, surfaceTemperature(mass))
-    const presence = 1 - ease(f.handoff, 0.2, 0.85)
+    const presence = handoffPresence(f.handoff)
 
     const body = bodyRef.current
     if (body) {

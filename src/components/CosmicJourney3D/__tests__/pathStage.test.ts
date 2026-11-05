@@ -3,6 +3,7 @@ import {
   createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, createBrownDwarfPath, brownDwarfPath, BROWN_DWARF_RADIUS, BROWN_DWARF_COLD_KELVIN, createFirstStarsPath, firstStarsPath, skyDensity, FIRST_STAR_RADIUS, BLAST_REACH, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
   SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
 } from '../pathStage'
+import { HANDOFF_ARRIVE } from '../openingScroll'
 
 const sun = (t: number, time = 0): SunPathState => ({ ...sunPath(t, time, createSunPath()) })
 const line = (k: number) => k / 7
@@ -244,6 +245,8 @@ describe('the first stars path', () => {
   it('thins the sky only on this path, and gives the full sky back over the hand-off', () => {
     expect(skyDensity('massive', 0.5, 0)).toBe(1)
     expect(skyDensity('first-stars', 1, 1)).toBe(1)
+    // Full before the hand-off's night-sky hold begins.
+    expect(skyDensity('first-stars', 1, HANDOFF_ARRIVE)).toBe(1)
   })
 
   it('makes pairs in the core during line 33, then the core falls in before anything ignites', () => {

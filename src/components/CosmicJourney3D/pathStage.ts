@@ -8,6 +8,7 @@
 
 import { ease, pulse, ramp } from './art/anim'
 import { segmentRange, type StarPathId } from './openingStory'
+import { HANDOFF_ARRIVE } from './openingScroll'
 
 export interface PathStarState {
   /** Surface temperature (K): the star's colour. */
@@ -474,11 +475,11 @@ export function createFirstStarsPath(): FirstStarsPathState {
 
 /**
  * How much of the sky's stars to draw (0..1) for `path` at path progress `t`:
- * the first stars shine in a nearly empty sky. The flight's full sky returns over the hand-off.
+ * the first stars shine in a nearly empty sky. The flight's full sky is back before the hand-off's hold.
  */
 export function skyDensity(path: StarPathId, t: number, handoff: number): number {
   if (path !== 'first-stars') return 1
-  return lerp(1 - 0.85 * ease(t, 0, 0.6 * FL), 1, ease(handoff, 0, 0.8))
+  return lerp(1 - 0.85 * ease(t, 0, 0.6 * FL), 1, ease(handoff, 0, HANDOFF_ARRIVE - 0.05))
 }
 
 // --- Every path ---------------------------------------------------------------

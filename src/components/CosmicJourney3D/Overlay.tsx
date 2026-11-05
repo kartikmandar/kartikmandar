@@ -5,7 +5,8 @@
 // once its shot has settled (the hold window of the shot schedule), revealing
 // line by line through masks (GSAP SplitText), and leaves with a short blur
 // before the camera departs. The opening's lines change one at a time as it scrolls,
-// following the path the visitor chooses; the choice line carries the mass control.
+// following the path the visitor chooses; the choice line carries the mass control,
+// and the hand-off line a link back to it.
 // React re-renders only when what is on screen changes, never per frame.
 
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
@@ -22,6 +23,7 @@ import { readCapture } from './capture'
 import { overlayView, type OverlayView } from './overlayView'
 import { Hud } from './Hud'
 import { MagneticLink } from './MagneticLink'
+import { TryAnotherStar } from './TryAnotherStar'
 
 if (typeof window !== 'undefined') gsap.registerPlugin(SplitText)
 
@@ -143,6 +145,7 @@ export function Overlay() {
           <h2 data-split style={lowered ? { ...openingText, ...choiceText } : openingText}>{line.text}</h2>
           {choosing && <div data-fade><MassChoice /></div>}
           {line.aside === 'lifetime' && <div data-fade><LifetimeTimeline /></div>}
+          {line.segment === 'handoff' && <div data-fade><TryAnotherStar /></div>}
         </div>
       </div>
     )

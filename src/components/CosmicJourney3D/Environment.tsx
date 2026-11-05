@@ -13,6 +13,7 @@ import { getGlowTexture } from './art/materials'
 import { journeyFrame } from './store'
 import { NEBULA_ANCHOR, STATION_SPACING } from './beatsMeta'
 import { pathProgress, skyDensity } from './pathStage'
+import { handoffFogClear } from './openingScroll'
 import { pathForMass, starStore } from './starChoice'
 
 // Nebula field reaches a little beyond the end of the flight.
@@ -50,8 +51,8 @@ export function Environment({ quality, halfFloat }: { quality: QualityTier; half
       const position = points?.geometry.getAttribute('position')
       if (points && position) points.geometry.setDrawRange(0, density >= 1 ? Infinity : Math.round(position.count * density))
     }
-    // The first station emerges out of the fog across the hand-off band, instead of popping in.
-    if (fogRef.current) fogRef.current.density = THREE.MathUtils.lerp(OPENING_FOG, FLIGHT_FOG, journeyFrame.handoff)
+    // The first station emerges out of the fog at the end of the hand-off's night-sky hold, instead of popping in.
+    if (fogRef.current) fogRef.current.density = THREE.MathUtils.lerp(OPENING_FOG, FLIGHT_FOG, handoffFogClear(journeyFrame.handoff))
   })
 
   const nebula = useMemo(() => {

@@ -11,9 +11,9 @@ import { useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import { journeyFrame } from '../store'
+import { handoffPresence } from '../openingScroll'
 import { PALETTE, setHdr } from '../art/palette'
 import { NOISE_GLSL, useDisposable } from '../art/materials'
-import { ease } from '../art/anim'
 import { brownDwarfPath, createBrownDwarfPath, pathProgress } from '../pathStage'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb } from '../starLook'
@@ -99,7 +99,7 @@ export function BrownDwarfPath({ reducedMotion }: { reducedMotion: boolean }) {
     if (!root.visible) return
     const time = reducedMotion ? 0 : f.clock
     const s = brownDwarfPath(t, time, state)
-    const presence = 1 - ease(f.handoff, 0.2, 0.85)
+    const presence = handoffPresence(f.handoff)
 
     const body = bodyRef.current
     if (!body) return

@@ -4,7 +4,8 @@
 // A hairline chapter rail: the fill tracks the flight (written straight to the
 // DOM each frame, no React state), ticks mark the 31 beats, and hover/focus
 // labels name them. Clicking a tick flies there (longer jumps take longer and
-// widen the lens); every control is a real, keyboard-focusable button.
+// widen the lens); every control is a real, keyboard-focusable button. A tick
+// above the rail stands for the opening and flies back to the choice of star.
 
 import { useEffect, useRef, useState } from 'react'
 import { addEffect } from '@react-three/fiber'
@@ -13,7 +14,7 @@ import { cumulativeRanges } from './scrollMath'
 import { journeyFrame, useActiveBeat } from './store'
 import { scrollToProgress } from './scrollEngine'
 import { beatTargetProgress } from './navigation'
-import { focusBeatHeading } from './JourneyNav'
+import { focusBeatHeading, jumpToChoice } from './JourneyNav'
 
 const RAIL_HEIGHT = '62vh'
 const ranges = cumulativeRanges(SCROLL_LENGTHS)
@@ -21,6 +22,7 @@ const ranges = cumulativeRanges(SCROLL_LENGTHS)
 export function ChapterRail() {
   const active = useActiveBeat()
   const fillRef = useRef<HTMLDivElement>(null)
+  /** Index of the tick whose label shows; -1 is the opening's tick. */
   const [hovered, setHovered] = useState<number | null>(null)
 
   useEffect(() => {
@@ -41,6 +43,22 @@ export function ChapterRail() {
     <nav aria-label="Story chapters" className="journey-rail" style={rail}>
       <div aria-hidden style={track}>
         <div ref={fillRef} style={fillStyle} />
+      </div>
+      <div style={{ position: 'absolute', top: -22, right: 0, transform: 'translateY(-50%)' }}>
+        <button
+          type="button"
+          onClick={jumpToChoice}
+          onMouseEnter={() => setHovered(-1)}
+          onMouseLeave={() => setHovered((h) => (h === -1 ? null : h))}
+          onFocus={() => setHovered(-1)}
+          onBlur={() => setHovered((h) => (h === -1 ? null : h))}
+          aria-label="Opening: choose a star"
+          className="journey-rail-tick"
+          style={openingTick}
+        />
+        <span aria-hidden style={{ ...label, opacity: hovered === -1 ? 1 : 0, transform: `translateY(-50%) translateX(${hovered === -1 ? 0 : 6}px)` }}>
+          Choose a star
+        </span>
       </div>
       <ol style={list}>
         {BEATS.map((b, i) => {
@@ -91,6 +109,11 @@ const list: React.CSSProperties = { position: 'absolute', inset: 0, margin: 0, p
 const tick: React.CSSProperties = {
   all: 'unset', display: 'block', height: 2, borderRadius: 2, cursor: 'pointer',
   transition: 'width 260ms ease, background 260ms ease', padding: '6px 0', backgroundClip: 'content-box',
+}
+// A small ring rather than a dash: the opening sits outside the beats' numbering.
+const openingTick: React.CSSProperties = {
+  all: 'unset', display: 'block', width: 7, height: 7, borderRadius: '50%', cursor: 'pointer',
+  border: '1px solid rgba(238,242,255,0.55)', boxSizing: 'border-box', margin: '6px 1px',
 }
 const label: React.CSSProperties = {
   position: 'absolute', right: 26, top: '50%', whiteSpace: 'nowrap', pointerEvents: 'none',
