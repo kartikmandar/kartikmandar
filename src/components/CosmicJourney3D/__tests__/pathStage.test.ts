@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, createBrownDwarfPath, brownDwarfPath, BROWN_DWARF_RADIUS, BROWN_DWARF_COLD_KELVIN, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
+  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, createRedDwarfPath, redDwarfPath, createBrownDwarfPath, brownDwarfPath, BROWN_DWARF_RADIUS, BROWN_DWARF_COLD_KELVIN, createFirstStarsPath, firstStarsPath, skyDensity, FIRST_STAR_RADIUS, BLAST_REACH, pathCameraZoom, RED_DWARF_RADIUS, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
   SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
 } from '../pathStage'
 
@@ -71,13 +71,6 @@ describe("the Sun's path", () => {
     const t = line(4) - 0.1 / 7
     expect(sun(t, 0).body).toBe(sun(t, 0).body)
     expect(sun(t, 0.7).body).not.toBe(sun(t, 0).body)
-  })
-})
-
-describe('paths not drawn yet', () => {
-  it('hold the steady star', () => {
-    const state = pathStar('first-stars', 0.5, 0, 2800, createPathStates())
-    expect(state).toMatchObject({ temperature: 2800, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
   })
 })
 
@@ -233,5 +226,58 @@ describe('the brown dwarf path', () => {
     expect(pathCameraZoom('brown-dwarf', at(0))).toBe(1)
     expect(pathCameraZoom('brown-dwarf', at(1, 0.3))).toBe(1)
     expect(pathCameraZoom('brown-dwarf', 1)).toBe(0)
+  })
+})
+
+describe('the first stars path', () => {
+  const fs = (t: number) => ({ ...firstStarsPath(t, 0, createFirstStarsPath()) })
+  const at = (k: number, within = 0.5) => (k + within) / 4
+
+  it('shows a huge blue star in a sparse sky during line 32', () => {
+    const star = fs(at(0, 0.8))
+    expect(star.body).toBe(FIRST_STAR_RADIUS)
+    expect(star.temperature).toBe(55000)
+    expect(star.sparse).toBe(1)
+    expect(skyDensity('first-stars', at(0, 0.8), 0)).toBeCloseTo(0.15, 6)
+  })
+
+  it('thins the sky only on this path, and gives the full sky back over the hand-off', () => {
+    expect(skyDensity('massive', 0.5, 0)).toBe(1)
+    expect(skyDensity('first-stars', 1, 1)).toBe(1)
+  })
+
+  it('makes pairs in the core during line 33, then the core falls in before anything ignites', () => {
+    expect(fs(at(1, 0.55)).cutaway).toBe(1)
+    expect(fs(at(1, 0.65)).pairs).toBe(1)
+    expect(fs(at(1, 0.65)).ignite).toBe(0)
+    expect(fs(at(2, 0)).coreFall).toBe(1)
+    expect(fs(at(2, 0)).blast).toBe(0)
+  })
+
+  it('ignites oxygen in line 34 and blows the whole star apart', () => {
+    const blown = fs(at(2, 0.9))
+    expect(blown.ignite).toBe(1)
+    expect(blown.blast).toBeGreaterThan(FIRST_STAR_RADIUS * 2.2)
+    expect(blown.bodyOpacity).toBe(0)
+  })
+
+  it('leaves nothing behind: no point of light at the end, and the debris gone past the camera', () => {
+    const end = fs(1)
+    expect(end.glow).toBeCloseTo(0, 6)
+    expect(end.glowSize).toBeCloseTo(0, 6)
+    expect(end.blast).toBe(BLAST_REACH)
+    expect(end.blastGlow).toBeLessThan(0.1)
+  })
+
+  it("changes the explosion's light smoothly, never jumping", () => {
+    let last = fs(0).glow
+    for (let t = 0; t <= 1; t += 0.0005) {
+      expect(Math.abs(fs(t).glow - last)).toBeLessThan(0.05)
+      last = fs(t).glow
+    }
+  })
+
+  it('is what pathStar draws for this path', () => {
+    expect(pathStar('first-stars', at(0, 0.8), 0, 55000, createPathStates()).body).toBe(FIRST_STAR_RADIUS)
   })
 })

@@ -114,14 +114,14 @@ const SILICON = LAYERS.length - 2
 
 // The supernova's shock, drawn as a camera-facing disc: a thin shell seen from
 // outside is a ring, brightest at its limb, with knots of debris round it.
-const SHOCK_VERT = /* glsl */ `
+export const SHOCK_VERT = /* glsl */ `
   varying vec2 vUv;
   void main() {
     vUv = uv;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
   }
 `
-const SHOCK_FRAG = /* glsl */ `
+export const SHOCK_FRAG = /* glsl */ `
   ${NOISE_GLSL}
   uniform vec3 uColor;
   uniform float uBright;

@@ -397,6 +397,90 @@ export function createBrownDwarfPath(): BrownDwarfPathState {
   return { ...createPathStar(), deuterium: 0, cooling: 0 }
 }
 
+// --- First stars (lines 32-35) -----------------------------------------------
+
+export interface FirstStarsPathState extends PathStarState {
+  /** 0..1 how sparse the sky is: few stars yet in the early Universe (line 32). */
+  sparse: number
+  /** 0..1 the cutaway opening on the star, showing its huge oxygen core (line 33). */
+  cutaway: number
+  /** 0..1 light turning into electron-positron pairs in the core. */
+  pairs: number
+  /** 0..1 the core falling in once the pressure drops. */
+  coreFall: number
+  /** 0..1 oxygen igniting all at once, from the centre of the core outward (line 34). */
+  ignite: number
+  /** Radius of the debris shell, in the disk units the star is drawn in (0: none yet). */
+  blast: number
+  /** 0..1 how bright that shell glows. */
+  blastGlow: number
+}
+
+const FS_LINES = 4
+const fLine = (k: number) => k / FS_LINES
+const FL = 1 / FS_LINES
+
+/** The star's radius in disk units: a blue giant, compact for its mass because it has almost no heavy elements. */
+export const FIRST_STAR_RADIUS = 1.1
+/** Its helium core, as a fraction of its radius (drawn large: about 64-133 solar masses of it; Heger & Woosley 2002). */
+export const FIRST_STAR_CORE = 0.42
+/** How far the debris runs: past the camera. */
+export const BLAST_REACH = 20
+
+/**
+ * A first star's life and ending at path progress `t` (0..1): a pair-instability
+ * supernova, which leaves nothing behind (Heger & Woosley 2002). The light of the
+ * explosion follows the debris shell's radius, so it ramps with the scroll; it never flashes.
+ */
+export function firstStarsPath(t: number, _time: number, out: FirstStarsPathState, mainSequenceKelvin = 55000): FirstStarsPathState {
+  const p = Math.max(0, Math.min(1, t))
+  // Line 32: a huge blue star in a sparse early sky; its weak wind lets it keep its mass.
+  out.sparse = ease(p, 0, 0.6 * FL)
+  const grown = ease(p, 0.05 * FL, 0.45 * FL)
+  // Line 33: cut open, its core so hot that light makes pairs; the pressure drops and the core falls in.
+  out.cutaway = ease(p, fLine(1) + 0.05 * FL, fLine(1) + 0.3 * FL) * (1 - ease(p, fLine(2) + 0.4 * FL, fLine(2) + 0.6 * FL))
+  out.pairs = ease(p, fLine(1) + 0.3 * FL, fLine(1) + 0.6 * FL) * (1 - ease(p, fLine(2), fLine(2) + 0.2 * FL))
+  out.coreFall = ease(p, fLine(1) + 0.6 * FL, fLine(2))
+  // Line 34: oxygen ignites all at once, and the star blows itself apart.
+  out.ignite = ease(p, fLine(2), fLine(2) + 0.2 * FL)
+  // It speeds up as it goes: the star is gone by the middle of line 34, and the debris passes the camera in line 35.
+  const blown = ramp(p, fLine(2) + 0.15 * FL, fLine(3) + 0.6 * FL)
+  out.blast = blown > 0 ? FIRST_STAR_RADIUS + (BLAST_REACH - FIRST_STAR_RADIUS) * blown * blown : 0
+  // Line 35: the debris thins and fades as it sweeps past; nothing is left at the centre.
+  out.blastGlow = ease(p, fLine(2) + 0.15 * FL, fLine(2) + 0.3 * FL) * (1 - 0.92 * ease(p, fLine(3), 1))
+
+  out.body = FIRST_STAR_RADIUS * grown * (1 - 0.04 * out.coreFall)
+  const gone = ramp(out.blast, FIRST_STAR_RADIUS * 1.05, FIRST_STAR_RADIUS * 2.2)
+  out.bodyOpacity = ease(grown, 0, 0.4) * (1 - gone)
+  out.temperature = lerp(mainSequenceKelvin, 12000, out.ignite)
+
+  // The light peaks as the debris breaks out and fades as it spreads: brighter and longer than a core-collapse supernova.
+  const outburst = pulse(ramp(out.blast, FIRST_STAR_RADIUS * 1.05, FIRST_STAR_RADIUS * 9), 0, 1)
+  const swollen = out.bodyOpacity
+  // Nothing is left: the point of light goes out with the star.
+  out.glowSize = lerp(1, (2.4 * FIRST_STAR_RADIUS) / 0.75, swollen) * (1 + 0.4 * outburst) * (1 - gone * (1 - outburst))
+  out.glow = lerp(1, 0.2, swollen) * (1 - gone) + 1.1 * outburst
+  out.halo = lerp(1, 0.5, swollen) * (1 - gone) + 0.25 * outburst
+  out.engulf = 0
+  out.orbitScale = 1
+  // A star this bright clears its leftover dust early.
+  out.debris = 1 - ease(p, 0, fLine(1))
+  return out
+}
+
+export function createFirstStarsPath(): FirstStarsPathState {
+  return { ...createPathStar(), sparse: 0, cutaway: 0, pairs: 0, coreFall: 0, ignite: 0, blast: 0, blastGlow: 0 }
+}
+
+/**
+ * How much of the sky's stars to draw (0..1) for `path` at path progress `t`:
+ * the first stars shine in a nearly empty sky. The flight's full sky returns over the hand-off.
+ */
+export function skyDensity(path: StarPathId, t: number, handoff: number): number {
+  if (path !== 'first-stars') return 1
+  return lerp(1 - 0.85 * ease(t, 0, 0.6 * FL), 1, ease(handoff, 0, 0.8))
+}
+
 // --- Every path ---------------------------------------------------------------
 
 /** Each drawn path's own state object, so every frame fills them without allocating. */
@@ -406,18 +490,19 @@ export interface PathStates {
   veryMassive: VeryMassivePathState
   redDwarf: RedDwarfPathState
   brownDwarf: BrownDwarfPathState
+  firstStars: FirstStarsPathState
 }
 
 export function createPathStates(): PathStates {
-  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath(), redDwarf: createRedDwarfPath(), brownDwarf: createBrownDwarfPath() }
+  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath(), redDwarf: createRedDwarfPath(), brownDwarf: createBrownDwarfPath(), firstStars: createFirstStarsPath() }
 }
 
-/** The star's state for `path` at path progress `t`. Paths not yet drawn hold the steady main-sequence star. */
+/** The star's state for `path` at path progress `t`. */
 export function pathStar(path: StarPathId, t: number, time: number, mainSequenceKelvin: number, states: PathStates): PathStarState {
   if (path === 'sun') return sunPath(t, time, states.sun, mainSequenceKelvin)
   if (path === 'massive') return massivePath(t, time, states.massive, mainSequenceKelvin)
   if (path === 'red-dwarf') return redDwarfPath(t, time, states.redDwarf, mainSequenceKelvin)
   if (path === 'very-massive') return veryMassivePath(t, time, states.veryMassive, mainSequenceKelvin)
   if (path === 'brown-dwarf') return brownDwarfPath(t, time, states.brownDwarf, mainSequenceKelvin)
-  return steadyStar(mainSequenceKelvin, states.sun)
+  return firstStarsPath(t, time, states.firstStars, mainSequenceKelvin)
 }

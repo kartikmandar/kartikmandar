@@ -12,6 +12,8 @@ import { PALETTE } from './art/palette'
 import { getGlowTexture } from './art/materials'
 import { journeyFrame } from './store'
 import { NEBULA_ANCHOR, STATION_SPACING } from './beatsMeta'
+import { pathProgress, skyDensity } from './pathStage'
+import { pathForMass, starStore } from './starChoice'
 
 // Nebula field reaches a little beyond the end of the flight.
 const NEBULA_DEPTH = Math.abs(NEBULA_ANCHOR.position[2]) + 80
@@ -37,8 +39,17 @@ export function Environment({ quality, halfFloat }: { quality: QualityTier; half
   // The star shell travels with the camera, so it reads as infinitely far away however long the flight.
   const starsRef = useRef<THREE.Group>(null)
   const fogRef = useRef<THREE.FogExp2>(null)
+  const nebulaRef = useRef<THREE.Points>(null)
   useFrame(({ camera }) => {
     starsRef.current?.position.copy(camera.position)
+    // The first stars shine in a nearly empty sky: draw only some of the stars (they are in random order), until the hand-off.
+    const f = journeyFrame
+    const density = skyDensity(pathForMass(starStore.getState().mass), pathProgress(f.opening), f.handoff)
+    const field = starsRef.current?.children[0] as THREE.Points | undefined
+    for (const points of [field, nebulaRef.current]) {
+      const position = points?.geometry.getAttribute('position')
+      if (points && position) points.geometry.setDrawRange(0, density >= 1 ? Infinity : Math.round(position.count * density))
+    }
     // The first station emerges out of the fog across the hand-off band, instead of popping in.
     if (fogRef.current) fogRef.current.density = THREE.MathUtils.lerp(OPENING_FOG, FLIGHT_FOG, journeyFrame.handoff)
   })
@@ -74,7 +85,7 @@ export function Environment({ quality, halfFloat }: { quality: QualityTier; half
       <group ref={starsRef}>
         <Stars radius={300} depth={120} count={quality === 'mobile' ? 1500 : 6000} factor={4} fade speed={0.4} />
       </group>
-      <points geometry={nebula}>
+      <points ref={nebulaRef} geometry={nebula}>
         <pointsMaterial map={getGlowTexture()} size={2.2} vertexColors transparent opacity={0.35} sizeAttenuation depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
       </points>
       {quality !== 'mobile' && (
