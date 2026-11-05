@@ -27,6 +27,8 @@ import { segmentRange, type StarPathId } from '../openingStory'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb, drawnBrightness, drawnDiskScale, drawnRadius, drawnSpin, surfaceTemperature } from '../starLook'
 import { readCapture } from '../capture'
+import { createSunPath, pathProgress, pathStar } from '../pathStage'
+import { SunPath } from './SunPath'
 
 const COUNTS: Record<QualityTier, { cloud: number; octaves: number; fragments: number; disk: number; jets: number }> = {
   high: { cloud: 7, octaves: 4, fragments: 9000, disk: 14000, jets: 2400 },
@@ -539,6 +541,7 @@ const HAZE: { position: [number, number, number]; scale: [number, number, number
 export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
   const counts = COUNTS[quality]
   const stage = useMemo(() => createOpeningStage(), [])
+  const sunState = useMemo(() => createSunPath(), [])
   const rootRef = useRef<THREE.Group>(null)
   const cloudRef = useRef<THREE.Mesh>(null)
   const fragmentsRef = useRef<THREE.Points>(null)
@@ -657,7 +660,9 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     const spin = drawnSpin(mass)
     diskClock.current = capture ? time * spin : diskClock.current + (reducedMotion ? 0 : f.dt * spin)
     const bright = drawnBrightness(mass)
-    blackbodyRgb(surfaceTemperature(mass), _rgb)
+    // The path's life and ending: the star's colour, size and glow, and what becomes of its planets.
+    const star = pathStar(path, pathProgress(f.opening), time, surfaceTemperature(mass), sunState)
+    blackbodyRgb(star.temperature, _rgb)
     _star.setRGB(_rgb.r, _rgb.g, _rgb.b)
 
     const cloud = uniformsOf(cloudRef.current)
@@ -672,7 +677,8 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     const fragments = uniformsOf(fragmentsRef.current)
     if (fragments) {
       fragments.uCollapse!.value = s.collapse
-      fragments.uHideFollowed!.value = s.envelope
+      // The followed clump's gas became the cocoon, then the star and disk: it never comes back.
+      fragments.uHideFollowed!.value = Math.max(s.envelope, s.heat)
       fragments.uTime!.value = time
       // The followed clump's gas becomes the cocoon and disk; the field dims as the camera closes in.
       fragments.uOpacity!.value = presence * (1 - 0.5 * s.disk)
@@ -697,15 +703,15 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       const feeding = GLOW.hot * (0.15 + 0.85 * s.heat) * (1 + (Math.min(1.4, bright) - 1) * chosen)
       const shining = path === 'brown-dwarf' ? GLOW.base : GLOW.hero * Math.min(1.3, bright) * 1.15
       const core = coreRef.current.material as THREE.SpriteMaterial
-      setHdr(core.color, _mixed, feeding + (shining - feeding) * s.ignite)
+      setHdr(core.color, _mixed, (feeding + (shining - feeding) * s.ignite) * star.glow)
       core.opacity = Math.min(1, s.collapse * 2) * presence
       const radius = drawnRadius(mass)
       // The buried protostar's glow, then the star itself, settled and smaller.
-      const coreSize = 1.1 * (1 + (0.7 + 0.3 * radius - 1) * chosen) * (1 - s.ignite) + 0.75 * radius * s.ignite
+      const coreSize = (1.1 * (1 + (0.7 + 0.3 * radius - 1) * chosen) * (1 - s.ignite) + 0.75 * radius * s.ignite) * star.glowSize
       coreRef.current.scale.set(coreSize, coreSize, 1)
       const halo = haloRef.current.material as THREE.SpriteMaterial
       setHdr(halo.color, _mixed, GLOW.base)
-      halo.opacity = (s.heat * 0.6 * (1 - 0.35 * s.clear) + 0.15 * s.ignite * (path === 'brown-dwarf' ? 0 : 1)) * presence
+      halo.opacity = (s.heat * 0.6 * (1 - 0.35 * s.clear) + 0.15 * s.ignite * (path === 'brown-dwarf' ? 0 : 1)) * star.halo * presence
       const haloSize = 5 * (1 + (0.6 + 0.4 * radius - 1) * chosen)
       haloRef.current.scale.set(haloSize, haloSize, 1)
     }
@@ -715,7 +721,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     if (disk) {
       disk.uDisk!.value = s.disk
       disk.uClock!.value = diskClock.current
-      disk.uOpacity!.value = Math.min(1, s.disk * 3) * presence
+      disk.uOpacity!.value = Math.min(1, s.disk * 3) * star.debris * presence
       // A heavier star feeds faster: its inner disk burns brighter.
       disk.uFeed!.value = 1 + (Math.min(1.8, bright) - 1) * chosen
       disk.uPebbles!.value = s.pebbles
@@ -744,10 +750,13 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       planets.visible = s.growth > 0 && layout.worlds.length > 0
       layout.worlds.forEach((world, i) => {
         // Planetesimals grow into planets; giants grow last, as they pull in gas.
-        const grown = world.giant ? s.growth * (0.3 + 0.7 * s.giants) : s.growth
+        // A swelling star swallows the worlds inside its reach; the rest drift outward as it loses mass.
+        const swallowed = world.radius < star.engulf
+        const grown = swallowed ? 0 : world.giant ? s.growth * (0.3 + 0.7 * s.giants) : s.growth
+        const orbit = world.radius * star.orbitScale
         const angle = world.phase + diskClock.current * 0.55 * world.radius ** -1.5
         const size = Math.max(0.0001, world.size * grown)
-        _matrix.makeScale(size, size, size).setPosition(Math.cos(angle) * world.radius, 0, Math.sin(angle) * world.radius)
+        _matrix.makeScale(size, size, size).setPosition(Math.cos(angle) * orbit, 0, Math.sin(angle) * orbit)
         planets.setMatrixAt(i, _matrix)
       })
       planets.instanceMatrix.needsUpdate = true
@@ -806,6 +815,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
           <points ref={diskRef} geometry={diskGeo} material={diskMat} frustumCulled={false} renderOrder={5} />
           <instancedMesh ref={planetsRef} args={[planetGeo, planetMat, MAX_WORLDS]} frustumCulled={false} visible={false} />
           <lineLoop ref={snowLineRef} geometry={snowGeo} material={snowMat} renderOrder={5} visible={false} />
+          <SunPath reducedMotion={reducedMotion} />
         </group>
         <points ref={jetsRef} geometry={jetGeo} material={jetMat} frustumCulled={false} renderOrder={5} />
         {[0, 1].map((i) => (

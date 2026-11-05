@@ -21,6 +21,9 @@ const STAR_HEIGHT = 2.6
 /** Over the planets the camera rises, so the orbits open out instead of lying edge-on. */
 const PLANETS_DISTANCE = 8.2
 const PLANETS_HEIGHT = 5.4
+/** Late in a star's life its ejecta (a nebula, a supernova) outgrow the close view: the camera backs away. */
+const ENDING_PULLBACK = 3.6
+const ENDING_RISE = 1.2
 /** How far the close view drifts round the star (radians) while the rest of the opening plays. */
 const ORBIT = 0.5
 /** The close view looks a little below the star, so it sits above the centred copy. */
@@ -33,6 +36,7 @@ const PASS_BY = new THREE.Vector3(5, 1.5, -4)
 const CLOUD = segmentRange('cloud')
 const PROTOSTAR = segmentRange('protostar')
 const PLANETS = segmentRange('planets')
+const PATH = segmentRange('path')
 
 const _a = new THREE.Vector3()
 const _b = new THREE.Vector3()
@@ -48,8 +52,9 @@ const riseAt = (p: number) => ease(p, PLANETS.start, PLANETS.start + (PLANETS.en
 function closeView(p: number, out: THREE.Vector3): THREE.Vector3 {
   const angle = ORBIT * ramp(p, PROTOSTAR.end, 1)
   const rise = riseAt(p)
-  const distance = STAR_DISTANCE + (PLANETS_DISTANCE - STAR_DISTANCE) * rise
-  const height = STAR_HEIGHT + (PLANETS_HEIGHT - STAR_HEIGHT) * rise
+  const pull = ease(p, PATH.start + 0.5 * (PATH.end - PATH.start), PATH.start + 0.7 * (PATH.end - PATH.start))
+  const distance = STAR_DISTANCE + (PLANETS_DISTANCE - STAR_DISTANCE) * rise + ENDING_PULLBACK * pull
+  const height = STAR_HEIGHT + (PLANETS_HEIGHT - STAR_HEIGHT) * rise + ENDING_RISE * pull
   return out.set(Math.sin(angle) * distance, height, Math.cos(angle) * distance).add(OPENING_CENTER)
 }
 
