@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  createMassivePath, createPathStar, createPathStates, createSunPath, massivePath, pathStar, steadyStar, sunPath,
+  createMassivePath, createPathStar, createPathStates, createSunPath, createVeryMassivePath, massivePath, pathStar, steadyStar, sunPath, veryMassivePath,
   SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
 } from '../pathStage'
 
@@ -127,5 +127,39 @@ describe('the massive path', () => {
     expect(end.pulsar).toBe(1)
     expect(end.shock).toBeCloseTo(SHOCK_REACH, 1)
     expect(end.glowSize).toBeLessThan(0.5)
+  })
+})
+
+describe('the very massive path', () => {
+  const vm = (t: number) => ({ ...veryMassivePath(t, 0, createVeryMassivePath()) })
+
+  it('starts as the steady star the ignition left', () => {
+    expect(vm(0)).toMatchObject({ temperature: 42000, glow: 1, glowSize: 1, wind: 0, blackHole: 0 })
+  })
+
+  it('blows a strong wind in line 29, and is a bare Wolf-Rayet core by the end of line 30', () => {
+    expect(vm(1 / 3).wind).toBe(1)
+    expect(vm(2 / 3).stripped).toBe(1)
+    expect(vm(2 / 3).glowSize).toBeLessThan(vm(1 / 3).glowSize)
+    expect(vm(2 / 3).temperature).toBeGreaterThan(vm(0).temperature)
+  })
+
+  it('goes dark and leaves a black hole in line 31, with at most a weak outburst', () => {
+    expect(vm(2 / 3).blackHole).toBe(0)
+    const end = vm(1)
+    expect(end.vanish).toBe(1)
+    expect(end.glow).toBeCloseTo(0, 10)
+    expect(end.blackHole).toBe(1)
+    let peak = 0
+    for (let t = 0; t <= 1; t += 0.001) peak = Math.max(peak, vm(t).outburst)
+    expect(peak).toBeLessThanOrEqual(0.35)
+  })
+
+  it('keeps the glow changing smoothly', () => {
+    let last = vm(0).glow
+    for (let t = 0; t <= 1; t += 0.0005) {
+      expect(Math.abs(vm(t).glow - last)).toBeLessThan(0.05)
+      last = vm(t).glow
+    }
   })
 })

@@ -12,7 +12,7 @@
 // beyond the snow line, while the gas clears (O6); and the core ignites (O7),
 // taking the colour of its mass. Motion lives in the shaders; buffers are built once.
 
-import { useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef } from 'react'
 import { useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityTier } from '../types'
@@ -30,6 +30,9 @@ import { readCapture } from '../capture'
 import { createPathStates, pathProgress, pathStar } from '../pathStage'
 import { SunPath } from './SunPath'
 import { MassivePath } from './MassivePath'
+import { VeryMassivePath } from './VeryMassivePath'
+import OriginBlackHole, { type BlackHoleLook } from './OriginBlackHole'
+import { createVeryMassivePath, veryMassivePath } from '../pathStage'
 
 const COUNTS: Record<QualityTier, { cloud: number; octaves: number; fragments: number; disk: number; jets: number }> = {
   high: { cloud: 7, octaves: 4, fragments: 9000, disk: 14000, jets: 2400 },
@@ -543,6 +546,19 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
   const counts = COUNTS[quality]
   const stage = useMemo(() => createOpeningStage(), [])
   const pathStates = useMemo(() => createPathStates(), [])
+  // The black hole reads its own copy of the very massive schedule, so it never waits a frame on this component's.
+  const blackHoleState = useRef(createVeryMassivePath())
+  const blackHoleLook = useRef<BlackHoleLook>({ opacity: 0, infall: 0 })
+  const lookAtBlackHole = useCallback((): BlackHoleLook => {
+    const f = journeyFrame
+    const t = pathProgress(f.opening)
+    const shown = t > 0 && f.handoff < 1 && pathForMass(starStore.getState().mass) === 'very-massive'
+    const s = veryMassivePath(t, f.clock, blackHoleState.current)
+    const look = blackHoleLook.current
+    look.opacity = shown ? s.blackHole * (1 - ease(f.handoff, 0.2, 0.85)) : 0
+    look.infall = s.infall
+    return look
+  }, [])
   const rootRef = useRef<THREE.Group>(null)
   const cloudRef = useRef<THREE.Mesh>(null)
   const fragmentsRef = useRef<THREE.Points>(null)
@@ -786,6 +802,8 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
 
   return (
     <group ref={rootRef} position={OPENING_CENTER.toArray()}>
+      {/* Outside the tilted, scaled frame: the impostor works in world units. */}
+      <OriginBlackHole look={lookAtBlackHole} />
       {/* Drawn after the sky (renderOrder), so the dust hides the stars and haze behind it. */}
       {/* Faint unresolved starlight behind the filament, so the dust reads as a silhouette against it. */}
       {HAZE.map((haze, i) => (
@@ -818,6 +836,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
           <lineLoop ref={snowLineRef} geometry={snowGeo} material={snowMat} renderOrder={5} visible={false} />
           <SunPath reducedMotion={reducedMotion} />
           <MassivePath reducedMotion={reducedMotion} />
+          <VeryMassivePath quality={quality} reducedMotion={reducedMotion} />
         </group>
         <points ref={jetsRef} geometry={jetGeo} material={jetMat} frustumCulled={false} renderOrder={5} />
         {[0, 1].map((i) => (

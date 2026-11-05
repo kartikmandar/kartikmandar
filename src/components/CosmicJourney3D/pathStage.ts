@@ -224,21 +224,81 @@ export function createMassivePath(): MassivePathState {
   return { ...createPathStar(), cutaway: 0, layers: 0, collapse: 0, shock: 0, shockGlow: 0, neutrinos: 0, pulsar: 0 }
 }
 
+// --- Very massive (lines 29-31) ----------------------------------------------
+
+export interface VeryMassivePathState extends PathStarState {
+  /** 0..1 how strong the wind blowing the star's outer layers away is (line 29). */
+  wind: number
+  /** 0..1 how far the star has been stripped to a bare Wolf-Rayet core (line 30). */
+  stripped: number
+  /** 0..1 the star gone from view as its core falls in (line 31). */
+  vanish: number
+  /** 0..1 a weak outburst as it goes, if any. */
+  outburst: number
+  /** 0..1 the black hole: its shadow and the little gas still falling onto it. */
+  blackHole: number
+  /** 0..1 how brightly that infalling gas glows (the impostor's disk and photon ring). */
+  infall: number
+}
+
+const VM_LINES = 3
+const vLine = (k: number) => k / VM_LINES
+const VL = 1 / VM_LINES
+
+/**
+ * A very massive star's life and ending at path progress `t` (0..1). Many such
+ * stars leave a neutron star instead (§3.2); the copy says "may", and the scene
+ * shows the black hole it names.
+ */
+export function veryMassivePath(t: number, _time: number, out: VeryMassivePathState, mainSequenceKelvin = 42000): VeryMassivePathState {
+  const p = Math.max(0, Math.min(1, t))
+  // Line 29: a few million years, blowing much of itself away as it goes.
+  out.wind = ease(p, 0.05 * VL, 0.5 * VL)
+  // Line 30: the winds strip it to a hot, bare core: a Wolf-Rayet star.
+  out.stripped = ease(p, vLine(1), vLine(1) + 0.6 * VL)
+  // Line 31: the core falls straight in. A weak outburst, or none; the star simply goes dark.
+  out.vanish = ease(p, vLine(2) + 0.15 * VL, vLine(2) + 0.45 * VL)
+  out.outburst = 0.35 * pulse(p, vLine(2) + 0.1 * VL, vLine(2) + 0.6 * VL)
+  out.blackHole = ease(p, vLine(2) + 0.25 * VL, vLine(2) + 0.55 * VL)
+  // Only a little gas is left to fall in: a faint inner glow and photon ring round the shadow, never a full disk.
+  out.infall = out.blackHole * (0.05 + 0.07 * pulse(p, vLine(2) + 0.3 * VL, 1))
+
+  // Stripped to its core, it gets hotter still (colour is held at the scale's blue end).
+  out.temperature = lerp(mainSequenceKelvin, 60000, out.stripped)
+  // Puffed up by its own light at first, then small and hard once stripped, then gone.
+  out.glowSize = lerp(lerp(1, 1.25, out.wind), 0.55, out.stripped) * (1 - 0.9 * out.vanish) * (1 + 0.6 * out.outburst)
+  out.glow = lerp(1, 1.25, out.stripped) * (1 - out.vanish) + 0.6 * out.outburst
+  out.halo = lerp(1, 0.6, out.stripped) * (1 - out.vanish)
+  out.body = 0
+  out.bodyOpacity = 0
+  out.engulf = 0
+  out.orbitScale = 1
+  // The wind sweeps away what dust the star's light had left.
+  out.debris = 1 - ease(p, 0, 0.6 * VL)
+  return out
+}
+
+export function createVeryMassivePath(): VeryMassivePathState {
+  return { ...createPathStar(), wind: 0, stripped: 0, vanish: 0, outburst: 0, blackHole: 0, infall: 0 }
+}
+
 // --- Every path ---------------------------------------------------------------
 
 /** Each drawn path's own state object, so every frame fills them without allocating. */
 export interface PathStates {
   sun: SunPathState
   massive: MassivePathState
+  veryMassive: VeryMassivePathState
 }
 
 export function createPathStates(): PathStates {
-  return { sun: createSunPath(), massive: createMassivePath() }
+  return { sun: createSunPath(), massive: createMassivePath(), veryMassive: createVeryMassivePath() }
 }
 
 /** The star's state for `path` at path progress `t`. Paths not yet drawn hold the steady main-sequence star. */
 export function pathStar(path: StarPathId, t: number, time: number, mainSequenceKelvin: number, states: PathStates): PathStarState {
   if (path === 'sun') return sunPath(t, time, states.sun, mainSequenceKelvin)
   if (path === 'massive') return massivePath(t, time, states.massive, mainSequenceKelvin)
+  if (path === 'very-massive') return veryMassivePath(t, time, states.veryMassive, mainSequenceKelvin)
   return steadyStar(mainSequenceKelvin, states.sun)
 }
