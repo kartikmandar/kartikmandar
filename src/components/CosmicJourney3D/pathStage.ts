@@ -139,14 +139,106 @@ export function createSunPath(): SunPathState {
   return { ...createPathStar(), flash: 0, shed: 0, expansion: 0, ionized: 0, nebula: 0 }
 }
 
-// --- Every path ---------------------------------------------------------------
+// --- Massive (lines 24-28) ---------------------------------------------------
+
+export interface MassivePathState extends PathStarState {
+  /** 0..1 the cutaway opening on the supergiant, showing its shells (line 25). */
+  cutaway: number
+  /** 0..1 how many burning shells have formed, hydrogen outward to iron at the centre. */
+  layers: number
+  /** 0..1 the iron core falling in (line 26). */
+  collapse: number
+  /** Radius of the shock, in the disk units the star is drawn in (0: none yet). */
+  shock: number
+  /** 0..1 how bright the shock glows. */
+  shockGlow: number
+  /** 0..1 neutrinos pouring out of the core, heating the stalled shock (line 27). */
+  neutrinos: number
+  /** 0..1 the neutron star, and its beams (line 28). */
+  pulsar: number
+}
+
+const MASSIVE_LINES = 5
+const mLine = (k: number) => k / MASSIVE_LINES
+const ML = 1 / MASSIVE_LINES
+
+/** A red supergiant's surface temperature (K): the envelope keeps it until the shock reaches it. */
+export const SUPERGIANT_KELVIN = 3500
+/** Red supergiant radius in disk units (the star is drawn in the disk's frame, which is larger for heavy stars). */
+export const SUPERGIANT_RADIUS = 1.5
+/** Where the shock stalls, in disk units: just outside the collapsed core, inside the star. */
+export const STALLED_SHOCK = 0.32
+/** How far the supernova's shock runs: past the camera. */
+export const SHOCK_REACH = 18
 
 /**
- * The star's state for `path` at path progress `t`. Paths not yet drawn hold
- * the steady main-sequence star. `sun` is the Sun path's own state object, so
- * it is filled without allocating.
+ * A massive star's life and ending at path progress `t` (0..1). The exposure
+ * of the explosion follows the scroll, so it ramps; it never flashes the screen.
  */
-export function pathStar(path: StarPathId, t: number, time: number, mainSequenceKelvin: number, sun: SunPathState): PathStarState {
-  if (path === 'sun') return sunPath(t, time, sun, mainSequenceKelvin)
-  return steadyStar(mainSequenceKelvin, sun)
+export function massivePath(t: number, _time: number, out: MassivePathState, mainSequenceKelvin = 31000): MassivePathState {
+  const p = Math.max(0, Math.min(1, t))
+  // Line 24: hot, blue and fast.
+  // Line 25: it swells into a red supergiant; a cutaway shows shells fusing heavier elements, out to iron.
+  const swell = ease(p, mLine(1) + 0.05 * ML, mLine(1) + 0.6 * ML)
+  out.cutaway = ease(p, mLine(1) + 0.45 * ML, mLine(1) + 0.75 * ML)
+  out.layers = ease(p, mLine(1) + 0.5 * ML, mLine(2) - 0.05 * ML)
+  // Line 26: fusing iron releases no energy. The core falls in, in less than a second.
+  out.collapse = ease(p, mLine(2) + 0.3 * ML, mLine(2) + 0.6 * ML)
+  // Line 27: the core rebounds; the shock stalls just outside it; neutrinos heat it until it blows the star apart.
+  const bounce = ease(p, mLine(3), mLine(3) + 0.12 * ML)
+  out.neutrinos = pulse(p, mLine(3) + 0.1 * ML, mLine(3) + 0.55 * ML)
+  const revived = ease(p, mLine(3) + 0.4 * ML, 1)
+  out.shock = bounce > 0 ? lerp(0.05, STALLED_SHOCK, bounce) + (SHOCK_REACH - STALLED_SHOCK) * revived * revived : 0
+  // The shock glows as it breaks out, then thins and fades as it sweeps past.
+  out.shockGlow = bounce * (1 - 0.9 * ease(p, mLine(3) + 0.8 * ML, mLine(4) + 0.7 * ML))
+  // Line 28: left behind, a neutron star; its beams sweep round as it spins.
+  out.pulsar = ease(p, mLine(4), mLine(4) + 0.3 * ML)
+
+  out.body = SUPERGIANT_RADIUS * swell * (1 - 0.06 * out.collapse)
+  // The envelope is gone once the shock has run through it.
+  const blown = ramp(out.shock, out.body * 0.8, out.body * 1.6)
+  out.bodyOpacity = ease(swell, 0, 0.3) * (1 - blown)
+
+  let kelvin = mainSequenceKelvin
+  kelvin = lerp(kelvin, SUPERGIANT_KELVIN, swell)
+  // The explosion is hot; the neutron star left behind is hotter still (drawn at the colour scale's blue end).
+  kelvin = lerp(kelvin, 12000, bounce)
+  out.temperature = lerp(kelvin, 40000, out.pulsar)
+
+  // The point of light is the core: hidden as a soft glow inside the supergiant, then the explosion's
+  // light ramping up and down as the shock breaks out, then a tiny hard point.
+  const swollen = out.bodyOpacity
+  // The light peaks as the shock breaks out of the surface and fades as the debris spreads.
+  const outburst = pulse(ramp(out.shock, SUPERGIANT_RADIUS * 0.9, SUPERGIANT_RADIUS * 7), 0, 1)
+  // The outburst brightens the glow more than it grows it: a big bright sprite blooms into a grey fog.
+  out.glowSize = lerp(lerp(1, (2.4 * SUPERGIANT_RADIUS) / 0.75, swollen), 0.25, out.pulsar) * (1 + 0.35 * outburst)
+  out.glow = lerp(lerp(1, 0.18, swollen), 1.3, out.pulsar) + 0.9 * outburst
+  out.halo = lerp(lerp(1, 0.5, swell), 0.05, Math.max(blown, out.pulsar)) + 0.2 * outburst
+  out.engulf = 0
+  out.orbitScale = 1
+  out.debris = 1 - ease(p, mLine(1), mLine(2))
+  return out
+}
+
+export function createMassivePath(): MassivePathState {
+  return { ...createPathStar(), cutaway: 0, layers: 0, collapse: 0, shock: 0, shockGlow: 0, neutrinos: 0, pulsar: 0 }
+}
+
+// --- Every path ---------------------------------------------------------------
+
+/** Each drawn path's own state object, so every frame fills them without allocating. */
+export interface PathStates {
+  sun: SunPathState
+  massive: MassivePathState
+}
+
+export function createPathStates(): PathStates {
+  return { sun: createSunPath(), massive: createMassivePath() }
+}
+
+/** The star's state for `path` at path progress `t`. Paths not yet drawn hold the steady main-sequence star. */
+export function pathStar(path: StarPathId, t: number, time: number, mainSequenceKelvin: number, states: PathStates): PathStarState {
+  if (path === 'sun') return sunPath(t, time, states.sun, mainSequenceKelvin)
+  if (path === 'massive') return massivePath(t, time, states.massive, mainSequenceKelvin)
+  return steadyStar(mainSequenceKelvin, states.sun)
 }

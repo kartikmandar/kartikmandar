@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { createPathStar, createSunPath, pathStar, steadyStar, sunPath, SUN_GIANT_RADIUS, type SunPathState } from '../pathStage'
+import {
+  createMassivePath, createPathStar, createPathStates, createSunPath, massivePath, pathStar, steadyStar, sunPath,
+  SHOCK_REACH, STALLED_SHOCK, SUN_GIANT_RADIUS, SUPERGIANT_RADIUS, type SunPathState,
+} from '../pathStage'
 
 const sun = (t: number, time = 0): SunPathState => ({ ...sunPath(t, time, createSunPath()) })
 const line = (k: number) => k / 7
@@ -73,7 +76,56 @@ describe("the Sun's path", () => {
 
 describe('paths not drawn yet', () => {
   it('hold the steady star', () => {
-    const state = pathStar('massive', 0.5, 0, 31000, createSunPath())
-    expect(state).toMatchObject({ temperature: 31000, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
+    const state = pathStar('red-dwarf', 0.5, 0, 3100, createPathStates())
+    expect(state).toMatchObject({ temperature: 3100, glow: 1, body: 0, engulf: 0, orbitScale: 1 })
+  })
+})
+
+describe('the massive path', () => {
+  const massive = (t: number) => ({ ...massivePath(t, 0, createMassivePath()) })
+  const at = (k: number, within = 0.5) => (k + within) / 5
+
+  it('starts as the steady blue star the ignition left', () => {
+    expect(massive(0)).toMatchObject({ temperature: 31000, glow: 1, glowSize: 1, body: 0, shock: 0, pulsar: 0 })
+  })
+
+  it('becomes a cool red supergiant, cut open to its shells, by the end of line 25', () => {
+    const late = massive(at(1, 0.95))
+    expect(late.body).toBeCloseTo(SUPERGIANT_RADIUS, 2)
+    expect(late.temperature).toBeLessThan(4000)
+    expect(late.cutaway).toBe(1)
+    expect(late.layers).toBeGreaterThan(0.95)
+  })
+
+  it('collapses the core during line 26, before any shock', () => {
+    expect(massive(at(2, 0.9)).collapse).toBe(1)
+    expect(massive(at(2, 0.9)).shock).toBe(0)
+  })
+
+  it('stalls the shock just outside the core while neutrinos heat it, then blows the star apart', () => {
+    const stalled = massive(at(3, 0.2))
+    expect(stalled.shock).toBeGreaterThan(0)
+    expect(stalled.shock).toBeLessThan(STALLED_SHOCK * 1.2)
+    expect(stalled.neutrinos).toBeGreaterThan(0.5)
+    expect(stalled.bodyOpacity).toBeGreaterThan(0.9)
+    const out = massive(at(4, 0.2))
+    expect(out.shock).toBeGreaterThan(SUPERGIANT_RADIUS * 2)
+    expect(out.bodyOpacity).toBe(0)
+  })
+
+  it('ramps the explosion up and back down, never jumping', () => {
+    let last = massive(0).glow
+    for (let t = 0; t <= 1; t += 0.0005) {
+      const glow = massive(t).glow
+      expect(Math.abs(glow - last)).toBeLessThan(0.05)
+      last = glow
+    }
+  })
+
+  it('ends with a neutron star, and the shock gone past the camera', () => {
+    const end = massive(1)
+    expect(end.pulsar).toBe(1)
+    expect(end.shock).toBeCloseTo(SHOCK_REACH, 1)
+    expect(end.glowSize).toBeLessThan(0.5)
   })
 })

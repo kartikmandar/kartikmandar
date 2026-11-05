@@ -27,8 +27,9 @@ import { segmentRange, type StarPathId } from '../openingStory'
 import { pathForMass, starStore } from '../starChoice'
 import { blackbodyRgb, drawnBrightness, drawnDiskScale, drawnRadius, drawnSpin, surfaceTemperature } from '../starLook'
 import { readCapture } from '../capture'
-import { createSunPath, pathProgress, pathStar } from '../pathStage'
+import { createPathStates, pathProgress, pathStar } from '../pathStage'
 import { SunPath } from './SunPath'
+import { MassivePath } from './MassivePath'
 
 const COUNTS: Record<QualityTier, { cloud: number; octaves: number; fragments: number; disk: number; jets: number }> = {
   high: { cloud: 7, octaves: 4, fragments: 9000, disk: 14000, jets: 2400 },
@@ -541,7 +542,7 @@ const HAZE: { position: [number, number, number]; scale: [number, number, number
 export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier; reducedMotion: boolean }) {
   const counts = COUNTS[quality]
   const stage = useMemo(() => createOpeningStage(), [])
-  const sunState = useMemo(() => createSunPath(), [])
+  const pathStates = useMemo(() => createPathStates(), [])
   const rootRef = useRef<THREE.Group>(null)
   const cloudRef = useRef<THREE.Mesh>(null)
   const fragmentsRef = useRef<THREE.Points>(null)
@@ -661,7 +662,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
     diskClock.current = capture ? time * spin : diskClock.current + (reducedMotion ? 0 : f.dt * spin)
     const bright = drawnBrightness(mass)
     // The path's life and ending: the star's colour, size and glow, and what becomes of its planets.
-    const star = pathStar(path, pathProgress(f.opening), time, surfaceTemperature(mass), sunState)
+    const star = pathStar(path, pathProgress(f.opening), time, surfaceTemperature(mass), pathStates)
     blackbodyRgb(star.temperature, _rgb)
     _star.setRGB(_rgb.r, _rgb.g, _rgb.b)
 
@@ -816,6 +817,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
           <instancedMesh ref={planetsRef} args={[planetGeo, planetMat, MAX_WORLDS]} frustumCulled={false} visible={false} />
           <lineLoop ref={snowLineRef} geometry={snowGeo} material={snowMat} renderOrder={5} visible={false} />
           <SunPath reducedMotion={reducedMotion} />
+          <MassivePath reducedMotion={reducedMotion} />
         </group>
         <points ref={jetsRef} geometry={jetGeo} material={jetMat} frustumCulled={false} renderOrder={5} />
         {[0, 1].map((i) => (
