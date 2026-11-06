@@ -241,11 +241,15 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
           {!capture.enabled && (
             // Adaptive resolution: sheds DPR under load (thermal throttling, slow GPUs)
             // and recovers with headroom, in 0.25 steps; gives up flip-flopping after 4.
+            // drei counts every window above its bounds as a flip, even with the factor
+            // already at 1, so a device that keeps up "gives up" about 12 s in: it then
+            // keeps the DPR it reached rather than dropping to the floor (a resize hitch
+            // and half the resolution on desktop). Sustained slowness is TierGovernor's job.
             <PerformanceMonitor
               factor={DPR_START_FACTOR}
               flipflops={4}
               onChange={({ factor }) => setDpr(adaptiveDpr(quality, factor, window.devicePixelRatio || 1))}
-              onFallback={() => setDpr(adaptiveDpr(quality, 0, window.devicePixelRatio || 1))}
+              onFallback={({ factor }) => setDpr(adaptiveDpr(quality, factor, window.devicePixelRatio || 1))}
             />
           )}
           {capture.enabled ? <CaptureReady /> : <TierGovernor quality={quality} onChange={setTier} />}

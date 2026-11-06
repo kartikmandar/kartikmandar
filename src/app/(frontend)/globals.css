@@ -415,6 +415,8 @@ html[data-story-mode='calm'] .story-article {
     background: linear-gradient(to top, rgba(4, 5, 11, 0.95) 0%, rgba(4, 5, 11, 0.86) 62%, rgba(4, 5, 11, 0) 100%) !important;
   }
   .journey-end { padding-bottom: 96px !important; }
+  /* The choice and the lifetime line end above the rail's "Skip story", which sits 19vh - 34px from the bottom. */
+  .journey-lowered { padding-bottom: max(9vh, 92px, calc(19vh - 10px)) !important; }
 }
 
 /* The CV prints as a plain black-on-white document with none of the site chrome. */

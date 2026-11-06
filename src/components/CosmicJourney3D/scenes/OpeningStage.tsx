@@ -13,7 +13,7 @@
 // taking the colour of its mass. Motion lives in the shaders; buffers are built once.
 
 import { useCallback, useMemo, useRef } from 'react'
-import { useFrame } from '@react-three/fiber'
+import { createPortal, useFrame, useThree } from '@react-three/fiber'
 import * as THREE from 'three'
 import type { QualityTier } from '../types'
 import { journeyFrame } from '../store'
@@ -43,6 +43,12 @@ const COUNTS: Record<QualityTier, { cloud: number; octaves: number; fragments: n
   low: { cloud: 5, octaves: 4, fragments: 6000, disk: 8000, jets: 1500 },
   mobile: { cloud: 4, octaves: 3, fragments: 3000, disk: 4500, jets: 900 },
 }
+/**
+ * The cloud is soft noise over the whole screen, the costliest thing in the opening (§11):
+ * it is drawn into its own target at most this many pixels per CSS pixel, then blended
+ * back in at its place in the draw order.
+ */
+const CLOUD_PIXEL_RATIO: Record<QualityTier, number> = { high: 1, low: 0.75, mobile: 0.6 }
 
 /** The filament's spine, in stage space (the followed clump sits at the origin). */
 function spine(x: number, out: THREE.Vector3): THREE.Vector3 {
@@ -105,6 +111,7 @@ const CLOUD_VERT = /* glsl */ `
   attribute vec3 aCenter;
   attribute vec2 aSize;
   attribute float aSeed;
+  uniform float uDensity;
   varying vec2 vUv;
   varying float vSeed;
   varying float vFade;
@@ -115,6 +122,8 @@ const CLOUD_VERT = /* glsl */ `
     // Billboards in view space; they thin out as the camera passes through them.
     vFade = smoothstep(4.0, 16.0, -center.z);
     gl_Position = projectionMatrix * (center + vec4(position.xy * aSize, 0.0, 0.0));
+    // A billboard the camera is passing through fills the screen with nothing: collapse it so it isn't rasterized.
+    if (uDensity * vFade <= 0.0) gl_Position = vec4(2.0, 2.0, 2.0, 1.0);
   }
 `
 const CLOUD_FRAG = /* glsl */ `
@@ -141,6 +150,8 @@ const CLOUD_FRAG = /* glsl */ `
   void main() {
     vec2 c = vUv - 0.5;
     float mask = smoothstep(0.5, 0.18, length(c));
+    // Outside the ellipse nothing is drawn: skip the noise (the costliest part of the opening).
+    if (mask <= 0.0) discard;
     float d = cloudFbm(vec3(vUv * vec2(3.2, 1.8) + vSeed * 17.0, vSeed * 5.0 + uTime * 0.012));
     // Dark where dense (it hides the stars behind), with a faint lit band at the edges of the dense parts.
     float dense = smoothstep(0.36, 0.6, d) * mask;
@@ -148,6 +159,22 @@ const CLOUD_FRAG = /* glsl */ `
     float k = uDensity * vFade;
     float alpha = max(dense * 0.97, rim * 0.2) * k;
     gl_FragColor = vec4(uDust + uRim * rim, alpha);
+  }
+`
+
+// The cloud's target is premultiplied (it was drawn into transparent black), so it is blended back with ONE, 1 - alpha.
+const CLOUD_COMPOSITE_VERT = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = vec4(position.xy, 0.0, 1.0);
+  }
+`
+const CLOUD_COMPOSITE_FRAG = /* glsl */ `
+  uniform sampler2D uCloud;
+  varying vec2 vUv;
+  void main() {
+    gl_FragColor = texture2D(uCloud, vUv);
   }
 `
 
@@ -540,6 +567,7 @@ const _star = new THREE.Color()
 const _rgb = { r: 1, g: 1, b: 1 }
 const _matrix = new THREE.Matrix4()
 const _tint = new THREE.Color()
+const _clearColor = new THREE.Color()
 /** Background haze, well behind the filament (stage space). */
 const HAZE: { position: [number, number, number]; scale: [number, number, number] }[] = [
   { position: [-6, 1, -30], scale: [120, 46, 1] },
@@ -586,7 +614,25 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
   const laidOut = useRef<StarPathId | null>(null)
   const hazeColor = useMemo(() => hdr(PALETTE.stellarBlue, 0.2), [])
 
+  const gl = useThree((s) => s.gl)
   const cloudGeo = useDisposable(() => cloudGeometry(counts.cloud), [counts.cloud])
+  // The cloud lives in a scene of its own, drawn each frame into a smaller target (CLOUD_PIXEL_RATIO).
+  const cloudScene = useMemo(() => new THREE.Scene(), [])
+  const cloudTarget = useDisposable(() => new THREE.WebGLRenderTarget(1, 1, {
+    type: gl.extensions.has('EXT_color_buffer_float') || gl.extensions.has('EXT_color_buffer_half_float') ? THREE.HalfFloatType : THREE.UnsignedByteType,
+    depthBuffer: false,
+  }), [gl])
+  const compositeGeo = useDisposable(() => new THREE.PlaneGeometry(2, 2), [])
+  const compositeMat = useDisposable(() => new THREE.ShaderMaterial({
+    uniforms: { uCloud: { value: cloudTarget.texture } },
+    vertexShader: CLOUD_COMPOSITE_VERT,
+    fragmentShader: CLOUD_COMPOSITE_FRAG,
+    transparent: true,
+    premultipliedAlpha: true,
+    depthTest: false,
+    depthWrite: false,
+  }), [cloudTarget])
+  const compositeRef = useRef<THREE.Mesh>(null)
   // Materials never depend on the tier: a tier change mid-precompile would dispose one compileAsync is waiting on.
   const cloudMat = useDisposable(() => new THREE.ShaderMaterial({
     uniforms: {
@@ -666,7 +712,7 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
   /** The star's exposure as drawn (ignition, and its glow with any outburst): NaN until the opening is on screen. */
   const exposure = useRef({ ignite: NaN, glow: NaN })
 
-  useFrame(() => {
+  useFrame((state) => {
     const f = journeyFrame
     const root = rootRef.current
     if (!root) return
@@ -701,6 +747,26 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
       cloud.uOctaves!.value = counts.octaves
       cloud.uDensity!.value = s.cloud * presence
       cloud.uTime!.value = time
+    }
+    // Draw the cloud into its target (the camera has already moved this frame); the composite quad puts it back at renderOrder 2.
+    const composite = compositeRef.current
+    if (composite) {
+      composite.visible = s.cloud * presence > 0
+      if (composite.visible) {
+        const ratio = Math.min(gl.getPixelRatio(), CLOUD_PIXEL_RATIO[quality])
+        const width = Math.max(1, Math.round(state.size.width * ratio))
+        const height = Math.max(1, Math.round(state.size.height * ratio))
+        if (cloudTarget.width !== width || cloudTarget.height !== height) cloudTarget.setSize(width, height)
+        const previous = gl.getRenderTarget()
+        gl.getClearColor(_clearColor)
+        const clearAlpha = gl.getClearAlpha()
+        gl.setRenderTarget(cloudTarget)
+        gl.setClearColor(0x000000, 0)
+        gl.clear(true, false, false)
+        gl.render(cloudScene, state.camera)
+        gl.setRenderTarget(previous)
+        gl.setClearColor(_clearColor, clearAlpha)
+      }
     }
     hazeRefs.current.forEach((sprite) => {
       if (sprite) (sprite.material as THREE.SpriteMaterial).opacity = presence * (0.35 + 0.65 * s.cloud)
@@ -830,7 +896,11 @@ export function OpeningStage({ quality, reducedMotion }: { quality: QualityTier;
           <spriteMaterial map={getGlowTexture()} color={hazeColor} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} fog={false} />
         </sprite>
       ))}
-      <mesh ref={cloudRef} geometry={cloudGeo} material={cloudMat} frustumCulled={false} renderOrder={2} />
+      {createPortal(
+        <mesh ref={cloudRef} geometry={cloudGeo} material={cloudMat} position={OPENING_CENTER.toArray()} frustumCulled={false} />,
+        cloudScene,
+      )}
+      <mesh ref={compositeRef} geometry={compositeGeo} material={compositeMat} frustumCulled={false} renderOrder={2} />
       <points ref={fragmentsRef} geometry={fragmentGeo} material={fragmentMat} frustumCulled={false} renderOrder={3} />
       {CLUMPS.map((clump, i) => i !== FOLLOWED && (
         <GlowSprite

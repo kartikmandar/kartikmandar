@@ -140,7 +140,7 @@ export function Overlay() {
     // Lines that carry something under them sit lower, like the choice, leaving the star clear above.
     const lowered = choosing || line.aside !== undefined
     return (
-      <div style={lowered ? { ...openingWrap, ...choiceWrap } : openingWrap}>
+      <div className={lowered ? 'journey-lowered' : undefined} style={lowered ? { ...openingWrap, ...choiceWrap } : openingWrap}>
         <div ref={rootRef} key={`opening-${view.index}`} style={lowered ? { width: '100%' } : undefined}>
           <h2 data-split style={lowered ? { ...openingText, ...choiceText } : openingText}>{line.text}</h2>
           {choosing && <div data-fade><MassChoice /></div>}
