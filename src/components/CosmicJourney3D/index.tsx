@@ -28,6 +28,7 @@ import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
 import { ContextGuard } from './ContextGuard'
+import { guardForcedContextLoss } from './rendererLifecycle'
 import { StorySound } from './StorySound'
 import { OPENING_STILLS, type OpeningStill } from './openingStills'
 
@@ -208,7 +209,8 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
   // context the probe got but the real canvas can't is caught here.
   const createRenderer = useCallback((props: THREE.WebGLRendererParameters) => {
     try {
-      return new THREE.WebGLRenderer(props)
+      // R3F forces a context loss 500 ms after an unmount; Strict Mode's dev remount keeps this renderer (rendererLifecycle).
+      return guardForcedContextLoss(new THREE.WebGLRenderer(props))
     } catch (error) {
       onAbandon()
       throw error

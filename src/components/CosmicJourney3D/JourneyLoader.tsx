@@ -7,6 +7,7 @@ import { useStore } from 'zustand'
 import { FIRST_VISIT_MIN_MS, REVEAL_MS, loadStore, reportLoad, SEEN_KEY } from './loader'
 import { journeyFrame } from './store'
 import { getLenis } from './scrollEngine'
+import { compileScene } from './rendererLifecycle'
 import { LoaderView } from './LoaderView'
 
 /** Frames the flight's opening is drawn behind the loader so buffers, textures and glyphs upload early. */
@@ -15,7 +16,7 @@ const WARMUP_FRAMES = 4
 /**
  * Inside the Canvas: compiles every material in the scene (all 31 beats and
  * the opening) before the story starts, so no beat
- * hitches on first arrival. compileAsync uses KHR_parallel_shader_compile when
+ * hitches on first arrival. compileScene uses KHR_parallel_shader_compile when
  * available. Progress feeds the loader's point of light.
  */
 export function Precompile() {
@@ -26,7 +27,10 @@ export function Precompile() {
     let cancelled = false
     reportLoad(0.35) // canvas live
     const raf = requestAnimationFrame(() => {
-      gl.compileAsync(scene, camera)
+      // compileAsync, but it stops when this effect is cleaned up (Strict Mode's dev remount
+      // disposes the first mount's materials mid-compile, and three's own poll throws on them).
+      Promise.resolve()
+        .then(() => compileScene(gl, scene, camera, () => cancelled))
         .catch(() => undefined) // a failed precompile only costs a first-arrival hitch
         .then(() => {
           if (cancelled) return

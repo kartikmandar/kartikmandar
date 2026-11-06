@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
 import { CONTEXT_RESTORE_TIMEOUT_MS, shouldAbandonAfterLoss } from './robustness'
+import { isTeardownCanvas } from './rendererLifecycle'
 
 /**
  * Watches for a lost WebGL context, which phones trigger under memory pressure.
@@ -19,6 +20,8 @@ export function ContextGuard({ onAbandon }: { onAbandon: () => void }) {
     const onLost = (event: Event) => {
       // Without preventDefault the browser never restores the context.
       event.preventDefault()
+      // Our own teardown (the canvas has left the page) is not a device losing the GPU.
+      if (isTeardownCanvas(canvas)) return
       lossCount += 1
       clearTimeout(restoreTimer)
       if (shouldAbandonAfterLoss(lossCount)) {
