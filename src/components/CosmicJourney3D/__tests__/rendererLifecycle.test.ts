@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type * as THREE from 'three'
-import { COMPILE_POLL_MS, compileScene, guardForcedContextLoss, isTeardownCanvas, type CompilingRenderer } from '../rendererLifecycle'
+import { COMPILE_POLL_MS, compileScene, guardForcedContextLoss, isTeardownCanvas, releaseOnUnmount, type CompilingRenderer } from '../rendererLifecycle'
 
 const canvas = (connected: boolean) => ({ isConnected: connected }) as HTMLCanvasElement
 
@@ -27,6 +27,44 @@ describe('guardForcedContextLoss', () => {
     element.isConnected = false
     renderer.forceContextLoss()
     expect(lose).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('guardForcedContextLoss, released once', () => {
+  it('loses the context only once, whoever asks (R3F teardown and releaseOnUnmount)', () => {
+    const lose = vi.fn()
+    const renderer = guardForcedContextLoss({ forceContextLoss: lose, domElement: canvas(false) })
+    renderer.forceContextLoss()
+    renderer.forceContextLoss()
+    expect(lose).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('releaseOnUnmount', () => {
+  beforeEach(() => vi.useFakeTimers())
+  afterEach(() => vi.useRealTimers())
+
+  // After a Strict Mode remount R3F has forgotten the canvas, so the real unmount must release it.
+  it('releases the context once React has removed the canvas', () => {
+    const lose = vi.fn()
+    const element = { isConnected: true }
+    const renderer = guardForcedContextLoss({ forceContextLoss: lose, domElement: element as HTMLCanvasElement })
+    releaseOnUnmount(renderer)
+    element.isConnected = false // React removes the canvas in the same commit
+    vi.runAllTimers()
+    expect(lose).toHaveBeenCalledTimes(1)
+  })
+
+  it("keeps the context through Strict Mode's simulated unmount (the canvas stays in the page)", () => {
+    const lose = vi.fn()
+    const renderer = guardForcedContextLoss({ forceContextLoss: lose, domElement: canvas(true) })
+    releaseOnUnmount(renderer)
+    vi.runAllTimers()
+    expect(lose).not.toHaveBeenCalled()
+  })
+
+  it('does nothing before a renderer exists', () => {
+    expect(() => releaseOnUnmount(null)).not.toThrow()
   })
 })
 

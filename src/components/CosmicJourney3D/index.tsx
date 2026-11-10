@@ -28,7 +28,7 @@ import { JourneyLoader, Precompile } from './JourneyLoader'
 import { LoaderView } from './LoaderView'
 import { JourneyNav } from './JourneyNav'
 import { ContextGuard } from './ContextGuard'
-import { guardForcedContextLoss } from './rendererLifecycle'
+import { guardForcedContextLoss, releaseOnUnmount } from './rendererLifecycle'
 import { StorySound } from './StorySound'
 import { OPENING_STILLS, type OpeningStill } from './openingStills'
 
@@ -207,15 +207,20 @@ export default function CosmicJourney3D({ onAbandon }: { onAbandon: () => void }
 
   // R3F builds the renderer in an async step no error boundary can see, so a
   // context the probe got but the real canvas can't is caught here.
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
   const createRenderer = useCallback((props: THREE.WebGLRendererParameters) => {
     try {
       // R3F forces a context loss 500 ms after an unmount; Strict Mode's dev remount keeps this renderer (rendererLifecycle).
-      return guardForcedContextLoss(new THREE.WebGLRenderer(props))
+      rendererRef.current = guardForcedContextLoss(new THREE.WebGLRenderer(props))
+      return rendererRef.current
     } catch (error) {
       onAbandon()
       throw error
     }
   }, [onAbandon])
+
+  // Leaving the flight releases its context, even after a Strict Mode remount made R3F forget the canvas.
+  useEffect(() => () => releaseOnUnmount(rendererRef.current), [])
 
   // Until the client probe runs, keep showing the server's first paint (never a black frame).
   if (!ready) return <LoaderView progress={0.05} />

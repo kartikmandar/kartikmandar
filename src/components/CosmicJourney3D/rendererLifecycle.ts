@@ -16,13 +16,33 @@ export function isTeardownCanvas(canvas: HTMLCanvasElement): boolean {
   return !canvas.isConnected
 }
 
-/** Makes forceContextLoss a no-op while the renderer's canvas is still in the page. */
+/**
+ * Makes forceContextLoss a no-op while the renderer's canvas is still in the
+ * page, and runs it at most once (R3F's teardown and releaseOnUnmount may both
+ * ask; losing a lost context is a WebGL error).
+ */
 export function guardForcedContextLoss<T extends Pick<THREE.WebGLRenderer, 'forceContextLoss' | 'domElement'>>(renderer: T): T {
   const forceContextLoss = renderer.forceContextLoss.bind(renderer)
+  let released = false
   renderer.forceContextLoss = () => {
-    if (isTeardownCanvas(renderer.domElement)) forceContextLoss()
+    if (released || !isTeardownCanvas(renderer.domElement)) return
+    released = true
+    forceContextLoss()
   }
   return renderer
+}
+
+/**
+ * Called from the flight's unmount: releases the context once React has removed
+ * the canvas. After a Strict Mode remount R3F has already forgotten this canvas
+ * (its first teardown ran, minus the guarded context loss), so on the real
+ * unmount nothing else would release it. Strict Mode's own simulated unmount
+ * leaves the canvas in the page, so the guard keeps the context then.
+ */
+export function releaseOnUnmount(renderer: Pick<THREE.WebGLRenderer, 'forceContextLoss'> | null): void {
+  if (!renderer) return
+  // After this commit, when the canvas has left the page.
+  setTimeout(() => renderer.forceContextLoss(), 0)
 }
 
 /** What compileScene needs from the renderer (WebGLRenderer, or a fake in tests). */
