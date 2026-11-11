@@ -13,7 +13,7 @@
 ## About Me
 
 I completed my **Bachelors in Physics** from the Indian Institute of Science Education and Research, Bhopal, India in May 2025.
-I am currently working as a Visiting Student at the Raman Research Institute, Bangalore. 
+I am currently pursuing MS Astrophysics from University of Catania, Italy.  
 
 My research interests are in Radio Interferometry (Visibility Simulators), Radio Antenna Simulations, Time Series and Spectral Analysis (BHXBs), open source software development and ML techniques for studying Strong Gravitational Lensing.
 
