@@ -1,3 +1,5 @@
+import { CV_PDFS } from './cv-pdfs'
+
 export type LinkIconConfig =
   | { kind: 'lucide'; name: string }
   | { kind: 'component'; id: 'github' | 'linkedin' | 'x' | 'reddit' | 'scholar' | 'orcid' }
@@ -33,22 +35,12 @@ export const LINKS: LinkItem[] = [
     icon: { kind: 'lucide', name: 'AtSign' },
     featured: true,
   },
-  {
-    id: 'academic-cv',
-    label: 'Academic CV',
-    href: 'https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing',
+  ...CV_PDFS.map((cv): LinkItem => ({
+    ...cv,
     category: 'primary',
-    icon: { kind: 'lucide', name: 'GraduationCap' },
+    icon: { kind: 'lucide', name: cv.id === 'academic-cv' ? 'GraduationCap' : 'FileText' },
     featured: true,
-  },
-  {
-    id: 'professional-cv',
-    label: 'Professional CV',
-    href: 'https://drive.google.com/file/d/15PZLNWHPzwWEzjf4GhA3WJhXWlJXqkXg/view?usp=sharing',
-    category: 'primary',
-    icon: { kind: 'lucide', name: 'FileText' },
-    featured: true,
-  },
+  })),
   {
     id: 'github',
     label: 'GitHub',

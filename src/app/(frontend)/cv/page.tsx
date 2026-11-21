@@ -10,6 +10,7 @@ import {
   CV_NAV, CV_RESEARCH_INTERESTS, CV_SECTIONS_AFTER, CV_SECTIONS_BEFORE, CV_SKILLS,
   type CvEntry, type CvSection,
 } from '@/data/cv'
+import { CV_PDFS } from '@/data/cv-pdfs'
 import { PUBLICATIONS, citationLine } from '@/data/publications'
 import { getCanonicalUrl, getServerSideURL } from '@/utilities/getURL'
 import { generateBreadcrumbSchema } from '@/utilities/structuredData'
@@ -91,8 +92,7 @@ export default function CvPage() {
           <PageHeader title="CV" lead={CV_RESEARCH_INTERESTS}>
             <div className="mt-6 flex flex-wrap gap-2">
               <PrintButton />
-              <CardAction href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing">Academic CV</CardAction>
-              <CardAction href="https://drive.google.com/file/d/15PZLNWHPzwWEzjf4GhA3WJhXWlJXqkXg/view?usp=sharing">Professional CV</CardAction>
+              {CV_PDFS.map((cv) => <CardAction key={cv.id} href={cv.href}>{cv.label}</CardAction>)}
             </div>
           </PageHeader>
         </div>

@@ -28,7 +28,7 @@ export const CV_SECTIONS_BEFORE: CvSection[] = [
     id: 'education',
     label: 'Education',
     entries: [
-      { title: 'MSc Physics (Astrophysics curriculum)', organisation: 'University of Catania', place: 'Italy', dates: '2026 – 2028' },
+      { title: 'MSc Physics (Astrophysics curriculum)', organisation: 'University of Catania', place: 'Italy', dates: '2026 – 2028 (expected)' },
       { title: 'BS Physics', organisation: 'Indian Institute of Science Education and Research, Bhopal', place: 'India', dates: '2021 – 2025' },
     ],
   },
@@ -40,13 +40,20 @@ export const CV_SECTIONS_BEFORE: CvSection[] = [
         title: 'Visiting Research Student, HERA Validation Group',
         organisation: 'Raman Research Institute',
         place: 'Bengaluru, India',
-        dates: 'May 2024 – present',
+        dates: 'May 2024 – 2026',
         people: 'Prof. Saurabh Singh, Dr. Rajorshi Chandra',
         points: [
           'Built RadioSim (formerly RRIVis), a full-polarization RIME visibility simulator with point-source and HEALPix skies, analytic and FITS beams, and NumPy, JAX and Dask backends, cross-validated against pyuvsim.',
           'Wrote the CUDA/CuPy GPU backend and matvis-like API for fftvis (co-author on the RASTI paper).',
-          'Lead the hera_pspec v1.0 work (astropy units and cosmology, CLI, packaging and CI); released hera_strip on PyPI.',
-          'Modelling 2D power-spectrum systematics in HERA H6C data with low-rank nuisance models, run on NRAO HPC, with Steven Murray and Adélie Gorce.',
+          'Implemented the Astropy units, cosmology and HDF5 migration that merged into the hera_pspec v1 release branch. Released hera_strip on PyPI.',
+        ],
+      },
+      {
+        title: 'HERA validation and instrument systematics',
+        organisation: 'Ongoing research collaboration',
+        people: 'Prof. Saurabh Singh, Steven Murray, Adélie Gorce',
+        points: [
+          'Develop low-rank models for HERA power-spectrum systematics and investigate antenna mutual coupling and beam uncertainty using simulations on NRAO HPC.',
         ],
       },
       {
@@ -77,8 +84,8 @@ export const CV_SECTIONS_BEFORE: CvSection[] = [
         dates: 'Feb 2024 – present',
         people: 'Prof. Matteo Bachetti, Dr. Guglielmo Mastroserio',
         points: [
-          'Built Stingray Explorer, a desktop app for X-ray astronomy timing analysis (Electron, React, FastAPI).',
-          'Modernized the legacy DAVE application: current Electron and Python, tests and security hardening.',
+          'Built Stingray Explorer for X-ray timing. Its Electron, React and FastAPI migration merged in November 2026, followed by a locally tested Apple Silicon packaging rehearsal.',
+          'Contributed to DAVE modernization, including FITS timing and background-subtraction fixes.',
         ],
       },
       {
@@ -104,7 +111,7 @@ export const CV_SECTIONS_AFTER: CvSection[] = [
         organisation: 'Enrolia',
         dates: '2026 – present',
         href: 'https://enrolia.app',
-        points: ['Sole architect of a graduate-admissions platform: multi-agent backend, web app, voice onboarding and self-hosted inference.'],
+        points: ['Develop graduate admissions software with source-cited guidance. The public site and waitlist are live alongside an early beta.'],
       },
       {
         title: 'Founder',
@@ -117,7 +124,8 @@ export const CV_SECTIONS_AFTER: CvSection[] = [
         title: 'Freelance AI/ML engineer',
         organisation: 'Upwork (Top Rated Plus, 100% Job Success Score)',
         points: [
-          'Self-hosted LLMs and document-extraction pipelines with deterministic verification for financial documents.',
+          'Built and deployed a self-hosted financial-document API that links extracted figures to source pages and performs calculations and reconciliation deterministically.',
+          'Delivered an HPC architecture assessment and focused static code review for a seismic software team.',
           'QLoRA fine-tuning of NVIDIA Cosmos-Reason1-7B for soccer event detection.',
           'GROMACS and LAMMPS molecular dynamics with CAD-defined boundaries.',
         ],
@@ -132,9 +140,10 @@ export const CV_SECTIONS_AFTER: CvSection[] = [
     id: 'talks',
     label: 'Talks & posters',
     entries: [
-      { title: 'RRIVis', organisation: 'School and Workshop on 21-cm Cosmology, TIFR Mumbai', dates: 'Mar 2026' },
+      { title: 'RadioSim', organisation: 'Science at Low Frequencies XII (accepted for remote presentation)', dates: 'Dec 2026' },
+      { title: 'RRIVis', organisation: 'School and Workshop on 21-cm Cosmology, TIFR Mumbai', dates: '9 Mar 2026' },
       { title: 'Radio Array Systematics: HERA Case Study', organisation: 'Science at Low Frequencies XI, France (presented by Dr. Rajorshi Chandra)', dates: 'Dec 2025' },
-      { title: 'RRIVis: 21cm Visibility Simulator (poster)', organisation: 'In-House Physics Symposium, IISER Bhopal', dates: 'Mar 2025' },
+      { title: 'RRIVis: 21cm Visibility Simulator (poster)', organisation: 'In-House Physics Symposium, IISER Bhopal', dates: '5 Mar 2025' },
       { title: 'Contributing to Open Source: A Primer to GSoC and beyond', organisation: 'IISER Bhopal', dates: 'Jan 2025' },
       { title: 'Talk on Celestial Sphere Mechanics', organisation: 'IBAC, IISER Bhopal', dates: 'Apr 2023' },
     ],

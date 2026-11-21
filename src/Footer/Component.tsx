@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { CookieConsentSettings } from '@/components/CookieConsent'
 import { HideOn } from '@/components/SiteChrome/RouteGate'
 import { CONTACT_EMAIL, NAVIGATION_ITEMS } from '@/constants/navigation'
+import { CV_PDFS } from '@/data/cv-pdfs'
 import { BackToTop } from './BackToTop'
 import { FooterSky } from './FooterSky'
 import './footer.css'
@@ -105,18 +106,14 @@ export function Footer() {
             
             {/* Academic buttons */}
             <div className="flex flex-col items-start gap-2 sm:gap-3 mb-4 sm:mb-6">
-              <a href="https://drive.google.com/file/d/1Mt1mdXwKkwagocNu4DYbXNjDmA006zvA/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-colors hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Academic CV</span>
-              </a>
-              <a href="https://drive.google.com/file/d/15PZLNWHPzwWEzjf4GhA3WJhXWlJXqkXg/view?usp=sharing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-colors hover:bg-zinc-600 touch-target min-h-[44px]">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <span>Professional CV</span>
-              </a>
+              {CV_PDFS.map((cv) => (
+                <a key={cv.id} href={cv.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-colors hover:bg-zinc-600 touch-target min-h-[44px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  <span>{cv.label}</span>
+                </a>
+              ))}
               <a href="https://scholar.google.com/citations?hl=en&user=8vhqrogAAAAJ" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 sm:gap-2 bg-zinc-800 px-3 py-2 rounded-md text-xs sm:text-sm transition-colors hover:bg-zinc-600 touch-target min-h-[44px]">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path d="M12 14l9-5-9-5-9 5 9 5z" />
