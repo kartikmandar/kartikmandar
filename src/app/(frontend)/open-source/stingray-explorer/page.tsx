@@ -41,6 +41,18 @@ export default function GSoC2024FinalReport(): React.JSX.Element {
           <Calendar className="w-4 h-4" />
           <span>Last updated: September 2024</span>
         </div>
+        <p className="mb-6 text-sm text-muted-foreground">
+          This report documents the 2024 web dashboard. The{' '}
+          <Link
+            href="https://github.com/StingraySoftware/StingrayExplorer/pull/2"
+            className="underline underline-offset-4"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Electron, React and FastAPI desktop migration
+          </Link>{' '}
+          merged in November 2026.
+        </p>
 
         {/* Project Info Bar */}
         <div className="bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/30 rounded-xl p-6 mb-12">
@@ -266,7 +278,7 @@ export default function GSoC2024FinalReport(): React.JSX.Element {
               The code is available on GitHub, where all the modules are documented and can be extended by the community.
             </p>
             <p className="text-muted-foreground">
-              The demo of the dashboard is also deployed at Hugging Face for new users to try out before installing locally.
+              The original 2024 web dashboard demo runs on Hugging Face.
             </p>
             <div className="flex flex-wrap gap-4 mt-6">
               <Link 
@@ -283,7 +295,7 @@ export default function GSoC2024FinalReport(): React.JSX.Element {
                 className="inline-flex items-center gap-2 px-4 py-2 border border-primary text-primary rounded-lg hover:bg-primary/10 transition-colors"
               >
                 <Globe className="w-4 h-4" />
-                Try Demo
+                2024 Dashboard Demo
               </Link>
             </div>
           </section>
@@ -388,9 +400,9 @@ export default function GSoC2024FinalReport(): React.JSX.Element {
 
             {/* Demo Section */}
             <div id="demo">
-              <h3 className="text-2xl font-bold mb-4">11. Demo for the Dashboard</h3>
+              <h3 className="text-2xl font-bold mb-4">11. Original Dashboard Demo</h3>
               <p className="text-muted-foreground mb-6">
-                Demo for the Dashboard deployed at Hugging Face. Watch the video demonstration below or try the live demo!
+                This video and interactive demo show the original 2024 web dashboard.
               </p>
               
               {/* YouTube Video Embed */}

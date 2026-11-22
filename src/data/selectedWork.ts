@@ -13,7 +13,7 @@ export const SELECTED_WORK: SelectedWork[] = [
     summary: 'A full-polarization RIME visibility simulator with point-source and HEALPix skies, analytic and FITS beams, and NumPy, JAX and Dask backends.',
     image: '/media/rrivis_poster.png',
     imageAlt: 'RadioSim poster showing simulated interferometer visibilities',
-    href: 'https://github.com/RRI-interferometry/RadioSim',
+    href: '/posters',
   },
   {
     title: 'fftvis',
@@ -24,10 +24,10 @@ export const SELECTED_WORK: SelectedWork[] = [
   },
   {
     title: 'Cygnus X-1',
-    summary: 'Timing analysis of 26 NuSTAR observations spanning 12 years.',
+    summary: 'A published timing study and a reflection-spectroscopy preprint based on 26 NuSTAR observations.',
     image: '/media/CygnusX1.png',
     imageAlt: 'Timing analysis plots of Cygnus X-1',
-    href: 'https://github.com/cygnus-x1-analysis/Analysis',
+    href: '/publications',
   },
   {
     title: 'RIPPLe',
@@ -45,9 +45,9 @@ export const SELECTED_WORK: SelectedWork[] = [
   },
   {
     title: 'DAVE',
-    summary: 'A legacy X-ray timing desktop app, modernized and security hardened.',
+    summary: 'An open pull request to modernize the DAVE X-ray timing app and fix scientific and security issues.',
     image: '/media/DAVE.png',
     imageAlt: 'The DAVE application interface',
-    href: 'https://github.com/StingraySoftware/dave',
+    href: 'https://github.com/StingraySoftware/dave/pull/79',
   },
 ]

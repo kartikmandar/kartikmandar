@@ -57,6 +57,7 @@ export default function TalksPage(): React.JSX.Element {
           {talks.map((talk) => {
             const coverImage = typeof talk.coverImage === 'object' ? talk.coverImage : undefined
             const materialsUrl = talk.materials?.gDriveFolderUrl || null
+            const eventUrl = talk.eventDetails?.eventWebsite
             const venue = talk.eventDetails?.venue
             const city = talk.eventDetails?.city
             const country = talk.eventDetails?.country
@@ -77,13 +78,18 @@ export default function TalksPage(): React.JSX.Element {
                   <>
                     <p>{talk.eventDetails?.eventName}</p>
                     <p>
-                      {formatDate(talk.scheduling?.talkDate)}
+                      {talk.scheduling.dateLabel ?? formatDate(talk.scheduling.talkDate)}
                       {location && `, ${location}`}
                     </p>
                   </>
                 }
                 summary={<p className="line-clamp-3">{talk.shortDescription || talk.abstract}</p>}
-                actions={materialsUrl ? <CardAction href={materialsUrl}>View materials</CardAction> : undefined}
+                actions={materialsUrl || eventUrl ? (
+                  <>
+                    {eventUrl && <CardAction href={eventUrl}>Event information</CardAction>}
+                    {materialsUrl && <CardAction href={materialsUrl}>View materials</CardAction>}
+                  </>
+                ) : undefined}
               />
             )
           })}

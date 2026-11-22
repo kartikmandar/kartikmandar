@@ -1,6 +1,6 @@
 /**
- * The Open Source & Projects page. Statuses were checked against GitHub on
- * 2026-11-01. Update `status` when a pull request lands.
+ * The Open Source & Projects page. Check upstream pull requests and releases
+ * before updating status.
  */
 export interface ProjectLink {
   label: string
@@ -48,7 +48,7 @@ export const OPEN_SOURCE_GROUPS: OpenSourceGroup[] = [
         ],
         tags: ['Python', 'JAX', 'Dask'],
         image: { src: '/media/rrivis_poster.png', alt: 'Poster of the simulator under its earlier name, RRIVis' },
-        links: [{ label: 'Repository', href: 'https://github.com/RRI-interferometry/RadioSim' }],
+        links: [{ label: 'RRIVis research poster', href: '/posters' }],
       },
       {
         name: 'hera_pspec',
@@ -58,13 +58,14 @@ export const OPEN_SOURCE_GROUPS: OpenSourceGroup[] = [
         summary: "HERA's power spectrum estimation code. I am leading the work towards its 1.0 release.",
         highlights: [
           'Native pspec CLI replacing the legacy pipeline scripts',
-          'Astropy units and cosmology (PR open)',
+          'Astropy units, cosmology and HDF5 migration merged into the v1 release branch',
           'Src layout, with uv and ruff in CI',
           'Example notebooks rendered in the online docs',
         ],
         tags: ['Python', 'Astropy'],
         links: [
           { label: 'Repository', href: 'https://github.com/HERA-Team/hera_pspec' },
+          { label: 'Merged migration', href: 'https://github.com/HERA-Team/hera_pspec/pull/545' },
           { label: 'My pull requests', href: 'https://github.com/HERA-Team/hera_pspec/pulls?q=is%3Apr+author%3Akartikmandar' },
         ],
       },
@@ -129,19 +130,19 @@ export const OPEN_SOURCE_GROUPS: OpenSourceGroup[] = [
         name: 'Stingray Explorer',
         role: 'Google Summer of Code 2024',
         meta: ['Open Astronomy', 'May - September 2024', 'Mentors: Prof. Matteo Bachetti, Dr. Guglielmo Mastroserio'],
-        status: 'Desktop rebuild: PR open',
+        status: 'Desktop migration merged',
         summary: 'A quicklook dashboard for X-ray astronomy built on the Stingray library, covering light curves, power spectra, cross spectra, dynamical power spectra and spectral colors.',
         highlights: [
           'GSoC dashboard: configurable widgets, plots and layouts',
           'Bokeh and Datashader plotting, with multiprocessing support',
-          'Rebuilt as a desktop app with Electron, React and FastAPI (PR open)',
-          'Eleven QuickLook analysis pages working end to end in the rebuild',
+          'Electron, React and FastAPI migration merged into main on 4 November 2026',
+          'Apple Silicon package rehearsed locally',
         ],
         tags: ['Python', 'Electron', 'React', 'FastAPI'],
         links: [
-          { label: 'Final report', href: '/open-source/stingray-explorer' },
+          { label: 'GSoC 2024 report', href: '/open-source/stingray-explorer' },
           { label: 'Repository', href: 'https://github.com/StingraySoftware/StingrayExplorer' },
-          { label: 'Desktop rebuild PR', href: 'https://github.com/StingraySoftware/StingrayExplorer/pull/2' },
+          { label: 'Merged desktop migration', href: 'https://github.com/StingraySoftware/StingrayExplorer/pull/2' },
           { label: 'Weekly blogs', href: 'https://gsoc2024.blogspot.com/' },
           { label: 'Proposal', href: 'https://drive.google.com/file/d/1VnP1hpKPUtQin5lKPRWXS-Ai2EW8057b/view?usp=sharing' },
         ],
@@ -195,17 +196,17 @@ export const OPEN_SOURCE_GROUPS: OpenSourceGroup[] = [
   {
     id: 'products',
     title: 'Products and tools',
-    lead: 'What I build outside research. The two companies are not open source.',
+    lead: 'Independent software projects and companies.',
     projects: [
       {
         name: 'Enrolia',
         role: 'Co-founder',
         meta: ['enrolia.app'],
-        summary: 'The honest consultant for graduate applicants. It helps you find masters and PhD programs and keeps track of every application, with no university commissions.',
+        status: 'Website and waitlist live',
+        summary: 'Graduate admissions guidance with cited sources and no university commissions. The applicant platform is in early beta.',
         highlights: [
           'Own the architecture and infrastructure',
-          'FastAPI and Postgres API with Pydantic AI agents',
-          'Next.js app and a browser autofill extension',
+          'Developing program research and application tracking',
         ],
         tags: ['FastAPI', 'Postgres', 'Next.js'],
         links: [{ label: 'Visit Enrolia', href: 'https://enrolia.app' }],
@@ -217,6 +218,14 @@ export const OPEN_SOURCE_GROUPS: OpenSourceGroup[] = [
         summary: 'A forward-deployed AI engineering lab that builds production AI workflows, RAG systems, data pipelines and AI product features for real business operations.',
         highlights: [],
         links: [{ label: 'Visit Merakinist', href: 'https://merakinist.com' }],
+      },
+      {
+        name: 'Scribaula',
+        role: 'Creator',
+        meta: ['Self-hosted lecture notes'],
+        summary: 'Turns classroom lecture recordings into transcripts and verified LaTeX and PDF study notes.',
+        highlights: [],
+        links: [{ label: 'Visit Scribaula', href: 'https://scribaula.kartikmandar.com/' }],
       },
       {
         name: 'PromptPrep',

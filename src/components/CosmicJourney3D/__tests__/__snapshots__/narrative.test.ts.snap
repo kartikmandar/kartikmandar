@@ -197,7 +197,7 @@ exports[`narrative v2 > pins the full approved copy 1`] = `
     },
     {
       "act": "widening",
-      "body": "I started contributing upstream to HERA's own software. I opened a pull request adding full-Stokes polarized skies to matvis, and did a long run of work on hera_pspec, the power-spectrum pipeline: a new command-line interface, modern packaging, and an ongoing move to astropy units on the road to v1.0. I also released hera_strip, a small tool that shows the strip of sky HERA sees.",
+      "body": "I started contributing upstream to HERA's own software. I opened a pull request adding full-Stokes polarized skies to matvis. For hera_pspec, the power-spectrum pipeline, I worked on its command-line interface and packaging. The Astropy units and cosmology migration merged into the v1 release branch. I also released hera_strip, a small tool that shows the strip of sky HERA sees.",
       "evidence": {
         "href": "https://github.com/HERA-Team/hera_pspec",
         "label": "hera_pspec",
@@ -255,7 +255,7 @@ exports[`narrative v2 > pins the full approved copy 1`] = `
       "act": "widening",
       "body": "Applying abroad, I saw how much admissions consulting runs on commissions and vague promises. So with Aryan Mishra, a fellow IISER Bhopal alum, I co-founded Enrolia: the honest consultant for graduate applicants, with no university commissions and every claim sourced. We went through YC Startup School and opened a free beta cohort in June 2026. I build the engineering side, and much of it is still being built.",
       "evidence": {
-        "href": "https://beta.enrolia.app",
+        "href": "https://enrolia.app",
         "label": "Enrolia",
       },
       "eyebrow": "The Founder",

@@ -295,6 +295,7 @@ export interface Talk {
   }
   scheduling: {
     talkDate: string
+    dateLabel?: string
     talkTime?: string | null
     timezone?: string | null
     talkStatus: TalkStatus

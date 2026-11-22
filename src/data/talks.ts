@@ -6,11 +6,33 @@ import type { Talk } from './types'
  */
 export const talks: Talk[] = [
   {
+    "id": "radiosim-salf-xii",
+    "displayOrder": 0,
+    "title": "RadioSim",
+    "shortDescription": "Accepted for remote presentation. The talk covers using RadioSim to simulate visibilities for low-frequency radio interferometers.",
+    "abstract": "Using RadioSim to simulate visibilities for low-frequency radio interferometers.",
+    "talkType": "presentation",
+    "slug": "radiosim-salf-xii",
+    "eventDetails": {
+      "eventName": "Science at Low Frequencies XII",
+      "eventType": "conference",
+      "venue": "Arizona State University",
+      "city": "Tempe",
+      "country": "USA",
+      "eventWebsite": "https://salfconference.org/2026-12th-annual-science-at-low-frequencies-salf-conference/"
+    },
+    "scheduling": {
+      "talkDate": "2026-12-07T00:00:00.000Z",
+      "dateLabel": "Conference: 7–10 December 2026",
+      "talkStatus": "upcoming"
+    }
+  },
+  {
     "id": 3,
     "displayOrder": 1,
     "title": "RRIVis",
-    "shortDescription": "Talk on RRIVis, now RadioSim, at the School and Workshop on 21-cm Cosmology, TIFR Mumbai",
-    "abstract": "Presented RRIVis, a full-RIME, GPU-accelerated radio interferometric visibility simulator developed at the Raman Research Institute. RRIVis is an interferometric visibility simulator (no approximation) for forward modelling the whole pipeline, used for validating radio interferometry data in the context of 21-cm cosmology and the Epoch of Reionization.",
+    "shortDescription": "RRIVis, now RadioSim, simulates full-polarization radio interferometer observations for validating 21-cm analysis pipelines.",
+    "abstract": "Presented RRIVis, now RadioSim, a full-polarization visibility simulator developed at the Raman Research Institute for forward modelling radio interferometer observations and validating 21-cm analysis pipelines.",
     "talkType": "presentation",
     "language": "english",
     "audienceLevel": "advanced",
@@ -96,14 +118,15 @@ export const talks: Talk[] = [
       "eventName": "School and Workshop on 21-cm Cosmology",
       "eventType": "workshop",
       "venue": "TIFR Mumbai",
-      "eventWebsite": null,
+      "eventWebsite": "https://scitalks.tifr.res.in/event/9246/sessions/817/",
       "eventOrganizer": "TIFR",
       "eventDescription": "School and Workshop on 21-cm Cosmology",
       "city": "Mumbai",
       "country": "India"
     },
     "scheduling": {
-      "talkDate": "2026-03-15T00:00:00.000Z",
+      "talkDate": "2026-03-09T00:00:00.000Z",
+      "dateLabel": "9 March 2026",
       "talkTime": null,
       "timezone": "IST",
       "talkStatus": "completed",

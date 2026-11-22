@@ -6,8 +6,9 @@ export interface IndexedProject {
 }
 
 export const PROJECT_INDEX: IndexedProject[] = [
-  { name: 'Enrolia', description: 'The honest consultant for graduate applicants: find masters and PhD programs and keep track of every application.', href: 'https://enrolia.app' },
+  { name: 'Enrolia', description: 'Source-cited graduate admissions guidance without university commissions. The public site and waitlist are live, and the applicant platform is in early beta.', href: 'https://enrolia.app' },
   { name: 'Merakinist Labs', description: 'A forward-deployed AI engineering lab.', href: 'https://merakinist.com' },
+  { name: 'Scribaula', description: 'A self-hosted pipeline for turning classroom recordings into transcripts and verified LaTeX and PDF study notes.', href: 'https://scribaula.kartikmandar.com/' },
   { name: 'Colloquia', description: 'Local-first AI research assistant with Zotero integration, RAG via ChromaDB, and real-time voice/text LLM interaction.' },
   { name: 'Workflow Orchestrator', description: 'OpenEnv environment for training and evaluating LLM agent orchestration across DAG-based workflows.' },
   { name: 'NVIDIA Cosmos-Reason1-7B Fine-Tuning', description: 'QLoRA fine-tuning of a 7B vision-language model on RTX 3090 for soccer event detection with temporal localization.' },
